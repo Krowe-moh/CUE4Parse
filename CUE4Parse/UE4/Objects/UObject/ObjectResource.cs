@@ -276,6 +276,19 @@ namespace CUE4Parse.UE4.Objects.UObject
                 SerialOffset = Ar.Read<long>();
             }
 
+            if (Ar.Ver > EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME)
+            {
+                ForcedExport = Ar.ReadBoolean();
+                NotForClient = Ar.ReadBoolean();
+                NotForServer = Ar.ReadBoolean();
+                PackageGuid = Ar.Ver < EUnrealEngineObjectUE5Version.REMOVE_OBJECT_EXPORT_PACKAGE_GUID ? Ar.Read<FGuid>() : default;
+                IsInheritedInstance = Ar.Ver >= EUnrealEngineObjectUE5Version.TRACK_OBJECT_EXPORT_IS_INHERITED && Ar.ReadBoolean();
+                PackageFlags = Ar.Read<uint>();
+                NotAlwaysLoadedForEditorGame = Ar.Ver >= EUnrealEngineObjectUE4Version.LOAD_FOR_EDITOR_GAME && Ar.ReadBoolean();
+                IsAsset = Ar.Ver >= EUnrealEngineObjectUE4Version.COOKED_ASSETS_IN_EDITOR_SUPPORT && Ar.ReadBoolean();
+                GeneratePublicHash = Ar.Ver >= EUnrealEngineObjectUE5Version.OPTIONAL_RESOURCES && Ar.ReadBoolean();
+            }
+            
             if (Ar.Game == EGame.GAME_RocketLeague)
             {
                 Ar.Read<int>(); // SerialOffsetUpper

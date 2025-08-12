@@ -1918,7 +1918,11 @@ namespace CUE4Parse.UE4.Versions
         VER_LIC_AUTOMATIC_VERSION_PLUS_ONE,
         VER_LIC_AUTOMATIC_VERSION = VER_LIC_AUTOMATIC_VERSION_PLUS_ONE - 1
     }
-
+    
+    /// <summary>
+    /// This object combines all of our version enums into a single easy to use structure
+    /// which allows us to update older version numbers independently of the newer version numbers.
+    /// </summary>
     public struct FPackageFileVersion :
         IComparable<EUnrealEngineObjectUE3Version>,
         IComparable<EUnrealEngineObjectUE4Version>,

@@ -217,6 +217,11 @@ public static class GameUtils
             {
                 < EGame.GAME_UE3_0 => 369,
                 < EGame.GAME_UE3_1 => 370,
+                < EGame.GAME_UE3_2 => 371,
+                < EGame.GAME_UE3_3 => 372,
+                < EGame.GAME_UE3_4 => 373,
+                < EGame.GAME_UE3_5 => 374,
+                < EGame.GAME_UE3_6 => 375,
                 _ => (int)EUnrealEngineObjectUE3Version.VER_AUTOMATIC_VERSION
             });
         }
