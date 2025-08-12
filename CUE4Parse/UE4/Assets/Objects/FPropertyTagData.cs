@@ -37,15 +37,15 @@ public class FPropertyTagData
                     StructGuid = Ar.Read<FGuid>();
                 break;
             case "BoolProperty":
-                Bool = Ar.ReadFlag();
+                Bool = Ar.ReadBoolean();
                 break;
             case "ByteProperty":
             case "EnumProperty":
                 EnumName = Ar.ReadFName().Text;
                 break;
             case "ArrayProperty":
-                if (Ar.Ver >= EUnrealEngineObjectUE4Version.ARRAY_PROPERTY_INNER_TAGS)
-                    InnerType = Ar.ReadFName().Text;
+               // if (Ar.Ver >= EUnrealEngineObjectUE4Version.ARRAY_PROPERTY_INNER_TAGS)
+                 //   InnerType = Ar.ReadFName().Text;
                 break;
             // Serialize the following if version is past PROPERTY_TAG_SET_MAP_SUPPORT
             case "SetProperty":

@@ -30,6 +30,11 @@ namespace CUE4Parse.UE4.Objects.UObject
          * Number of names in the linker's NameMap for this generation.
          */
         public readonly int NameCount;
+        
+        /**
+         * 
+         */
+        public readonly int NetObjectCount;
     }
 
     [JsonConverter(typeof(FPackageFileSummaryConverter))]
@@ -164,19 +169,16 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Tag == PACKAGE_FILE_TAG_AE) Tag = PACKAGE_FILE_TAG;
 
-            if (Tag != PACKAGE_FILE_TAG && Tag != PACKAGE_FILE_TAG_SWAPPED)
+            var byteSwappedTag = ((Tag & 0x000000FF) << 24) | ((Tag & 0x0000FF00) << 8) | ((Tag & 0x00FF0000) >> 8) | ((Tag & 0xFF000000) >> 24);
+            if (Tag != PACKAGE_FILE_TAG && byteSwappedTag != PACKAGE_FILE_TAG_SWAPPED)
             {
                 throw new ParserException($"Invalid uasset magic: 0x{Tag:X8} != 0x{PACKAGE_FILE_TAG:X8}");
             }
 
-            // The package has been stored in a separate endianness than the linker expected so we need to force
-            // endian conversion. Latent handling allows the PC version to retrieve information about cooked packages.
-            if (Tag == PACKAGE_FILE_TAG_SWAPPED)
+            if (byteSwappedTag == PACKAGE_FILE_TAG_SWAPPED)
             {
-                // Set proper tag.
-                //Tag = PACKAGE_FILE_TAG;
-                // Toggle forced byte swapping.
-                throw new ParserException("Byte swapping for packages not supported");
+                Tag = PACKAGE_FILE_TAG;
+                Ar.ReverseBytes = true;
             }
 
             legacyFileVersion = Ar.Read<int>();
@@ -248,8 +250,8 @@ namespace CUE4Parse.UE4.Objects.UObject
             }
             else
             {
-                // This is probably an old UE3 file, make sure that the linker will fail to load with it.
-                throw new ParserException("Can't load legacy UE3 file");
+                legacyFileVersion = (ushort)(legacyFileVersion & 0xFFFF);
+                FileVersionUE.FileVersionUE3 = legacyFileVersion;
             }
 
             if (FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
@@ -307,10 +309,33 @@ namespace CUE4Parse.UE4.Objects.UObject
                 MetaDataOffset = Ar.Read<int>();
             }
 
-            DependsOffset = Ar.Read<int>();
-
-            if (FileVersionUE < EUnrealEngineObjectUE4Version.OLDEST_LOADABLE_PACKAGE || FileVersionUE > EUnrealEngineObjectUE4Version.AUTOMATIC_VERSION)
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.AddedDependsOffset)
             {
+                DependsOffset = Ar.Read<int>();
+            }
+
+        if (FileVersionUE < EUnrealEngineObjectUE4Version.OLDEST_LOADABLE_PACKAGE || FileVersionUE > EUnrealEngineObjectUE4Version.AUTOMATIC_VERSION)
+            {
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES)
+                {
+                    //Ar << f38 << f3C << f40;
+                             Ar.Read<int>();
+                            Ar.Read<int>();
+                            Ar.Read<int>();
+                }
+
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ASSET_THUMBNAILS_IN_PACKAGES)
+                {
+                    Ar.Read<int>(); //unk38
+                }
+
+                Ar.Read<FGuid>();
+                Ar.ReadArray<FGenerationInfo>();
+                Ar.Read<int>(); //EngineVersion
+                Ar.Read<int>(); //CookerVersion
+                Ar.Read<int>(); //CompressionFlags
+                Ar.ReadArray<FCompressedChunk>();
+                Ar.Read<int>(); // U3unk60
                 Generations = [];
                 ChunkIds = [];
                 return; // we can't safely load more than this because the below was different in older files.

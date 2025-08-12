@@ -128,6 +128,7 @@ namespace CUE4Parse.UE4.Readers
         public override void Flush() { }
         public override bool CanRead { get; } = true;
         public override bool CanWrite { get; } = false;
+        public bool ReverseBytes { get; set; } = false;
         public override void SetLength(long value) { throw new InvalidOperationException(); }
         public override void Write(byte[] buffer, int offset, int count) { throw new InvalidOperationException(); }
 

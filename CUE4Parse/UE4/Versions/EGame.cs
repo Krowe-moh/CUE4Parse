@@ -8,6 +8,15 @@ namespace CUE4Parse.UE4.Versions;
 public enum EGame : uint
 {
     // bytes: 04.NN.FF.XX : 04/05=UE4/5, NN=UE4 subversion, FF=Flags (curently not used), XX=game (0=base engine)
+    GAME_UE3_0 = GameUtils.GameUe3Base + (0 << 16),
+        GAME_RocketLeague = GAME_UE3_0 + 1,
+    GAME_UE3_1 = GameUtils.GameUe3Base + (1 << 16),
+    GAME_UE3_2 = GameUtils.GameUe3Base + (2 << 16),
+    GAME_UE3_3 = GameUtils.GameUe3Base + (3 << 16),
+    GAME_UE3_4 = GameUtils.GameUe3Base + (4 << 16),
+    GAME_UE3_5 = GameUtils.GameUe3Base + (5 << 16),
+    GAME_UE3_6 = GameUtils.GameUe3Base + (6 << 16),
+    
     GAME_UE4_0 = GameUtils.GameUe4Base + (0 << 16),
     GAME_UE4_1 = GameUtils.GameUe4Base + (1 << 16),
     GAME_UE4_2 = GameUtils.GameUe4Base + (2 << 16),
@@ -169,6 +178,7 @@ public enum EGame : uint
 
 public static class GameUtils
 {
+    public const int GameUe3Base = 0x3000000;
     public const int GameUe4Base = 0x4000000;
     public const int GameUe5Base = 0x5000000;
 
@@ -189,16 +199,25 @@ public static class GameUtils
         {
             return game switch
             {
-                < EGame.GAME_UE5_1 => new FPackageFileVersion(522, 1004),
-                < EGame.GAME_UE5_2 => new FPackageFileVersion(522, 1008),
-                    EGame.GAME_TheFirstDescendant => new FPackageFileVersion(522, 1002),
-                < EGame.GAME_UE5_4 => new FPackageFileVersion(522, 1009),
-                < EGame.GAME_UE5_5 => new FPackageFileVersion(522, 1012),
-                < EGame.GAME_UE5_6 => new FPackageFileVersion(522, 1013),
-                _ => new FPackageFileVersion((int) EUnrealEngineObjectUE4Version.AUTOMATIC_VERSION, (int) EUnrealEngineObjectUE5Version.AUTOMATIC_VERSION)
+                < EGame.GAME_UE5_1 => new FPackageFileVersion(0, 522, 1004),
+                < EGame.GAME_UE5_2 => new FPackageFileVersion(0, 522, 1008),
+                    EGame.GAME_TheFirstDescendant => new FPackageFileVersion(0, 522, 1002),
+                < EGame.GAME_UE5_4 => new FPackageFileVersion(0, 522, 1009),
+                < EGame.GAME_UE5_5 => new FPackageFileVersion(0, 522, 1012),
+                < EGame.GAME_UE5_6 => new FPackageFileVersion(0, 522, 1013),
+                _ => new FPackageFileVersion((int) EUnrealEngineObjectUE3Version.VER_AUTOMATIC_VERSION, (int) EUnrealEngineObjectUE4Version.AUTOMATIC_VERSION, (int) EUnrealEngineObjectUE5Version.AUTOMATIC_VERSION)
             };
         }
 
+        if (game >= EGame.GAME_UE3_0 && game < EGame.GAME_UE4_0)
+        {
+            return FPackageFileVersion.CreateUE3Version(game switch
+            {
+                < EGame.GAME_UE3_0 => 369,
+                < EGame.GAME_UE3_1 => 370,
+                _ => (int)EUnrealEngineObjectUE3Version.VER_AUTOMATIC_VERSION
+            });
+        }
         return FPackageFileVersion.CreateUE4Version(game switch
         {
             // General UE4 Versions

@@ -152,10 +152,14 @@ public class UObject : AbstractPropertyHolder
         }
         else
         {
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedNetIndex)
+            {
+                Ar.Read<int>(); // NetIndex
+            }
             DeserializePropertiesTagged(Properties = [], Ar, false);
         }
 
-        if (!Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject) && Ar.ReadBoolean() && Ar.Position + 16 <= validPos)
+        if (Ar.Ver > EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME && !Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject) && Ar.ReadBoolean() && Ar.Position + 16 <= validPos)
         {
             ObjectGuid = Ar.Read<FGuid>();
         }

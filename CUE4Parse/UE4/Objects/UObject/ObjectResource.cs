@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -35,8 +36,11 @@ namespace CUE4Parse.UE4.Objects.UObject
         public readonly IPackage? Owner;
 
         private WeakReference<ResolvedObject?>? _resolvedObject;
-        public ResolvedObject? ResolvedObject {
-            get {
+
+        public ResolvedObject? ResolvedObject
+        {
+            get
+            {
                 var resolvedObject = _resolvedObject != null && _resolvedObject.TryGetTarget(out var target) ? target : null;
                 if (resolvedObject == null)
                 {
@@ -44,12 +48,15 @@ namespace CUE4Parse.UE4.Objects.UObject
                     resolvedObject = Owner.ResolvePackageIndex(this);
                     _resolvedObject = new(resolvedObject);
                 }
+
                 return resolvedObject;
             }
         }
 
-        public ResolvedObject? ResolvedObjectNoCache {
-            get {
+        public ResolvedObject? ResolvedObjectNoCache
+        {
+            get
+            {
                 if (Owner == null) return null;
                 var resolvedObject = _resolvedObject != null && _resolvedObject.TryGetTarget(out var target) ? target : null;
                 if (resolvedObject != null) return resolvedObject;
@@ -113,6 +120,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         }
 
         #region Loading Methods
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T? Load<T>() where T : UExport => Owner?.FindObject(this)?.Value as T;
 
@@ -169,6 +177,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             return null;
         }
+
         #endregion
 
         public bool Equals(FPackageIndex? other)
@@ -232,7 +241,8 @@ namespace CUE4Parse.UE4.Objects.UObject
 #pragma warning disable 8618
         public FObjectExport()
 #pragma warning restore 8618
-        { }
+        {
+        }
 
         public FObjectExport(FAssetArchive Ar)
         {
@@ -241,12 +251,24 @@ namespace CUE4Parse.UE4.Objects.UObject
             TemplateIndex = Ar.Ver >= EUnrealEngineObjectUE4Version.TemplateIndex_IN_COOKED_EXPORTS ? new FPackageIndex(Ar) : new FPackageIndex();
             OuterIndex = new FPackageIndex(Ar);
             ObjectName = Ar.ReadFName();
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedArcheType)
+            {
+                Ar.Read<uint>(); //Archetype
+            }
+
             ObjectFlags = Ar.Read<uint>();
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag)
+            {
+                Ar.Read<uint>(); // ObjectFlags2
+            }
 
             if (Ar.Ver < EUnrealEngineObjectUE4Version.e64BIT_EXPORTMAP_SERIALSIZES)
             {
                 SerialSize = Ar.Read<int>();
-                SerialOffset = Ar.Read<int>();
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedSerialOffset)
+                {
+                    SerialOffset = Ar.Read<int>();
+                }
             }
             else
             {
@@ -254,15 +276,26 @@ namespace CUE4Parse.UE4.Objects.UObject
                 SerialOffset = Ar.Read<long>();
             }
 
-            ForcedExport = Ar.ReadBoolean();
-            NotForClient = Ar.ReadBoolean();
-            NotForServer = Ar.ReadBoolean();
-            PackageGuid = Ar.Ver < EUnrealEngineObjectUE5Version.REMOVE_OBJECT_EXPORT_PACKAGE_GUID ? Ar.Read<FGuid>() : default;
-            IsInheritedInstance = Ar.Ver >= EUnrealEngineObjectUE5Version.TRACK_OBJECT_EXPORT_IS_INHERITED && Ar.ReadBoolean();
-            PackageFlags = Ar.Read<uint>();
-            NotAlwaysLoadedForEditorGame = Ar.Ver >= EUnrealEngineObjectUE4Version.LOAD_FOR_EDITOR_GAME && Ar.ReadBoolean();
-            IsAsset = Ar.Ver >= EUnrealEngineObjectUE4Version.COOKED_ASSETS_IN_EDITOR_SUPPORT && Ar.ReadBoolean();
-            GeneratePublicHash = Ar.Ver >= EUnrealEngineObjectUE5Version.OPTIONAL_RESOURCES && Ar.ReadBoolean();
+            if (Ar.Game == EGame.GAME_RocketLeague)
+            {
+                Ar.Read<int>(); // SerialOffsetUpper
+            }
+
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_COMPONENT_MAP)
+            {
+                var LegacyComponentMap = Ar.ReadMap(() => Ar.ReadFName(), () => Ar.Read<int>());
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedExportFlags)
+            {
+                Ar.Read<int>(); // ExportFlags
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedNetIndex)
+            {
+                Ar.ReadArray<int>(); // NetObjectCount
+                Ar.Read<FGuid>();
+            }
 
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
             {
@@ -315,7 +348,8 @@ namespace CUE4Parse.UE4.Objects.UObject
 #pragma warning disable 8618
         public FObjectImport()
 #pragma warning restore 8618
-        { }
+        {
+        }
 
         public FObjectImport(FAssetArchive Ar)
         {

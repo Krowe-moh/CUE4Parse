@@ -21,8 +21,8 @@ public static class VersionUtils
         var packageSummary = (Ar as FAssetArchive)?.Owner.Summary;
         if (packageSummary is { bUnversioned: false })
         {
-            var packageCustomVersion = packageSummary.CustomVersionContainer.GetVersion(key);
-            return packageCustomVersion; // proceed so we can guess version from engine version
+          //  var packageCustomVersion = packageSummary.CustomVersionContainer.GetVersion(key);
+         //   return packageCustomVersion; // proceed so we can guess version from engine version
         }
 
         return -1; // Determine by game

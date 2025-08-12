@@ -13,12 +13,12 @@ namespace CUE4Parse.FileProvider.Objects;
 
 public abstract class GameFile
 {
-    public static readonly string[] UePackageExtensions = ["uasset", "umap"];
+    public static readonly string[] UePackageExtensions = ["uasset", "umap", "upk"];
     public static readonly string[] UePackagePayloadExtensions = ["uexp", "ubulk", "uptnl"];
     public static readonly string[] UeKnownExtensions =
     [
         ..UePackageExtensions, ..UePackagePayloadExtensions,
-        "bin", "ini", "uplugin", "upluginmanifest", "locres", "locmeta",
+        "bin", "ini", "uplugin", "upluginmanifest", "locres", "locmeta",  "wem", "ewem", "bnk",  "tfc"
     ];
 
     // hashset for quick lookup

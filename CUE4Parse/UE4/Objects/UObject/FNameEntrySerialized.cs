@@ -39,6 +39,14 @@ namespace CUE4Parse.UE4.Objects.UObject
                 if (Name != null && _pubgNameMap.TryGetValue(Name, out var name)) Name = name;
             }
 
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag)
+            {
+                Ar.Read<long>(); // flags64
+            }
+            else
+            {
+                Ar.Read<int>(); // flags32
+            }
             if (bHasNameHashes)
             {
 #if NAME_HASHES
