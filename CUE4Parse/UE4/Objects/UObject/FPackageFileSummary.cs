@@ -330,15 +330,15 @@ namespace CUE4Parse.UE4.Objects.UObject
                 }
 
                 Ar.Read<FGuid>();
-                Ar.ReadArray<FGenerationInfo>();
+                
+                Generations = Ar.ReadArray<FGenerationInfo>();
                 Ar.Read<int>(); //EngineVersion
                 Ar.Read<int>(); //CookerVersion
                 Ar.Read<int>(); //CompressionFlags
                 Ar.ReadArray<FCompressedChunk>();
                 Ar.Read<int>(); // U3unk60
-                Generations = [];
                 ChunkIds = [];
-                return; // we can't safely load more than this because the below was different in older files.
+                return;
             }
 
             if (FileVersionUE >= EUnrealEngineObjectUE4Version.ADD_STRING_ASSET_REFERENCES_MAP)

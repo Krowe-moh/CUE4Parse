@@ -48,7 +48,11 @@ public class FPropertyTagData
                 break;
             case "ByteProperty":
             case "EnumProperty":
-                EnumName = Ar.ReadFName().Text;
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_BYTEPROP_SERIALIZE_ENUM)
+                {
+                    EnumName = Ar.ReadFName().Text;
+                }
+
                 break;
             case "ArrayProperty":
                 if (Ar.Ver >= EUnrealEngineObjectUE4Version.ARRAY_PROPERTY_INNER_TAGS)
