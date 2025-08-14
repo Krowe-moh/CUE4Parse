@@ -59,6 +59,46 @@ public class FGlobalShaderCache
     }
 }
 
+
+public class FGlobalShaders
+{
+    public FGlobalShaderMap[] LoadedShaderMaps;
+
+    public FGlobalShaders(FArchive Ar)
+    {
+        uint Tag = Ar.Read<uint>();
+        int PackageVersion = Ar.Read<int>();
+        int LicenseeVersion = Ar.Read<int>();
+        string NameString = Ar.ReadFString();
+    }
+}
+
+public class FShaderEntryy
+{
+    public uint Offset { get; set; }
+    public uint Size { get; set; }
+
+    public FShaderEntryy(ulong shaderInfo)
+    {
+        Offset = (uint)(shaderInfo >> 32);
+        Size = (uint)(shaderInfo & 0xFFFFFFFF);
+    }
+}
+public class FShadersInfo
+{
+
+    public Dictionary<string, FShaderEntryy> Metadata { get; set; }
+    public FShadersInfo(FArchive Ar)
+    {
+        Metadata = Ar.ReadMap(() =>
+        {
+            var key = Ar.ReadFString();
+            ulong shaderInfo = Ar.Read<ulong>();
+            return (key, new FShaderEntryy(shaderInfo));
+        });
+    }
+}
+
 public abstract class FShaderMapBase
 {
     public FShaderMapContent Content;

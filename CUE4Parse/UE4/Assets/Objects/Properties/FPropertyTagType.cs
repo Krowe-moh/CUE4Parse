@@ -7,6 +7,7 @@ using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Assets.Utils;
 using CUE4Parse.UE4.Objects.UObject;
+using CUE4Parse.UE4.Versions;
 using CUE4Parse.Utils;
 using Newtonsoft.Json;
 using Serilog;
@@ -117,7 +118,7 @@ public abstract class FPropertyTagType
             "AssetObjectProperty" => new AssetObjectProperty(Ar, type),
             "AssetClassProperty" => new AssetObjectProperty(Ar, type),
             "BoolProperty" => new BoolProperty(Ar, tagData, type),
-            "ByteProperty" => (tagData?.EnumName != null && !tagData.EnumName.Equals("None", StringComparison.OrdinalIgnoreCase)) || (type is ReadType.MAP && Ar.TestReadFName())
+            "ByteProperty" => (tagData?.EnumName != null && !tagData.EnumName.Equals("None", StringComparison.OrdinalIgnoreCase)) || Ar.Ver > EUnrealEngineObjectUE3Version.VER_LIC_NONE || (type is ReadType.MAP && Ar.TestReadFName())
                 ? (FPropertyTagType?) new EnumProperty(Ar, tagData, type)
                 : new ByteProperty(Ar, type),
             "ClassProperty" => new ClassProperty(Ar, type),

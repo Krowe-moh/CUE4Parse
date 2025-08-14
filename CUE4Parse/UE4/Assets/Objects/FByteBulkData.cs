@@ -48,6 +48,15 @@ namespace CUE4Parse.UE4.Assets.Objects
             _dataPosition = Ar.Position;
             _savedAr = Ar;
 
+            if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload))
+            {
+                Ar.Position += Header.ElementCount;
+            }
+            else if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB)) // but where is data? inlined or in separate file?
+            {
+                throw new ParserException(Ar, "TODO: CompressedZlib");
+            }
+
             if (LazyLoad)
             {
                 _data = new Lazy<byte[]?>(() =>
@@ -67,7 +76,16 @@ namespace CUE4Parse.UE4.Assets.Objects
         {
             Header = new FByteBulkDataHeader(Ar);
 
-           
+            if (BulkDataFlags.HasFlag(BULKDATA_Unused | BULKDATA_PayloadInSeperateFile | BULKDATA_PayloadAtEndOfFile))
+            {
+                return;
+            }
+
+            if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || Header.OffsetInFile == Ar.Position)
+            {
+                Ar.Position += Header.SizeOnDisk;
+            }
+            
         }
 
         private void CheckReadSize(int read) 
