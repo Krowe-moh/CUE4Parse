@@ -720,6 +720,7 @@ namespace CUE4Parse.UE4.Versions
         AUTOMATIC_VERSION_PLUS_ONE,
         AUTOMATIC_VERSION = AUTOMATIC_VERSION_PLUS_ONE - 1
     }
+    
     public enum EUnrealEngineObjectUE3Version
     {
         VER_LIC_NONE = 0,
