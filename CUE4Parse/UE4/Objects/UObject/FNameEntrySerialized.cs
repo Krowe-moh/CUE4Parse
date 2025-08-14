@@ -43,7 +43,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 Ar.Read<long>(); // flags64
             }
-            else
+            else if (Ar.Ver == EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME)
             {
                 Ar.Read<int>(); // flags32
             }

@@ -231,7 +231,7 @@ namespace CUE4Parse.UE4.Assets
             if (importPackage == null)
             {
 #if DEBUG
-               // Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, import.ObjectName, Name);
+                Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, import.ObjectName, Name);
 #endif
                 return new ResolvedImportObject(import, this);
             }

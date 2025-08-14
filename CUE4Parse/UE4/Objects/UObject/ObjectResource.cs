@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -37,10 +36,8 @@ namespace CUE4Parse.UE4.Objects.UObject
 
         private WeakReference<ResolvedObject?>? _resolvedObject;
 
-        public ResolvedObject? ResolvedObject
-        {
-            get
-            {
+        public ResolvedObject? ResolvedObject {
+            get {
                 var resolvedObject = _resolvedObject != null && _resolvedObject.TryGetTarget(out var target) ? target : null;
                 if (resolvedObject == null)
                 {
@@ -48,15 +45,12 @@ namespace CUE4Parse.UE4.Objects.UObject
                     resolvedObject = Owner.ResolvePackageIndex(this);
                     _resolvedObject = new(resolvedObject);
                 }
-
                 return resolvedObject;
             }
         }
 
-        public ResolvedObject? ResolvedObjectNoCache
-        {
-            get
-            {
+        public ResolvedObject? ResolvedObjectNoCache {
+            get {
                 if (Owner == null) return null;
                 var resolvedObject = _resolvedObject != null && _resolvedObject.TryGetTarget(out var target) ? target : null;
                 if (resolvedObject != null) return resolvedObject;
@@ -120,7 +114,6 @@ namespace CUE4Parse.UE4.Objects.UObject
         }
 
         #region Loading Methods
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T? Load<T>() where T : UExport => Owner?.FindObject(this)?.Value as T;
 
@@ -177,7 +170,6 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             return null;
         }
-
         #endregion
 
         public bool Equals(FPackageIndex? other)
@@ -241,8 +233,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 #pragma warning disable 8618
         public FObjectExport()
 #pragma warning restore 8618
-        {
-        }
+        { }
 
         public FObjectExport(FAssetArchive Ar)
         {
@@ -361,8 +352,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 #pragma warning disable 8618
         public FObjectImport()
 #pragma warning restore 8618
-        {
-        }
+        { }
 
         public FObjectImport(FAssetArchive Ar)
         {
