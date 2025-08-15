@@ -7,6 +7,7 @@ using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Core.Serialization;
+using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
@@ -41,7 +42,7 @@ namespace CUE4Parse.UE4.Objects.UObject
     public class FPackageFileSummary
     {
         public const uint PACKAGE_FILE_TAG = 0x9E2A83C1U;
-        public const uint PACKAGE_FILE_TAG_SWAPPED = 0xC1832A9EU;
+        public const uint PACKAGE_FILE_TAG_SWAPPED = 0xC1832A9E;
         public const uint PACKAGE_FILE_TAG_ACE7 = 0x37454341U; // ACE7
         private const uint PACKAGE_FILE_TAG_ONE = 0x00656E6FU; // SOD2
         private const uint PACKAGE_FILE_TAG_NTE = 0xD5A8D56E;
@@ -169,13 +170,12 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Tag == PACKAGE_FILE_TAG_AE) Tag = PACKAGE_FILE_TAG;
 
-            var byteSwappedTag = ((Tag & 0x000000FF) << 24) | ((Tag & 0x0000FF00) << 8) | ((Tag & 0x00FF0000) >> 8) | ((Tag & 0xFF000000) >> 24);
-            if (Tag != PACKAGE_FILE_TAG && byteSwappedTag != PACKAGE_FILE_TAG_SWAPPED)
+            if (Tag != PACKAGE_FILE_TAG && Tag != PACKAGE_FILE_TAG_SWAPPED)
             {
                 throw new ParserException($"Invalid uasset magic: 0x{Tag:X8} != 0x{PACKAGE_FILE_TAG:X8}");
             }
 
-            if (byteSwappedTag == PACKAGE_FILE_TAG_SWAPPED)
+            if (Tag == PACKAGE_FILE_TAG_SWAPPED)
             {
                 Tag = PACKAGE_FILE_TAG;
                 Ar.ReverseBytes = true;
@@ -254,12 +254,16 @@ namespace CUE4Parse.UE4.Objects.UObject
                 FileVersionUE.FileVersionUE3 = legacyFileVersion;
             }
 
-            if (FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedSerialOffset && Ar.Ver < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
             {
                 TotalHeaderSize = Ar.Read<int>();
             }
 
-            PackageName = Ar.ReadFString(); // PackageGroup
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedPackageGroup) 
+            {
+                PackageName = Ar.ReadFString();
+            }
+            
             PackageFlags = Ar.Read<EPackageFlags>();
 
             /*if (PackageFlags.HasFlag(EPackageFlags.PKG_FilterEditorOnly))
@@ -318,25 +322,49 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES)
                 {
-                    //Ar << f38 << f3C << f40;
-                             Ar.Read<int>();
-                            Ar.Read<int>();
-                            Ar.Read<int>();
+                            Ar.Read<int>(); // ImportExportGuidsOffset 
+                            Ar.Read<int>(); // ImportGuidsCount 
+                            Ar.Read<int>(); // ExportGuidsCount
                 }
 
                 if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ASSET_THUMBNAILS_IN_PACKAGES)
                 {
-                    Ar.Read<int>(); //unk38
+                    Ar.Read<int>(); // ThumbnailTableOffset
                 }
 
                 Ar.Read<FGuid>();
                 
                 Generations = Ar.ReadArray<FGenerationInfo>();
-                Ar.Read<int>(); //EngineVersion
-                Ar.Read<int>(); //CookerVersion
-                Ar.Read<int>(); //CompressionFlags
-                Ar.ReadArray<FCompressedChunk>();
-                Ar.Read<int>(); // U3unk60
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES)
+                {
+                    Ar.Read<int>(); //EngineVersion
+                }
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES)
+                {
+                    Ar.Read<int>(); //CookerVersion
+                }
+
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.AddedCompression)
+                {
+                    Ar.Read<int>(); //CompressionFlags
+                    Ar.ReadArray<FCompressedChunk>();
+                }
+
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.AddedPackageSource)
+                {
+                    Ar.Read<int>(); // PackageSource
+                }
+                
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDITIONAL_COOK_PACKAGE_SUMMARY)
+                {
+                    Ar.ReadArray(Ar.ReadFString); // AdditionalPackagesToCook
+                }
+                
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_TEXTURE_PREALLOCATION)
+                {
+                    Ar.ReadArray<FTextureAllocations>();
+                }
+
                 ChunkIds = [];
                 return;
             }

@@ -727,9 +727,15 @@ namespace CUE4Parse.UE4.Versions
         Use64BitFlag = 195,
         AddedArcheType = 220,
         AddedExportFlags = 247,
+        AddedEngineVersion = 245,
         AddedSerialOffset = 249,
+        AddedPackageGroup = 269,
+        AddedCookerVersion = 245,
         AddedNetIndex = 322,
+        AddedCompression = 334,
         AddedDependsOffset = 415,
+        AddedPackageFlags = 475,
+        AddedPackageSource = 482,
 
         // - Min version for content resave
         VER_CONTENT_RESAVE_AUGUST_2007_QA_BUILD = 491,

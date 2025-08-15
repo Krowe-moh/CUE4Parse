@@ -280,7 +280,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 GeneratePublicHash = Ar.Ver >= EUnrealEngineObjectUE5Version.OPTIONAL_RESOURCES && Ar.ReadBoolean();
             }
             
-            if (Ar.Game == EGame.GAME_RocketLeague)
+            if (Ar.Game == EGame.GAME_RocketLeague )//&& Ar.Ver >= 22
             {
                 Ar.Read<int>(); // SerialOffsetUpper
             }
@@ -298,7 +298,12 @@ namespace CUE4Parse.UE4.Objects.UObject
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedNetIndex)
             {
                 Ar.ReadArray<int>(); // NetObjectCount
-                Ar.Read<FGuid>();
+                Ar.Read<FGuid>(); // PackageGuid
+            }
+            
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPackageFlags)
+            {
+                Ar.Read<int>(); // PackageFlags
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
