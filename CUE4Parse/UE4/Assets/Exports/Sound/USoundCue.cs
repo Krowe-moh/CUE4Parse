@@ -8,16 +8,10 @@ using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.UE4.Assets.Exports.Sound
 {
-    public readonly struct NodeEditorData : IUStruct
+    public struct NodeEditorData
     {
-        public readonly int X;
-        public readonly int Y;
-
-        public NodeEditorData(FArchive Ar)
-        {
-            X = Ar.Read<int>();
-            Y = Ar.Read<int>();
-        }
+        public int X;
+        public int Y;
     }
 
     public class USoundCue : USoundBase
@@ -37,7 +31,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
                 for (int i = 0; i < Count; i++)
                 {
                     var key = Ar.ReadUObject(); // Sometimes can be null, ReadMap can't be used.
-                    var value = new NodeEditorData(Ar);
+                    var value = Ar.Read<NodeEditorData>();
 
                     if (key != null)
                         EditorData[key] = value;
