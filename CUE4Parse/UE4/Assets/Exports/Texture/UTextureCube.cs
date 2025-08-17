@@ -10,7 +10,8 @@ public class UTextureCube : UTexture
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver > EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME)
+// todo: changes somewhere 
+        if (Ar.Game >= EGame.GAME_UE4_0)
         {
             var stripFlags = new FStripDataFlags(Ar);
             bool bCooked = Ar.ReadBoolean();
