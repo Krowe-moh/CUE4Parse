@@ -71,7 +71,7 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
         SRGB = GetOrDefault(nameof(SRGB), true);
         AssetUserData = GetOrDefault<FPackageIndex[]>(nameof(AssetUserData), []);
 
-        if (Ar.Ver == EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME && Ar.Ver <= EUnrealEngineObjectUE5Version.INITIAL_VERSION)
+        if (Ar.Game < EGame.GAME_UE4_0)
         {
             new FByteBulkData(Ar); // SourceArt
             return;
