@@ -33,7 +33,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         public readonly int NameCount;
 
         /**
-         *
+         * Number of net serializable objects in the package for this generation.
          */
         public readonly int NetObjectCount;
     }
