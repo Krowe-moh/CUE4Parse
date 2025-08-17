@@ -11,13 +11,7 @@ public enum EGame : uint
     GAME_UE3_0 = GameUtils.GameUe3Base + (0 << 16),
         GAME_RocketLeague = GAME_UE3_0 + 1,
         GAME_SuddenAttack2 = GAME_UE3_0 + 2,
-    GAME_UE3_1 = GameUtils.GameUe3Base + (1 << 16),
-    GAME_UE3_2 = GameUtils.GameUe3Base + (2 << 16),
-    GAME_UE3_3 = GameUtils.GameUe3Base + (3 << 16),
-    GAME_UE3_4 = GameUtils.GameUe3Base + (4 << 16),
-    GAME_UE3_5 = GameUtils.GameUe3Base + (5 << 16),
-    GAME_UE3_6 = GameUtils.GameUe3Base + (6 << 16),
-    
+        
     GAME_UE4_0 = GameUtils.GameUe4Base + (0 << 16),
     GAME_UE4_1 = GameUtils.GameUe4Base + (1 << 16),
     GAME_UE4_2 = GameUtils.GameUe4Base + (2 << 16),
