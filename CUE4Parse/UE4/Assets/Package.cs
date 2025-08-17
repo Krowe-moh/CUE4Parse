@@ -7,6 +7,8 @@ using CUE4Parse.GameTypes.ACE7.Encryption;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Assets.Utils;
+using CUE4Parse.UE4.Objects.Core.Misc;
+using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
@@ -15,6 +17,11 @@ using Serilog;
 
 namespace CUE4Parse.UE4.Assets
 {
+    public struct FImportGuids
+    {
+        public FName LevelName;
+        public FGuid[] Guids;
+    }
     [SkipObjectRegistration]
     public sealed class Package : AbstractUePackage
     {
@@ -25,6 +32,9 @@ namespace CUE4Parse.UE4.Assets
 
         public FObjectImport[] ImportMap { get; }
         public FObjectExport[] ExportMap { get; }
+        public FImportGuids[]? ImportGuids { get; }
+        public ThumbnailTableItem[]? ThumbnailTable { get; }
+        public Dictionary<FGuid, int> ExportGuidsAwaitingLookup { get; } = new();
         public FPackageIndex[][]? DependsMap { get; }
         public FPackageIndex[]? PreloadDependencies { get; }
         public FObjectDataResource[]? DataResourceMap { get; }
@@ -82,12 +92,37 @@ namespace CUE4Parse.UE4.Assets
             uassetAr.SeekAbsolute(Summary.ImportOffset, SeekOrigin.Begin);
             ImportMap = new FObjectImport[Summary.ImportCount];
             uassetAr.ReadArray(ImportMap, () => new FObjectImport(uassetAr));
+            
+            uassetAr.SeekAbsolute(Summary.HeritageOffset, SeekOrigin.Begin);
+            uassetAr.ReadArray(Summary.HeritageCount, () => uassetAr.Read<FGuid>());
 
             uassetAr.SeekAbsolute(Summary.ExportOffset, SeekOrigin.Begin);
             ExportMap = new FObjectExport[Summary.ExportCount]; // we need this to get its final size in some case
             ExportsLazy = new Lazy<UObject>[Summary.ExportCount];
             uassetAr.ReadArray(ExportMap, () => new FObjectExport(uassetAr));
 
+            uassetAr.SeekAbsolute(Summary.ImportExportGuidsOffset, SeekOrigin.Begin);
+            
+            ImportGuids = new FImportGuids[Summary.ImportGuidsCount];
+            for (int i = 0; i < Summary.ImportGuidsCount; i++)
+            {
+                var levelName = uassetAr.ReadFString();
+                ImportGuids[i] = new FImportGuids
+                {
+                    LevelName = new FName(levelName),
+                    Guids = uassetAr.ReadArray(() => uassetAr.Read<FGuid>())
+                };
+            }
+
+            for (int i = 0; i < Summary.ExportGuidsCount; i++)
+            {
+                var objectGuid = uassetAr.Read<FGuid>();
+                var exportIndex = uassetAr.Read<int>();
+
+                ExportGuidsAwaitingLookup[objectGuid] = exportIndex;
+            }
+
+            
             if (!useLazySerialization && Summary is { DependsOffset: > 0, ExportCount: > 0 })
             {
                 uassetAr.SeekAbsolute(Summary.DependsOffset, SeekOrigin.Begin);
@@ -100,6 +135,11 @@ namespace CUE4Parse.UE4.Assets
                 PreloadDependencies = uassetAr.ReadArray(Summary.PreloadDependencyCount, () => new FPackageIndex(uassetAr));
             }
 
+            if (Summary is { ThumbnailTableOffset: > 0 })
+            {
+                uassetAr.SeekAbsolute(Summary.ThumbnailTableOffset, SeekOrigin.Begin);
+                ThumbnailTable = uassetAr.ReadArray(() => new ThumbnailTableItem(uassetAr));
+            }
             // if (Summary.SoftPackageReferencesCount > 0)
             // {
             //     uassetAr.SeekAbsolute(Summary.SoftPackageReferencesOffset, SeekOrigin.Begin);
@@ -231,7 +271,6 @@ namespace CUE4Parse.UE4.Assets
             if (importPackage == null)
             {
 #if DEBUG
-                Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, import.ObjectName, Name);
 #endif
                 return new ResolvedImportObject(import, this);
             }

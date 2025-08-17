@@ -267,7 +267,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 SerialOffset = Ar.Read<long>();
             }
 
-            if (Ar.Ver > EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME)
+            if (Ar.Ver > EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME || Ar.Ver > EUnrealEngineObjectUE5Version.INITIAL_VERSION)
             {
                 ForcedExport = Ar.ReadBoolean();
                 NotForClient = Ar.ReadBoolean();
@@ -280,7 +280,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 GeneratePublicHash = Ar.Ver >= EUnrealEngineObjectUE5Version.OPTIONAL_RESOURCES && Ar.ReadBoolean();
             }
             
-            if (Ar.Game == EGame.GAME_RocketLeague )//&& Ar.Ver >= 22
+            if (Ar.Game == EGame.GAME_RocketLeague)// todo: && Ar.Ver >= 22
             {
                 Ar.Read<int>(); // SerialOffsetUpper
             }

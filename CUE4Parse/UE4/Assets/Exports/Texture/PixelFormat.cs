@@ -59,7 +59,7 @@ public static class PixelFormatUtils
         new(EPixelFormat.PF_R16G16B16A16_SINT,  "R16G16B16A16_SINT",      1,          1,          1,          8,            4,                false),
         new(EPixelFormat.PF_R5G6B5_UNORM,       "PF_R5G6B5_UNORM",        1,          1,          1,          2,            3,                false),
         new(EPixelFormat.PF_R8G8B8A8,           "R8G8B8A8",               1,          1,          1,          4,            4,                false),
-        new(EPixelFormat.PF_A8R8G8B8,           "A8R8G8B8",               1,          1,          1,          4,            4,                false),
+        new(EPixelFormat.PF_A8R8G8B8,           "A8R8G8B8",               1,          1,          1,          4,            4,                true),
         new(EPixelFormat.PF_BC4,                "BC4",                    4,          4,          1,          8,            1,                true),
         new(EPixelFormat.PF_R8G8,               "R8G8",                   1,          1,          1,          2,            2,                false),
 
@@ -186,7 +186,7 @@ public enum EPixelFormat : byte
 	PF_R16G16B16A16_SINT    = 35,
 	PF_R5G6B5_UNORM         = 36,
 	PF_R8G8B8A8             = 37,
-	PF_A8R8G8B8				= 38,	// Only used for legacy loading; do NOT use!
+	PF_A8R8G8B8				= 38,	// Only used for legacy.
 	PF_BC4					= 39,
 	PF_R8G8                 = 40,
 	PF_ATC_RGB				= 41,	// Unsupported Format

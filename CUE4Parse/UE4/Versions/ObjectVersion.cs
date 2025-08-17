@@ -724,8 +724,10 @@ namespace CUE4Parse.UE4.Versions
     public enum EUnrealEngineObjectUE3Version
     {
         VER_LIC_NONE = 0,
+        DeprecatedHeritageTable = 68,
         Use64BitFlag = 195,
         AddedArcheType = 220,
+        TemplateDataAddedToUComponent = 224,
         AddedExportFlags = 247,
         AddedEngineVersion = 245,
         AddedSerialOffset = 249,
@@ -733,7 +735,10 @@ namespace CUE4Parse.UE4.Versions
         AddedCookerVersion = 245,
         AddedNetIndex = 322,
         AddedCompression = 334,
+        AddedPCSoundData = 380,
+        AddedChannelsSoundInfo = 385,
         AddedDependsOffset = 415,
+        DisplacedSoundChannelProperties = 420,
         AddedPackageFlags = 475,
         AddedPackageSource = 482,
 

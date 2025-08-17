@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace CUE4Parse.UE4.Objects.PhysicsEngine;
 
+public class UPhysicsAssetInstance : UPhysicsAsset;
 public class UPhysicsAsset : Assets.Exports.UObject
 {
     public int[] BoundsBodies;

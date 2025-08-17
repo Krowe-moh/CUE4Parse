@@ -4,9 +4,9 @@ using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.UObject;
 using Newtonsoft.Json;
 
-namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
+namespace CUE4Parse.UE4.Objects.Engine
 {
-    public class UGuidCache : UObject
+    public class UGuidCache : Assets.Exports.UObject
     {
 
         public Dictionary<FName, FGuid>? PackageGuidMap;

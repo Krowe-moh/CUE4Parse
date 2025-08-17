@@ -50,7 +50,6 @@ public class UClass : UStruct
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-
         if (Ar.Game == EGame.GAME_AWayOut) Ar.Position += 4;
 
         // serialize the function map
@@ -63,6 +62,11 @@ public class UClass : UStruct
 
         // Class flags first.
         ClassFlags = Ar.Read<EClassFlags>();
+        
+        if (Ar.Game == EGame.GAME_RocketLeague)
+        {
+            Ar.Read<int>();
+        }
 
         // Variables.
         if (Ar.Game is EGame.GAME_StarWarsJediFallenOrder or EGame.GAME_StarWarsJediSurvivor or EGame.GAME_AshesOfCreation) Ar.Position += 4;
@@ -75,6 +79,18 @@ public class UClass : UStruct
         Interfaces = Ar.ReadArray(() => new FImplementedInterface(Ar));
 
         var bDeprecatedForceScriptOrder = Ar.ReadBoolean();
+        if (Ar.Game == EGame.GAME_RocketLeague)
+        {
+            Ar.ReadFString();
+            Ar.Read<int>();
+            Ar.ReadArray(() => Ar.ReadFName());
+        }
+
+        if (Ar.Game == EGame.GAME_SuddenAttack2)
+        {
+            Ar.Read<int>();
+        }
+
         var dummy = Ar.ReadFName();
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_COOKED_TO_UCLASS)
@@ -84,6 +100,11 @@ public class UClass : UStruct
 
         // Defaults.
         ClassDefaultObject = new FPackageIndex(Ar);
+        
+        if (Ar.Game == EGame.GAME_RocketLeague)
+        {
+            Ar.ReadMap(Ar.ReadFName, Ar.ReadUObject);
+        }
     }
 
     public Assets.Exports.UObject? ConstructObject(EObjectFlags flags)

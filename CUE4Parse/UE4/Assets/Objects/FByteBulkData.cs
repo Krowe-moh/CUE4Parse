@@ -6,6 +6,7 @@ using CUE4Parse.FileProvider.Vfs;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Assets.Utils;
 using CUE4Parse.UE4.Exceptions;
+using CUE4Parse.UE4.Readers;
 using Newtonsoft.Json;
 using Serilog;
 using static CUE4Parse.UE4.Assets.Objects.EBulkDataFlags;
@@ -57,6 +58,16 @@ namespace CUE4Parse.UE4.Assets.Objects
                 throw new ParserException(Ar, "TODO: CompressedZlib");
             }
 
+            /*
+              if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
+              {
+                  var data = new byte[Header.ElementCount];
+                  FArchive dataAr = new FArchiveLoadCompressedProxy(Ar.Name, data, "LZ4", versions: Ar.Versions);
+                  var decompressedData = dataAr.ReadArray<byte>();
+
+              }
+            */
+
             if (LazyLoad)
             {
                 _data = new Lazy<byte[]?>(() =>
@@ -69,6 +80,7 @@ namespace CUE4Parse.UE4.Assets.Objects
             {
                 var data = new byte[Header.ElementCount];
                 if (ReadBulkDataInto(data)) _data = new Lazy<byte[]?>(() => data);
+                Ar.Position += Header.ElementCount;
             }
         }
 
@@ -87,16 +99,18 @@ namespace CUE4Parse.UE4.Assets.Objects
             }
         }
 
-        private void CheckReadSize(int read) 
+        private void CheckReadSize(int read)
         {
-            if (read != Header.ElementCount) {
+            if (read != Header.ElementCount)
+            {
                 Log.Warning("Read {read} bytes, expected {Header.ElementCount}", read, Header.ElementCount);
             }
         }
 
-        public bool ReadBulkDataInto(byte[] data, int offset = 0) 
+        public bool ReadBulkDataInto(byte[] data, int offset = 0)
         {
-            if (data.Length - offset < Header.ElementCount) {
+            if (data.Length - offset < Header.ElementCount)
+            {
                 Log.Error("Data buffer is too small");
                 return false;
             }
@@ -126,7 +140,7 @@ namespace CUE4Parse.UE4.Assets.Objects
 #endif
                 if (!TryGetBulkPayload(Ar, PayloadType.UBULK, out var ubulkAr)) return false;
 
-                CheckReadSize(ubulkAr.ReadAt(Header.OffsetInFile, data, offset, Header.ElementCount));;
+                CheckReadSize(ubulkAr.ReadAt(Header.OffsetInFile, data, offset, Header.ElementCount));
             }
             else if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
             {
@@ -170,6 +184,7 @@ namespace CUE4Parse.UE4.Assets.Objects
                     payloadAr = new FAssetArchive(reader, Ar.Owner);
                 }
             }
+
             return payloadAr != null;
         }
 

@@ -31,9 +31,9 @@ namespace CUE4Parse.UE4.Objects.UObject
          * Number of names in the linker's NameMap for this generation.
          */
         public readonly int NameCount;
-        
+
         /**
-         * 
+         *
          */
         public readonly int NetObjectCount;
     }
@@ -67,10 +67,15 @@ namespace CUE4Parse.UE4.Objects.UObject
         public int ExportOffset;
         public int ImportCount;
         public int ImportOffset;
+        public int HeritageCount;
+        public int HeritageOffset;
         public int CellExportCount;
         public int CellExportOffset;
         public int CellImportCount;
         public int CellImportOffset;
+        public int ExportGuidsCount;
+        public int ImportGuidsCount;
+        public int ImportExportGuidsOffset;
         public readonly int DependsOffset;
         public readonly int SoftPackageReferencesCount;
         public readonly int SoftPackageReferencesOffset;
@@ -175,6 +180,8 @@ namespace CUE4Parse.UE4.Objects.UObject
                 throw new ParserException($"Invalid uasset magic: 0x{Tag:X8} != 0x{PACKAGE_FILE_TAG:X8}");
             }
 
+            // The package has been stored in a separate endianness than the linker expected so we need to force
+            // endian conversion. Latent handling allows the PC version to retrieve information about cooked packages.
             if (Tag == PACKAGE_FILE_TAG_SWAPPED)
             {
                 Tag = PACKAGE_FILE_TAG;
@@ -250,20 +257,21 @@ namespace CUE4Parse.UE4.Objects.UObject
             }
             else
             {
-                legacyFileVersion = (ushort)(legacyFileVersion & 0xFFFF);
+                FileVersionLicenseeUE = (EUnrealEngineObjectLicenseeUEVersion)(legacyFileVersion >> 16);
+                legacyFileVersion &= 0xFFFF;
                 FileVersionUE.FileVersionUE3 = legacyFileVersion;
             }
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedSerialOffset && Ar.Ver < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
+            if (FileVersionUE > EUnrealEngineObjectUE3Version.AddedSerialOffset && FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
             {
                 TotalHeaderSize = Ar.Read<int>();
             }
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedPackageGroup) 
+            if (FileVersionUE > EUnrealEngineObjectUE3Version.AddedPackageGroup)
             {
                 PackageName = Ar.ReadFString();
             }
-            
+
             PackageFlags = Ar.Read<EPackageFlags>();
 
             /*if (PackageFlags.HasFlag(EPackageFlags.PKG_FilterEditorOnly))
@@ -300,6 +308,12 @@ namespace CUE4Parse.UE4.Objects.UObject
             ImportCount = Ar.Read<int>();
             ImportOffset = Ar.Read<int>();
 
+            if (FileVersionUE < EUnrealEngineObjectUE3Version.DeprecatedHeritageTable)
+            {
+                HeritageOffset = Ar.Read<int>();
+                HeritageCount = Ar.Read<int>();
+            }
+
             if (FileVersionUE >= EUnrealEngineObjectUE5Version.VERSE_CELLS)
             {
                 CellExportCount = Ar.Read<int>();
@@ -318,27 +332,28 @@ namespace CUE4Parse.UE4.Objects.UObject
                 DependsOffset = Ar.Read<int>();
             }
 
-        if (FileVersionUE < EUnrealEngineObjectUE4Version.OLDEST_LOADABLE_PACKAGE || FileVersionUE > EUnrealEngineObjectUE4Version.AUTOMATIC_VERSION)
+            if (FileVersionUE < EUnrealEngineObjectUE4Version.OLDEST_LOADABLE_PACKAGE || FileVersionUE > EUnrealEngineObjectUE4Version.AUTOMATIC_VERSION)
             {
                 if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES)
                 {
-                            Ar.Read<int>(); // ImportExportGuidsOffset 
-                            Ar.Read<int>(); // ImportGuidsCount 
-                            Ar.Read<int>(); // ExportGuidsCount
+                    ImportExportGuidsOffset = Ar.Read<int>();
+                    ImportGuidsCount = Ar.Read<int>(); 
+                    ExportGuidsCount = Ar.Read<int>();
                 }
 
                 if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ASSET_THUMBNAILS_IN_PACKAGES)
                 {
-                    Ar.Read<int>(); // ThumbnailTableOffset
+                    ThumbnailTableOffset = Ar.Read<int>();
                 }
 
                 Ar.Read<FGuid>();
-                
+
                 Generations = Ar.ReadArray<FGenerationInfo>();
                 if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES)
                 {
                     Ar.Read<int>(); //EngineVersion
                 }
+
                 if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES)
                 {
                     Ar.Read<int>(); //CookerVersion
@@ -346,6 +361,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
                 if (FileVersionUE >= EUnrealEngineObjectUE3Version.AddedCompression)
                 {
+                    // todo:
                     Ar.Read<int>(); //CompressionFlags
                     Ar.ReadArray<FCompressedChunk>();
                 }
@@ -354,17 +370,29 @@ namespace CUE4Parse.UE4.Objects.UObject
                 {
                     Ar.Read<int>(); // PackageSource
                 }
-                
+
                 if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDITIONAL_COOK_PACKAGE_SUMMARY)
                 {
                     Ar.ReadArray(Ar.ReadFString); // AdditionalPackagesToCook
                 }
-                
+
                 if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_TEXTURE_PREALLOCATION)
                 {
                     Ar.ReadArray<FTextureAllocations>();
                 }
 
+                if (Ar.Game == EGame.GAME_SuddenAttack2)
+                {
+                    Ar.Read<int>(); // count
+                    Ar.Read<int>(); // offset
+                }
+                
+                if (Ar.Game == EGame.GAME_RocketLeague && PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
+                {
+                    Ar.Read<int>(); // garbageSize
+                    Ar.Read<int>(); // compressedChunkInfoOffset
+                    Ar.Read<int>(); // lastBlockSize
+                }
                 ChunkIds = [];
                 return;
             }
@@ -423,7 +451,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
                 if (engineChangelist != 0)
                 {
-                    SavedByEngineVersion = new FEngineVersion(4, 0, 0, (uint) engineChangelist, string.Empty);
+                    SavedByEngineVersion = new FEngineVersion(4, 0, 0, (uint)engineChangelist, string.Empty);
                 }
             }
 
@@ -439,15 +467,15 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             static bool VerifyCompressionFlagsValid(int compressionFlags)
             {
-                const int CompressionFlagsMask = (int) (COMPRESS_DeprecatedFormatFlagsMask | COMPRESS_OptionsFlagsMask | COMPRESS_ForPurposeMask);
+                const int CompressionFlagsMask = (int)(COMPRESS_DeprecatedFormatFlagsMask | COMPRESS_OptionsFlagsMask | COMPRESS_ForPurposeMask);
                 return (compressionFlags & ~CompressionFlagsMask) == 0;
             }
 
             CompressionFlags = Ar.Read<ECompressionFlags>();
 
-            if (!VerifyCompressionFlagsValid((int) CompressionFlags))
+            if (!VerifyCompressionFlagsValid((int)CompressionFlags))
             {
-                throw new ParserException($"Invalid compression flags ({(uint) CompressionFlags})");
+                throw new ParserException($"Invalid compression flags ({(uint)CompressionFlags})");
             }
 
             var compressedChunks = Ar.ReadArray<FCompressedChunk>();
@@ -459,7 +487,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             PackageSource = Ar.Read<int>();
 
-            if (Ar.Game == EGame.GAME_ArkSurvivalEvolved && (int) FileVersionLicenseeUE >= 10)
+            if (Ar.Game == EGame.GAME_ArkSurvivalEvolved && (int)FileVersionLicenseeUE >= 10)
             {
                 Ar.Position += 8;
             }
@@ -485,16 +513,16 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Game == EGame.GAME_TowerOfFantasy)
             {
-                TotalHeaderSize = (int) (TotalHeaderSize ^ 0xEEB2CEC7);
-                NameCount = (int) (NameCount ^ 0xEEB2CEC7);
-                NameOffset = (int) (NameOffset ^ 0xEEB2CEC7);
-                ExportCount = (int) (ExportCount ^ 0xEEB2CEC7);
-                ExportOffset = (int) (ExportOffset ^ 0xEEB2CEC7);
-                ImportCount = (int) (ImportCount ^ 0xEEB2CEC7);
-                ImportOffset = (int) (ImportOffset ^ 0xEEB2CEC7);
-                DependsOffset = (int) (DependsOffset ^ 0xEEB2CEC7);
-                PackageSource = (int) (PackageSource ^ 0xEEB2CEC7);
-                AssetRegistryDataOffset = (int) (AssetRegistryDataOffset ^ 0xEEB2CEC7);
+                TotalHeaderSize = (int)(TotalHeaderSize ^ 0xEEB2CEC7);
+                NameCount = (int)(NameCount ^ 0xEEB2CEC7);
+                NameOffset = (int)(NameOffset ^ 0xEEB2CEC7);
+                ExportCount = (int)(ExportCount ^ 0xEEB2CEC7);
+                ExportOffset = (int)(ExportOffset ^ 0xEEB2CEC7);
+                ImportCount = (int)(ImportCount ^ 0xEEB2CEC7);
+                ImportOffset = (int)(ImportOffset ^ 0xEEB2CEC7);
+                DependsOffset = (int)(DependsOffset ^ 0xEEB2CEC7);
+                PackageSource = (int)(PackageSource ^ 0xEEB2CEC7);
+                AssetRegistryDataOffset = (int)(AssetRegistryDataOffset ^ 0xEEB2CEC7);
             }
 
             if (Ar.Game is EGame.GAME_SeaOfThieves or EGame.GAME_GearsOfWar4)
@@ -504,7 +532,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (FileVersionUE >= EUnrealEngineObjectUE4Version.SUMMARY_HAS_BULKDATA_OFFSET)
             {
-                BulkDataStartOffset = (int) Ar.Read<long>();
+                BulkDataStartOffset = (int)Ar.Read<long>();
             }
 
             if (FileVersionUE >= EUnrealEngineObjectUE4Version.WORLD_LEVEL_INFO)
@@ -543,7 +571,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Tag == PACKAGE_FILE_TAG_ONE && Ar is FAssetArchive assetAr)
             {
-                assetAr.AbsoluteOffset = NameOffset - (int) Ar.Position;
+                assetAr.AbsoluteOffset = NameOffset - (int)Ar.Position;
             }
         }
 

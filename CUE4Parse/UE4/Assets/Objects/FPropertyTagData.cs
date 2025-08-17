@@ -37,7 +37,7 @@ public class FPropertyTagData
                     StructGuid = Ar.Read<FGuid>();
                 break;
             case "BoolProperty":
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_PROPERTYTAG_BOOL_OPTIMIZATION)
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_PROPERTYTAG_BOOL_OPTIMIZATION && Ar.Game != EGame.GAME_SuddenAttack2)
                 {
                     Bool = Ar.ReadBoolean();
                 }
@@ -48,11 +48,10 @@ public class FPropertyTagData
                 break;
             case "ByteProperty":
             case "EnumProperty":
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_BYTEPROP_SERIALIZE_ENUM)
-                {
+           //     if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_BYTEPROP_SERIALIZE_ENUM && Ar.Ver != EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME)
+               // {
                     EnumName = Ar.ReadFName().Text;
-                }
-
+            //    }
                 break;
             case "ArrayProperty":
                 if (Ar.Ver >= EUnrealEngineObjectUE4Version.ARRAY_PROPERTY_INNER_TAGS)
