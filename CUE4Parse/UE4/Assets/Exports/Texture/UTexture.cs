@@ -74,6 +74,7 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
         if (Ar.Ver == EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME && Ar.Ver <= EUnrealEngineObjectUE5Version.INITIAL_VERSION)
         {
             new FByteBulkData(Ar); // SourceArt
+            return;
         }
         
         var stripFlags = Ar.Read<FStripDataFlags>();
