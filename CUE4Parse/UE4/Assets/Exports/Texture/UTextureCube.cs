@@ -10,11 +10,11 @@ public class UTextureCube : UTexture
     {
         base.Deserialize(Ar, validPos);
 
-// todo: changes somewhere 
+        // todo: changes somewhere 
         if (Ar.Game >= EGame.GAME_UE4_0)
         {
             var stripFlags = new FStripDataFlags(Ar);
-            bool bCooked = Ar.ReadBoolean();
+            var bCooked = Ar.ReadBoolean();
 
             if (bCooked)
             {
