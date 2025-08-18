@@ -17,7 +17,16 @@ namespace CUE4Parse.UE4.Objects.UObject
             base.Deserialize(Ar, validPos);
             ArrayDim = Ar.Read<int>();
             PropertyFlags = Ar.Read<EPropertyFlags>();
-            RepNotifyFunc = Ar.ReadFName();
+            if (Ar.Game < EGame.GAME_UE4_0)
+            {
+                var PropertyFlags2 = Ar.Read<EPropertyFlags>();
+                new FPackageIndex(Ar);
+            }
+            else
+            {
+                RepNotifyFunc = Ar.ReadFName();
+            }
+
             if (FReleaseObjectVersion.Get(Ar) >= FReleaseObjectVersion.Type.PropertiesSerializeRepCondition)
             {
                 BlueprintReplicationCondition = (ELifetimeCondition) Ar.Read<byte>();

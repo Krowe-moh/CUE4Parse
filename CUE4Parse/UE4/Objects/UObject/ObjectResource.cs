@@ -267,7 +267,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 SerialOffset = Ar.Read<long>();
             }
 
-            if (Ar.Game >= EGame.Game_UE4_0)
+            if (Ar.Game >= EGame.GAME_UE4_0)
             {
                 ForcedExport = Ar.ReadBoolean();
                 NotForClient = Ar.ReadBoolean();

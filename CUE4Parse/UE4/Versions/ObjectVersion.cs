@@ -733,6 +733,7 @@ namespace CUE4Parse.UE4.Versions
         AddedSerialOffset = 249,
         AddedPackageGroup = 269,
         AddedCookerVersion = 245,
+        AddedMeshthingtodo = 315,
         AddedNetIndex = 322,
         AddedCompression = 334,
         AddedPCSoundData = 380,

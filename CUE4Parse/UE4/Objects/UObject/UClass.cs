@@ -62,14 +62,9 @@ public class UClass : UStruct
 
         // Class flags first.
         ClassFlags = Ar.Read<EClassFlags>();
-        
-        if (Ar.Game == EGame.GAME_RocketLeague)
-        {
-            Ar.Read<int>();
-        }
 
         // Variables.
-        if (Ar.Game is EGame.GAME_StarWarsJediFallenOrder or EGame.GAME_StarWarsJediSurvivor or EGame.GAME_AshesOfCreation) Ar.Position += 4;
+        if (Ar.Game is EGame.GAME_StarWarsJediFallenOrder or EGame.GAME_StarWarsJediSurvivor or EGame.GAME_AshesOfCreation or (EGame.GAME_RocketLeague)) Ar.Position += 4;
         ClassWithin = new FPackageIndex(Ar);
         ClassConfigName = Ar.ReadFName();
 

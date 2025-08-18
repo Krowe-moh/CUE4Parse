@@ -24,7 +24,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
             base.Deserialize(Ar, validPos);
             FirstNode = GetOrDefault<FPackageIndex>(nameof(FirstNode));
 
-            if (Ar.Game < EGame.Game_UE4_0)
+            if (Ar.Game < EGame.GAME_UE4_0)
             {
                 EditorData = new Dictionary<UObject, NodeEditorData>();
                 int Count = Ar.Read<int>();
