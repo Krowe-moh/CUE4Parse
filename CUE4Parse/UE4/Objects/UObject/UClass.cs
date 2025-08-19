@@ -52,12 +52,18 @@ public class UClass : UStruct
         base.Deserialize(Ar, validPos);
         if (Ar.Game == EGame.GAME_AWayOut) Ar.Position += 4;
 
+          if (Ar.Ver < EUnrealEngineObjectUE3Version.Release62) {// temp
+              Ar.Read<int>(); // classRecordSize
+           }
+           
         // serialize the function map
+        if (Ar.Game >= EGame.GAME_UE4_0) {
         FuncMap = new Dictionary<FName, FPackageIndex>();
         var funcMapNum = Ar.Read<int>();
         for (var i = 0; i < funcMapNum; i++)
         {
             FuncMap[Ar.ReadFName()] = new FPackageIndex(Ar);
+        }
         }
 
         // Class flags first.
