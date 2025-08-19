@@ -336,17 +336,13 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             base.Deserialize(Ar, validPos);
             SignatureFunction = new FPackageIndex(Ar);
-            
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedDelegateSourceToUDelegateProperty)
-            {
-                return;
-            }
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.ChangedDelegateSourceFromNameToObject)
             {
                 var source = Ar.ReadFName();
             }
-            else
+            
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedDelegateSourceToUDelegateProperty)
             {
                 var Delegate = new FPackageIndex(Ar);
             }
