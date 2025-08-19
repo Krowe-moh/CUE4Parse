@@ -30,6 +30,7 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
 
     public bool RenderNearestNeighbor => LODGroup == TextureGroup.TEXTUREGROUP_Pixels2D || Filter == TextureFilter.TF_Nearest;
     public bool IsNormalMap => CompressionSettings == TextureCompressionSettings.TC_Normalmap;
+
     public bool IsHDR => CompressionSettings is
         TextureCompressionSettings.TC_HDR or
         TextureCompressionSettings.TC_HDR_F32 or
@@ -42,6 +43,7 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
     public virtual TextureAddress GetTextureAddressZ() => TextureAddress.TA_Wrap;
 
     private UTextureAllMipDataProviderFactory? _mipDataProvider;
+
     public UTextureAllMipDataProviderFactory? MipDataProvider
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -57,6 +59,7 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
                     }
                 }
             }
+
             return _mipDataProvider;
         }
     }
@@ -64,7 +67,7 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        LightingGuid = GetOrDefault(nameof(LightingGuid), new FGuid((uint) GetFullName().GetHashCode()));
+        LightingGuid = GetOrDefault(nameof(LightingGuid), new FGuid((uint)GetFullName().GetHashCode()));
         CompressionSettings = GetOrDefault(nameof(CompressionSettings), TextureCompressionSettings.TC_Default);
         LODGroup = GetOrDefault(nameof(LODGroup), TextureGroup.TEXTUREGROUP_World);
         Filter = GetOrDefault(nameof(Filter), TextureFilter.TF_Nearest);
@@ -73,10 +76,23 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.CompMipsDeprecated)
+            {
+                var bHasComp = GetOrDefault("bHasComp", false);
+                if (bHasComp)
+                {
+                    Ar.ReadArray(() => new FLegacyMipMap(Ar));
+                }
+                
+                Ar.ReadArray(() => new FTexture2DMipMap(Ar));
+                return;
+            }
+
             new FByteBulkData(Ar); // SourceArt
             return;
         }
-        
+
+
         var stripFlags = Ar.Read<FStripDataFlags>();
 
         // If archive is has editor only data

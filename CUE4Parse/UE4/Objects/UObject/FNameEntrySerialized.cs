@@ -24,7 +24,14 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             var bHasNameHashes = Ar.Ver >= EUnrealEngineObjectUE4Version.NAME_HASHES_SERIALIZED || Ar.Game is EGame.GAME_GearsOfWar4 or EGame.GAME_DaysGone;
 
-            Name = Ar.ReadFString().Trim();
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.Release64 || Ar.Game >= EGame.GAME_UE4_0)
+            {
+                Name = Ar.ReadFString().Trim();
+            }
+            else
+            {
+                Name = Ar.ReadAnsiNullString();
+            }
 
             if (Ar.Game == EGame.GAME_PlayerUnknownsBattlegrounds)
             {

@@ -13,7 +13,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedPCSoundData)
             {
-                Ar.ReadFName();
+                Ar.ReadFName(); // FileType?
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedChannelsSoundInfo && Ar.Ver < EUnrealEngineObjectUE3Version.DisplacedSoundChannelProperties)
@@ -30,6 +30,31 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
             }
             
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPCSoundData)
+            {
+                new FByteBulkData(Ar);
+            }
+            
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedXenonSoundData)// xbox
+            {
+                new FByteBulkData(Ar);
+            }
+            
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPS3SoundData)
+            {
+                new FByteBulkData(Ar);
+            }
+            
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_WIIU_COMPRESSED_SOUNDS)
+            {
+                new FByteBulkData(Ar);
+            }
+            
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_IPHONE_COMPRESSED_SOUNDS)
+            {
+                new FByteBulkData(Ar);
+            }
+            
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FLASH_MERGE_TO_MAIN)
             {
                 new FByteBulkData(Ar);
             }

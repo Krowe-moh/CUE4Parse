@@ -10,6 +10,7 @@ using CUE4Parse.UE4.Assets.Utils;
 using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Readers;
+using CUE4Parse.UE4.Versions;
 using Serilog;
 
 namespace CUE4Parse.UE4.Assets.Readers
@@ -37,7 +38,11 @@ namespace CUE4Parse.UE4.Assets.Readers
         public override FName ReadFName()
         {
             var nameIndex = Read<int>();
-            var extraIndex = Read<int>();
+            var extraIndex = -1;
+            if (Ver >= EUnrealEngineObjectUE3Version.NumberAddedToName || Game >= EGame.GAME_UE4_0)
+            {
+                extraIndex = Read<int>();
+            }
 #if !NO_FNAME_VALIDATION
             if (nameIndex < 0 || nameIndex >= Owner!.NameMap.Length)
             {

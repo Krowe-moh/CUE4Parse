@@ -10,7 +10,14 @@ public class UTextureCube : UTexture
     {
         base.Deserialize(Ar, validPos);
 
-        // todo: changes somewhere 
+        
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.DisplacedUTextureProperties)
+        {
+            var SizeX = Ar.Read<int>();
+            var SizeY = Ar.Read<int>();
+            var format = Ar.Read<int>();
+            Format = (EPixelFormat)format;
+        }
         if (Ar.Game >= EGame.GAME_UE4_0)
         {
             var stripFlags = new FStripDataFlags(Ar);

@@ -208,7 +208,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         public FPackageIndex ClassIndex;
         public FPackageIndex SuperIndex;
         public FPackageIndex TemplateIndex;
-        public uint ObjectFlags;
+        public long ObjectFlags;
         public long SerialSize;
         public long SerialOffset;
         public bool ForcedExport;
@@ -247,10 +247,14 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.Read<uint>(); //Archetype
             }
 
-            ObjectFlags = Ar.Read<uint>();
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag)
             {
-                Ar.Read<uint>(); // ObjectFlags2
+                ObjectFlags = Ar.Read<long>();
+                ObjectFlags = (ObjectFlags >> 32) | (ObjectFlags << 32);
+            }
+            else
+            {
+                ObjectFlags = Ar.Read<uint>();
             }
 
             if (Ar.Ver < EUnrealEngineObjectUE4Version.e64BIT_EXPORTMAP_SERIALSIZES)
@@ -285,9 +289,9 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.Read<int>(); // SerialOffsetUpper
             }
 
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_COMPONENT_MAP)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedComponentMapToExports && Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_COMPONENT_MAP)
             {
-                var LegacyComponentMap = Ar.ReadMap(() => Ar.ReadFName(), () => Ar.Read<int>());
+                var LegacyComponentMap = Ar.ReadMap(() => Ar.ReadFName(), () => new FPackageIndex(Ar));
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedExportFlags)

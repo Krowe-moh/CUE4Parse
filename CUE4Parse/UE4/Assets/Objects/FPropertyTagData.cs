@@ -65,6 +65,16 @@ public class FPropertyTagData
                         InnerType = "FloatProperty";
                         return;
                     }
+                    if (name is "Expressions" or "AnimSets" or "Components" or "Modules" or "Targets")
+                    {
+                        InnerType = "ObjectProperty";
+                        return;
+                    }
+                    if (name == "WeaponClasses")
+                    {
+                        InnerType = "ClassProperty";
+                        return;
+                    }
                     InnerType = "StructProperty";
                 }
                 break;

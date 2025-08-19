@@ -79,7 +79,7 @@ namespace CUE4Parse.UE4.Assets.Objects
                 if (ReadBulkDataInto(data)) _data = new Lazy<byte[]?>(() => data);
             }
 
-            Ar.Position += Header.ElementCount;
+            Ar.Position += (Header.OffsetInFile + Header.SizeOnDisk);
         }
 
         protected FByteBulkData(FAssetArchive Ar, bool skip = false)
