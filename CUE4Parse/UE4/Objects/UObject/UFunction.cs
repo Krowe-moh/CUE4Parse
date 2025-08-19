@@ -18,7 +18,7 @@ public class UFunction : UStruct
         {
             if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
             {
-                ushort paramsSize = Ar.Read<ushort>();
+                var paramsSize = Ar.Read<ushort>();
             }
 
             var NativeToken = Ar.Read<ushort>();
@@ -32,7 +32,7 @@ public class UFunction : UStruct
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
             {
-                ushort returnValueOffset = Ar.Read<ushort>();
+                var returnValueOffset = Ar.Read<ushort>();
             }
         }
 
