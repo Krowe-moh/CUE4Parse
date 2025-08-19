@@ -19,7 +19,6 @@ namespace CUE4Parse.UE4.Objects.UObject
     /// <summary>
     /// Revision data for an Unreal package file.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
     public readonly struct FGenerationInfo
     {
         /**
@@ -36,7 +35,19 @@ namespace CUE4Parse.UE4.Objects.UObject
          * Number of net serializable objects in the package for this generation.
          */
         public readonly int NetObjectCount;
+
+        public FGenerationInfo(FArchive Ar)
+        {
+            ExportCount = Ar.Read<int>();
+            NameCount = Ar.Read<int>();
+
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedNetIndex && Ar.Game < EGame.GAME_UE4_0)
+            {
+                NetObjectCount = Ar.Read<int>();
+            }
+        }
     }
+
 
     [JsonConverter(typeof(FPackageFileSummaryConverter))]
     public class FPackageFileSummary
@@ -260,6 +271,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 FileVersionLicenseeUE = (EUnrealEngineObjectLicenseeUEVersion)(legacyFileVersion >> 16);
                 legacyFileVersion &= 0xFFFF;
                 FileVersionUE.FileVersionUE3 = legacyFileVersion;
+                Ar.Ver = FileVersionUE;
             }
 
             if (FileVersionUE > EUnrealEngineObjectUE3Version.AddedSerialOffset && FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
@@ -332,69 +344,11 @@ namespace CUE4Parse.UE4.Objects.UObject
                 DependsOffset = Ar.Read<int>();
             }
 
-            if (FileVersionUE < EUnrealEngineObjectUE4Version.OLDEST_LOADABLE_PACKAGE || FileVersionUE > EUnrealEngineObjectUE4Version.AUTOMATIC_VERSION)
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES)
             {
-                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES)
-                {
-                    ImportExportGuidsOffset = Ar.Read<int>();
-                    ImportGuidsCount = Ar.Read<int>(); 
-                    ExportGuidsCount = Ar.Read<int>();
-                }
-
-                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ASSET_THUMBNAILS_IN_PACKAGES)
-                {
-                    ThumbnailTableOffset = Ar.Read<int>();
-                }
-
-                Ar.Read<FGuid>();
-
-                Generations = Ar.ReadArray<FGenerationInfo>();
-                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES)
-                {
-                    Ar.Read<int>(); //EngineVersion
-                }
-
-                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES)
-                {
-                    Ar.Read<int>(); //CookerVersion
-                }
-
-                if (FileVersionUE >= EUnrealEngineObjectUE3Version.AddedCompression)
-                {
-                    // todo:
-                    Ar.Read<int>(); //CompressionFlags
-                    Ar.ReadArray<FCompressedChunk>();
-                }
-
-                if (FileVersionUE >= EUnrealEngineObjectUE3Version.AddedPackageSource)
-                {
-                    Ar.Read<int>(); // PackageSource
-                }
-
-                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDITIONAL_COOK_PACKAGE_SUMMARY)
-                {
-                    Ar.ReadArray(Ar.ReadFString); // AdditionalPackagesToCook
-                }
-
-                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_TEXTURE_PREALLOCATION)
-                {
-                    Ar.ReadArray<FTextureAllocations>();
-                }
-
-                if (Ar.Game == EGame.GAME_SuddenAttack2)
-                {
-                    Ar.Read<int>(); // count
-                    Ar.Read<int>(); // offset
-                }
-                
-                if (Ar.Game == EGame.GAME_RocketLeague && PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
-                {
-                    Ar.Read<int>(); // garbageSize
-                    Ar.Read<int>(); // compressedChunkInfoOffset
-                    Ar.Read<int>(); // lastBlockSize
-                }
-                ChunkIds = [];
-                return;
+                ImportExportGuidsOffset = Ar.Read<int>();
+                ImportGuidsCount = Ar.Read<int>();
+                ExportGuidsCount = Ar.Read<int>();
             }
 
             if (FileVersionUE >= EUnrealEngineObjectUE4Version.ADD_STRING_ASSET_REFERENCES_MAP)
@@ -408,7 +362,10 @@ namespace CUE4Parse.UE4.Objects.UObject
                 SearchableNamesOffset = Ar.Read<int>();
             }
 
-            ThumbnailTableOffset = Ar.Read<int>();
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ASSET_THUMBNAILS_IN_PACKAGES)
+            {
+                ThumbnailTableOffset = Ar.Read<int>();
+            }
 
             if (FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
             {
@@ -436,7 +393,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 }
             }
 
-            Generations = Ar.ReadArray<FGenerationInfo>();
+            Generations = Ar.ReadArray(() => new FGenerationInfo(Ar));
 
             if (Ar.Game == EGame.GAME_DeltaForceHawkOps) Ar.Position += 16;
 
@@ -445,13 +402,25 @@ namespace CUE4Parse.UE4.Objects.UObject
                 SavedByEngineVersion = new FEngineVersion(Ar);
                 FixCorruptEngineVersion(FileVersionUE, SavedByEngineVersion);
             }
-            else
+            else if (Ar.Game >= EGame.GAME_UE4_0)
             {
                 var engineChangelist = Ar.Read<int>();
 
                 if (engineChangelist != 0)
                 {
                     SavedByEngineVersion = new FEngineVersion(4, 0, 0, (uint)engineChangelist, string.Empty);
+                }
+            }
+            else
+            {
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.AddedEngineVersion)
+                {
+                    var EngineVersion = Ar.Read<int>();
+                }
+
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.AddedCookerVersion)
+                {
+                    var CookerVersion = Ar.Read<int>();
                 }
             }
 
@@ -482,7 +451,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (compressedChunks.Length > 0)
             {
-                throw new ParserException("Package level compression is enabled");
+                //throw new ParserException("Package level compression is enabled");
             }
 
             PackageSource = Ar.Read<int>();
@@ -498,11 +467,9 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (legacyFileVersion > -7)
             {
-                var numTextureAllocations = Ar.Read<int>();
-                if (numTextureAllocations != 0)
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_TEXTURE_PREALLOCATION)
                 {
-                    // We haven't used texture allocation info for ages and it's no longer supported anyway
-                    throw new ParserException("NumTextureAllocations != 0");
+                    Ar.ReadArray<FTextureAllocations>();
                 }
             }
 
@@ -572,6 +539,19 @@ namespace CUE4Parse.UE4.Objects.UObject
             if (Tag == PACKAGE_FILE_TAG_ONE && Ar is FAssetArchive assetAr)
             {
                 assetAr.AbsoluteOffset = NameOffset - (int)Ar.Position;
+            }
+            
+            if (Ar.Game == EGame.GAME_SuddenAttack2)
+            {
+                Ar.Read<int>(); // count
+                Ar.Read<int>(); // offset
+            }
+
+            if (Ar.Game == EGame.GAME_RocketLeague && PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
+            {
+                Ar.Read<int>(); // garbageSize
+                Ar.Read<int>(); // compressedChunkInfoOffset
+                Ar.Read<int>(); // lastBlockSize
             }
         }
 

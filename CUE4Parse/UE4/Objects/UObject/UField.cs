@@ -12,6 +12,12 @@ namespace CUE4Parse.UE4.Objects.UObject
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
+            
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_MOVED_SUPERFIELD_TO_USTRUCT)
+            {
+                new FPackageIndex(Ar);
+            }
+            
             if (FFrameworkObjectVersion.Get(Ar) < FFrameworkObjectVersion.Type.RemoveUField_Next)
             {
                 Next = new FPackageIndex(Ar);

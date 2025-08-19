@@ -48,14 +48,25 @@ public class FPropertyTagData
                 break;
             case "ByteProperty":
             case "EnumProperty":
-           //     if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_BYTEPROP_SERIALIZE_ENUM && Ar.Ver != EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME)
-               // {
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_BYTEPROP_SERIALIZE_ENUM || Ar.Game > EGame.GAME_UE4_0)
+                {
                     EnumName = Ar.ReadFName().Text;
-            //    }
+                }
                 break;
             case "ArrayProperty":
                 if (Ar.Ver >= EUnrealEngineObjectUE4Version.ARRAY_PROPERTY_INNER_TAGS)
+                {
                     InnerType = Ar.ReadFName().Text;
+                }
+                else
+                {
+                    if (name == "LookupTable")
+                    {
+                        InnerType = "FloatProperty";
+                        return;
+                    }
+                    InnerType = "StructProperty";
+                }
                 break;
             // Serialize the following if version is past PROPERTY_TAG_SET_MAP_SUPPORT
             case "SetProperty":

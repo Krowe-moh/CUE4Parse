@@ -14,6 +14,28 @@ public class UFunction : UStruct
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
+            {
+                ushort paramsSize = Ar.Read<ushort>();
+            }
+
+            var NativeToken = Ar.Read<ushort>();
+
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
+            {
+                var paramsCount = Ar.ReadByte();
+            }
+
+            var OperPrecedence = Ar.ReadByte();
+
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
+            {
+                ushort returnValueOffset = Ar.Read<ushort>();
+            }
+        }
+
         FunctionFlags = Ar.Read<EFunctionFlags>();
         if (Ar.Game is EGame.GAME_AshesOfCreation) Ar.Position += 4;
 
@@ -22,6 +44,11 @@ public class UFunction : UStruct
         {
             // Unused.
             var repOffset = Ar.Read<short>();
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && !Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Game < EGame.GAME_UE4_0)
+        {
+            var FriendlyName = Ar.ReadFName();
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SERIALIZE_BLUEPRINT_EVENTGRAPH_FASTCALLS_IN_UFUNCTION)

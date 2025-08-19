@@ -16,11 +16,18 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             base.Deserialize(Ar, validPos);
             ArrayDim = Ar.Read<int>();
-            PropertyFlags = Ar.Read<EPropertyFlags>();
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PropertyFlagsSizeExpandedTo64Bits)
+            {
+                PropertyFlags = (EPropertyFlags) Ar.Read<ulong>();
+            }
+            else
+            {
+                PropertyFlags = (EPropertyFlags) Ar.Read<uint>();
+            }
             if (Ar.Game < EGame.GAME_UE4_0)
             {
-                var PropertyFlags2 = Ar.Read<EPropertyFlags>();
-                new FPackageIndex(Ar);
+             //   var PropertyFlags2 = Ar.Read<EPropertyFlags>();
+           //     new FPackageIndex(Ar);
             }
             else
             {
@@ -106,8 +113,11 @@ namespace CUE4Parse.UE4.Objects.UObject
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
-            BoolSize = Ar.Read<byte>();
-            bIsNativeBool = Ar.ReadFlag();
+            if (Ar.Game > EGame.GAME_UE4_0)
+            {
+                BoolSize = Ar.Read<byte>();
+                bIsNativeBool = Ar.ReadFlag();
+            }
         }
 
         protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
@@ -130,6 +140,12 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             base.Deserialize(Ar, validPos);
             PropertyClass = new FPackageIndex(Ar);
+
+            // move this to UObjectProperty?
+            if (Ar.Game == EGame.GAME_RocketLeague)// LicenseeVersion >= 32
+            {
+                Ar.ReadFName();
+            }
         }
 
         protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
@@ -320,6 +336,20 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             base.Deserialize(Ar, validPos);
             SignatureFunction = new FPackageIndex(Ar);
+            
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedDelegateSourceToUDelegateProperty)
+            {
+                return;
+            }
+
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.ChangedDelegateSourceFromNameToObject)
+            {
+                var source = Ar.ReadFName();
+            }
+            else
+            {
+                var Delegate = new FPackageIndex(Ar);
+            }
         }
 
         protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)

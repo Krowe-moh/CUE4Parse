@@ -57,16 +57,13 @@ namespace CUE4Parse.UE4.Assets.Objects
             {
                 throw new ParserException(Ar, "TODO: CompressedZlib");
             }
+            else if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
+            {
+              //  var bytes = Ar.ReadBytes(Header.ElementCount);
+                //FArchive dataAr = new FArchiveLoadCompressedProxy(Ar.Name, bytes, "LZ4", versions: Ar.Versions);
+              //  var decompressedData = dataAr.Read(bytes, 0, Header.ElementCount);
+            }
 
-            /*
-              if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
-              {
-                  var data = new byte[Header.ElementCount];
-                  FArchive dataAr = new FArchiveLoadCompressedProxy(Ar.Name, data, "LZ4", versions: Ar.Versions);
-                  var decompressedData = dataAr.ReadArray<byte>();
-
-              }
-            */
 
             if (LazyLoad)
             {
@@ -81,6 +78,7 @@ namespace CUE4Parse.UE4.Assets.Objects
                 var data = new byte[Header.ElementCount];
                 if (ReadBulkDataInto(data)) _data = new Lazy<byte[]?>(() => data);
             }
+
             Ar.Position += Header.ElementCount;
         }
 
@@ -158,7 +156,7 @@ namespace CUE4Parse.UE4.Assets.Objects
             else if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
             {
                 throw new ParserException(Ar, "TODO: CompressedZlib");
-            }
+            } 
             else if (BulkDataFlags.HasFlag(BULKDATA_LazyLoadable) || BulkDataFlags.HasFlag(BULKDATA_None))
             {
                 CheckReadSize(Ar.Read(data, offset, Header.ElementCount));

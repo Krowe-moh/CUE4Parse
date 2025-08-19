@@ -21,7 +21,20 @@ public class UStruct : UField
     {
         base.Deserialize(Ar, validPos);
 
-        SuperStruct = new FPackageIndex(Ar);
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MOVED_SUPERFIELD_TO_USTRUCT)
+        {
+            SuperStruct = new FPackageIndex(Ar);
+        }
+        else
+        {
+            SuperStruct = Next;
+        }
+
+        if (Ar.Game == EGame.GAME_UE3_0)
+        {
+            new FPackageIndex(Ar);
+        }
+
         if (FFrameworkObjectVersion.Get(Ar) < FFrameworkObjectVersion.Type.RemoveUField_Next)
         {
             var firstChild = new FPackageIndex(Ar);
@@ -32,32 +45,57 @@ public class UStruct : UField
             Children = Ar.ReadArray(() => new FPackageIndex(Ar));
         }
 
+
         if (FCoreObjectVersion.Get(Ar) >= FCoreObjectVersion.Type.FProperties)
         {
             DeserializeProperties(Ar);
         }
 
+        if (Ar.Game == EGame.GAME_UE3_0)
+        {
+            new FPackageIndex(Ar);
+            Ar.Read<int>();
+            Ar.Read<int>();
+        }
+
         var bytecodeBufferSize = Ar.Read<int>();
-        var serializedScriptSize = Ar.Read<int>();
+        var serializedScriptSize = 0;
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE)
+        {
+            serializedScriptSize = Ar.Read<int>();
+        }
+        else
+        {
+            serializedScriptSize = bytecodeBufferSize;
+        }
 
         if (Ar.Owner!.Provider?.ReadScriptData == true && serializedScriptSize > 0)
         {
-            using var kismetAr = new FKismetArchive(Name, Ar.ReadBytes(serializedScriptSize), Ar.Owner, Ar.Versions);
-            var tempCode = new List<KismetExpression>();
-            try
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE)
             {
-                while (kismetAr.Position < kismetAr.Length)
+                serializedScriptSize = Ar.Read<int>();
+                
+                using var kismetAr = new FKismetArchive(Name, Ar.ReadBytes(serializedScriptSize), Ar.Owner, Ar.Versions);
+                var tempCode = new List<KismetExpression>();
+                try
                 {
-                    tempCode.Add(kismetAr.ReadExpression());
+                    while (kismetAr.Position < kismetAr.Length)
+                    {
+                        tempCode.Add(kismetAr.ReadExpression());
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e, $"Failed to serialize script bytecode in {Name}");
+                }
+                finally
+                {
+                    ScriptBytecode = [.. tempCode];
                 }
             }
-            catch (Exception e)
-            { 
-                Log.Warning(e, $"Failed to serialize script bytecode in {Name}");
-            }
-            finally
+            else
             {
-                ScriptBytecode = [.. tempCode];
+                serializedScriptSize = bytecodeBufferSize;
             }
         }
         else

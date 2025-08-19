@@ -191,7 +191,7 @@ namespace CUE4Parse.UE4.Assets
                         // Create
                         var obj = ConstructObject(ResolvePackageIndex(export.ClassIndex)?.Object?.Value as UStruct, this, (EObjectFlags) export.ObjectFlags);
                         obj.Name = export.ObjectName.Text;
-                        obj.Outer = (ResolvePackageIndex(export.OuterIndex) as ResolvedExportObject)?.Object.Value ?? this;
+                        obj.Outer = (ResolvePackageIndex(export.OuterIndex) as ResolvedExportObject)?.Object?.Value ?? this;
                         obj.Super = ResolvePackageIndex(export.SuperIndex) as ResolvedExportObject;
                         obj.Template = ResolvePackageIndex(export.TemplateIndex) as ResolvedExportObject;
                         obj.Flags |= (EObjectFlags) export.ObjectFlags; // We give loaded objects the RF_WasLoaded flag in ConstructObject, so don't remove it again in here
