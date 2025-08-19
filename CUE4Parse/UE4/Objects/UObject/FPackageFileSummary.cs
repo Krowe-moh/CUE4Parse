@@ -53,7 +53,7 @@ namespace CUE4Parse.UE4.Objects.UObject
     public class FPackageFileSummary
     {
         public const uint PACKAGE_FILE_TAG = 0x9E2A83C1U;
-        public const uint PACKAGE_FILE_TAG_SWAPPED = 0xC1832A9E;
+        public const uint PACKAGE_FILE_TAG_SWAPPED = 0xC1832A9EU;
         public const uint PACKAGE_FILE_TAG_ACE7 = 0x37454341U; // ACE7
         private const uint PACKAGE_FILE_TAG_ONE = 0x00656E6FU; // SOD2
         private const uint PACKAGE_FILE_TAG_NTE = 0xD5A8D56E;
