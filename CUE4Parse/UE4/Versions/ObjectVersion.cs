@@ -729,6 +729,7 @@ namespace CUE4Parse.UE4.Versions
         MovedFriendlyNameToUFunction = 160,
         AddedDelegateSourceToUDelegateProperty = 185,
         PropertyFlagsSizeExpandedTo64Bits = 195,
+        AddedComponentGuid = 196,
         Use64BitFlag = 195,
         AddedArcheType = 220,
         AddedComponentMapToExports, // todo
@@ -739,6 +740,7 @@ namespace CUE4Parse.UE4.Versions
         AddedSerialOffset = 249,
         AddedCookerVersion = 245,
         AddedPackageGroup = 269,
+        ComponentGuidDeprecated = 273,
         DisplacedUTextureProperties = 297,
         AddedMeshthingtodo = 315,
         AddedNetIndex = 322,

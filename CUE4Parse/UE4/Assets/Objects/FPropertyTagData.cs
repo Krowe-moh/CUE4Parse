@@ -60,17 +60,32 @@ public class FPropertyTagData
                 }
                 else
                 {
-                    if (name == "LookupTable")
+                    if (name is "LookupTable" or "LODDistances" or "LODSettings" or "LODSpawnRatios" or "TargetWeight" or "Child2PerBoneWeight")
                     {
                         InnerType = "FloatProperty";
                         return;
                     }
-                    if (name is "Expressions" or "AnimSets" or "Components" or "Modules" or "Targets")
+                    if (name is "Constraints")
+                    {
+                        InnerType = "IntProperty";
+                        return;
+                    }
+                    if (name is "LocalToCompReqBones")
+                    {
+                        InnerType = "ByteProperty";
+                        return;
+                    }
+                    if (name is "BranchStartBoneName" or "AnimList")
+                    {
+                        InnerType = "NameProperty";
+                        return;
+                    }
+                    if (name is "Expressions" or "LFMaterials" or "DecalList" or "Anim" or "ControlHead" or "AnimSets" or "Components" or "Modules" or "Targets" or "Controls" or "SpawnModules" or "UpdateModules" or "Emitters" or "LODLevels" or "ReplayClips" or "Skins" or "Effects" or "ReferencedTextures")
                     {
                         InnerType = "ObjectProperty";
                         return;
                     }
-                    if (name == "WeaponClasses")
+                    if (name is "WeaponClasses" or "PreviewAnimSets")
                     {
                         InnerType = "ClassProperty";
                         return;
