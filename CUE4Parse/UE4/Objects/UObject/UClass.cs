@@ -62,9 +62,20 @@ public class UClass : UStruct
 
         // Class flags first.
         ClassFlags = Ar.Read<EClassFlags>();
-
-        // Variables.
+        
         if (Ar.Game is EGame.GAME_StarWarsJediFallenOrder or EGame.GAME_StarWarsJediSurvivor or EGame.GAME_AshesOfCreation or (EGame.GAME_RocketLeague)) Ar.Position += 4;
+
+        If (Ar.Ver >= EUnrealEngineObjectUE3Version.ClassGuidDeprecated) {
+           if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_EMITTER_LODVALIDITY_FIX2) {// temp
+              Ar.Read<byte>(); // classPlatformFlags
+           }
+        }
+        else
+        {
+           Ar.Read<FGuid>();
+        }
+        
+        // Variables.
         ClassWithin = new FPackageIndex(Ar);
         ClassConfigName = Ar.ReadFName();
 
