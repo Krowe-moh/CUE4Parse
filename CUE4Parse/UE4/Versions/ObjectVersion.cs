@@ -741,6 +741,7 @@ namespace CUE4Parse.UE4.Versions
         AddedCookerVersion = 245,
         AddedPackageGroup = 269,
         ComponentGuidDeprecated = 273,
+        ClassGuidDeprecated = 276,
         DisplacedUTextureProperties = 297,
         AddedMeshthingtodo = 315,
         AddedNetIndex = 322,
