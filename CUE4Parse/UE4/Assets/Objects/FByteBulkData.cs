@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.IO.Compression;
 using System.Runtime.CompilerServices;
+using CUE4Parse.Compression;
 using CUE4Parse.FileProvider.Vfs;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Assets.Utils;
@@ -10,6 +12,53 @@ using CUE4Parse.UE4.Readers;
 using Newtonsoft.Json;
 using Serilog;
 using static CUE4Parse.UE4.Assets.Objects.EBulkDataFlags;
+
+public class FCompressedChunkBlock
+{
+    public int CompressedSize;
+    public int UncompressedSize;
+
+    public FCompressedChunkBlock(FArchive Ar)
+    {
+        CompressedSize = Ar.Read<int>();
+        UncompressedSize = Ar.Read<int>();
+    }
+}
+
+public class FCompressedChunkHeader
+{
+    public int Tag;
+    public int ChunkSize;
+    public FCompressedChunkBlock Sum;
+    public FCompressedChunkBlock[] Blocks;
+    public FCompressedChunkHeader(FArchive Ar)
+    {
+        Tag = Ar.Read<int>();
+        ChunkSize = Ar.Read<int>();
+        // ignore, i'm lazy too finish rn
+        ChunkSize = 0x20000;
+
+        Sum = new FCompressedChunkBlock(Ar);
+        int blockCount = (Sum.UncompressedSize + ChunkSize - 1) / ChunkSize;
+        Blocks = new FCompressedChunkBlock[blockCount];
+        int compSize = 0, uncompSize = 0, i = 0;
+
+        while (compSize < Sum.CompressedSize && uncompSize < Sum.UncompressedSize)
+        {
+            var block = new FCompressedChunkBlock(Ar);
+            Blocks[i++] = block;
+
+            compSize += block.CompressedSize;
+            uncompSize += block.UncompressedSize;
+        }
+
+        if (Blocks.Length > 1)
+            ChunkSize = Blocks[0].UncompressedSize;
+
+        if (uncompSize != Sum.UncompressedSize)
+            throw new Exception("Header validation failed: uncompressed size mismatch");
+    }
+}
 
 namespace CUE4Parse.UE4.Assets.Objects
 {
@@ -26,6 +75,42 @@ namespace CUE4Parse.UE4.Assets.Objects
 
         private readonly FAssetArchive _savedAr;
         private readonly long _dataPosition;
+        
+        public static void ReadCompressedChunk(FArchive Ar, byte[] buffer, CompressionMethod Compression)
+        {
+            var header = new FCompressedChunkHeader(Ar);
+
+            var readBuffer = new byte[header.ChunkSize * 16]; // ignore everything here 
+            int bufferOffset = 0;
+
+            foreach (var block in header.Blocks)
+            {
+                if (block.CompressedSize > readBuffer.Length)
+                    throw new Exception("Block compressed size exceeds read buffer");
+                if (block.UncompressedSize + bufferOffset > buffer.Length)
+                    throw new Exception("Block uncompressed size exceeds output buffer");
+
+                Ar.Read(readBuffer, 0, block.CompressedSize);
+
+                if (block.CompressedSize <= 36 && block.UncompressedSize <= 32)
+                {
+                    Buffer.BlockCopy(readBuffer, 0, buffer, bufferOffset, block.UncompressedSize);
+                }
+                else
+                {
+                    CUE4Parse.Compression.Compression.Decompress(
+                        readBuffer, 0, block.CompressedSize,
+                        buffer, bufferOffset, block.UncompressedSize,
+                        Compression, Ar
+                    );
+                }
+
+                bufferOffset += block.UncompressedSize;
+            }
+
+            if (bufferOffset != buffer.Length)
+                throw new Exception("Buffer not fully filled by decompressed data");
+        }
 
         public FByteBulkData(byte[] data)
         {
@@ -53,22 +138,26 @@ namespace CUE4Parse.UE4.Assets.Objects
             {
                 Ar.Position += Header.ElementCount;
             }
-            else if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB)) // but where is data? inlined or in separate file?
+            else if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
             {
-                throw new ParserException(Ar, "TODO: CompressedZlib");
+                var data = new byte[Header.ElementCount];
+                ReadCompressedChunk(Ar, data, CompressionMethod.Zlib);
+                _data = new Lazy<byte[]>(() => data);
+                return;
             }
             else if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
             {
-              //  var bytes = Ar.ReadBytes(Header.ElementCount);
-                //FArchive dataAr = new FArchiveLoadCompressedProxy(Ar.Name, bytes, "LZ4", versions: Ar.Versions);
-              //  var decompressedData = dataAr.Read(bytes, 0, Header.ElementCount);
+                var data = new byte[Header.ElementCount];
+                ReadCompressedChunk(Ar, data, CompressionMethod.LZ0);
+                _data = new Lazy<byte[]>(() => data);
+                return;
             }
 
 
             if (LazyLoad)
             {
                 _data = new Lazy<byte[]?>(() =>
-                {
+               {
                     var data = new byte[Header.ElementCount];
                     return ReadBulkDataInto(data) ? data : null;
                 });
@@ -78,10 +167,8 @@ namespace CUE4Parse.UE4.Assets.Objects
                 var data = new byte[Header.ElementCount];
                 if (ReadBulkDataInto(data)) _data = new Lazy<byte[]?>(() => data);
             }
-
-            Ar.Position += (Header.OffsetInFile + Header.SizeOnDisk);
+            Ar.Position += Header.ElementCount;
         }
-
         protected FByteBulkData(FAssetArchive Ar, bool skip = false)
         {
             Header = new FByteBulkDataHeader(Ar);

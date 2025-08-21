@@ -463,7 +463,10 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             // No longer used: List of additional packages that are needed to be cooked for this package (ie streaming levels)
             // Keeping the serialization code for backwards compatibility without bumping the package version
-            var additionalPackagesToCook = Ar.ReadArray(Ar.ReadFString);
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDITIONAL_COOK_PACKAGE_SUMMARY || Ar.Game >= EGame.GAME_UE4_0)
+            {
+                var additionalPackagesToCook = Ar.ReadArray(Ar.ReadFString);
+            }
 
             if (legacyFileVersion > -7)
             {

@@ -7,7 +7,7 @@ using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Readers;
 
 using K4os.Compression.LZ4;
-
+using lzo.net;
 using ZstdSharp;
 
 namespace CUE4Parse.Compression
@@ -66,6 +66,24 @@ namespace CUE4Parse.Compression
                     Buffer.BlockCopy(uncompressedBuffer, 0, uncompressed, uncompressedOffset, uncompressedSize);
                     if (result != uncompressedSize) throw new FileLoadException($"Failed to decompress LZ4 data (Expected: {uncompressedSize}, Result: {result})");
                     return;
+                case CompressionMethod.LZ0:
+                {
+                    using var ms = new MemoryStream(compressed, compressedOffset, compressedSize);
+                    using var lzoStream = new LzoStream(ms, CompressionMode.Decompress);
+
+                    int totalRead = 0;
+                    while (totalRead < uncompressedSize)
+                    {
+                        int bytesRead = lzoStream.Read(uncompressed, uncompressedOffset + totalRead, uncompressedSize - totalRead);
+                        if (bytesRead == 0)
+                            throw new FileLoadException($"Failed to decompress LZO data (Expected: {uncompressedSize}, Got: {totalRead})");
+                        totalRead += bytesRead;
+                    }
+
+                    if (totalRead != uncompressedSize)
+                        throw new FileLoadException($"Failed to decompress LZO data (Expected: {uncompressedSize}, Result: {totalRead})");
+                    return;
+                }
                 case CompressionMethod.Zstd:
                 {
                     var compressionStream = new DecompressionStream(srcStream);

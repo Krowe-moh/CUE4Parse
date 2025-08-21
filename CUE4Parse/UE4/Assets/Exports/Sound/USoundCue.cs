@@ -17,7 +17,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
     public class USoundCue : USoundBase
     {
         public FPackageIndex? FirstNode;
-        public Dictionary<UObject?, NodeEditorData>? EditorData;
+        public Dictionary<FPackageIndex?, NodeEditorData>? EditorData;
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
@@ -26,11 +26,11 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
 
             if (Ar.Game < EGame.GAME_UE4_0)
             {
-                EditorData = new Dictionary<UObject, NodeEditorData>();
+                EditorData = new Dictionary<FPackageIndex, NodeEditorData>();
                 int Count = Ar.Read<int>();
                 for (int i = 0; i < Count; i++)
                 {
-                    var key = Ar.ReadUObject(); // Sometimes can be null, ReadMap can't be used.
+                    var key = new FPackageIndex(Ar); // Sometimes can be null, ReadMap can't be used.
                     var value = Ar.Read<NodeEditorData>();
 
                     if (key != null)

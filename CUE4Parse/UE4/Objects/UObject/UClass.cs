@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using CUE4Parse.UE4.Assets;
 using CUE4Parse.UE4.Assets.Exports;
+using CUE4Parse.UE4.Assets.Exports.Actor;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Kismet;
+using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Objects.UObject.BlueprintDecompiler;
 using CUE4Parse.UE4.Objects.UObject.Editor;
@@ -52,40 +54,118 @@ public class UClass : UStruct
         base.Deserialize(Ar, validPos);
         if (Ar.Game == EGame.GAME_AWayOut) Ar.Position += 4;
 
-          if (Ar.Ver < EUnrealEngineObjectUE3Version.Release62) {// temp
-              Ar.Read<int>(); // classRecordSize
-           }
-           
-        // serialize the function map
-        if (Ar.Game >= EGame.GAME_UE4_0) {
-        FuncMap = new Dictionary<FName, FPackageIndex>();
-        var funcMapNum = Ar.Read<int>();
-        for (var i = 0; i < funcMapNum; i++)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.Release62)
         {
-            FuncMap[Ar.ReadFName()] = new FPackageIndex(Ar);
+            // temp
+            Ar.Read<int>(); // classRecordSize
         }
+
+        // serialize the function map
+        if (Ar.Game >= EGame.GAME_UE4_0)
+        {
+            FuncMap = new Dictionary<FName, FPackageIndex>();
+            var funcMapNum = Ar.Read<int>();
+            for (var i = 0; i < funcMapNum; i++)
+            {
+                FuncMap[Ar.ReadFName()] = new FPackageIndex(Ar);
+            }
         }
 
         // Class flags first.
         ClassFlags = Ar.Read<EClassFlags>();
-        
+
         if (Ar.Game is EGame.GAME_StarWarsJediFallenOrder or EGame.GAME_StarWarsJediSurvivor or EGame.GAME_AshesOfCreation or (EGame.GAME_RocketLeague)) Ar.Position += 4;
 
-        If (Ar.Ver >= EUnrealEngineObjectUE3Version.ClassGuidDeprecated) {
-           if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_EMITTER_LODVALIDITY_FIX2) {// temp
-              Ar.Read<byte>(); // classPlatformFlags
-           }
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ClassGuidDeprecated)
+        {
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_EMITTER_LODVALIDITY_FIX2)
+            {
+                // temp
+                Ar.Read<byte>(); // classPlatformFlags
+            }
         }
         else
         {
-           Ar.Read<FGuid>();
+            Ar.Read<FGuid>();
+        }
+
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.ClassDependenciesDeprecated)
+        {
+            Ar.ReadArray(() => new Dependency(Ar));
+        }
+        
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.PackageImportsDeprecated)
+        {
+            Ar.ReadArray(() => Ar.ReadFName());
         }
         
         // Variables.
         ClassWithin = new FPackageIndex(Ar);
         ClassConfigName = Ar.ReadFName();
 
-        ClassGeneratedBy = new FPackageIndex(Ar);
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedHideCategoriesToUClass)
+        {
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DisplacedHideCategories
+                && Ar.Ver < EUnrealEngineObjectUE3Version.VER_MP3ENC_TO_MSENC)// && Ar.UE4Version < 117
+            {
+                Ar.ReadArray(() => Ar.ReadFName());
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.CompactIndexDeprecated &&
+                Ar.Ver < EUnrealEngineObjectUE3Version.ComponentClassBridgeMapDeprecated)
+            {
+                var ComponentClassBridgeMap = Ar.ReadMap(
+                    () => new FPackageIndex(Ar),
+                    () => Ar.ReadFName()
+                );
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedComponentTemplatesToUClass &&
+                Ar.Ver < EUnrealEngineObjectUE3Version.ComponentTemplatesDeprecated)
+            {
+                Ar.ReadArray(() => new FPackageIndex(Ar));
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.CompactIndexDeprecated)//&& Ar.UE4Version < 118
+            {
+                 Ar.ReadMap(
+                    () => new FPackageIndex(Ar),
+                    () => Ar.ReadFName()
+                );
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedInterfacesFeature &&
+                Ar.Ver < EUnrealEngineObjectUE3Version.InterfaceClassesDeprecated)
+            {
+                Ar.ReadArray(() => new FPackageIndex(Ar));
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.InterfaceClassesDeprecated)
+            {
+                var interfacesCount = Ar.Read<int>();
+
+                if (interfacesCount > 0)
+                {
+                    var ImplementedInterfaces = new List<int>(interfacesCount);
+                    for (int i = 0; i < interfacesCount; i++)
+                    {
+                        var interfaceIndex = Ar.Read<int>();
+                        var typeIndex = Ar.Read<int>();
+                        ImplementedInterfaces.Add(interfaceIndex);
+
+                        if (Ar.Game >= EGame.GAME_UE4_0)
+                        {
+                            var isImplementedByK2 = Ar.Read<int>() > 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (Ar.Game >= EGame.GAME_UE4_0)
+        {
+            ClassGeneratedBy = new FPackageIndex(Ar);
+        }
 
         // Load serialized interface classes
         Interfaces = Ar.ReadArray(() => new FImplementedInterface(Ar));
@@ -112,7 +192,7 @@ public class UClass : UStruct
 
         // Defaults.
         ClassDefaultObject = new FPackageIndex(Ar);
-        
+
         if (Ar.Game == EGame.GAME_RocketLeague)
         {
             Ar.ReadMap(Ar.ReadFName, Ar.ReadUObject);
@@ -158,7 +238,7 @@ public class UClass : UStruct
 
         var classDefaultObject = ClassDefaultObject.Load();
         bool emptyClass = Properties.Count == 0 && (ChildProperties?.Length ?? 0) == 0 && FuncMap.Count == 0 && (classDefaultObject?.Properties.Count ?? 0) == 0;
-        
+
         var c = $"class {derivedClass} : {accessSpecifier} {baseClass}";
         if (emptyClass) return $"{c} {{ }};";
 
@@ -168,13 +248,14 @@ public class UClass : UStruct
 
         var distinct = new HashSet<string>();
         var variables = new Dictionary<string, EAccessMode>();
-        
+
         var combined = Properties.Concat(classDefaultObject?.Properties ?? []).Concat(classDefaultObject?.SerializedSparseClassData?.Properties ?? []);
         foreach (var property in combined)
         {
             if (!distinct.Add(property.Name.Text)) continue;
             variables.TryAdd(property.GetCppVariable(), EAccessMode.Public); // should always be public
         }
+
         foreach (var childProperty in ChildProperties ?? [])
         {
             if (childProperty is not FProperty property || !distinct.Add(property.Name.Text))
@@ -274,10 +355,12 @@ public class UClass : UStruct
                 {
                     functionStringBuilder.AppendLine($"// Category: {category}");
                 }
+
                 if (editorData.Value.ObjectMetaData.ObjectMetaData.TryGetValue("ToolTip", out var tooltip) && tooltip != null)
                 {
                     functionStringBuilder.AppendLine(string.Join(Environment.NewLine, tooltip.Split(["\r\n", "\n", "\r"], StringSplitOptions.None).Select(line => $"// {line}")));
                 }
+
                 if (editorData.Value.ObjectMetaData.ObjectMetaData.TryGetValue("ModuleRelativePath", out var moduleRelativePath) && moduleRelativePath != null)
                 {
                     functionStringBuilder.AppendLine($"// ModuleRelativePath: {moduleRelativePath}");
@@ -296,6 +379,7 @@ public class UClass : UStruct
                 stringBuilder.CloseBlock("};");
                 return stringBuilder.ToString();
             }
+
             var jumpCodeOffsets = jumpCodeOffsetsMap.TryGetValue(function.Name, out var jumpList) ? jumpList : [];
             foreach (var kismetExpression in function.ScriptBytecode)
             {

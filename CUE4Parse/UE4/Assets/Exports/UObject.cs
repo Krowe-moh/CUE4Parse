@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using CUE4Parse.MappingsProvider;
+using CUE4Parse.UE4.Assets.Exports.Component;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Objects.Properties;
 using CUE4Parse.UE4.Assets.Objects.Unversioned;
@@ -152,6 +153,13 @@ public class UObject : AbstractPropertyHolder
         }
         else
         {
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.TemplateDataAddedToUComponent)
+            {// todo: is component
+                if (Class?.Name?.Contains("Component") ?? false)
+                {
+                    new FPackageIndex(Ar);
+                }
+            }
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedNetIndex && Ar.Game < EGame.GAME_UE4_0)
             {
                 Ar.Read<int>(); // NetIndex
