@@ -37,7 +37,7 @@ public class FPropertyTagData
                     StructGuid = Ar.Read<FGuid>();
                 break;
             case "BoolProperty":
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_PROPERTYTAG_BOOL_OPTIMIZATION && Ar.Game != EGame.GAME_SuddenAttack2)
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_PROPERTYTAG_BOOL_OPTIMIZATION)
                 {
                     Bool = Ar.ReadBoolean();
                 }

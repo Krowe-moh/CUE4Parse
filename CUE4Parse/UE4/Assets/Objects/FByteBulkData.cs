@@ -148,7 +148,7 @@ namespace CUE4Parse.UE4.Assets.Objects
             else if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
             {
                 var data = new byte[Header.ElementCount];
-                ReadCompressedChunk(Ar, data, CompressionMethod.LZ0);
+                ReadCompressedChunk(Ar, data, CompressionMethod.LZO);
                 _data = new Lazy<byte[]>(() => data);
                 return;
             }

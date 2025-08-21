@@ -66,7 +66,7 @@ namespace CUE4Parse.Compression
                     Buffer.BlockCopy(uncompressedBuffer, 0, uncompressed, uncompressedOffset, uncompressedSize);
                     if (result != uncompressedSize) throw new FileLoadException($"Failed to decompress LZ4 data (Expected: {uncompressedSize}, Result: {result})");
                     return;
-                case CompressionMethod.LZ0:
+                case CompressionMethod.LZO:
                 {
                     using var ms = new MemoryStream(compressed, compressedOffset, compressedSize);
                     using var lzoStream = new LzoStream(ms, CompressionMode.Decompress);

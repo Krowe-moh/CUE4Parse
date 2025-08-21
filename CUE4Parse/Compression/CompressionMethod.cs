@@ -8,7 +8,7 @@
         Custom = 3,
         Oodle = 4,
         LZ4,
-        LZ0,
+        LZO,
         Zstd,
         XB1Zlib,
         Unknown
