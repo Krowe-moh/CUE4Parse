@@ -240,10 +240,6 @@ namespace CUE4Parse.UE4.Assets.Objects
                 }
                 else throw new ParserException(Ar, $"Failed to read PayloadAtEndOfFile, {Header.OffsetInFile} is out of range");
             }
-            else if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
-            {
-                throw new ParserException(Ar, "TODO: CompressedZlib");
-            } 
             else if (BulkDataFlags.HasFlag(BULKDATA_LazyLoadable) || BulkDataFlags.HasFlag(BULKDATA_None))
             {
                 CheckReadSize(Ar.Read(data, offset, Header.ElementCount));
