@@ -1,4 +1,4 @@
-﻿using CUE4Parse.UE4.Assets.Readers;
+﻿using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.UE4.Assets.Objects
@@ -10,7 +10,7 @@ namespace CUE4Parse.UE4.Assets.Objects
         public readonly int CompressedOffset;
         public readonly int CompressedSize;
 
-        public FCompressedChunk(FAssetArchive Ar)
+        public FCompressedChunk(FArchive Ar)
         {
             if (Ar.Game == EGame.GAME_RocketLeague)
             {

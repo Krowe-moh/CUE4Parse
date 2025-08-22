@@ -440,21 +440,27 @@ namespace CUE4Parse.UE4.Objects.UObject
                 return (compressionFlags & ~CompressionFlagsMask) == 0;
             }
 
-            CompressionFlags = Ar.Read<ECompressionFlags>();
-
-            if (!VerifyCompressionFlagsValid((int)CompressionFlags))
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedCompression || Ar.Game >= EGame.GAME_UE4_0)
             {
-                throw new ParserException($"Invalid compression flags ({(uint)CompressionFlags})");
+                CompressionFlags = Ar.Read<ECompressionFlags>();
+
+                if (!VerifyCompressionFlagsValid((int)CompressionFlags))
+                {
+                    throw new ParserException($"Invalid compression flags ({(uint)CompressionFlags})");
+                }
+
+                var compressedChunks = Ar.ReadArray((() => new FCompressedChunk(Ar)));
+
+                if (compressedChunks.Length > 0)
+                {
+                    throw new ParserException("Package level compression is enabled");
+                }
             }
 
-            var compressedChunks = Ar.ReadArray<FCompressedChunk>();
-
-            if (compressedChunks.Length > 0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPackageSource || Ar.Game >= EGame.GAME_UE4_0)
             {
-                throw new ParserException("Package level compression is enabled");
+                PackageSource = Ar.Read<int>();
             }
-
-            PackageSource = Ar.Read<int>();
 
             if (Ar.Game == EGame.GAME_ArkSurvivalEvolved && (int)FileVersionLicenseeUE >= 10)
             {
