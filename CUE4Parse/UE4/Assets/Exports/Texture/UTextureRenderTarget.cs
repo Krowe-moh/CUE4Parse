@@ -16,6 +16,7 @@ public class UTextureRenderTarget : UTexture
             var SizeY = Ar.Read<int>();
             var format = Ar.Read<int>();
             Format = (EPixelFormat)format;
+            var numMips = Ar.Read<int>();
         }
     }
 }

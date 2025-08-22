@@ -451,7 +451,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (compressedChunks.Length > 0)
             {
-                //throw new ParserException("Package level compression is enabled");
+                throw new ParserException("Package level compression is enabled");
             }
 
             PackageSource = Ar.Read<int>();

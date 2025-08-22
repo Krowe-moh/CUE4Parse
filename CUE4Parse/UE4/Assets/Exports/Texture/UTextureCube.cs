@@ -17,7 +17,9 @@ public class UTextureCube : UTexture
             var SizeY = Ar.Read<int>();
             var format = Ar.Read<int>();
             Format = (EPixelFormat)format;
+            var numMips = Ar.Read<int>();
         }
+        
         if (Ar.Game >= EGame.GAME_UE4_0)
         {
             var stripFlags = new FStripDataFlags(Ar);

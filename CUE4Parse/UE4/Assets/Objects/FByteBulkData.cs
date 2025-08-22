@@ -199,7 +199,7 @@ namespace CUE4Parse.UE4.Assets.Objects
                 return false;
             }
 
-            var Ar = _savedAr; // TODO: remove and use FArchive.ReadAt
+            var Ar = (FAssetArchive)_savedAr.Clone(); // TODO: remove and use FArchive.ReadAt
             Ar.Position = _dataPosition;
             if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload))
             {

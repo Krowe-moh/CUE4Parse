@@ -156,7 +156,7 @@ public class UObject : AbstractPropertyHolder
         {
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.TemplateDataAddedToUComponent)
             {
-                if (this is UComponent)
+                if (Class.Name.Contains("Component") || this is UComponent)
                 {
                     new FPackageIndex(Ar);
                 }
