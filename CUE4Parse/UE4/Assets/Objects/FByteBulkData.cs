@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.IO.Compression;
 using System.Runtime.CompilerServices;
 using CUE4Parse.Compression;
 using CUE4Parse.FileProvider.Vfs;
@@ -200,7 +199,7 @@ namespace CUE4Parse.UE4.Assets.Objects
                 return false;
             }
 
-            var Ar = (FAssetArchive)_savedAr.Clone(); // TODO: remove and use FArchive.ReadAt
+            var Ar = _savedAr; // TODO: remove and use FArchive.ReadAt
             Ar.Position = _dataPosition;
             if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload))
             {

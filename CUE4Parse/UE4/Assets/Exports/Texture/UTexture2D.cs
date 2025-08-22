@@ -31,14 +31,16 @@ public class UTexture2D : UTexture
             bCooked = Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_COOKED_TO_TEXTURE2D && Ar.ReadBoolean();
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.DisplacedUTextureProperties)
+        if (Ar.Game < EGame.GAME_UE4_0 && Ar.Ver < EUnrealEngineObjectUE3Version.DisplacedUTextureProperties)
         {
             var SizeX = Ar.Read<int>();
             var SizeY = Ar.Read<int>();
             var format = Ar.Read<int>();
             Format = (EPixelFormat)format;
         }
-        if (Ar.Ver < EUnrealEngineObjectUE4Version.TEXTURE_SOURCE_ART_REFACTOR)
+        
+        // I've set this to 4.0 as TEXTURE_SOURCE_ART_REFACTOR is UE 4 Pre-release
+        if (Ar.Game <= EGame.GAME_UE4_0 && Ar.Ver < EUnrealEngineObjectUE4Version.TEXTURE_SOURCE_ART_REFACTOR)
         {
             var legacyMips = Array.Empty<FTexture2DMipMap>();
 

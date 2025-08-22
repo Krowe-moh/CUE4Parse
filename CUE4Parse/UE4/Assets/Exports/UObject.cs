@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using CUE4Parse.MappingsProvider;
+using CUE4Parse.UE4.Assets.Exports.Actor;
 using CUE4Parse.UE4.Assets.Exports.Component;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Objects.Properties;
@@ -154,8 +155,8 @@ public class UObject : AbstractPropertyHolder
         else
         {
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.TemplateDataAddedToUComponent)
-            {// todo: is component
-                if (Class?.Name?.Contains("Component") ?? false)
+            {
+                if (this is UComponent)
                 {
                     new FPackageIndex(Ar);
                 }

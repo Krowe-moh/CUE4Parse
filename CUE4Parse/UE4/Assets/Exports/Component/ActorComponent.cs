@@ -1,3 +1,4 @@
+using CUE4Parse.UE4.Assets.Exports.Actor;
 using CUE4Parse.UE4.Assets.Exports.Component.Atmosphere;
 using CUE4Parse.UE4.Assets.Exports.Component.Landscape;
 using CUE4Parse.UE4.Assets.Exports.Component.Lights;
@@ -11,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace CUE4Parse.UE4.Assets.Exports.Component;
 
-public class UActorComponent : UObject
+public class UActorComponent : UComponent
 {
     [JsonIgnore] public FSimpleMemberReference[]? UCSModifiedProperties;
 
@@ -71,6 +72,7 @@ public class UCableComponent : UMeshComponent;
 public class UCameraComponent : USceneComponent;
 public class UCameraShakeSourceComponent : USceneComponent;
 public class UCapsuleComponent : UShapeComponent;
+public class UCylinderComponent : UShapeComponent;
 public class UChaosDebugDrawComponent : UActorComponent;
 public class UChaosDestructionListener : USceneComponent;
 public class UChaosEventListenerComponent : UActorComponent;

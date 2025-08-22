@@ -40,7 +40,8 @@ public class USceneComponent : UActorComponent
             if (bIsCooked)
                 Bounds = new FBoxSphereBounds(Ar);
         }
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedComponentGuid && Ar.Ver < EUnrealEngineObjectUE3Version.AddedComponentGuid) 
+        // move this to UPrimitiveComponent ?
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedComponentGuid && Ar.Ver < EUnrealEngineObjectUE3Version.ComponentGuidDeprecated) 
         {
             Ar.Read<FGuid>();
         }
