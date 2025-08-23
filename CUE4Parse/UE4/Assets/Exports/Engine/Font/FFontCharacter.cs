@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using CUE4Parse.UE4.Readers;
+using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.UE4.Assets.Exports.Engine.Font
 {
@@ -19,8 +20,14 @@ namespace CUE4Parse.UE4.Assets.Exports.Engine.Font
             StartV = Ar.Read<int>();
             USize = Ar.Read<int>();
             VSize = Ar.Read<int>();
-            TextureIndex = Ar.Read<byte>();
-            VerticalOffset = Ar.Read<int>();
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.FontPagesDisplaced || Ar.Game >= EGame.GAME_UE4_0)
+            {
+                TextureIndex = Ar.Read<byte>();
+            }
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FONT_FORMAT_AND_UV_TILING_CHANGES || Ar.Game >= EGame.GAME_UE4_0)
+            {
+                VerticalOffset = Ar.Read<int>();
+            }
         }
 
         public FFontCharacter(int startU, int startV, int uSize, int vSize, byte textureIndex, int verticalOffset)

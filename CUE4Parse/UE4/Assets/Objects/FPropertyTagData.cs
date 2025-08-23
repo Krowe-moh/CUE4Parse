@@ -90,7 +90,7 @@ public class FPropertyTagData
                         InnerType = "NameProperty";
                         return;
                     }
-                    if (name is "Expressions" or "ChildNodes" or "Sequences" or "Children" or "ReferencedObjects" or "References" or "Textures" or "RemovedArchetypes" or "PrefabArchetypes" or "Attached" or "SequenceObjects" or "LFMaterials" or "DecalList" or "Anim" or "ControlHead" or "AnimSets" or "Components" or "Modules" or "Targets" or "Controls" or "SpawnModules" or "UpdateModules" or "Emitters" or "LODLevels" or "ReplayClips" or "Skins" or "Effects" or "ReferencedTextures")
+                    if (name is "Expressions" or "ChildProFXTextures" or "ChildNodes" or "Sequences" or "Children" or "ReferencedObjects" or "References" or "Textures" or "RemovedArchetypes" or "PrefabArchetypes" or "Attached" or "SequenceObjects" or "LFMaterials" or "DecalList" or "Anim" or "ControlHead" or "AnimSets" or "Components" or "Modules" or "Targets" or "Controls" or "SpawnModules" or "UpdateModules" or "Emitters" or "LODLevels" or "ReplayClips" or "Skins" or "Effects" or "ReferencedTextures")
                     {
                         InnerType = "ObjectProperty";
                         return;

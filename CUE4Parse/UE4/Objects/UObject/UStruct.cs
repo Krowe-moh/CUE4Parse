@@ -25,10 +25,6 @@ public class UStruct : UField
         {
             SuperStruct = new FPackageIndex(Ar);
         }
-        else
-        {
-            SuperStruct = Next;
-        }
 
         if (Ar.Game == EGame.GAME_UE3_0)
         {

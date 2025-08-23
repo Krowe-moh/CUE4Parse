@@ -27,6 +27,7 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
     public FPackageIndex[] AssetUserData { get; private set; } = [];
     public EPixelFormat Format { get; protected set; } = EPixelFormat.PF_Unknown;
     public FTexturePlatformData PlatformData { get; private set; } = new();
+    public FByteBulkData SourceArt { get; private set; }
 
     public bool RenderNearestNeighbor => LODGroup == TextureGroup.TEXTUREGROUP_Pixels2D || Filter == TextureFilter.TF_Nearest;
     public bool IsNormalMap => CompressionSettings == TextureCompressionSettings.TC_Normalmap;
@@ -88,7 +89,7 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
                 return;
             }
 
-            new FByteBulkData(Ar); // SourceArt
+            SourceArt = new FByteBulkData(Ar); // sometimes has data, dds format
             return;
         }
 

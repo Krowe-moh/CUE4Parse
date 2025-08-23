@@ -41,7 +41,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             ExportCount = Ar.Read<int>();
             NameCount = Ar.Read<int>();
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedNetIndex && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedNetIndex)
             {
                 NetObjectCount = Ar.Read<int>();
             }

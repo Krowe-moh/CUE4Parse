@@ -178,6 +178,11 @@ public class UClass : UStruct
             Ar.ReadArray(() => Ar.ReadFName());
         }
 
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SCRIPT_BIND_DLL_FUNCTIONS)
+        {
+            Ar.ReadFName(); // DLLBindName
+        }
+
         if (Ar.Game == EGame.GAME_SuddenAttack2)
         {
             Ar.Read<int>();

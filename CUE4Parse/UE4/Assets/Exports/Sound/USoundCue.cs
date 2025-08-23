@@ -36,8 +36,11 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
                     if (key != null)
                         EditorData[key] = value;
                 }
+
+                return;
             }
-            else if (Ar.Ver >= EUnrealEngineObjectUE4Version.COOKED_ASSETS_IN_EDITOR_SUPPORT)
+            
+            if (Ar.Ver >= EUnrealEngineObjectUE4Version.COOKED_ASSETS_IN_EDITOR_SUPPORT)
             {
                 var _ = new FStripDataFlags(Ar);
             }

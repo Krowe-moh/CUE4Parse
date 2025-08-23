@@ -38,7 +38,7 @@ public class FTexture2DMipMap
         else
         {
             SizeX = Ar.Read<int>();
-            SizeY = Ar.Read<int>();
+            SizeY = Ar.Game == EGame.GAME_RocketLeague ? SizeX : Ar.Read<int>();
             SizeZ = Ar.Game >= EGame.GAME_UE4_20 ? Ar.Read<int>() : 1;
         }
 

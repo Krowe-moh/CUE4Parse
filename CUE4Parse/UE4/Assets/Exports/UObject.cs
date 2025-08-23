@@ -161,7 +161,7 @@ public class UObject : AbstractPropertyHolder
                     new FPackageIndex(Ar);
                 }
             }
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedNetIndex && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedNetIndex)
             {
                 Ar.Read<int>(); // NetIndex
             }

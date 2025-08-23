@@ -16,24 +16,17 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             base.Deserialize(Ar, validPos);
             ArrayDim = Ar.Read<int>();
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PropertyFlagsSizeExpandedTo64Bits)
-            {
-                PropertyFlags = (EPropertyFlags) Ar.Read<ulong>();
-            }
-            else
-            {
-                PropertyFlags = (EPropertyFlags) Ar.Read<uint>();
-            }
-            if (Ar.Game < EGame.GAME_UE4_0)
-            {
-             //   var PropertyFlags2 = Ar.Read<EPropertyFlags>();
-           //     new FPackageIndex(Ar);
-            }
-            else
+            PropertyFlags = (EPropertyFlags)(Ar.Ver >= EUnrealEngineObjectUE3Version.PropertyFlagsSizeExpandedTo64Bits ? Ar.Read<ulong>() : Ar.Read<uint>());
+            if (Ar.Game > EGame.GAME_UE4_0)
             {
                 RepNotifyFunc = Ar.ReadFName();
             }
-
+            
+            if (PropertyFlags.HasFlag(EPropertyFlags.Net) && Ar.Game < EGame.GAME_UE4_0)
+            {
+                Ar.Read<ushort>();
+            }
+            
             if (FReleaseObjectVersion.Get(Ar) >= FReleaseObjectVersion.Type.PropertiesSerializeRepCondition)
             {
                 BlueprintReplicationCondition = (ELifetimeCondition) Ar.Read<byte>();
@@ -142,7 +135,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             PropertyClass = new FPackageIndex(Ar);
 
             // move this to UObjectProperty?
-            if (Ar.Game == EGame.GAME_RocketLeague)// LicenseeVersion >= 32
+            if (Ar.Game == EGame.GAME_RocketLeague)
             {
                 Ar.ReadFName();
             }
@@ -232,6 +225,10 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             base.Deserialize(Ar, validPos);
             InterfaceClass = new FPackageIndex(Ar);
+            if (Ar.Game == EGame.GAME_RocketLeague)
+            {
+                Ar.ReadFName();
+            }
         }
 
         protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)

@@ -47,12 +47,25 @@ public class UTexture2D : UTexture
             var bHasLegacyMips = Ar.Game >= EGame.GAME_UE4_0 ? GetOrDefault("bDisableDerivedDataCache_DEPRECATED", false) : true;
             if (bHasLegacyMips)
             {
-                legacyMips = Ar.ReadArray(() => new FTexture2DMipMap(Ar));
+                if (Ar.Game == EGame.GAME_RocketLeague)
+                {
+                    legacyMips = [new FTexture2DMipMap(Ar)];
+                }
+                else
+                {
+                    legacyMips = Ar.ReadArray(() => new FTexture2DMipMap(Ar));
+                }
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_TEXTURE_FILECACHE_GUIDS)
             {
                 var textureFileCacheGuidDeprecated = Ar.Read<FGuid>();
+            }
+
+            if (Ar.Game == EGame.GAME_RocketLeague)
+            {
+                Ar.Position += 36; // unknown
+                goto skipPlatform;
             }
             
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_IPHONE_DATA)
@@ -72,6 +85,7 @@ public class UTexture2D : UTexture
                 Ar.ReadArray(() => new FTexture2DMipMap(Ar));
             }
 
+            skipPlatform:
             Format = GetOrDefault(nameof(Format), EPixelFormat.PF_Unknown);
 
             if (bHasLegacyMips && legacyMips.Length > 0)
