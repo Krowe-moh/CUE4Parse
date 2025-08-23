@@ -260,7 +260,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             if (Ar.Ver < EUnrealEngineObjectUE4Version.e64BIT_EXPORTMAP_SERIALSIZES)
             {
                 SerialSize = Ar.Read<int>();
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedSerialOffset)
+                if (SerialSize > 0 && Ar.Ver >= EUnrealEngineObjectUE3Version.AddedSerialOffset)
                 {
                     SerialOffset = Ar.Read<int>();
                 }
