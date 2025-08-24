@@ -1,3 +1,4 @@
+using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Versions;
 using CUE4Parse.Utils;
@@ -24,7 +25,12 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Game < EGame.GAME_UE4_0)
             {
-                Ar.ReadFName();
+                if (!Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform != ETexturePlatform.XboxAndPlaystation) // ignore for now
+                {
+                    //Ar.ReadFName();
+                    //new FPackageIndex(Ar);
+                }
+
                 if (PropertyFlags.HasFlag(EPropertyFlags.Net))
                 {
                     Ar.Read<ushort>();
