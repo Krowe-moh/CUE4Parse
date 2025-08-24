@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using CUE4Parse.Compression;
 using CUE4Parse.FileProvider;
 using CUE4Parse.GameTypes.ACE7.Encryption;
 using CUE4Parse.UE4.Assets.Exports;
+using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Assets.Utils;
 using CUE4Parse.UE4.Objects.Core.Misc;
@@ -84,6 +86,22 @@ namespace CUE4Parse.UE4.Assets
             else uassetAr = new FAssetArchive(uasset, this);
 
             Summary = new FPackageFileSummary(uassetAr);
+
+            if (Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_GZIP) || Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB))
+            {
+                uassetAr.Position = Summary.CompressedChunks[0].CompressedOffset;
+                var compressedData = new byte[Summary.CompressedChunks[0].UncompressedSize];
+                FByteBulkData.ReadCompressedChunk(uassetAr, compressedData, Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB) ? CompressionMethod.Zlib : CompressionMethod.LZO);
+                var buffer = new byte[uassetAr.Position + compressedData.Length];
+                uassetAr.Position = 0;
+                uassetAr.Read(buffer, 0, (int)uassetAr.Position);
+
+                uassetAr.Position = Summary.CompressedChunks[0].UncompressedOffset;
+                Array.Copy(compressedData, 0, buffer, (int)uassetAr.Position, compressedData.Length);
+
+                using var tempAr = new FByteArchive("temp", buffer, uassetAr.Versions);
+                uassetAr.SetBaseArchive(tempAr);
+            }
 
             uassetAr.SeekAbsolute(Summary.NameOffset, SeekOrigin.Begin);
             NameMap = new FNameEntrySerialized[Summary.NameCount];
@@ -271,7 +289,7 @@ namespace CUE4Parse.UE4.Assets
             if (importPackage == null)
             {
 #if DEBUG
-Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, import.ObjectName, Name);
+//                Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, import.ObjectName, Name);
 #endif
                 return new ResolvedImportObject(import, this);
             }

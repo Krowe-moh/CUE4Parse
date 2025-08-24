@@ -25,10 +25,14 @@ public class UStruct : UField
         {
             SuperStruct = new FPackageIndex(Ar);
         }
+        else
+        {
+            SuperStruct = SuperField;
+        }
 
         if (Ar.Game == EGame.GAME_UE3_0)
         {
-            new FPackageIndex(Ar);
+            new FPackageIndex(Ar); // ScriptText
         }
 
         if (FFrameworkObjectVersion.Get(Ar) < FFrameworkObjectVersion.Type.RemoveUField_Next)
@@ -40,18 +44,26 @@ public class UStruct : UField
         {
             Children = Ar.ReadArray(() => new FPackageIndex(Ar));
         }
+        
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction)
+        {
+            Ar.ReadFName();
+        }
 
-
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedCppTextToUStruct)
+        {
+            new FPackageIndex(Ar);
+        }
+        
+        if (Ar.Game == EGame.GAME_UE3_0)
+        {
+            Ar.Read<int>(); // Line
+            Ar.Read<int>(); // TextPos
+        }
+        
         if (FCoreObjectVersion.Get(Ar) >= FCoreObjectVersion.Type.FProperties)
         {
             DeserializeProperties(Ar);
-        }
-
-        if (Ar.Game == EGame.GAME_UE3_0)
-        {
-            new FPackageIndex(Ar);
-            Ar.Read<int>();
-            Ar.Read<int>();
         }
 
         var bytecodeBufferSize = Ar.Read<int>();
@@ -97,6 +109,11 @@ public class UStruct : UField
         else
         {
             Ar.Position += serializedScriptSize;
+        }
+
+        if (Ar.Game == EGame.GAME_UE3_0)
+        {
+            //DeserializePropertiesTagged(Properties, Ar, true);
         }
     }
 

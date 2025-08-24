@@ -21,12 +21,21 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 RepNotifyFunc = Ar.ReadFName();
             }
-            
-            if (PropertyFlags.HasFlag(EPropertyFlags.Net) && Ar.Game < EGame.GAME_UE4_0)
+
+            if (Ar.Game < EGame.GAME_UE4_0)
             {
-                Ar.Read<ushort>();
+                Ar.ReadFName();
+                if (PropertyFlags.HasFlag(EPropertyFlags.Net))
+                {
+                    Ar.Read<ushort>();
+                }
+
+                if (Ar.Game == EGame.GAME_RocketLeague)
+                {
+                    Ar.ReadFString();
+                }
             }
-            
+
             if (FReleaseObjectVersion.Get(Ar) >= FReleaseObjectVersion.Type.PropertiesSerializeRepCondition)
             {
                 BlueprintReplicationCondition = (ELifetimeCondition) Ar.Read<byte>();
@@ -178,7 +187,9 @@ namespace CUE4Parse.UE4.Objects.UObject
             serializer.Serialize(writer, MetaClass);
         }
     }
-
+    
+    public class UComponentProperty : UProperty { }
+    
     public class UClassProperty : UObjectProperty
     {
         public FPackageIndex MetaClass; // UClass

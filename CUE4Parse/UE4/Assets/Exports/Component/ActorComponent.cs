@@ -211,6 +211,7 @@ public class UPaperTileMapComponent : UMeshComponent;
 public class UPaperTileMapRenderComponent : UPaperTileMapComponent;
 public class UParticleSystemComponent : UFXSystemComponent;
 public class UPathFollowingComponent : UActorComponent;
+public class UPathRenderingComponent : UPrimitiveComponent;
 public class UPawnActionsComponent : UActorComponent;
 public class UPawnMovementComponent : UNavMovementComponent;
 public class UPawnNoiseEmitterComponent : UActorComponent;

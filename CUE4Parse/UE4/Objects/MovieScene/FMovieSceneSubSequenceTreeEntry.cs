@@ -13,7 +13,7 @@ public struct FMovieSceneSubSequenceTreeEntry : IUStruct
     public FMovieSceneSubSequenceTreeEntry(FAssetArchive Ar)
     {
         SequenceID = Ar.Read<uint>();
-        Flags = (ESectionEvaluationFlags) Ar.ReadByte();
+        Flags = (ESectionEvaluationFlags) Ar.Read<byte>();
         if (Ar.Game < EGame.GAME_UE5_5 && (FReleaseObjectVersion.Get(Ar) >= FReleaseObjectVersion.Type.AddedSubSequenceEntryWarpCounter ||
             FFortniteMainBranchObjectVersion.Get(Ar) >= FFortniteMainBranchObjectVersion.Type.AddedSubSequenceEntryWarpCounter))
         {

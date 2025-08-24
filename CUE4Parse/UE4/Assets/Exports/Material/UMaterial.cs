@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
+using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
@@ -72,6 +73,22 @@ public class UMaterial : UMaterialInterface
             {
                 Ar.Position = validPos;
             }
+        }
+
+        if (Ar.Game >= EGame.GAME_UE4_0) return;
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MATERIAL_QUALITY_LEVEL)
+        {
+            Ar.Read<int>();
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
+        {
+            var StringArray = Ar.ReadArray((() => Ar.ReadString()));
+            var ObjectIntMap = Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>());
+            var FirstInt = Ar.Read<int>();
+            var GuidValue = Ar.Read<FGuid>();
+            var SecondInt = Ar.Read<int>();
         }
     }
 

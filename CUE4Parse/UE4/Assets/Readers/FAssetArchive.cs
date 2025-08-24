@@ -18,7 +18,7 @@ namespace CUE4Parse.UE4.Assets.Readers
     public class FAssetArchive : FArchive
     {
         private readonly Dictionary<PayloadType, Lazy<FAssetArchive?>> _payloads;
-        private readonly FArchive _baseArchive;
+        private FArchive _baseArchive;
 
         public readonly IPackage? Owner;
         public int AbsoluteOffset;
@@ -32,6 +32,11 @@ namespace CUE4Parse.UE4.Assets.Readers
             _baseArchive = baseArchive;
             Owner = owner;
             AbsoluteOffset = absoluteOffset;
+        }
+
+        public void SetBaseArchive(FArchive newArchive)
+        {
+            _baseArchive = newArchive;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -78,6 +83,7 @@ namespace CUE4Parse.UE4.Assets.Readers
                         // Silent this as it is expected to not have an object
                         return null;
                     }
+
                     Log.Warning("Failed to resolve index {Index}", index);
                     return null;
                 }
@@ -98,6 +104,7 @@ namespace CUE4Parse.UE4.Assets.Readers
                 {
                     return cast;
                 }
+
                 Log.Warning("Object has unexpected type {ObjType}, expected type {Type}", obj.GetType().Name, typeof(T).Name);
 
                 return null;
@@ -116,6 +123,7 @@ namespace CUE4Parse.UE4.Assets.Readers
             {
                 ar = null;
             }
+
             return ar != null;
         }
 
@@ -156,8 +164,10 @@ namespace CUE4Parse.UE4.Assets.Readers
 
         public override int ReadAt(long position, byte[] buffer, int offset, int count)
             => _baseArchive.ReadAt(position, buffer, offset, count);
+
         public override Task<int> ReadAtAsync(long position, byte[] buffer, int offset, int count, CancellationToken cancellationToken = default)
             => _baseArchive.ReadAtAsync(position, buffer, offset, count, cancellationToken);
+
         public override ValueTask<int> ReadAtAsync(long position, Memory<byte> memory, CancellationToken cancellationToken = default)
             => _baseArchive.ReadAtAsync(position, memory, cancellationToken);
 
@@ -172,6 +182,7 @@ namespace CUE4Parse.UE4.Assets.Readers
         public override bool CanSeek => _baseArchive.CanSeek;
         public override long Length => _baseArchive.Length;
         public long AbsolutePosition => AbsoluteOffset + Position;
+
         public override long Position
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -204,6 +215,6 @@ namespace CUE4Parse.UE4.Assets.Readers
 
         // For performance reasons we carry over the payloads dict to the cloned instance
         // Shouldn't be a big deal since we add the payloads during package initialization phase, not during object serialization
-        public override object Clone() => new FAssetArchive((FArchive) _baseArchive.Clone(), Owner, AbsoluteOffset, _payloads);
+        public override object Clone() => new FAssetArchive((FArchive)_baseArchive.Clone(), Owner, AbsoluteOffset, _payloads);
     }
 }

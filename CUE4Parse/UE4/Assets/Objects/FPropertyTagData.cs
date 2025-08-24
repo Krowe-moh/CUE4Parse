@@ -65,7 +65,7 @@ public class FPropertyTagData
                         InnerType = "FloatProperty";
                         return;
                     }
-                    if (name is "Constraints" or "CompressedTrackOffsets" or "LODMaterialMap")
+                    if (name is "Constraints" or "FaceTriData" or "SpawnOffsets" or "CompressedTrackOffsets" or "LODMaterialMap" or "SupportedEvents")
                     {
                         InnerType = "IntProperty";
                         return;
@@ -80,17 +80,17 @@ public class FPropertyTagData
                         InnerType = "BoolProperty";
                         return;
                     }
-                    if (name is "ParamNames")
+                    if (name is "ParamNames" or "EditPackages" or "PackagesToBeFullyLoadedAtStartup")
                     {
                         InnerType = "StrProperty";
                         return;
                     }
-                    if (name is "BranchStartBoneName" or "AnimList" or "ReferencedSwfs" or "TrackBoneNames" or "LibraryCategories")
+                    if (name is "BranchStartBoneName" or "ArenaNames" or "SavedGameFileNames" or "TargetParamNames" or "AnimList" or "ReferencedSwfs" or "TrackBoneNames" or "LibraryCategories" or "TargetParamNames" or "HiddenKismetClassNames" or "BadPackageNames")
                     {
                         InnerType = "NameProperty";
                         return;
                     }
-                    if (name is "Expressions" or "ChildProFXTextures" or "ChildNodes" or "Sequences" or "Children" or "ReferencedObjects" or "References" or "Textures" or "RemovedArchetypes" or "PrefabArchetypes" or "Attached" or "SequenceObjects" or "LFMaterials" or "DecalList" or "Anim" or "ControlHead" or "AnimSets" or "Components" or "Modules" or "Targets" or "Controls" or "SpawnModules" or "UpdateModules" or "Emitters" or "LODLevels" or "ReplayClips" or "Skins" or "Effects" or "ReferencedTextures")
+                    if (name is "Expressions" or "AchievementIcons" or "ConnectorSockets" or "ChildProFXTextures" or "ChildNodes" or "Sequences" or "Children" or "ReferencedObjects" or "References" or "Textures" or "RemovedArchetypes" or "PrefabArchetypes" or "Attached" or "SequenceObjects" or "LFMaterials" or "DecalList" or "Anim" or "ControlHead" or "AnimSets" or "Components" or "Modules" or "Targets" or "Controls" or "SpawnModules" or "UpdateModules" or "Emitters" or "LODLevels" or "ReplayClips" or "Skins" or "Effects" or "ReferencedTextures")
                     {
                         InnerType = "ObjectProperty";
                         return;
@@ -99,6 +99,14 @@ public class FPropertyTagData
                     {
                         InnerType = "ClassProperty";
                         return;
+                    }
+                    if (name is "FaceNormalDirections" or "EdgeDirections" or "VertexData")
+                    {
+                        InnerTypeData = new FPropertyTagData("Vector", name);
+                    }
+                    if (name is "FacePlaneData" or "PermutedVertexData")
+                    {
+                        InnerTypeData = new FPropertyTagData("Plane", name);
                     }
                     InnerType = "StructProperty";
                 }

@@ -4,7 +4,6 @@ using System.Linq;
 using CUE4Parse.UE4.Assets;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Exports.Actor;
-using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Kismet;
 using CUE4Parse.UE4.Objects.Core.Misc;
@@ -14,7 +13,6 @@ using CUE4Parse.UE4.Objects.UObject.Editor;
 using CUE4Parse.UE4.Versions;
 using CUE4Parse.Utils;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Serilog;
 
 namespace CUE4Parse.UE4.Objects.UObject;

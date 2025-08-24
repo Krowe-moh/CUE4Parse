@@ -360,7 +360,7 @@ namespace CUE4Parse.GameTypes.FN.Assets.Exports
             else
             {
                 if (SaveVersion >= ELevelSaveRecordVersion.AddedLevelInstance)
-                    Ar.Position += 1; // var _ = Ar.ReadByte(); // 2 almost? every time
+                    Ar.Position += 1; // var _ = Ar.Read<byte>(); // 2 almost? every time
 
                 base.Deserialize(Ar, validPos);
 

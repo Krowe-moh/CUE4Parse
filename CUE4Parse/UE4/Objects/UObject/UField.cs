@@ -6,6 +6,8 @@ namespace CUE4Parse.UE4.Objects.UObject
 {
     public class UField : Assets.Exports.UObject
     {
+        public FPackageIndex? SuperField;
+        
         /** Next Field in the linked list */
         public FPackageIndex? Next; // UField
 
@@ -15,7 +17,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             
             if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_MOVED_SUPERFIELD_TO_USTRUCT)
             {
-                new FPackageIndex(Ar);
+                SuperField = new FPackageIndex(Ar);
             }
             
             if (FFrameworkObjectVersion.Get(Ar) < FFrameworkObjectVersion.Type.RemoveUField_Next)

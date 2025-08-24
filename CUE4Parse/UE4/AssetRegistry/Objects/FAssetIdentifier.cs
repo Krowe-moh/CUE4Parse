@@ -17,7 +17,7 @@ namespace CUE4Parse.UE4.AssetRegistry.Objects
 
         public FAssetIdentifier(FAssetRegistryArchive Ar)
         {
-            var fieldBits = Ar.ReadByte();
+            var fieldBits = Ar.Read<byte>();
             if ((fieldBits & (1 << 0)) != 0)
             {
                 PackageName = Ar.ReadFName();

@@ -1,4 +1,5 @@
-﻿using CUE4Parse.UE4.Assets.Readers;
+﻿using CUE4Parse.UE4.Assets.Exports.Texture;
+using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Versions;
 using CUE4Parse.Utils;
 using Newtonsoft.Json;
@@ -25,10 +26,10 @@ public class UFunction : UStruct
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
             {
-                var paramsCount = Ar.ReadByte();
+                var paramsCount = Ar.Read<byte>();
             }
 
-            var OperPrecedence = Ar.ReadByte();
+            var OperPrecedence = Ar.Read<byte>();
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
             {
@@ -39,17 +40,19 @@ public class UFunction : UStruct
         FunctionFlags = Ar.Read<EFunctionFlags>();
         // rocket league, maybe use flag?
         if (Ar.Game is EGame.GAME_AshesOfCreation or EGame.GAME_RocketLeague) Ar.Position += 4;
-
+        
         // Replication info
-        if ((FunctionFlags & EFunctionFlags.FUNC_Net) != 0)
+        if (FunctionFlags.HasFlag(EFunctionFlags.FUNC_Net))
         {
             // Unused.
             var repOffset = Ar.Read<short>();
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && !Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && !Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform != ETexturePlatform.XboxAndPlaystation)
         {
-            var FriendlyName = Ar.ReadFName();
+            // ignore platform.
+            // vro this broken vro
+            //var FriendlyName = Ar.ReadFName();
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SERIALIZE_BLUEPRINT_EVENTGRAPH_FASTCALLS_IN_UFUNCTION)

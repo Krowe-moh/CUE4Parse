@@ -728,6 +728,7 @@ namespace CUE4Parse.UE4.Versions
         DeprecatedHeritageTable = 68,
         CompMipsDeprecated = 84,
         AddedHideCategoriesToUClass = 99,
+        AddedCppTextToUStruct = 120,
         FontPagesDisplaced = 122,
         MovedFriendlyNameToUFunction = 160,
         CompactIndexDeprecated = 178,

@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using CUE4Parse.Compression;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
@@ -96,6 +97,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         public readonly FGuid Guid;
         public readonly FGuid PersistentGuid;
         public readonly FGenerationInfo[] Generations;
+        public readonly FCompressedChunk[] CompressedChunks;
         public readonly FEngineVersion? SavedByEngineVersion;
         public readonly FEngineVersion? CompatibleWithEngineVersion;
         public readonly ECompressionFlags CompressionFlags;
@@ -449,12 +451,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                     throw new ParserException($"Invalid compression flags ({(uint)CompressionFlags})");
                 }
 
-                var compressedChunks = Ar.ReadArray((() => new FCompressedChunk(Ar)));
-
-                if (compressedChunks.Length > 0)
-                {
-                    throw new ParserException("Package level compression is enabled");
-                }
+                CompressedChunks = Ar.ReadArray(() => new FCompressedChunk(Ar));
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPackageSource || Ar.Game >= EGame.GAME_UE4_0)
