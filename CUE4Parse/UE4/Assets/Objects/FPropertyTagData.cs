@@ -80,17 +80,17 @@ public class FPropertyTagData
                         InnerType = "BoolProperty";
                         return;
                     }
-                    if (name is "ParamNames" or "Commands" or "EditPackages" or "PackagesToBeFullyLoadedAtStartup")
+                    if (name is "ParamNames" or "StyleGroups" or "Commands" or "EditPackages" or "PackagesToBeFullyLoadedAtStartup")
                     {
                         InnerType = "StrProperty";
                         return;
                     }
-                    if (name is "BranchStartBoneName" or "MonsterTypes" or "ArenaNames" or "SavedGameFileNames" or "TargetParamNames" or "AnimList" or "ReferencedSwfs" or "TrackBoneNames" or "LibraryCategories" or "TargetParamNames" or "HiddenKismetClassNames" or "BadPackageNames")
+                    if (name is "BranchStartBoneName" or "MonsterTypes" or "ArenaNames" or "SavedGameFileNames" or "TargetParamNames" or "AnimList" or "ReferencedSwfs" or "TrackBoneNames" or "LibraryCategories" or "HiddenKismetClassNames" or "BadPackageNames")
                     {
                         InnerType = "NameProperty";
                         return;
                     }
-                    if (name is "Expressions" or "GroupAnimSets" or "Materials" or "AchievementIcons" or "ConnectorSockets" or "ChildProFXTextures" or "ChildNodes" or "Sequences" or "Children" or "ReferencedObjects" or "References" or "Textures" or "RemovedArchetypes" or "PrefabArchetypes" or "Attached" or "SequenceObjects" or "LFMaterials" or "DecalList" or "Anim" or "ControlHead" or "AnimSets" or "Components" or "Modules" or "Targets" or "Controls" or "SpawnModules" or "UpdateModules" or "Emitters" or "LODLevels" or "ReplayClips" or "Skins" or "Effects" or "ReferencedTextures")
+                    if (name is "Expressions" or "Styles" or "InactiveStates" or "Flashlight_MeshComponents" or "Flashlight_FlareComponents" or "Flashlight_FlareSockets" or "Wheels" or "Flashlight_LightSockets" or "FlickerFunctionArchetypes" or "GroupAnimSets" or "Materials" or "AchievementIcons" or "ConnectorSockets" or "ChildProFXTextures" or "ChildNodes" or "Sequences" or "Children" or "ReferencedObjects" or "References" or "Textures" or "RemovedArchetypes" or "PrefabArchetypes" or "Attached" or "SequenceObjects" or "LFMaterials" or "DecalList" or "Anim" or "ControlHead" or "AnimSets" or "Components" or "Modules" or "Targets" or "Controls" or "SpawnModules" or "UpdateModules" or "Emitters" or "LODLevels" or "ReplayClips" or "Skins" or "Effects" or "ReferencedTextures")
                     {
                         InnerType = "ObjectProperty";
                         return;
