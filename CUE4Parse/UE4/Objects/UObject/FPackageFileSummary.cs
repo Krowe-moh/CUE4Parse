@@ -88,6 +88,8 @@ namespace CUE4Parse.UE4.Objects.UObject
         public int ExportGuidsCount;
         public int ImportGuidsCount;
         public int ImportExportGuidsOffset;
+        public int GarbageSize;
+        public int CompressedChunkInfoOffset;
         public readonly int DependsOffset;
         public readonly int SoftPackageReferencesCount;
         public readonly int SoftPackageReferencesOffset;
@@ -97,7 +99,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         public readonly FGuid Guid;
         public readonly FGuid PersistentGuid;
         public readonly FGenerationInfo[] Generations;
-        public readonly FCompressedChunk[] CompressedChunks;
+        public FCompressedChunk[] CompressedChunks;
         public readonly FEngineVersion? SavedByEngineVersion;
         public readonly FEngineVersion? CompatibleWithEngineVersion;
         public readonly ECompressionFlags CompressionFlags;
@@ -469,6 +471,10 @@ namespace CUE4Parse.UE4.Objects.UObject
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDITIONAL_COOK_PACKAGE_SUMMARY || Ar.Game >= EGame.GAME_UE4_0)
             {
                 var additionalPackagesToCook = Ar.ReadArray(Ar.ReadFString);
+                if (Ar.Game == EGame.GAME_RocketLeague)
+                {
+                    goto skipTexture;
+                }
             }
 
             if (legacyFileVersion > -7)
@@ -553,10 +559,18 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.Read<int>(); // offset
             }
 
-            if (Ar.Game == EGame.GAME_RocketLeague && PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
+            skipTexture:
+            if (Ar.Game == EGame.GAME_RocketLeague)
             {
-                Ar.Read<int>(); // garbageSize
-                Ar.Read<int>(); // compressedChunkInfoOffset
+                int NumUnknownStructs = Ar.Read<int>();
+                for (int i = 0; i < NumUnknownStructs; i++)
+                {
+                    Ar.Position += sizeof(int) * 5;
+                    var unknownArray = Ar.ReadArray<int>();
+                }
+
+                GarbageSize = Ar.Read<int>();
+                CompressedChunkInfoOffset = Ar.Read<int>();
                 Ar.Read<int>(); // lastBlockSize
             }
         }

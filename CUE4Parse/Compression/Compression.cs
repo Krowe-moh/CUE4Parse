@@ -7,7 +7,7 @@ using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Readers;
 
 using K4os.Compression.LZ4;
-using lzo.net;
+using SharpLzo;
 using ZstdSharp;
 
 namespace CUE4Parse.Compression
@@ -42,7 +42,7 @@ namespace CUE4Parse.Compression
                     ZlibHelper.Decompress(compressed, compressedOffset, compressedSize, uncompressed, uncompressedOffset, uncompressedSize, reader);
                     return;
                 case CompressionMethod.Gzip:
-                    var gzip = new GZipStream(srcStream, CompressionMode.Decompress);
+                    var gzip = new GZipStream(srcStream, System.IO.Compression.CompressionMode.Decompress);
                     gzip.Read(uncompressed, uncompressedOffset, uncompressedSize);
                     gzip.Dispose();
                     return;
@@ -68,20 +68,14 @@ namespace CUE4Parse.Compression
                     return;
                 case CompressionMethod.LZO:
                 {
-                    using var ms = new MemoryStream(compressed, compressedOffset, compressedSize);
-                    using var lzoStream = new LzoStream(ms, CompressionMode.Decompress);
-
-                    int totalRead = 0;
-                    while (totalRead < uncompressedSize)
-                    {
-                        int bytesRead = lzoStream.Read(uncompressed, uncompressedOffset + totalRead, uncompressedSize - totalRead);
-                        if (bytesRead == 0)
-                            throw new FileLoadException($"Failed to decompress LZO data (Expected: {uncompressedSize}, Got: {totalRead})");
-                        totalRead += bytesRead;
-                    }
-
-                    if (totalRead != uncompressedSize)
-                        throw new FileLoadException($"Failed to decompress LZO data (Expected: {uncompressedSize}, Result: {totalRead})");
+                    byte[] decompressed = Lzo.Decompress(
+                        new ReadOnlySpan<byte>(compressed, compressedOffset, compressedSize).ToArray(),
+                        uncompressedSize
+                    );
+                    if (decompressed.Length != uncompressedSize)
+                        throw new FileLoadException(
+                            $"Failed to decompress LZO data (Expected: {uncompressedSize}, Result: {decompressed.Length})");
+                    Buffer.BlockCopy(decompressed, 0, uncompressed, uncompressedOffset, uncompressedSize);
                     return;
                 }
                 case CompressionMethod.Zstd:

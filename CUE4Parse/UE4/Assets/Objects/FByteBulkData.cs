@@ -137,7 +137,40 @@ namespace CUE4Parse.UE4.Assets.Objects
             {
                 Ar.Position += Header.ElementCount;
             }
-            else if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
+            if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
+            {
+                Log.Error("important");
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "Textures.tfc");
+
+                if (!File.Exists(path))
+                    throw new FileNotFoundException("Textures.tfc not found in current directory.", path);
+
+                var buffer = File.ReadAllBytes(path);
+                var tempAr = new FByteArchive("temp", buffer, Ar.Versions);
+                
+                tempAr.Position = Header.OffsetInFile;
+
+                if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
+                {
+                    var data = new byte[Header.ElementCount];
+                    ReadCompressedChunk(tempAr, data, CompressionMethod.Zlib);
+                    _data = new Lazy<byte[]>(() => data);
+                }
+                else if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
+                {
+                    var data = new byte[Header.ElementCount];
+                    ReadCompressedChunk(tempAr, data, CompressionMethod.LZO);
+                    _data = new Lazy<byte[]>(() => data);
+                    Ar.Position += Header.ElementCount;
+                }
+                else
+                {
+                    var data = new byte[Header.ElementCount];
+                    tempAr.Read(data, 0, Header.ElementCount);
+                    _data = new Lazy<byte[]>(() => data);
+                }
+                return;
+            } else if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
             {
                 var data = new byte[Header.ElementCount];
                 ReadCompressedChunk(Ar, data, CompressionMethod.Zlib);

@@ -281,6 +281,7 @@ public static class TextureEncoder
         {
             case EPixelFormat.PF_R8G8B8A8:
                 break;
+            case EPixelFormat.PF_A8R8G8B8:
             case EPixelFormat.PF_B8G8R8A8:
                 skColorType = SKColorType.Bgra8888;
                 break;

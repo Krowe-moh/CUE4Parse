@@ -29,7 +29,7 @@
     <PackageReference Include="GenericReader" Version="2.2.3" />
     <PackageReference Include="Infrablack.UE4Config" Version="0.7.2.97" />
     <PackageReference Include="LZMA-SDK" Version="22.1.1" />
-    <PackageReference Include="lzo.net" Version="0.0.6" />
+    <PackageReference Include="NativeSharpLzo" Version="0.3.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="OffiUtils" Version="2.0.1" />
     <PackageReference Include="Oodle.NET" Version="2.1.0" />
