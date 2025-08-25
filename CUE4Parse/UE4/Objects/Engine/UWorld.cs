@@ -1,7 +1,9 @@
 ﻿using CUE4Parse.UE4.Assets.Readers;
+using CUE4Parse.UE4.Assets.Exports.Actor;
 using CUE4Parse.UE4.Objects.UObject;
+using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
-
+    
 namespace CUE4Parse.UE4.Objects.Engine
 {
     public class UWorld : Assets.Exports.UObject
@@ -14,8 +16,29 @@ namespace CUE4Parse.UE4.Objects.Engine
         {
             base.Deserialize(Ar, validPos);
             PersistentLevel = new FPackageIndex(Ar);
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_WORLD_PERSISTENT_FACEFXANIMSET)
+            {
+                new FPackageIndex(Ar); // PersistentFaceFXAnimSet
+            }
+
+            if (Ar.Game < EGame.GAME_UE4_0)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    new FLevelViewportInfo(Ar);
+                }
+                new FPackageIndex(Ar);
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_DECAL_MANAGER_FROM_UWORLD)
+                {
+                    new FPackageIndex(Ar);
+                }
+              
+            }
             ExtraReferencedObjects = Ar.ReadArray(() => new FPackageIndex(Ar));
-            StreamingLevels = Ar.ReadArray(() => new FPackageIndex(Ar));
+            if (Ar.Game >= EGame.GAME_UE4_0)
+            {
+                StreamingLevels = Ar.ReadArray(() => new FPackageIndex(Ar));
+            }
         }
         
         protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)

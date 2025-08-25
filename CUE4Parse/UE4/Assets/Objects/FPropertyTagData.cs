@@ -60,12 +60,12 @@ public class FPropertyTagData
                 }
                 else
                 {
-                    if (name is "LookupTable" or "RandomSpawnPoints" or "Value" or "LODDistances" or "LODSettings" or "LODSpawnRatios" or "TargetWeight" or "Child2PerBoneWeight" or "ResolutionTestTable" or "Weights" or "InputVolume")
+                    if (name is "LookupTable" or "RandomSpawnPoints" or "Value" or "LODDistances" or "LODSpawnRatios" or "TargetWeight" or "Child2PerBoneWeight" or "ResolutionTestTable" or "Weights" or "InputVolume")
                     {
                         InnerType = "FloatProperty";
                         return;
                     }
-                    if (name is "Constraints" or "FaceTriData" or "SpawnOffsets" or "CompressedTrackOffsets" or "LODMaterialMap" or "SupportedEvents")
+                    if (name is "Constraints" or "BoundsBodies" or "FaceTriData" or "SpawnOffsets" or "CompressedTrackOffsets" or "LODMaterialMap" or "SupportedEvents")
                     {
                         InnerType = "IntProperty";
                         return;
@@ -80,17 +80,17 @@ public class FPropertyTagData
                         InnerType = "BoolProperty";
                         return;
                     }
-                    if (name is "ParamNames" or "StyleGroups" or "Commands" or "EditPackages" or "PackagesToBeFullyLoadedAtStartup")
+                    if (name is "ParamNames" or "TemplateMapFolders" or "ReferencedSwfs" or "RequireZoneNames" or "HelpParamDescriptions" or "HelpParamNames" or "StyleGroups" or "Commands" or "EditPackages" or "PackagesToBeFullyLoadedAtStartup")
                     {
                         InnerType = "StrProperty";
                         return;
                     }
-                    if (name is "BranchStartBoneName" or "MonsterTypes" or "ArenaNames" or "SavedGameFileNames" or "TargetParamNames" or "AnimList" or "ReferencedSwfs" or "TrackBoneNames" or "LibraryCategories" or "HiddenKismetClassNames" or "BadPackageNames")
+                    if (name is "BranchStartBoneName" or "UseTranslationBoneNames" or "MonsterTypes" or "ArenaNames" or "SavedGameFileNames" or "TargetParamNames" or "AnimList" or "TrackBoneNames" or "LibraryCategories" or "HiddenKismetClassNames" or "BadPackageNames")
                     {
                         InnerType = "NameProperty";
                         return;
                     }
-                    if (name is "Expressions" or "Styles" or "InactiveStates" or "Flashlight_MeshComponents" or "Flashlight_FlareComponents" or "Flashlight_FlareSockets" or "Wheels" or "Flashlight_LightSockets" or "FlickerFunctionArchetypes" or "GroupAnimSets" or "Materials" or "AchievementIcons" or "ConnectorSockets" or "ChildProFXTextures" or "ChildNodes" or "Sequences" or "Children" or "ReferencedObjects" or "References" or "Textures" or "RemovedArchetypes" or "PrefabArchetypes" or "Attached" or "SequenceObjects" or "LFMaterials" or "DecalList" or "Anim" or "ControlHead" or "AnimSets" or "Components" or "Modules" or "Targets" or "Controls" or "SpawnModules" or "UpdateModules" or "Emitters" or "LODLevels" or "ReplayClips" or "Skins" or "Effects" or "ReferencedTextures")
+                    if (name is "Expressions" or "InterpTracks" or "InterpGroups" or "BodySetup" or "Bodies" or "Styles" or "InactiveStates" or "Flashlight_MeshComponents" or "Flashlight_FlareComponents" or "Flashlight_FlareSockets" or "Wheels" or "Flashlight_LightSockets" or "FlickerFunctionArchetypes" or "GroupAnimSets" or "Materials" or "AchievementIcons" or "ConnectorSockets" or "ChildProFXTextures" or "ChildNodes" or "Sequences" or "Children" or "ReferencedObjects" or "References" or "Textures" or "RemovedArchetypes" or "PrefabArchetypes" or "Attached" or "SequenceObjects" or "LFMaterials" or "DecalList" or "Anim" or "ControlHead" or "AnimSets" or "Components" or "Modules" or "Targets" or "Controls" or "SpawnModules" or "UpdateModules" or "Emitters" or "LODLevels" or "ReplayClips" or "Skins" or "Effects" or "ReferencedTextures")
                     {
                         InnerType = "ObjectProperty";
                         return;
@@ -100,7 +100,7 @@ public class FPropertyTagData
                         InnerType = "ClassProperty";
                         return;
                     }
-                    if (name is "FaceNormalDirections" or "EdgeDirections" or "VertexData")
+                    if (name is "FaceNormalDirections" or "PreCachedPhysScale" or "EdgeDirections" or "VertexData")
                     {
                         InnerTypeData = new FPropertyTagData("Vector", name);
                     }
@@ -108,7 +108,7 @@ public class FPropertyTagData
                     {
                         InnerTypeData = new FPropertyTagData("Plane", name);
                     }
-                    if (name is "IrrelevantLights")
+                    if (name is "IrrelevantLights" or "ReferencedTextureGuids")
                     {
                         InnerTypeData = new FPropertyTagData("Guid", name);
                     }

@@ -29,13 +29,13 @@ public class UMetaData : Assets.Exports.UObject
     {
         base.WriteJson(writer, serializer);
 
-        if (ObjectMetaDataMap.Count > 0)
+        if (ObjectMetaDataMap != null && ObjectMetaDataMap.Count > 0)
         {
             writer.WritePropertyName("ObjectMetaDataMap");
             serializer.Serialize(writer, ObjectMetaDataMap);
         }
 
-        if (RootMetaDataMap.Count > 0)
+        if (RootMetaDataMap != null && RootMetaDataMap.Count > 0)
         {
             writer.WritePropertyName("RootMetaDataMap");
             serializer.Serialize(writer, RootMetaDataMap);

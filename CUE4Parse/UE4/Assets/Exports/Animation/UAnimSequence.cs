@@ -49,7 +49,15 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
-            base.Deserialize(Ar, validPos);
+            if (Ar.Game < EGame.GAME_UE4_0)
+            {
+                var obj = new UObject();
+                obj.Deserialize(Ar, validPos);
+            }
+            else
+            {
+                base.Deserialize(Ar, validPos);
+            }
 
             NumFrames = GetOrDefault<int>(nameof(NumFrames));
             BoneCompressionSettings = GetOrDefault<ResolvedObject>(nameof(BoneCompressionSettings));
@@ -75,11 +83,18 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
                     Ar.Position += array.Length * sizeof(short);
                 }
             }
-
-            var stripFlags = new FStripDataFlags(Ar);
-            if (!stripFlags.IsEditorDataStripped())
+            
+            var stripFlags = new FStripDataFlags();
+            if (Ar.Game >= EGame.GAME_UE4_0)
             {
-                RawAnimationData = Ar.ReadArray(() => new FRawAnimSequenceTrack(Ar));
+                stripFlags = new FStripDataFlags(Ar);
+            }
+            if (Ar.Game < EGame.GAME_UE4_0 || !stripFlags.IsEditorDataStripped())
+            {
+                if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_NATIVE_RAWANIMDATA_SERIALIZATION || Ar.Game >= EGame.GAME_UE4_0)
+                {
+                    RawAnimationData = Ar.ReadArray(() => new FRawAnimSequenceTrack(Ar));
+                }
                 if (Ar.Ver >= EUnrealEngineObjectUE4Version.ANIMATION_ADD_TRACKCURVES)
                 {
                     if (FUE5MainStreamObjectVersion.Get(Ar) < FUE5MainStreamObjectVersion.Type.RemovingSourceAnimationData)

@@ -87,7 +87,7 @@ namespace CUE4Parse.UE4.Assets
 
             Summary = new FPackageFileSummary(uassetAr);
 
-            if (Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_GZIP) || Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB))
+            if (Summary.CompressedChunks.Length > 0 && (Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_GZIP) || Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB)))
             {
                 uassetAr.Position = Summary.CompressedChunks[0].CompressedOffset;
                 var compressedData = new byte[Summary.CompressedChunks[0].UncompressedSize];
