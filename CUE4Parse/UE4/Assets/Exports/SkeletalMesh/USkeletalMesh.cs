@@ -32,6 +32,11 @@ public partial class USkeletalMesh : UObject
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
+        if (Ar.Game == EGame.GAME_UE3_0)
+        { // todo (it's impossible... real)
+            Ar.Position = validPos;
+            return;
+        }
         LODInfo = GetOrDefault<FSkeletalMeshLODGroupSettings[]>(nameof(LODInfo), []);
 
         bHasVertexColors = GetOrDefault<bool>(nameof(bHasVertexColors));

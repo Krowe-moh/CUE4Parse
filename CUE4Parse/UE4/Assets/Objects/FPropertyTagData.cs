@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using CUE4Parse.MappingsProvider;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
+using Serilog;
 
 namespace CUE4Parse.UE4.Assets.Objects;
 
@@ -16,7 +19,9 @@ public class FPropertyTagData
     public string? Module;
     public FGuid? StructGuid;
     public bool? Bool;
+
     public string? EnumName;
+
     //public bool IsEnumAsByte;
     public string? InnerType;
     public string? ValueType;
@@ -45,6 +50,7 @@ public class FPropertyTagData
                 {
                     Bool = Ar.ReadFlag();
                 }
+
                 break;
             case "ByteProperty":
             case "EnumProperty":
@@ -52,6 +58,7 @@ public class FPropertyTagData
                 {
                     EnumName = Ar.ReadFName().Text;
                 }
+
                 break;
             case "ArrayProperty":
                 if (Ar.Ver >= EUnrealEngineObjectUE4Version.ARRAY_PROPERTY_INNER_TAGS)
@@ -60,64 +67,81 @@ public class FPropertyTagData
                 }
                 else
                 {
-                    if (name is "LookupTable" or "RandomSpawnPoints" or "Value" or "LODDistances" or "LODSpawnRatios" or "TargetWeight" or "Child2PerBoneWeight" or "ResolutionTestTable" or "Weights" or "InputVolume")
+                    var map = new Dictionary<string, string[]>
                     {
-                        InnerType = "FloatProperty";
+                        ["FloatProperty"] = new[]
+                        {
+                            "LookupTable", "AngleConstraint", "RandomSpawnPoints", "Value", "LODDistances",
+                            "LODSpawnRatios", "TargetWeight", "Child2PerBoneWeight", "ResolutionTestTable", "Weights", "InputVolume"
+                        },
+                        ["IntProperty"] = new[]
+                        {
+                            "Constraints", "RandomSeeds", "Children", "BoundsBodies", "FaceTriData", "SpawnOffsets",
+                            "CompressedTrackOffsets", "LODMaterialMap", "SupportedEvents"
+                        },
+                        ["ByteProperty"] = new[] { "LocalToCompReqBones", "RawData" },
+                        ["BoolProperty"] = new[] { "bEnableShadowCasting" },
+                        ["StrProperty"] = new[]
+                        {
+                            "ParamNames", "BossLevels", "BossArchetypeNames", "TemplateMapFolders", "ReferencedSwfs", "RequireZoneNames",
+                            "HelpParamDescriptions", "HelpParamNames", "StyleGroups", "Commands", "EditPackages", "PackagesToBeFullyLoadedAtStartup"
+                        },
+                        ["NameProperty"] = new[]
+                        {
+                            "BranchStartBoneName", "ChildClassNames", "UseTranslationBoneNames", "MonsterTypes", "ArenaNames",
+                            "SavedGameFileNames", "TargetParamNames", "AnimList", "TrackBoneNames", "LibraryCategories",
+                            "HiddenKismetClassNames", "BadPackageNames"
+                        },
+                        ["ObjectProperty"] = new[]
+                        {
+                            "Expressions", "StaticMeshComponents", "LightComponents", "MetaData", "RootMorphNodes", "AnimTickArray",
+                            "ParentNodes", "LinkedVariables", "InterpTracks", "InterpGroups", "BodySetup", "Bodies", "Styles",
+                            "InactiveStates", "Flashlight_MeshComponents", "Flashlight_FlareComponents", "Flashlight_FlareSockets",
+                            "Wheels", "Flashlight_LightSockets", "FlickerFunctionArchetypes", "GroupAnimSets", "Materials",
+                            "AchievementIcons", "ConnectorSockets", "ChildProFXTextures", "ChildNodes", "Sequences", "ReferencedObjects",
+                            "References", "Textures", "RemovedArchetypes", "PrefabArchetypes", "Attached", "SequenceObjects", "LFMaterials",
+                            "DecalList", "Anim", "ControlHead", "AnimSets", "Components", "Modules", "Targets", "Controls", "SpawnModules",
+                            "UpdateModules", "Emitters", "LODLevels", "ReplayClips", "Skins", "Effects", "ReferencedTextures"
+                        },
+                        ["ClassProperty"] = new[] { "WeaponClasses", "PreviewAnimSets" }
+                    };
+
+                    if (map.Any(kv => kv.Value.Contains(name)))
+                    {
+                        InnerType = map.First(kv => kv.Value.Contains(name)).Key;
                         return;
                     }
-                    if (name is "Constraints" or "Children" or "BoundsBodies" or "FaceTriData" or "SpawnOffsets" or "CompressedTrackOffsets" or "LODMaterialMap" or "SupportedEvents")
+
+                    switch (name)
                     {
-                        InnerType = "IntProperty";
-                        return;
+                        case "FaceNormalDirections":
+                        case "PreCachedPhysScale":
+                        case "EdgeDirections":
+                        case "VertexData":
+                            InnerTypeData = new FPropertyTagData("Vector", name);
+                            InnerType = "StructProperty";
+                            break;
+                        case "FacePlaneData":
+                        case "PermutedVertexData":
+                            InnerTypeData = new FPropertyTagData("Plane", name);
+                            InnerType = "StructProperty";
+                            break;
+                        case "IrrelevantLights":
+                        case "ReferencedTextureGuids":
+                            InnerTypeData = new FPropertyTagData("Guid", name);
+                            InnerType = "StructProperty";
+                            break;
+                        case "Characters":
+                            InnerTypeData = new FPropertyTagData("FontCharacter", name);
+                            InnerType = "StructProperty";
+                            break;
+                        default:
+                            Log.Information(name);
+                            InnerType = "StructProperty";
+                            break;
                     }
-                    if (name is "LocalToCompReqBones" or "RawData")
-                    {
-                        InnerType = "ByteProperty";
-                        return;
-                    }
-                    if (name is "bEnableShadowCasting")
-                    {
-                        InnerType = "BoolProperty";
-                        return;
-                    }
-                    if (name is "ParamNames" or "TemplateMapFolders" or "ReferencedSwfs" or "RequireZoneNames" or "HelpParamDescriptions" or "HelpParamNames" or "StyleGroups" or "Commands" or "EditPackages" or "PackagesToBeFullyLoadedAtStartup")
-                    {
-                        InnerType = "StrProperty";
-                        return;
-                    }
-                    if (name is "BranchStartBoneName" or "ChildClassNames" or "UseTranslationBoneNames" or "MonsterTypes" or "ArenaNames" or "SavedGameFileNames" or "TargetParamNames" or "AnimList" or "TrackBoneNames" or "LibraryCategories" or "HiddenKismetClassNames" or "BadPackageNames")
-                    {
-                        InnerType = "NameProperty";
-                        return;
-                    }
-                    if (name is "Expressions" or "MetaData" or "RootMorphNodes" or "AnimTickArray" or "ParentNodes" or "LinkedVariables" or "InterpTracks" or "InterpGroups" or "BodySetup" or "Bodies" or "Styles" or "InactiveStates" or "Flashlight_MeshComponents" or "Flashlight_FlareComponents" or "Flashlight_FlareSockets" or "Wheels" or "Flashlight_LightSockets" or "FlickerFunctionArchetypes" or "GroupAnimSets" or "Materials" or "AchievementIcons" or "ConnectorSockets" or "ChildProFXTextures" or "ChildNodes" or "Sequences" or "ReferencedObjects" or "References" or "Textures" or "RemovedArchetypes" or "PrefabArchetypes" or "Attached" or "SequenceObjects" or "LFMaterials" or "DecalList" or "Anim" or "ControlHead" or "AnimSets" or "Components" or "Modules" or "Targets" or "Controls" or "SpawnModules" or "UpdateModules" or "Emitters" or "LODLevels" or "ReplayClips" or "Skins" or "Effects" or "ReferencedTextures")
-                    {
-                        InnerType = "ObjectProperty";
-                        return;
-                    }
-                    if (name is "WeaponClasses" or "PreviewAnimSets")
-                    {
-                        InnerType = "ClassProperty";
-                        return;
-                    }
-                    if (name is "FaceNormalDirections" or "PreCachedPhysScale" or "EdgeDirections" or "VertexData")
-                    {
-                        InnerTypeData = new FPropertyTagData("Vector", name);
-                    }
-                    if (name is "FacePlaneData" or "PermutedVertexData")
-                    {
-                        InnerTypeData = new FPropertyTagData("Plane", name);
-                    }
-                    if (name is "IrrelevantLights" or "ReferencedTextureGuids")
-                    {
-                        InnerTypeData = new FPropertyTagData("Guid", name);
-                    }
-                    if (name is "Characters")
-                    {
-                        InnerTypeData = new FPropertyTagData("FontCharacter", name);
-                    }
-                    InnerType = "StructProperty";
                 }
+
                 break;
             // Serialize the following if version is past PROPERTY_TAG_SET_MAP_SUPPORT
             case "SetProperty":
@@ -130,6 +154,7 @@ public class FPropertyTagData
                     InnerType = Ar.ReadFName().Text;
                     ValueType = Ar.ReadFName().Text;
                 }
+
                 break;
             case "OptionalProperty":
                 InnerType = Ar.ReadFName().Text;
@@ -154,6 +179,7 @@ public class FPropertyTagData
                     // doesn't use StructGuid anyway
                     // if (typeName.GetParameter(1) is { } guid) StructGuid = new Guid(guid.GetName);
                 }
+
                 break;
             case "ByteProperty":
             case "EnumProperty":
@@ -162,6 +188,7 @@ public class FPropertyTagData
                     EnumName = enumType.GetName();
                     Module = enumType.GetParameter(0).GetName();
                 }
+
                 break;
             case "ArrayProperty":
             case "SetProperty":
@@ -171,6 +198,7 @@ public class FPropertyTagData
                     InnerType = innerType.GetName();
                     InnerTypeData = InnerType != "None" && innerType[0].InnerCount != 0 ? new FPropertyTagData(innerType, InnerType) : null;
                 }
+
                 break;
             case "MapProperty":
                 if (typeName.GetParameter(0) is { IsEmpty: false } keyType && typeName.GetParameter(1) is { IsEmpty: false } valueType)
@@ -180,6 +208,7 @@ public class FPropertyTagData
                     ValueType = valueType.GetName();
                     ValueTypeData = InnerType != "None" && valueType[0].InnerCount != 0 ? new FPropertyTagData(valueType, ValueType) : null;
                 }
+
                 break;
         }
     }

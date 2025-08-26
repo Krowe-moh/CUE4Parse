@@ -36,8 +36,10 @@ namespace CUE4Parse.UE4.Objects.UObject
 
         private WeakReference<ResolvedObject?>? _resolvedObject;
 
-        public ResolvedObject? ResolvedObject {
-            get {
+        public ResolvedObject? ResolvedObject
+        {
+            get
+            {
                 var resolvedObject = _resolvedObject != null && _resolvedObject.TryGetTarget(out var target) ? target : null;
                 if (resolvedObject == null)
                 {
@@ -45,12 +47,15 @@ namespace CUE4Parse.UE4.Objects.UObject
                     resolvedObject = Owner.ResolvePackageIndex(this);
                     _resolvedObject = new(resolvedObject);
                 }
+
                 return resolvedObject;
             }
         }
 
-        public ResolvedObject? ResolvedObjectNoCache {
-            get {
+        public ResolvedObject? ResolvedObjectNoCache
+        {
+            get
+            {
                 if (Owner == null) return null;
                 var resolvedObject = _resolvedObject != null && _resolvedObject.TryGetTarget(out var target) ? target : null;
                 if (resolvedObject != null) return resolvedObject;
@@ -114,6 +119,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         }
 
         #region Loading Methods
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T? Load<T>() where T : UExport => Owner?.FindObject(this)?.Value as T;
 
@@ -170,6 +176,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             return null;
         }
+
         #endregion
 
         public bool Equals(FPackageIndex? other)
@@ -233,7 +240,8 @@ namespace CUE4Parse.UE4.Objects.UObject
 #pragma warning disable 8618
         public FObjectExport()
 #pragma warning restore 8618
-        { }
+        {
+        }
 
         public FObjectExport(FAssetArchive Ar)
         {
@@ -260,6 +268,13 @@ namespace CUE4Parse.UE4.Objects.UObject
             if (Ar.Ver < EUnrealEngineObjectUE4Version.e64BIT_EXPORTMAP_SERIALSIZES)
             {
                 SerialSize = Ar.Read<int>();
+
+                if (Ar.Game == EGame.GAME_RocketLeague)
+                {
+                    SerialOffset = Ar.Read<long>();
+                    goto exportflag;
+                }
+
                 if (SerialSize > 0 && Ar.Ver >= EUnrealEngineObjectUE3Version.AddedSerialOffset)
                 {
                     SerialOffset = Ar.Read<int>();
@@ -283,17 +298,13 @@ namespace CUE4Parse.UE4.Objects.UObject
                 IsAsset = Ar.Ver >= EUnrealEngineObjectUE4Version.COOKED_ASSETS_IN_EDITOR_SUPPORT && Ar.ReadBoolean();
                 GeneratePublicHash = Ar.Ver >= EUnrealEngineObjectUE5Version.OPTIONAL_RESOURCES && Ar.ReadBoolean();
             }
-            
-            if (Ar.Game == EGame.GAME_RocketLeague)// todo: && Ar.Ver >= 22
-            {
-                Ar.Read<int>(); // SerialOffsetUpper
-            }
 
             if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedComponentMapToExports && Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_COMPONENT_MAP)
             {
                 var LegacyComponentMap = Ar.ReadMap(() => Ar.ReadFName(), () => new FPackageIndex(Ar));
             }
 
+            exportflag:
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedExportFlags)
             {
                 Ar.Read<int>(); // ExportFlags
@@ -303,11 +314,11 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 Ar.ReadArray<int>(); // NetObjectCount
                 Ar.Read<FGuid>(); // PackageGuid
-            }
-            
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPackageFlags)
-            {
-                Ar.Read<int>(); // PackageFlags
+
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPackageFlags)
+                {
+                    Ar.Read<int>(); // PackageFlags
+                }
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
@@ -361,7 +372,8 @@ namespace CUE4Parse.UE4.Objects.UObject
 #pragma warning disable 8618
         public FObjectImport()
 #pragma warning restore 8618
-        { }
+        {
+        }
 
         public FObjectImport(FAssetArchive Ar)
         {
