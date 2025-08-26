@@ -1,28 +1,18 @@
 using System.Collections.Generic;
 using CUE4Parse.UE4.Assets.Readers;
-using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.UE4.Assets.Exports.Sound
 {
-    public struct NodeEditorData
+    public class USoundClass : UObject
     {
-        public int X;
-        public int Y;
-    }
-
-    public class USoundCue : USoundBase
-    {
-        public FPackageIndex? FirstNode;
         public Dictionary<FPackageIndex?, NodeEditorData>? EditorData;
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
-            FirstNode = GetOrDefault<FPackageIndex>(nameof(FirstNode));
-
-            if (Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SOUND_CLASS_SERIALISATION_UPDATE)
             {
                 EditorData = new Dictionary<FPackageIndex, NodeEditorData>();
                 int Count = Ar.Read<int>();
@@ -34,13 +24,6 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
                     if (key != null)
                         EditorData[key] = value;
                 }
-
-                return;
-            }
-            
-            if (Ar.Ver >= EUnrealEngineObjectUE4Version.COOKED_ASSETS_IN_EDITOR_SUPPORT)
-            {
-                var _ = new FStripDataFlags(Ar);
             }
         }
     }

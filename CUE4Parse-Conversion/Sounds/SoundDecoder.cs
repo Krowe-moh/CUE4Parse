@@ -5,6 +5,7 @@ using CUE4Parse.UE4.Assets.Exports.Sound;
 using CUE4Parse.UE4.Assets.Exports.Wwise;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse_Conversion.Sounds.ADPCM;
+using CUE4Parse.UE4.Assets.Exports.Sound.Node;
 using CUE4Parse.Utils;
 
 namespace CUE4Parse_Conversion.Sounds;
@@ -16,9 +17,50 @@ public static class SoundDecoder
         switch (export)
         {
             case UAkMediaAssetData mediaAsset: mediaAsset.Decode(shouldDecompress, out audioFormat, out data); break;
+            case USoundNodeWave nodeWave: nodeWave.Decode(shouldDecompress, out audioFormat, out data); break;
             case USoundWave soundWave: soundWave.Decode(shouldDecompress, out audioFormat, out data); break;
-            default: audioFormat = string.Empty; data = null; break;
+            default:
+                audioFormat = string.Empty;
+                data = null;
+                break;
         }
+    }
+
+    public static void Decode(this USoundNodeWave nodeWave, bool shouldDecompress, out string audioFormat, out byte[]? data)
+    {
+        audioFormat = "OGG";
+        byte[]? input = null;
+
+        if (nodeWave.DefaultSound.Header.ElementCount > 0)
+        {
+            input = nodeWave.DefaultSound.Data;
+        }
+        else if (nodeWave.PCSound.Header.ElementCount > 0)
+        {
+            input = nodeWave.PCSound.Data;
+        }
+        else if (nodeWave.XboxSound.Header.ElementCount > 0)
+        {
+            input = nodeWave.XboxSound.Data;
+        }
+        else if (nodeWave.WIIUSound.Header.ElementCount > 0)
+        {
+            input = nodeWave.WIIUSound.Data;
+        }
+        else if (nodeWave.PS3Sound.Header.ElementCount > 0)
+        {
+            input = nodeWave.PS3Sound.Data;
+        }
+        else if (nodeWave.IPhoneSound.Header.ElementCount > 0)
+        {
+            input = nodeWave.IPhoneSound.Data;
+        }
+        else if (nodeWave.FlashSound.Header.ElementCount > 0)
+        {
+            input = nodeWave.FlashSound.Data;
+        }
+
+        data = Decompress(shouldDecompress, ref audioFormat, input);
     }
 
     public static void Decode(this USoundWave soundWave, bool shouldDecompress, out string audioFormat, out byte[]? data)

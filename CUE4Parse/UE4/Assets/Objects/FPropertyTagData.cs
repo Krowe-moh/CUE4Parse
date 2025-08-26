@@ -65,7 +65,7 @@ public class FPropertyTagData
                         InnerType = "FloatProperty";
                         return;
                     }
-                    if (name is "Constraints" or "BoundsBodies" or "FaceTriData" or "SpawnOffsets" or "CompressedTrackOffsets" or "LODMaterialMap" or "SupportedEvents")
+                    if (name is "Constraints" or "Children" or "BoundsBodies" or "FaceTriData" or "SpawnOffsets" or "CompressedTrackOffsets" or "LODMaterialMap" or "SupportedEvents")
                     {
                         InnerType = "IntProperty";
                         return;
@@ -85,12 +85,12 @@ public class FPropertyTagData
                         InnerType = "StrProperty";
                         return;
                     }
-                    if (name is "BranchStartBoneName" or "UseTranslationBoneNames" or "MonsterTypes" or "ArenaNames" or "SavedGameFileNames" or "TargetParamNames" or "AnimList" or "TrackBoneNames" or "LibraryCategories" or "HiddenKismetClassNames" or "BadPackageNames")
+                    if (name is "BranchStartBoneName" or "ChildClassNames" or "UseTranslationBoneNames" or "MonsterTypes" or "ArenaNames" or "SavedGameFileNames" or "TargetParamNames" or "AnimList" or "TrackBoneNames" or "LibraryCategories" or "HiddenKismetClassNames" or "BadPackageNames")
                     {
                         InnerType = "NameProperty";
                         return;
                     }
-                    if (name is "Expressions" or "InterpTracks" or "InterpGroups" or "BodySetup" or "Bodies" or "Styles" or "InactiveStates" or "Flashlight_MeshComponents" or "Flashlight_FlareComponents" or "Flashlight_FlareSockets" or "Wheels" or "Flashlight_LightSockets" or "FlickerFunctionArchetypes" or "GroupAnimSets" or "Materials" or "AchievementIcons" or "ConnectorSockets" or "ChildProFXTextures" or "ChildNodes" or "Sequences" or "Children" or "ReferencedObjects" or "References" or "Textures" or "RemovedArchetypes" or "PrefabArchetypes" or "Attached" or "SequenceObjects" or "LFMaterials" or "DecalList" or "Anim" or "ControlHead" or "AnimSets" or "Components" or "Modules" or "Targets" or "Controls" or "SpawnModules" or "UpdateModules" or "Emitters" or "LODLevels" or "ReplayClips" or "Skins" or "Effects" or "ReferencedTextures")
+                    if (name is "Expressions" or "MetaData" or "RootMorphNodes" or "AnimTickArray" or "ParentNodes" or "LinkedVariables" or "InterpTracks" or "InterpGroups" or "BodySetup" or "Bodies" or "Styles" or "InactiveStates" or "Flashlight_MeshComponents" or "Flashlight_FlareComponents" or "Flashlight_FlareSockets" or "Wheels" or "Flashlight_LightSockets" or "FlickerFunctionArchetypes" or "GroupAnimSets" or "Materials" or "AchievementIcons" or "ConnectorSockets" or "ChildProFXTextures" or "ChildNodes" or "Sequences" or "ReferencedObjects" or "References" or "Textures" or "RemovedArchetypes" or "PrefabArchetypes" or "Attached" or "SequenceObjects" or "LFMaterials" or "DecalList" or "Anim" or "ControlHead" or "AnimSets" or "Components" or "Modules" or "Targets" or "Controls" or "SpawnModules" or "UpdateModules" or "Emitters" or "LODLevels" or "ReplayClips" or "Skins" or "Effects" or "ReferencedTextures")
                     {
                         InnerType = "ObjectProperty";
                         return;

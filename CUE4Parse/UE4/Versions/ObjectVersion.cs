@@ -755,6 +755,7 @@ namespace CUE4Parse.UE4.Versions
         ClassGuidDeprecated = 276,
         AddedCookerVersion = 277,
         InterfaceClassesDeprecated = 288,
+        AddedConvexVolumes = 294,
         DisplacedUTextureProperties = 297,
         AddedMeshthingtodo = 315,
         AddedNetIndex = 322,

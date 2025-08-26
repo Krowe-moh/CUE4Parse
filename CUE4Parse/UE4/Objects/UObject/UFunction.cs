@@ -52,7 +52,7 @@ public class UFunction : UStruct
         {
             // ignore platform.
             // vro this broken vro
-            //var FriendlyName = Ar.ReadFName();
+            var FriendlyName = Ar.ReadFName();
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SERIALIZE_BLUEPRINT_EVENTGRAPH_FASTCALLS_IN_UFUNCTION)

@@ -40,7 +40,6 @@ public static class TextureDecoder
 
         DecodeTexture(mip, sizeX, sizeY, sizeZ, texture.Format, texture.IsNormalMap, platform, out var data, out var colorType);
         return new CTexture( sizeX, sizeY, colorType, data);
-
     }
 
     private static unsafe Span<byte> GetSliceData(byte* data, int sizeX, int sizeY, int bytesPerPixel, int zLayer = 0)

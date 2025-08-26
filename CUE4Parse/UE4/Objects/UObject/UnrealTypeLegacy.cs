@@ -27,8 +27,8 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 if (!Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform != ETexturePlatform.XboxAndPlaystation) // ignore for now
                 {
-                    //Ar.ReadFName();
-                    //new FPackageIndex(Ar);
+                    Ar.ReadFName();
+                    new FPackageIndex(Ar);
                 }
 
                 if (PropertyFlags.HasFlag(EPropertyFlags.Net))
@@ -38,7 +38,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
                 if (Ar.Game == EGame.GAME_RocketLeague)
                 {
-                    Ar.ReadFString();
+                    //Ar.ReadFString();
                 }
             }
 
