@@ -67,7 +67,39 @@ public class UBoxComponent : UShapeComponent;
 public class UBoxFalloff : UFieldNodeFloat;
 public class UBoxReflectionCaptureComponent : UReflectionCaptureComponent;
 public class UBrainComponent : UActorComponent;
-public class UBrushComponent : UPrimitiveComponent;
+
+public class FKCachedConvexDataElement
+{
+    public byte[] ConvexElementData;
+
+    public FKCachedConvexDataElement(FAssetArchive Ar)
+    {
+        ConvexElementData = Ar.ReadBulkArray<byte>();
+    }
+}
+
+public class FKCachedConvexData
+{
+    public FKCachedConvexDataElement[] CachedConvexElements;
+
+    public FKCachedConvexData(FAssetArchive Ar)
+    {
+        CachedConvexElements = Ar.ReadArray(() => new FKCachedConvexDataElement(Ar));
+    }
+}
+
+public class UBrushComponent : UPrimitiveComponent
+{
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+
+        if (Ar.Game < EGame.GAME_UE4_0) // verify this or find version that added this.
+        {
+            new FKCachedConvexData(Ar); // CachedPhysBrushData
+        }
+    }
+};
 public class UCableComponent : UMeshComponent;
 public class UCameraComponent : USceneComponent;
 public class UCameraShakeSourceComponent : USceneComponent;

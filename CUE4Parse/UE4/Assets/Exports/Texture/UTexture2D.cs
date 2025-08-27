@@ -28,7 +28,7 @@ public class UTexture2D : UTexture
         var bCooked = false;
         if (Ar.Game >= EGame.GAME_UE4_0)
         {
-            var stripDataFlags = Ar.Read<FStripDataFlags>();
+            var stripDataFlags = new FStripDataFlags(Ar);
             bCooked = Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_COOKED_TO_TEXTURE2D && Ar.ReadBoolean();
         }
 

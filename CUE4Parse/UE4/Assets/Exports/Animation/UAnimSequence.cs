@@ -84,11 +84,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
                 }
             }
             
-            var stripFlags = new FStripDataFlags();
-            if (Ar.Game >= EGame.GAME_UE4_0)
-            {
-                stripFlags = new FStripDataFlags(Ar);
-            }
+            var stripFlags = new FStripDataFlags(Ar);
             if (Ar.Game < EGame.GAME_UE4_0 || !stripFlags.IsEditorDataStripped())
             {
                 if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_NATIVE_RAWANIMDATA_SERIALIZATION || Ar.Game >= EGame.GAME_UE4_0)

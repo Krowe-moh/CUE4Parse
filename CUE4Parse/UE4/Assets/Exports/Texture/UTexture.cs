@@ -94,7 +94,7 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
         }
 
 
-        var stripFlags = Ar.Read<FStripDataFlags>();
+        var stripFlags = new FStripDataFlags(Ar);
 
         // If archive is has editor only data
         if (!stripFlags.IsEditorDataStripped())

@@ -3,12 +3,31 @@ using CUE4Parse.UE4.Assets.Exports.BuildData;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Engine;
+using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 
 namespace CUE4Parse.UE4.Assets.Exports.Component.Lights;
 
 public abstract class ULightComponentBase : USceneComponent;
+
+public class UUIDynamicFieldProvider : UObject
+{
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MULTICOLUMN_SUPPORT)
+        {
+            Ar.ReadMap(
+                () => Ar.ReadFName(),
+                () => Ar.ReadMap(
+                    () => Ar.ReadFName(),
+                    () => Ar.ReadArray(() => Ar.ReadFString())
+                )
+            ); // PersistentCollectionData
+        }
+    }
+}
 
 public class ULightComponent : ULightComponentBase
 {
@@ -27,6 +46,12 @@ public class ULightComponent : ULightComponentBase
             {
                 LegacyData = new FStaticShadowDepthMapData(Ar);
             }
+        }
+
+        if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedConvexVolumes && Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVE_UNUSED_LIGHTING_PROPERTIES)
+        {
+            Ar.ReadArray(() => new FConvexVolume(Ar)); // InclusionConvexVolumes
+            Ar.ReadArray(() => new FConvexVolume(Ar)); // ExclusionConvexVolumes
         }
 
         if (Ar.Game == EGame.GAME_Valorant) Ar.Position += 24; // Zero FVector, 1.0f, -1 int, 1.0f
@@ -169,8 +194,10 @@ public class URectLightComponent : ULocalLightComponent
     }
 }
 
-public class UDirectionalLightComponent : ULightComponent {
-    public override double GetNitIntensity() {
+public class UDirectionalLightComponent : ULightComponent
+{
+    public override double GetNitIntensity()
+    {
         throw new NotImplementedException();
     }
 }

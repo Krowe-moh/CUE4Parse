@@ -66,7 +66,7 @@ public class FSkelMeshSection
 
     public FSkelMeshSection(FArchive Ar, bool IsFilterEditorOnly = false) : this()
     {
-        var stripDataFlags = Ar.Read<FStripDataFlags>();
+        var stripDataFlags = new FStripDataFlags(Ar);
         var skelMeshVer = FSkeletalMeshCustomVersion.Get(Ar);
 
         MaterialIndex = Ar.Read<short>();
@@ -229,7 +229,7 @@ public class FSkelMeshSection
     // Reference: FArchive& operator<<(FArchive& Ar, FSkelMeshRenderSection& S)
     public void SerializeRenderItem(FAssetArchive Ar)
     {
-        var stripDataFlags = Ar.Read<FStripDataFlags>();
+        var stripDataFlags = new FStripDataFlags(Ar);
 
         MaterialIndex = Ar.Read<short>();
         BaseIndex = Ar.Read<int>();

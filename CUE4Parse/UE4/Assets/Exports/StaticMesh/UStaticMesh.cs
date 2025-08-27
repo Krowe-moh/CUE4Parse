@@ -24,7 +24,7 @@ public class UStaticMesh : UObject
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        if (Ar.Game == EGame.GAME_UE3_0)
+        if (Ar.Game < EGame.GAME_UE4_0)
         { // todo (it's impossible... real)
             Ar.Position = validPos;
             return;
@@ -32,7 +32,7 @@ public class UStaticMesh : UObject
         Materials = [];
         LODForCollision = GetOrDefault(nameof(LODForCollision), 0);
 
-        var stripDataFlags = Ar.Read<FStripDataFlags>();
+        var stripDataFlags = new FStripDataFlags(Ar);
         bCooked = Ar.ReadBoolean();
         BodySetup = new FPackageIndex(Ar);
 

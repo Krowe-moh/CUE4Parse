@@ -200,7 +200,7 @@ public class UMorphTarget : UObject
             return;
         }
 
-        var stripFlags = Ar.Read<FStripDataFlags>();
+        var stripFlags = new FStripDataFlags(Ar);
         if (stripFlags.IsAudioVisualDataStripped())
             return;
 
