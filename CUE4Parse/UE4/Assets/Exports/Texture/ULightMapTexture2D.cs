@@ -1,5 +1,6 @@
 using System;
 using CUE4Parse.UE4.Assets.Readers;
+using CUE4Parse.UE4.Versions;
 using CUE4Parse.Utils;
 using Newtonsoft.Json;
 
@@ -13,7 +14,16 @@ public class ULightMapTexture2D : UTexture2D
     {
         base.Deserialize(Ar, validPos);
 
-        LightmapFlags = Ar.Read<ELightMapFlags>();
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LIGHTMAPFLAGS || Ar.Game >= EGame.GAME_UE4_0)
+        {
+            LightmapFlags = Ar.Read<ELightMapFlags>();
+        }
+        else 
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LIGHTMAPTEXTURE_VARIABLE)
+        {
+            var bSimpleLightmap = Ar.ReadBoolean();
+            LightmapFlags = bSimpleLightmap ? ELightMapFlags.LMF_LQLightmap : ELightMapFlags.LMF_None;
+        }
     }
 
     protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)

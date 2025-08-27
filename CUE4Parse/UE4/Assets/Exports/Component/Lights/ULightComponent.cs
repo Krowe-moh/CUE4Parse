@@ -136,6 +136,21 @@ public class USpotLightComponent : UPointLightComponent
     }
 }
 
+
+public class UDominantSpotLightComponent : UPointLightComponent
+{
+    public ushort[] DominantLightShadowMap { get; private set; }
+
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SPOTLIGHT_DOMINANTSHADOW_TRANSITION)
+        {
+            DominantLightShadowMap = Ar.ReadArray(() => Ar.Read<ushort>());
+        }
+    }
+}
+
 public class UPointLightComponent : ULocalLightComponent
 {
     public float SourceRadius { get; private set; }
