@@ -31,9 +31,9 @@ public static class SoundDecoder
         audioFormat = "OGG";
         byte[]? input = null;
 
-        if (nodeWave.DefaultSound.Header.ElementCount > 0)
+        if (nodeWave.RawSound.Header.ElementCount > 0)
         {
-            input = nodeWave.DefaultSound.Data;
+            input = nodeWave.RawSound.Data;
         }
         else if (nodeWave.PCSound.Header.ElementCount > 0)
         {

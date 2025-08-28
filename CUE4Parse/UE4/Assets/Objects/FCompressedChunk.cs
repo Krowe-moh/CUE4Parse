@@ -12,17 +12,9 @@ namespace CUE4Parse.UE4.Assets.Objects
 
         public FCompressedChunk(FArchive Ar)
         {
-            if (Ar.Game == EGame.GAME_RocketLeague)
-            {
-                UncompressedOffset = (int)Ar.Read<long>();
-                UncompressedSize = (int)Ar.Read<long>();
-                goto SkipToCompressed;
-            }
-
-            UncompressedOffset = Ar.Read<int>();
+            UncompressedOffset = Ar.Game == EGame.GAME_RocketLeague ? (int)Ar.Read<long>() : Ar.Read<int>();
             UncompressedSize = Ar.Read<int>();
-            SkipToCompressed:
-            CompressedOffset = Ar.Read<int>();
+            CompressedOffset = Ar.Game == EGame.GAME_RocketLeague ? (int)Ar.Read<long>() : Ar.Read<int>();
             CompressedSize = Ar.Read<int>();
         }
     }

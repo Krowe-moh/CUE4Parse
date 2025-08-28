@@ -471,6 +471,10 @@ namespace CUE4Parse.UE4.Objects.UObject
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDITIONAL_COOK_PACKAGE_SUMMARY || Ar.Game >= EGame.GAME_UE4_0)
             {
                 var additionalPackagesToCook = Ar.ReadArray(Ar.ReadFString);
+                if (Ar.Game == EGame.GAME_RocketLeague)
+                {
+                    goto skipTexture;
+                }
             }
 
             if (legacyFileVersion > -7)
@@ -480,7 +484,8 @@ namespace CUE4Parse.UE4.Objects.UObject
                     Ar.ReadArray<FTextureAllocations>();
                 }
             }
-
+            
+            skipTexture:
             if (FileVersionUE >= EUnrealEngineObjectUE4Version.ASSET_REGISTRY_TAGS)
             {
                 AssetRegistryDataOffset = Ar.Read<int>();
@@ -557,6 +562,11 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Game == EGame.GAME_RocketLeague)
             {
+                int count = Ar.Read<int>();
+                for (int i = 0; i < count; i++) {
+                    Ar.Position += sizeof(int) * 5;
+                    Ar.ReadArray<int>();
+                }
                 GarbageSize = Ar.Read<int>();
                 CompressedChunkInfoOffset = Ar.Read<int>();
                 Ar.Read<int>(); // lastBlockSize

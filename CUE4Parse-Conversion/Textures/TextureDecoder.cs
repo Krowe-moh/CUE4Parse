@@ -332,6 +332,7 @@ public static class TextureDecoder
             //SECTION: raw formats. Do nothing, we return original format and data
             case EPixelFormat.PF_A8R8G8B8:
             case EPixelFormat.PF_B8G8R8A8:
+            case EPixelFormat.PF_V8U8:
             case EPixelFormat.PF_G8:
             case EPixelFormat.PF_A32B32G32R32F:
             case EPixelFormat.PF_FloatRGB:

@@ -83,18 +83,18 @@ public class FPropertyTagData
                         ["BoolProperty"] = new[] { "bEnableShadowCasting" },
                         ["StrProperty"] = new[]
                         {
-                            "ParamNames", "BossLevels", "BossArchetypeNames", "TemplateMapFolders", "ReferencedSwfs", "RequireZoneNames",
+                            "ParamNames", "BossLevels", "LibraryCategories", "BossArchetypeNames", "TemplateMapFolders", "ReferencedSwfs", "RequireZoneNames",
                             "HelpParamDescriptions", "HelpParamNames", "StyleGroups", "Commands", "EditPackages", "PackagesToBeFullyLoadedAtStartup"
                         },
                         ["NameProperty"] = new[]
                         {
                             "BranchStartBoneName", "ChildClassNames", "UseTranslationBoneNames", "MonsterTypes", "ArenaNames",
-                            "SavedGameFileNames", "TargetParamNames", "AnimList", "TrackBoneNames", "LibraryCategories",
+                            "SavedGameFileNames", "TargetParamNames", "AnimList", "TrackBoneNames",
                             "HiddenKismetClassNames", "BadPackageNames"
                         },
                         ["ObjectProperty"] = new[]
                         {
-                            "Expressions", "StaticMeshComponents", "LightComponents", "MetaData", "RootMorphNodes", "AnimTickArray",
+                            "Expressions", "StaticMeshComponents", "FunctionExpressions", "LightComponents", "MetaData", "RootMorphNodes", "AnimTickArray",
                             "ParentNodes", "LinkedVariables", "InterpTracks", "InterpGroups", "BodySetup", "Bodies", "Styles",
                             "InactiveStates", "Flashlight_MeshComponents", "Flashlight_FlareComponents", "Flashlight_FlareSockets",
                             "Wheels", "Flashlight_LightSockets", "FlickerFunctionArchetypes", "GroupAnimSets", "Materials",

@@ -7,7 +7,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
 {
     public class USoundNodeWave : UObject
     {
-        public FByteBulkData DefaultSound;
+        public FByteBulkData RawSound;
         public FByteBulkData PCSound;
         public FByteBulkData XboxSound;
         public FByteBulkData PS3Sound;
@@ -30,7 +30,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
                 Ar.ReadArray<int>(); // ChannelSizes
             }
 
-            DefaultSound = new FByteBulkData(Ar);
+            RawSound = new FByteBulkData(Ar);
             
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedChannelsSoundInfo && Ar.Ver < EUnrealEngineObjectUE3Version.DisplacedSoundChannelProperties)
             {
@@ -40,6 +40,11 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPCSoundData)
             {
                 PCSound = new FByteBulkData(Ar);
+            }
+
+            if (Ar.Game == EGame.GAME_SuddenAttack2)
+            {
+                return;
             }
             
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedXenonSoundData)

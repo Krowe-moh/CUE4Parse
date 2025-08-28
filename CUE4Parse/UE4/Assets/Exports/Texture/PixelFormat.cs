@@ -43,7 +43,7 @@ public static class PixelFormatUtils
         new(EPixelFormat.PF_R16F,               "PF_R16F",                1,          1,          1,          2,            1,                true),
         new(EPixelFormat.PF_R16F_FILTER,        "PF_R16F_FILTER",         1,          1,          1,          2,            1,                true),
         new(EPixelFormat.PF_BC5,                "BC5",                    4,          4,          1,          16,           2,                true),
-        new(EPixelFormat.PF_V8U8,               "V8U8",                   1,          1,          1,          2,            2,                false),
+        new(EPixelFormat.PF_V8U8,               "V8U8",                   1,          1,          1,          2,            2,                true),
         new(EPixelFormat.PF_A1,                 "A1",                     1,          1,          1,          1,            1,                false),
         new(EPixelFormat.PF_FloatR11G11B10,     "FloatR11G11B10",         1,          1,          1,          4,            3,                false),
         new(EPixelFormat.PF_A8,                 "A8",                     1,          1,          1,          1,            1,                false),
