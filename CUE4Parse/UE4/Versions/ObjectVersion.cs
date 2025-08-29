@@ -743,6 +743,7 @@ namespace CUE4Parse.UE4.Versions
         Use64BitFlag = 195,
         PackageImportsDeprecated = 208,
         AddedComponentTemplatesToUClass = 210,
+        todoa = 218,
         AddedArcheType = 220,
         AddedComponentMapToExports, // todo
         AddedInterfacesFeature = 222,

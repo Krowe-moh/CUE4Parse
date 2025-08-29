@@ -35,11 +35,6 @@ namespace CUE4Parse.UE4.Objects.UObject
                 {
                     Ar.Read<ushort>();
                 }
-
-                if (Ar.Game == EGame.GAME_RocketLeague)
-                {
-                    //Ar.ReadFString();
-                }
             }
 
             if (FReleaseObjectVersion.Get(Ar) >= FReleaseObjectVersion.Type.PropertiesSerializeRepCondition)

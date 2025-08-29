@@ -157,7 +157,7 @@ public enum EPixelFormat : byte
 	PF_DXT3                 = 6,
 	PF_DXT5                 = 7,
 	PF_UYVY                 = 8,
-	PF_FloatRGB             = 9, // 16F
+	PF_FloatRGB             = 9,  // 16F
 	PF_FloatRGBA            = 10, // 16F
 	PF_DepthStencil         = 11,
 	PF_ShadowDepth          = 12,
@@ -186,7 +186,7 @@ public enum EPixelFormat : byte
 	PF_R16G16B16A16_SINT    = 35,
 	PF_R5G6B5_UNORM         = 36,
 	PF_R8G8B8A8             = 37,
-	PF_A8R8G8B8				= 38,	// Only used for legacy.
+	PF_A8R8G8B8				= 38,
 	PF_BC4					= 39,
 	PF_R8G8                 = 40,
 	PF_ATC_RGB				= 41,	// Unsupported Format

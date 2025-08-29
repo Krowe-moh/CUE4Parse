@@ -11,10 +11,13 @@ public class UScriptStruct : UStruct
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedStructFlagsToScriptStruct)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedStructFlagsToScriptStruct || Ar.Game >= EGame.GAME_UE4_0)
         {
             StructFlags = Ar.Read<EStructFlags>();
         }
-        DeserializePropertiesTagged(Properties, Ar, true);
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            DeserializePropertiesTagged(Properties, Ar, true);
+        }
     }
 }

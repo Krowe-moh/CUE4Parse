@@ -275,7 +275,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                     goto exportflag;
                 }
 
-                if (SerialSize > 0 && Ar.Ver >= EUnrealEngineObjectUE3Version.AddedSerialOffset)
+                if (SerialSize > 0 && (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedSerialOffset || Ar.Game >= EGame.GAME_UE4_0))
                 {
                     SerialOffset = Ar.Read<int>();
                 }

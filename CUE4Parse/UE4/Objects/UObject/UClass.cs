@@ -52,7 +52,7 @@ public class UClass : UStruct
         base.Deserialize(Ar, validPos);
         if (Ar.Game == EGame.GAME_AWayOut) Ar.Position += 4;
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.Release62)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.Release62 && Ar.Game < EGame.GAME_UE4_0)
         {
             // temp
             Ar.Read<int>(); // classRecordSize
@@ -87,12 +87,12 @@ public class UClass : UStruct
             Ar.Read<FGuid>();
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.ClassDependenciesDeprecated)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.ClassDependenciesDeprecated && Ar.Game < EGame.GAME_UE4_0)
         {
             Ar.ReadArray(() => new Dependency(Ar));
         }
         
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.PackageImportsDeprecated)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.PackageImportsDeprecated && Ar.Game < EGame.GAME_UE4_0)
         {
             Ar.ReadArray(() => Ar.ReadFName());
         }
