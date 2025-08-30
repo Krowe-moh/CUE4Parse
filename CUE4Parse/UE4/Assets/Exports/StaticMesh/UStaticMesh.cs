@@ -1,8 +1,10 @@
 using System;
 using CUE4Parse.UE4.Assets.Readers;
+using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Objects.UObject;
+using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 using Serilog;
@@ -24,20 +26,82 @@ public class UStaticMesh : UObject
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        if (Ar.Game < EGame.GAME_UE4_0)
-        { // todo (it's impossible... real)
-            Ar.Position = validPos;
-            return;
-        }
         Materials = [];
         LODForCollision = GetOrDefault(nameof(LODForCollision), 0);
 
         var stripDataFlags = new FStripDataFlags(Ar);
-        bCooked = Ar.ReadBoolean();
+        var Bounds = new FBoxSphereBounds();
+        if (Ar.Game >= EGame.GAME_UE4_0)
+        {
+            bCooked = Ar.ReadBoolean();
+        }
+        else
+        {
+            Bounds = new FBoxSphereBounds(Ar);
+        }
+
         BodySetup = new FPackageIndex(Ar);
 
         if (Ar.Versions["StaticMesh.HasNavCollision"])
             NavCollision = new FPackageIndex(Ar);
+
+        if (Ar.Game < EGame.GAME_UE4_0 || Ar.Game == EGame.GAME_RocketLeague)
+        {
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_COMPACTKDOPSTATICMESH)
+            {
+                Ar.ReadBulkArray(() => Ar.ReadBytes(16)); // node
+            }
+            else
+            {
+                Ar.Position += 8; // bound
+                Ar.ReadBulkArray(() => Ar.ReadBytes(6)); // non legacy node
+            }
+
+            Ar.ReadBulkArray(() => Ar.ReadBytes(8)); // Collision Triangle
+
+            var InternalVersion = Ar.Read<int>();
+            var STATICMESH_VERSION_CONTENT_TAGS = 17; // Content tags were introduced in SM version 17
+
+            if (InternalVersion >= STATICMESH_VERSION_CONTENT_TAGS && Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_LEGACY_CONTENT_TAGS)
+            {
+                Ar.ReadArray(Ar.ReadFName);
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATIC_MESH_SOURCE_DATA_COPY)
+            {
+                var real = Ar.ReadBoolean();
+                if (real)
+                {
+                    RenderData = new FStaticMeshRenderData(Ar);
+                }
+
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_STORE_MESH_OPTIMIZATION_SETTINGS)
+                {
+                    Ar.ReadArray(Ar.Read<int>);
+                }
+                else
+                {
+                    Ar.ReadArray(() => Ar.ReadBytes(7));
+                }
+
+                Ar.Read<int>();
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_TAG_MESH_PROXIES)
+            {
+                Ar.Read<int>();
+            }
+
+            RenderData = new FStaticMeshRenderData(Ar);
+            RenderData.Bounds = Bounds;
+            
+            Materials = new ResolvedObject[RenderData.LODs[0].Sections.Length];
+            for (var i = 0; i < RenderData.LODs[0].Sections.Length; i++)
+            {
+                Materials[i] = RenderData.LODs[0].Sections[i].Mat.ResolvedObject!;
+            }
+            return;
+        }
 
         if (!stripDataFlags.IsEditorDataStripped())
         {
@@ -66,7 +130,6 @@ public class UStaticMesh : UObject
                 _ => RenderData = new FStaticMeshRenderData(Ar)
             };
         }
-
 
         if (Ar.Game == EGame.GAME_WutheringWaves && GetOrDefault<bool>("bUseKuroLODDistance") && Ar.ReadBoolean())
         {
@@ -111,7 +174,7 @@ public class UStaticMesh : UObject
             if (FEditorObjectVersion.Get(Ar) >= FEditorObjectVersion.Type.RefactorMeshEditorMaterials)
             {
                 // UE4.14+ - "Materials" are deprecated, added StaticMaterials
-                StaticMaterials = bHasSpeedTreeWind ? GetOrDefault("StaticMaterials",  Array.Empty<FStaticMaterial>()) : Ar.ReadArray(() => new FStaticMaterial(Ar));
+                StaticMaterials = bHasSpeedTreeWind ? GetOrDefault("StaticMaterials", Array.Empty<FStaticMaterial>()) : Ar.ReadArray(() => new FStaticMaterial(Ar));
 
                 Materials = new ResolvedObject[StaticMaterials.Length];
                 for (var i = 0; i < Materials.Length; i++)

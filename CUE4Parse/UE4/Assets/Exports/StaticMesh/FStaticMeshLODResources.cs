@@ -46,6 +46,15 @@ public class FStaticMeshLODResources
     {
         var stripDataFlags = new FStripDataFlags(Ar);
 
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.todoa)
+        {
+            new FByteBulkData((FAssetArchive)Ar, true); // RawTriangles
+            if (Ar.Game != EGame.GAME_RocketLeague)
+            {
+                Ar.Read<int>(); // unknown but i assume this is a issue because of FByteBulkData skip
+            }
+        }
+        
         if (Ar.Game == EGame.GAME_TheDivisionResurgence) Ar.Position += 4;
 
         Sections = Ar.ReadArray(() => new FStaticMeshSection(Ar));
@@ -55,7 +64,10 @@ public class FStaticMeshLODResources
             SourceMeshBounds = new FBoxSphereBounds(Ar);
         }
 
-        MaxDeviation = Ar.Read<float>();
+        if (Ar.Game >= EGame.GAME_UE4_0)
+        {
+            MaxDeviation = Ar.Read<float>();
+        }
 
         if (Ar.Game == EGame.GAME_ThePathless) Ar.Position += 4;
 
@@ -145,6 +157,7 @@ public class FStaticMeshLODResources
     public void SerializeBuffersLegacy(FArchive Ar, FStripDataFlags stripDataFlags)
     {
         PositionVertexBuffer = new FPositionVertexBuffer(Ar);
+        //if( Ar.Ver() < VER_MESH_PAINT_SYSTEM_ENUM )
         VertexBuffer = new FStaticMeshVertexBuffer(Ar);
 
         if (Ar.Game == EGame.GAME_Borderlands3)
@@ -163,11 +176,12 @@ public class FStaticMeshLODResources
                 ColorVertexBuffer = new FColorVertexBuffer();
             }
         }
-        else
+        else if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MESH_PAINT_SYSTEM || Ar.Game >= EGame.GAME_UE4_0)
         {
             ColorVertexBuffer = new FColorVertexBuffer(Ar);
         }
-
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_SHADOW_VOLUMES) new FStaticMeshShadowVolumeStream(Ar); // FColorVertexBuffer but uses floats
+        if (Ar.Game < EGame.GAME_UE4_0) Ar.Read<int>(); // NumVertices
         IndexBuffer = new FRawStaticIndexBuffer(Ar);
 
         if (Ar.Game == EGame.GAME_NarutotoBorutoShinobiStriker )
@@ -186,7 +200,7 @@ public class FStaticMeshLODResources
                 DepthOnlyIndexBuffer = new FRawStaticIndexBuffer(Ar);
                 ReversedDepthOnlyIndexBuffer = new FRawStaticIndexBuffer(Ar);
             }
-            else
+            else if (Ar.Game >= EGame.GAME_UE4_0)
             {
                 // UE4.8 or older, or when has CDSF_ReversedIndexBuffer
                 DepthOnlyIndexBuffer = new FRawStaticIndexBuffer(Ar);
@@ -197,10 +211,16 @@ public class FStaticMeshLODResources
                 _ = new FDistanceFieldVolumeData(Ar); // distanceFieldData
             }
 
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_SHADOW_VOLUMES)
+            {
+                Ar.ReadBulkArray(() => Ar.ReadBytes(16)); // LegacyEdges
+                Ar.ReadArray<byte>(); // LegacyShadowTriangleDoubleSided
+            }
+            
             if (!stripDataFlags.IsEditorDataStripped())
                 WireframeIndexBuffer = new FRawStaticIndexBuffer(Ar);
-
-            if (!stripDataFlags.IsClassDataStripped((byte) EClassDataStripFlag.CDSF_AdjacencyData))
+            
+            if (!stripDataFlags.IsClassDataStripped((byte) EClassDataStripFlag.CDSF_AdjacencyData) && (Ar.Ver > EUnrealEngineObjectUE3Version.VER_CRACK_FREE_DISPLACEMENT_SUPPORT || Ar.Game >= EGame.GAME_UE4_0))
                 AdjacencyIndexBuffer = new FRawStaticIndexBuffer(Ar);
         }
 

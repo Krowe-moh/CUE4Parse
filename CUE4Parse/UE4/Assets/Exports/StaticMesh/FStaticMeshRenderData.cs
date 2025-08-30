@@ -61,6 +61,11 @@ public class FStaticMeshRenderData
         }
         else
         {
+            if (Ar.Game < EGame.GAME_UE4_0)
+            {
+                LODs = [new FStaticMeshLODResources(Ar)];
+                return; 
+            }
             LODs = Ar.ReadArray(() => new FStaticMeshLODResources(Ar));
         }
 

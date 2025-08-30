@@ -1,12 +1,39 @@
+using CUE4Parse.UE4.Assets.Readers;
+using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 
 namespace CUE4Parse.UE4.Assets.Exports.StaticMesh;
 
+public class FPS3StaticMeshData
+{
+    public int[] IoBufferSize;
+    public int[] ScratchBufferSize;
+    public short[] CommandBufferHoleSize;
+    public short[] IndexBias;
+    public short[] VertexCount;
+    public short[] TriangleCount;
+    public short[] FirstVertex;
+    public short[] FirstTriangle;
+
+    public FPS3StaticMeshData(FArchive Ar)
+    {
+        IoBufferSize = Ar.ReadArray<int>();
+        ScratchBufferSize = Ar.ReadArray<int>();
+        CommandBufferHoleSize = Ar.ReadArray<short>();
+        IndexBias = Ar.ReadArray<short>();
+        VertexCount = Ar.ReadArray<short>();
+        TriangleCount = Ar.ReadArray<short>();
+        FirstVertex = Ar.ReadArray<short>();
+        FirstTriangle = Ar.ReadArray<short>();
+    }
+}
+
 [JsonConverter(typeof(FStaticMeshSectionConverter))]
 public class FStaticMeshSection
 {
+    public FPackageIndex Mat;
     public int MaterialIndex;
     public int FirstIndex;
     public int NumTriangles;
@@ -21,6 +48,29 @@ public class FStaticMeshSection
 
     public FStaticMeshSection(FArchive Ar)
     {
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            Mat = new FPackageIndex((FAssetArchive)Ar);
+            bEnableCollision = Ar.ReadBoolean();
+            bEnableCollision = Ar.ReadBoolean();
+            bCastShadow = Ar.ReadBoolean();
+            FirstIndex = Ar.Read<int>();
+            NumTriangles = Ar.Read<int>();
+            MinVertexIndex = Ar.Read<int>();
+            MaxVertexIndex = Ar.Read<int>();
+            MaterialIndex = Ar.Read<int>();
+            Ar.SkipFixedArray(8); 
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_PLATFORMMESHDATA)
+            {
+                var LoadPlatformData = Ar.Read<byte>();
+                if (LoadPlatformData > 0)
+                {
+                    new FPS3StaticMeshData(Ar);
+                }
+            }
+            return;
+        }
+        
         MaterialIndex = Ar.Read<int>();
         FirstIndex = Ar.Read<int>();
         NumTriangles = Ar.Read<int>();

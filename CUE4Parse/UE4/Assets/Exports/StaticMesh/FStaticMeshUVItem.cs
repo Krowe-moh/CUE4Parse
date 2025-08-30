@@ -1,6 +1,8 @@
+using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Objects.RenderCore;
 using CUE4Parse.UE4.Objects.Meshes;
+using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 
 namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
@@ -14,6 +16,10 @@ namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
         public FStaticMeshUVItem(FArchive Ar, bool useHighPrecisionTangents, int numStaticUVSets, bool useStaticFloatUVs)
         {
             Normal = SerializeTangents(Ar, useHighPrecisionTangents);
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_MESH_PAINT_SYSTEM)
+            {
+                Ar.Read<FColor>();
+            }
             UV = SerializeTexcoords(Ar, numStaticUVSets, useStaticFloatUVs);
         }
 
