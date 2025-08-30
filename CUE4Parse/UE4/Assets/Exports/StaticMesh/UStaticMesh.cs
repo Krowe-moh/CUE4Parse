@@ -49,11 +49,11 @@ public class UStaticMesh : UObject
         {
             if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_COMPACTKDOPSTATICMESH)
             {
-                Ar.ReadBulkArray(() => Ar.ReadBytes(16)); // node
+                Ar.ReadBulkArray(() => Ar.ReadBytes(32)); // node
             }
             else
             {
-                Ar.Position += 8; // bound
+                Ar.Position += 24; // bound
                 Ar.ReadBulkArray(() => Ar.ReadBytes(6)); // non legacy node
             }
 
