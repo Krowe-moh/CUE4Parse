@@ -71,30 +71,30 @@ public class FPropertyTagData
                     {
                         ["FloatProperty"] = new[]
                         {
-                            "LookupTable", "AngleConstraint", "RandomSpawnPoints", "Value", "LODDistances",
+                            "LookupTable", "ClothMovementScale", "AttackImpactDelay", "WeaponRange", "MaxMagazineSize", "AmmoCount", "ChildBlendTimes", "MagazineSize", "fPerturbIncreaseSpeedFire", "MaxAmmoCount", "MaxMagazineSize", "AngleConstraint", "RandomSpawnPoints", "Value", "LODDistances",
                             "LODSpawnRatios", "TargetWeight", "Child2PerBoneWeight", "ResolutionTestTable", "Weights", "InputVolume"
                         },
                         ["IntProperty"] = new[]
                         {
-                            "Constraints", "RandomSeeds", "Children", "BoundsBodies", "FaceTriData", "SpawnOffsets",
+                            "Constraints", "RandomSeeds", "ClothIndexBuffer", "ClothWeldingMap", "Indices", "TrackIndices", "BoundsBodies", "FaceTriData", "SpawnOffsets",
                             "CompressedTrackOffsets", "LODMaterialMap", "SupportedEvents"
                         },
-                        ["ByteProperty"] = new[] { "LocalToCompReqBones", "RawData" },
-                        ["BoolProperty"] = new[] { "bEnableShadowCasting" },
+                        ["ByteProperty"] = new[] { "LocalToCompReqBones", "RequiredBones", "RawData", "Types", "SystemMemoryData" },
+                        ["BoolProperty"] = new[] { "bEnableShadowCasting", "bForceFireAnimLinkages" },
                         ["StrProperty"] = new[]
                         {
-                            "ParamNames", "BossLevels", "LibraryCategories", "BossArchetypeNames", "TemplateMapFolders", "ReferencedSwfs", "RequireZoneNames",
+                            "ParamNames", "BossLevels", "BoneNames", "HiddenLevels", "LibraryCategories", "BossArchetypeNames", "TemplateMapFolders", "ReferencedSwfs", "RequireZoneNames",
                             "HelpParamDescriptions", "HelpParamNames", "StyleGroups", "Commands", "EditPackages", "PackagesToBeFullyLoadedAtStartup"
                         },
                         ["NameProperty"] = new[]
                         {
-                            "BranchStartBoneName", "ChildClassNames", "UseTranslationBoneNames", "MonsterTypes", "ArenaNames",
+                            "BranchStartBoneName", "ClothBones", "UnfixedNames", "EnabledSpringNames", "HideBoneNames", "MaterialParameters", "InputNames", "ClothingTeleportRefBones", "AnimTypes", "ComposePrePassBoneNames", "LevelNames", "ArcheTypeNames", "FireModeTypes", "ChildClassNames", "UseTranslationBoneNames", "MonsterTypes", "ArenaNames",
                             "SavedGameFileNames", "TargetParamNames", "AnimList", "TrackBoneNames",
                             "HiddenKismetClassNames", "BadPackageNames"
                         },
                         ["ObjectProperty"] = new[]
                         {
-                            "Expressions", "StaticMeshComponents", "FunctionExpressions", "LightComponents", "MetaData", "RootMorphNodes", "AnimTickArray",
+                            "Expressions", "Sockets", "Children", "AdditiveBasePoseAnimSeq", "AdditiveTargetPoseAnimSeq", "SubTracks", "DefaultMaterials", "ParticleModuleEventsToSendToGame", "StatModComponents", "InventoryList", "ClothingAssets", "FemaleAnimSets", "DamageTypes", "IgnoreDamageTypes", "LinkedEvents", "ClassProximityTypes", "MaleAnimSets", "RelatedAdditiveAnimSeqs", "SkelControls", "ConstraintSetup", "BoundsBodies", "ClothingAssets", "Expression", "EditorComments", "MeshMaterials", "MaleLobbyAnimSets", "FemaleLobbyAnimSets", "HandSignalAnims", "WeaponProjectilesAT", "BloodSplatterDecalMaterial", "StaticMeshComponents", "FunctionExpressions", "LightComponents", "MetaData", "RootMorphNodes", "AnimTickArray",
                             "ParentNodes", "LinkedVariables", "InterpTracks", "InterpGroups", "BodySetup", "Bodies", "Styles",
                             "InactiveStates", "Flashlight_MeshComponents", "Flashlight_FlareComponents", "Flashlight_FlareSockets",
                             "Wheels", "Flashlight_LightSockets", "FlickerFunctionArchetypes", "GroupAnimSets", "Materials",
@@ -103,7 +103,7 @@ public class FPropertyTagData
                             "DecalList", "Anim", "ControlHead", "AnimSets", "Components", "Modules", "Targets", "Controls", "SpawnModules",
                             "UpdateModules", "Emitters", "LODLevels", "ReplayClips", "Skins", "Effects", "ReferencedTextures"
                         },
-                        ["ClassProperty"] = new[] { "WeaponClasses", "PreviewAnimSets" }
+                        ["ClassProperty"] = new[] { "WeaponClasses", "PreviewAnimSets", "SupportSynchronizeClasses" }
                     };
 
                     if (map.Any(kv => kv.Value.Contains(name)))
@@ -118,28 +118,28 @@ public class FPropertyTagData
                         case "PreCachedPhysScale":
                         case "EdgeDirections":
                         case "VertexData":
+                        case "PosKeys":
                             InnerTypeData = new FPropertyTagData("Vector", name);
-                            InnerType = "StructProperty";
+                            break;
+                        case "RotKeys":
+                            InnerTypeData = new FPropertyTagData("Quat", name);
                             break;
                         case "FacePlaneData":
                         case "PermutedVertexData":
                             InnerTypeData = new FPropertyTagData("Plane", name);
-                            InnerType = "StructProperty";
                             break;
                         case "IrrelevantLights":
                         case "ReferencedTextureGuids":
                             InnerTypeData = new FPropertyTagData("Guid", name);
-                            InnerType = "StructProperty";
                             break;
                         case "Characters":
                             InnerTypeData = new FPropertyTagData("FontCharacter", name);
-                            InnerType = "StructProperty";
                             break;
                         default:
-                            Log.Information(name);
-                            InnerType = "StructProperty";
+                            //Log.Information(name);
                             break;
                     }
+                    InnerType = "StructProperty";
                 }
 
                 break;

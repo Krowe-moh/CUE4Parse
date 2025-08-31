@@ -154,9 +154,40 @@ public class UObject : AbstractPropertyHolder
         }
         else
         {
+            if (Ar.Game < EGame.GAME_UE4_0 && Flags.HasFlag(EObjectFlags.RF_NonPIEDuplicateTransient))
+            {
+                // turn this to a struct real
+                
+                var temp = new FPackageIndex(Ar);
+                new FPackageIndex(Ar);
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
+                {
+                    Ar.Read<long>();
+                }
+                else
+                {
+                    Ar.Read<int>();
+                }
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_REDUCED_STATEFRAME_LATENTACTION_SIZE)
+                {
+                    Ar.Read<short>();
+                }
+                else
+                {
+                    Ar.Read<int>();
+                }
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedStateStackToUStateFrame)
+                {
+                    Ar.ReadArray(() => Ar.ReadBytes(12));
+                }
+                if (temp.IsNull)
+                {
+                    Ar.Read<int>();
+                }
+            }
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.TemplateDataAddedToUComponent)
             {
-                if ((Class?.Name?.Contains("Component") ?? false) || this is UComponent)
+                if (this is UComponent)// Lazy way: Class?.Name?.Contains("Component") ?? false)
                 {
                     new FPackageIndex(Ar);
                 }

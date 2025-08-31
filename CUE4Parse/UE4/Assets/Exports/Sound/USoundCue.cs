@@ -3,6 +3,7 @@ using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
+using Newtonsoft.Json;
 
 namespace CUE4Parse.UE4.Assets.Exports.Sound
 {
@@ -41,6 +42,26 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.COOKED_ASSETS_IN_EDITOR_SUPPORT)
             {
                 var _ = new FStripDataFlags(Ar);
+            }
+        }
+
+        protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
+        {
+            base.WriteJson(writer, serializer);
+
+            if (EditorData != null && EditorData.Count > 0)
+            {
+                writer.WritePropertyName("EditorData");
+                writer.WriteStartObject();
+
+                foreach (var kvp in EditorData)
+                {
+                    string keyStr = kvp.Key?.ToString() ?? "null";
+                    writer.WritePropertyName(keyStr);
+                    serializer.Serialize(writer, kvp.Value);
+                }
+
+                writer.WriteEndObject();
             }
         }
     }

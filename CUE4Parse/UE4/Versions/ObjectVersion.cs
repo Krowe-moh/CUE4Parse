@@ -738,6 +738,7 @@ namespace CUE4Parse.UE4.Versions
         AddedDelegateSourceToUDelegateProperty = 185,
         ClassDependenciesDeprecated = 186,
         DisplacedHideCategories = 187, // todo
+        AddedStateStackToUStateFrame = 189,
         PropertyFlagsSizeExpandedTo64Bits = 195,
         AddedComponentGuid = 196,
         Use64BitFlag = 195,

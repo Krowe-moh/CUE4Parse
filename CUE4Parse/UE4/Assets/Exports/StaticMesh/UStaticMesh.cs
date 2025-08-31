@@ -4,7 +4,6 @@ using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Objects.UObject;
-using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 using Serilog;
@@ -69,36 +68,79 @@ public class UStaticMesh : UObject
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATIC_MESH_SOURCE_DATA_COPY)
             {
-                var real = Ar.ReadBoolean();
-                if (real)
+                var bHaveSourceData = Ar.ReadBoolean();
+                if (bHaveSourceData)
                 {
                     RenderData = new FStaticMeshRenderData(Ar);
                 }
 
                 if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_STORE_MESH_OPTIMIZATION_SETTINGS)
                 {
-                    Ar.ReadArray(Ar.Read<int>);
+                    Ar.ReadArray(Ar.Read<int>); // OptimizationSettings
                 }
                 else
                 {
-                    Ar.ReadArray(() => Ar.ReadBytes(7));
+                    if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_ADDED_EXTRA_MESH_OPTIMIZATION_SETTINGS)
+                    { 
+                        Ar.ReadArray(() => Ar.ReadBytes(7));
+                    }
+                    else
+                    {
+                        Ar.ReadArray(() => Ar.ReadBytes(24));
+                    }
                 }
 
-                Ar.Read<int>();
+                Ar.Read<int>(); // bHasBeenSimplified
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_TAG_MESH_PROXIES)
             {
-                Ar.Read<int>();
+                Ar.ReadBoolean(); // bIsMeshProxy
             }
 
             RenderData = new FStaticMeshRenderData(Ar);
-            RenderData.Bounds = Bounds;
             
             Materials = new ResolvedObject[RenderData.LODs[0].Sections.Length];
             for (var i = 0; i < RenderData.LODs[0].Sections.Length; i++)
             {
                 Materials[i] = RenderData.LODs[0].Sections[i].Mat.ResolvedObject!;
+            }
+            RenderData.Bounds = Bounds;
+            
+            Ar.ReadArray(() => new FPackageIndex(Ar));
+            Ar.Read<FRotator>(); // ThumbnailAngle
+            Ar.Read<int>(); // ThumbnailDistance
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_VERSION_18)
+            {
+                Ar.ReadFString(); // HighResSourceMeshName
+                //Ar.Read<int>(); // HighResSourceMeshCRC
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INTEGRATED_LIGHTMASS)
+            {
+                LightingGuid = Ar.Read<FGuid>(); // LocalLightingGuid
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_PRESERVE_SMC_VERT_COLORS)
+            {
+                Ar.Read<int>(); // VertexPositionVersionNumber
+            }
+            
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICTEXTUREINSTANCES)
+            {
+                Ar.ReadArray<int>(); // CachedStreamingTextureFactors   
+            }
+            
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_KEEP_STATIC_MESH_DEGENERATES)
+            {
+                Ar.ReadBoolean(); // bRemoveDegenerates
+            }
+            
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INSTANCED_STATIC_MESH_PER_LOD_STATIC_LIGHTING)
+            {
+                Ar.ReadBoolean(); // bPerLODStaticLightingForInstancing
+                Ar.Read<int>(); // ConsolePreallocateInstanceCount
             }
             return;
         }
