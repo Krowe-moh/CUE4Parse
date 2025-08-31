@@ -119,7 +119,11 @@ public class UStaticMesh : UObject
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INTEGRATED_LIGHTMASS)
             {
-                LightingGuid = Ar.Read<FGuid>(); // LocalLightingGuid
+                LightingGuid = Ar.Read<FGuid>();
+            }
+            else
+            {
+                LightingGuid = FGuid.Random();
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_PRESERVE_SMC_VERT_COLORS)

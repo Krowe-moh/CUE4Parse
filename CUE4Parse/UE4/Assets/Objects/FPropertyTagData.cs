@@ -7,7 +7,6 @@ using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
-using Serilog;
 
 namespace CUE4Parse.UE4.Assets.Objects;
 
@@ -76,7 +75,7 @@ public class FPropertyTagData
                         },
                         ["IntProperty"] = new[]
                         {
-                            "Constraints", "RandomSeeds", "ClothIndexBuffer", "ClothWeldingMap", "Indices", "TrackIndices", "BoundsBodies", "FaceTriData", "SpawnOffsets",
+                            "Constraints", "RandomSeeds", "ClothIndexBuffer", "ClothWeldedIndices", "ClothWeldingMap", "Indices", "TrackIndices", "BoundsBodies", "FaceTriData", "SpawnOffsets",
                             "CompressedTrackOffsets", "LODMaterialMap", "SupportedEvents"
                         },
                         ["ByteProperty"] = new[] { "LocalToCompReqBones", "RequiredBones", "RawData", "Types", "SystemMemoryData" },
