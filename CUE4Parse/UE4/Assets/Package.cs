@@ -5,6 +5,7 @@ using System.IO;
 using CUE4Parse.Compression;
 using CUE4Parse.FileProvider;
 using CUE4Parse.GameTypes.ACE7.Encryption;
+using CUE4Parse.GameTypes.RL.Encryption.Aes;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
@@ -87,17 +88,73 @@ namespace CUE4Parse.UE4.Assets
 
             Summary = new FPackageFileSummary(uassetAr);
 
-            if (Summary.CompressedChunks.Length > 0 && (Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_GZIP) || Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB)))
+            if (uassetAr.Game == EGame.GAME_RocketLeague)
             {
-                uassetAr.Position = Summary.CompressedChunks[0].CompressedOffset;
-                var compressedData = new byte[Summary.CompressedChunks[0].UncompressedSize];
-                FByteBulkData.ReadCompressedChunk(uassetAr, compressedData, Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB) ? CompressionMethod.Zlib : CompressionMethod.LZO);
-                var buffer = new byte[uassetAr.Position + compressedData.Length];
                 uassetAr.Position = 0;
-                uassetAr.Read(buffer, 0, (int)uassetAr.Position);
+                byte[] before = uassetAr.ReadBytes(Summary.NameOffset);
+                
+                int encSize = Summary.TotalHeaderSize - Summary.GarbageSize - Summary.NameOffset;
+                encSize = (encSize + 15) & ~15; // AES block alignment (ignore this code for now as it's junk that's only meant to work.)
+                byte[] encryptedData = uassetAr.ReadBytes(encSize);
 
-                uassetAr.Position = Summary.CompressedChunks[0].UncompressedOffset;
-                Array.Copy(compressedData, 0, buffer, (int)uassetAr.Position, compressedData.Length);
+                RocketLeagueAes.Decrypt(encryptedData, out byte[] decryptedData);
+                
+                long remaining = uassetAr.Length - uassetAr.Position;
+                byte[] after = uassetAr.ReadBytes((int)remaining);
+
+                byte[] fullBuffer = new byte[before.Length + decryptedData.Length + after.Length];
+                int offset = 0;
+                Buffer.BlockCopy(before, 0, fullBuffer, offset, before.Length);
+                offset += before.Length;
+                Buffer.BlockCopy(decryptedData, 0, fullBuffer, offset, decryptedData.Length);
+                offset += decryptedData.Length;
+                Buffer.BlockCopy(after, 0, fullBuffer, offset, after.Length);
+
+                using var tempArr = new FByteArchive("tempp", fullBuffer, uassetAr.Versions);
+                uassetAr.SetBaseArchive(tempArr);
+            }
+
+            if (Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_GZIP) || Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB))
+            {
+                if (uassetAr.Game == EGame.GAME_RocketLeague)
+                {
+                    uassetAr.SeekAbsolute(Summary.NameOffset + Summary.CompressedChunkInfoOffset, SeekOrigin.Begin);
+                    Summary.CompressedChunks = uassetAr.ReadArray(() => new FCompressedChunk(uassetAr));
+                }
+                long totalSize = uassetAr.Length;
+                foreach (var chunk in Summary.CompressedChunks)
+                {
+                    var endOffset = chunk.UncompressedOffset + chunk.UncompressedSize;
+                    if (endOffset > totalSize)
+                        totalSize = endOffset;
+                }
+
+                var buffer = new byte[totalSize];
+
+                uassetAr.Position = 0;
+                uassetAr.Read(buffer, 0, (int)uassetAr.Length);
+
+                foreach (var chunk in Summary.CompressedChunks)
+                {
+                    uassetAr.Position = chunk.CompressedOffset;
+
+                    var decompressedData = new byte[chunk.UncompressedSize];
+                    FByteBulkData.ReadCompressedChunk(
+                        uassetAr,
+                        decompressedData,
+                        Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB)
+                            ? CompressionMethod.Zlib
+                            : CompressionMethod.LZO
+                    );
+
+                    Array.Copy(
+                        decompressedData,
+                        0,
+                        buffer,
+                        (int)chunk.UncompressedOffset,
+                        decompressedData.Length
+                    );
+                }
 
                 using var tempAr = new FByteArchive("temp", buffer, uassetAr.Versions);
                 uassetAr.SetBaseArchive(tempAr);
@@ -111,35 +168,39 @@ namespace CUE4Parse.UE4.Assets
             ImportMap = new FObjectImport[Summary.ImportCount];
             uassetAr.ReadArray(ImportMap, () => new FObjectImport(uassetAr));
             
-            uassetAr.SeekAbsolute(Summary.HeritageOffset, SeekOrigin.Begin);
-            uassetAr.ReadArray(Summary.HeritageCount, () => uassetAr.Read<FGuid>());
+            if (Summary is { HeritageOffset: > 0 })
+            {
+                uassetAr.SeekAbsolute(Summary.HeritageOffset, SeekOrigin.Begin);
+                uassetAr.ReadArray(Summary.HeritageCount, () => uassetAr.Read<FGuid>());
+            }
 
             uassetAr.SeekAbsolute(Summary.ExportOffset, SeekOrigin.Begin);
             ExportMap = new FObjectExport[Summary.ExportCount]; // we need this to get its final size in some case
             ExportsLazy = new Lazy<UObject>[Summary.ExportCount];
             uassetAr.ReadArray(ExportMap, () => new FObjectExport(uassetAr));
 
-            uassetAr.SeekAbsolute(Summary.ImportExportGuidsOffset, SeekOrigin.Begin);
-            
-            ImportGuids = new FImportGuids[Summary.ImportGuidsCount];
-            for (int i = 0; i < Summary.ImportGuidsCount; i++)
+            if (Summary is { ImportExportGuidsOffset: > 0 })
             {
-                var levelName = uassetAr.ReadFString();
-                ImportGuids[i] = new FImportGuids
+                uassetAr.SeekAbsolute(Summary.ImportExportGuidsOffset, SeekOrigin.Begin);
+                ImportGuids = new FImportGuids[Summary.ImportGuidsCount];
+                for (int i = 0; i < Summary.ImportGuidsCount; i++)
                 {
-                    LevelName = new FName(levelName),
-                    Guids = uassetAr.ReadArray(() => uassetAr.Read<FGuid>())
-                };
+                    var levelName = uassetAr.ReadFString();
+                    ImportGuids[i] = new FImportGuids
+                    {
+                        LevelName = new FName(levelName),
+                        Guids = uassetAr.ReadArray(() => uassetAr.Read<FGuid>())
+                    };
+                }
+                
+                for (int i = 0; i < Summary.ExportGuidsCount; i++)
+                {
+                    var objectGuid = uassetAr.Read<FGuid>();
+                    var exportIndex = uassetAr.Read<int>();
+
+                    ExportGuidsAwaitingLookup[objectGuid] = exportIndex;
+                }
             }
-
-            for (int i = 0; i < Summary.ExportGuidsCount; i++)
-            {
-                var objectGuid = uassetAr.Read<FGuid>();
-                var exportIndex = uassetAr.Read<int>();
-
-                ExportGuidsAwaitingLookup[objectGuid] = exportIndex;
-            }
-
             
             if (!useLazySerialization && Summary is { DependsOffset: > 0, ExportCount: > 0 })
             {
@@ -261,68 +322,94 @@ namespace CUE4Parse.UE4.Assets
             return null;
         }
 
-        private ResolvedObject? ResolveImport(FPackageIndex importIndex)
+     private ResolvedObject? ResolveImport(FPackageIndex importIndex)
+{
+    int firstIdx = -importIndex.Index - 1;
+    if (firstIdx < 0 || firstIdx >= ImportMap.Length)
+        return null; // invalid import upfront
+
+    var import = ImportMap[firstIdx];
+    var outerMostIndex = importIndex;
+    FObjectImport? outerMostImport = null;
+
+    while (true)
+    {
+        int idx = -outerMostIndex.Index - 1;
+        if (idx < 0 || idx >= ImportMap.Length)
+            break; // invalid index, bail out
+
+        outerMostImport = ImportMap[idx];
+
+        if (outerMostImport.OuterIndex.IsNull)
+            break;
+
+        outerMostIndex = outerMostImport.OuterIndex;
+    }
+
+    // revalidate before dereferencing again
+    int outerIdx = -outerMostIndex.Index - 1;
+    if (outerIdx < 0 || outerIdx >= ImportMap.Length)
+        return new ResolvedImportObject(import, this);
+
+    outerMostImport = ImportMap[outerIdx];
+
+    // We don't support loading script packages, so just return a fallback
+    if (outerMostImport.ObjectName.Text.StartsWith("/Script/"))
+    {
+        return new ResolvedImportObject(import, this);
+    }
+
+    if (Provider == null)
+        return null;
+
+    Package? importPackage = null;
+    if (Provider.TryLoadPackage(outerMostImport.ObjectName.Text, out var package))
+        importPackage = package as Package;
+
+    if (importPackage == null)
+    {
+#if DEBUG
+        // Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, import.ObjectName, Name);
+#endif
+        return new ResolvedImportObject(import, this);
+    }
+
+    string? outer = null;
+    if (outerMostIndex != import.OuterIndex && import.OuterIndex.IsImport)
+    {
+        int outerImportIdx = -import.OuterIndex.Index - 1;
+        if (outerImportIdx < 0 || outerImportIdx >= ImportMap.Length)
+            return new ResolvedImportObject(import, this);
+
+        var outerImport = ImportMap[outerImportIdx];
+        outer = ResolveImport(import.OuterIndex)?.GetPathName();
+        if (outer == null)
         {
-            var import = ImportMap[-importIndex.Index - 1];
-            var outerMostIndex = importIndex;
-            FObjectImport outerMostImport;
-            while (true)
-            {
-                outerMostImport = ImportMap[-outerMostIndex.Index - 1];
-                if (outerMostImport.OuterIndex.IsNull)
-                    break;
-                outerMostIndex = outerMostImport.OuterIndex;
-            }
-
-            outerMostImport = ImportMap[-outerMostIndex.Index - 1];
-            // We don't support loading script packages, so just return a fallback
-            if (outerMostImport.ObjectName.Text.StartsWith("/Script/"))
-            {
-                return new ResolvedImportObject(import, this);
-            }
-
-            if (Provider == null)
-                return null;
-            Package? importPackage = null;
-            if (Provider.TryLoadPackage(outerMostImport.ObjectName.Text, out var package))
-                importPackage = package as Package;
-            if (importPackage == null)
-            {
 #if DEBUG
-//                Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, import.ObjectName, Name);
-#endif
-                return new ResolvedImportObject(import, this);
-            }
-
-            string? outer = null;
-            if (outerMostIndex != import.OuterIndex && import.OuterIndex.IsImport)
-            {
-                var outerImport = ImportMap[-import.OuterIndex.Index - 1];
-                outer = ResolveImport(import.OuterIndex)?.GetPathName();
-                if (outer == null)
-                {
-#if DEBUG
-                    Log.Fatal("Missing outer for import of ({0}): {1} in {2} was not found, but the package exists.", Name, outerImport.ObjectName, importPackage.GetFullName());
-#endif
-                    return new ResolvedImportObject(import, this);
-                }
-            }
-
-            for (var i = 0; i < importPackage.ExportMap.Length; i++)
-            {
-                var export = importPackage.ExportMap[i];
-                if (export.ObjectName.Text != import.ObjectName.Text)
-                    continue;
-                var thisOuter = importPackage.ResolvePackageIndex(export.OuterIndex);
-                if (thisOuter?.GetPathName() == outer)
-                    return new ResolvedExportObject(i, importPackage);
-            }
-
-#if DEBUG
-            Log.Fatal("Missing import of ({0}): {1} in {2} was not found, but the package exists.", Name, import.ObjectName, importPackage.GetFullName());
+            Log.Fatal("Missing outer for import of ({0}): {1} in {2} was not found, but the package exists.",
+                Name, outerImport.ObjectName, importPackage.GetFullName());
 #endif
             return new ResolvedImportObject(import, this);
         }
+    }
+
+    for (var i = 0; i < importPackage.ExportMap.Length; i++)
+    {
+        var export = importPackage.ExportMap[i];
+        if (export.ObjectName.Text != import.ObjectName.Text)
+            continue;
+
+        var thisOuter = importPackage.ResolvePackageIndex(export.OuterIndex);
+        if (thisOuter?.GetPathName() == outer)
+            return new ResolvedExportObject(i, importPackage);
+    }
+
+#if DEBUG
+    Log.Fatal("Missing import of ({0}): {1} in {2} was not found, but the package exists.",
+        Name, import.ObjectName, importPackage.GetFullName());
+#endif
+    return new ResolvedImportObject(import, this);
+}
 
         private class ResolvedExportObject : ResolvedObject
         {

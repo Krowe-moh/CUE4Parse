@@ -485,7 +485,6 @@ namespace CUE4Parse.UE4.Objects.UObject
                 }
             }
             
-            skipTexture:
             if (FileVersionUE >= EUnrealEngineObjectUE4Version.ASSET_REGISTRY_TAGS)
             {
                 AssetRegistryDataOffset = Ar.Read<int>();
@@ -560,6 +559,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.Read<int>(); // offset
             }
 
+            skipTexture:
             if (Ar.Game == EGame.GAME_RocketLeague)
             {
                 int count = Ar.Read<int>();
