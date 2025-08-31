@@ -100,6 +100,7 @@ public class UBrushComponent : UPrimitiveComponent
         }
     }
 };
+public class UAudioOverlapComponent : UActorComponent;
 public class UCableComponent : UMeshComponent;
 public class UCameraComponent : USceneComponent;
 public class UCameraShakeSourceComponent : USceneComponent;
@@ -268,6 +269,7 @@ public class UPostProcessComponent : USceneComponent;
 public class UProceduralFoliageComponent : UActorComponent;
 public class UProceduralMeshComponent : UMeshComponent;
 public class UProjectileMovementComponent : UMovementComponent;
+public class URadialBlurComponent : UActorComponent;
 public class URB_ConstraintComponent : UPhysicsConstraintComponent;
 public class URB_Handle : UPhysicsHandleComponent;
 public class URB_RadialForceComponent : URadialForceComponent;
@@ -288,8 +290,15 @@ public class USensingComponent : UPawnSensingComponent;
 public class UShapeComponent : UPrimitiveComponent;
 public class USingleAnimSkeletalComponent : USkeletalMeshComponent;
 public class USkeletalMeshReplicatedComponent : USkeletalMeshComponent;
+public class UFPSSkeletalMeshComponent : USkeletalMeshComponent;
 public class USkinnedMeshComponent : UMeshComponent;
+public class USA2PartMeshToActorComp : UMeshComponent;
+public class USA2WeaponAIComponent : UActorComponent;
+public class USA2PickupComponent : UActorComponent; 
 public class USkyLightComponent : ULightComponentBase;
+public class UDynamicLightEnvironmentComponent : UActorComponent;
+public class UDrawLightRadiusComponent : UActorComponent;
+public class UFracturedSkinnedMeshComponent : UActorComponent;
 public class USmartNavLinkComponent : UNavLinkCustomComponent;
 public class USparseVolumeTextureViewerComponent : UPrimitiveComponent;
 public class USpectatorPawnMovement : UFloatingPawnMovement;

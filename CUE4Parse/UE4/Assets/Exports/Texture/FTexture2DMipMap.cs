@@ -47,7 +47,15 @@ public class FTexture2DMipMap
             var derivedDataKey = Ar.ReadFString();
         }
     }
-
+    
+    // temp tfc (ignore please)
+    public FTexture2DMipMap(FAssetArchive Ar, string tfc, int sizeX, int sizeY)
+    {
+        BulkData = new FByteBulkData(Ar, tfc);
+        SizeX = sizeX;
+        SizeY = Ar.Game == EGame.GAME_RocketLeague ? sizeY : Ar.Read<int>();
+        SizeZ = Ar.Game >= EGame.GAME_UE4_20 ? Ar.Read<int>() : 1;
+    }
     public bool EnsureValidBulkData(UTextureAllMipDataProviderFactory? provider, int mipLevel)
     {
         if (BulkData?.Data != null) return true;

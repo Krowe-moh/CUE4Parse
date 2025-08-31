@@ -97,7 +97,7 @@ namespace CUE4Parse.UE4.Assets
                 encSize = (encSize + 15) & ~15; // AES block alignment (ignore this code for now as it's junk that's only meant to work.)
                 byte[] encryptedData = uassetAr.ReadBytes(encSize);
 
-                RocketLeagueAes.Decrypt(encryptedData, out byte[] decryptedData);
+                RocketLeagueAes.Decrypt(encryptedData, Summary.CompressedChunkInfoOffset, out byte[] decryptedData);
                 
                 long remaining = uassetAr.Length - uassetAr.Position;
                 byte[] after = uassetAr.ReadBytes((int)remaining);

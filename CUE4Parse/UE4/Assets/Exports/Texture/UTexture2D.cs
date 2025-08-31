@@ -13,7 +13,10 @@ public class UTexture2D : UTexture
 {
     public FIntPoint ImportedSize { get; private set; }
     public TextureAddress AddressX { get; private set; }
+    public int SizeX { get; private set; }
+    public int SizeY { get; private set; }
     public TextureAddress AddressY { get; private set; }
+    public FName TextureFileCacheName { get; private set; }
 
     public override TextureAddress GetTextureAddressX() => AddressX;
     public override TextureAddress GetTextureAddressY() => AddressY;
@@ -24,6 +27,9 @@ public class UTexture2D : UTexture
         ImportedSize = GetOrDefault<FIntPoint>(nameof(ImportedSize));
         AddressX = GetOrDefault<TextureAddress>(nameof(AddressX));
         AddressY = GetOrDefault<TextureAddress>(nameof(AddressY));
+        SizeX = GetOrDefault<int>(nameof(SizeX));
+        SizeY = GetOrDefault<int>(nameof(SizeY));
+        TextureFileCacheName = GetOrDefault<FName>(nameof(TextureFileCacheName));
 
         var bCooked = false;
         if (Ar.Game >= EGame.GAME_UE4_0)
@@ -50,7 +56,8 @@ public class UTexture2D : UTexture
             {
                 if (Ar.Game == EGame.GAME_RocketLeague)
                 {
-                    legacyMips = [new FTexture2DMipMap(Ar)];
+                    // ignore please
+                    legacyMips = [new FTexture2DMipMap(Ar, TextureFileCacheName.Text, SizeX, SizeY)];
                 }
                 else
                 {

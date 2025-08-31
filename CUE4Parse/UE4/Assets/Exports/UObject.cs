@@ -157,7 +157,7 @@ public class UObject : AbstractPropertyHolder
             if (Ar.Game < EGame.GAME_UE4_0 && Flags.HasFlag(EObjectFlags.RF_NonPIEDuplicateTransient))
             {
                 // turn this to a struct real
-                
+              /*  
                 var temp = new FPackageIndex(Ar);
                 new FPackageIndex(Ar);
                 if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
@@ -183,7 +183,7 @@ public class UObject : AbstractPropertyHolder
                 if (temp.IsNull)
                 {
                     Ar.Read<int>();
-                }
+                }*/
             }
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.TemplateDataAddedToUComponent)
             {
