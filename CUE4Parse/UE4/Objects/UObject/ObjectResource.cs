@@ -275,7 +275,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                     goto exportflag;
                 }
 
-                if (SerialSize > 0 && (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedSerialOffset || Ar.Game >= EGame.GAME_UE4_0))
+                if (SerialSize > 0 && (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE || Ar.Game >= EGame.GAME_UE4_0))
                 {
                     SerialOffset = Ar.Read<int>();
                 }
@@ -305,12 +305,12 @@ namespace CUE4Parse.UE4.Objects.UObject
             }
 
             exportflag:
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedExportFlags)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FOBJECTEXPORT_EXPORTFLAGS)
             {
                 Ar.Read<int>(); // ExportFlags
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedNetIndex)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP)
             {
                 Ar.ReadArray<int>(); // NetObjectCount
                 Ar.Read<FGuid>(); // PackageGuid

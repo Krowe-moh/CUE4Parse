@@ -1,7 +1,6 @@
 using System;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
-using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
@@ -39,11 +38,6 @@ public class USceneComponent : UActorComponent
             bIsCooked = Ar.ReadBoolean();
             if (bIsCooked)
                 Bounds = new FBoxSphereBounds(Ar);
-        }
-        // move this to UPrimitiveComponent ?
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedComponentGuid && Ar.Ver < EUnrealEngineObjectUE3Version.ComponentGuidDeprecated) 
-        {
-            Ar.Read<FGuid>();
         }
     }
 

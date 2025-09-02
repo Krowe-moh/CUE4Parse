@@ -7,7 +7,7 @@ namespace CUE4Parse.UE4.Objects.PhysicsEngine
         {
             base.Deserialize(Ar, validPos);
 
-            Ar.ReadArray(() => Ar.ReadArray<byte>()); // PreCachedPhysData
+            Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadArray<byte>())); // PreCachedPhysData
         }
     }
 }

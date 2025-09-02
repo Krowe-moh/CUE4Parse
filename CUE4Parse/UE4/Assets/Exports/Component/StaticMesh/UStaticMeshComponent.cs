@@ -17,7 +17,7 @@ public class UStaticMeshComponent : UMeshComponent
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        if (Ar.Position == validPos) return;
+        if (Ar.Position == validPos || Ar.Ver < EUnrealEngineObjectUE3Version.VER_LIGHTMAP_NON_UOBJECT) return;
         if (Ar.Game == Versions.EGame.GAME_Borderlands3) Ar.ReadBoolean();
         LODData = Ar.ReadArray(() => new FStaticMeshComponentLODInfo(Ar));
 

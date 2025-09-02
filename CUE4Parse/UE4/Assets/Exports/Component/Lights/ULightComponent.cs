@@ -47,7 +47,7 @@ public class ULightComponent : ULightComponentBase
             }
         }
 
-        if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedConvexVolumes && Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVE_UNUSED_LIGHTING_PROPERTIES)
+        if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_SIMD_SIMPLIFIED_COLLISION_DATA && Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVE_UNUSED_LIGHTING_PROPERTIES)
         {
             Ar.ReadArray(() => new FConvexVolume(Ar)); // InclusionConvexVolumes
             Ar.ReadArray(() => new FConvexVolume(Ar)); // ExclusionConvexVolumes

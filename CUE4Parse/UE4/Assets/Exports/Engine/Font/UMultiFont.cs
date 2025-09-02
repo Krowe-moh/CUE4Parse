@@ -11,7 +11,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Engine.Font
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_FIXED_FONTS_SERIALIZATION)
             {
-                Ar.Read<int>(); // ResolutionTestTable
+                Ar.ReadArray(() => Ar.Read<int>()); // ResolutionTestTable
             }
         }
     }

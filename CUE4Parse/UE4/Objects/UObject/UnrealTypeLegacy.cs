@@ -346,7 +346,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             base.Deserialize(Ar, validPos);
             SignatureFunction = new FPackageIndex(Ar);
 
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.ChangedDelegateSourceFromNameToObject)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_ADDED_UExPORTER_PREFFERED_FORMAT)
             {
                 var source = Ar.ReadFName();
             }

@@ -74,7 +74,7 @@ public class UClass : UStruct
 
         if (Ar.Game is EGame.GAME_StarWarsJediFallenOrder or EGame.GAME_StarWarsJediSurvivor or EGame.GAME_AshesOfCreation or (EGame.GAME_RocketLeague)) Ar.Position += 4;
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ClassGuidDeprecated)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_PLATFORM_FLAGS)
         {
             if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_EMITTER_LODVALIDITY_FIX2)
             {
@@ -110,7 +110,7 @@ public class UClass : UStruct
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.CompactIndexDeprecated &&
-                Ar.Ver < EUnrealEngineObjectUE3Version.ComponentClassBridgeMapDeprecated)
+                Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_COMPONENT_CLASS_BRIDGE)
             {
                 var ComponentClassBridgeMap = Ar.ReadMap(
                     () => new FPackageIndex(Ar),
@@ -119,7 +119,7 @@ public class UClass : UStruct
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedComponentTemplatesToUClass &&
-                Ar.Ver < EUnrealEngineObjectUE3Version.ComponentTemplatesDeprecated)
+                Ar.Ver < EUnrealEngineObjectUE3Version.VER_FIXED_COMPONENT_TEMPLATES)
             {
                 Ar.ReadArray(() => new FPackageIndex(Ar));
             }
@@ -133,12 +133,12 @@ public class UClass : UStruct
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedInterfacesFeature &&
-                Ar.Ver < EUnrealEngineObjectUE3Version.InterfaceClassesDeprecated)
+                Ar.Ver < EUnrealEngineObjectUE3Version.VER_CHANGED_INTERFACES_TO_MAP)
             {
                 Ar.ReadArray(() => new FPackageIndex(Ar));
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.InterfaceClassesDeprecated)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_CHANGED_INTERFACES_TO_MAP)
             {
                 var interfacesCount = Ar.Read<int>();
 

@@ -82,7 +82,7 @@ namespace CUE4Parse.UE4.Objects.Engine
         
         public FPoly(FAssetArchive Ar)
         {
-            VertexCount = Ar.Ver < EUnrealEngineObjectUE3Version.FixedVerticesToArrayFromPoly ? Ar.Read<int>() : -1;
+            VertexCount = Ar.Ver < EUnrealEngineObjectUE3Version.VER_FPOLYVERTEXARRAY ? Ar.Read<int>() : -1;
 
             Base = Ar.Read<FVector>();
             Normal = Ar.Read<FVector>();
@@ -99,7 +99,7 @@ namespace CUE4Parse.UE4.Objects.Engine
             }
 
             PolyFlags = (uint)Ar.Read<int>();
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedSerialOffset) PolyFlags |= 0xe00; // temp
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE) PolyFlags |= 0xe00;
             Actor = new FPackageIndex(Ar);
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.TextureDeprecatedFromPoly)
@@ -124,17 +124,17 @@ namespace CUE4Parse.UE4.Objects.Engine
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.LightMapScaleAddedToPoly &&
-                Ar.Ver < EUnrealEngineObjectUE3Version.LightMapScaleRemovedFromPoly)
+                Ar.Ver < EUnrealEngineObjectUE3Version.VER_TWOSIDEDSIGN_PARAMETERS)
             {
                 LightMapScale = Ar.Read<float>();
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.LightMapScaleRemovedFromPoly)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_TWOSIDEDSIGN_PARAMETERS)
             {
                 ShadowMapScale = Ar.Read<float>();
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.LightingChannelsAddedToPoly)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_BSP_LIGHTING_CHANNEL_SUPPORT)
             {
                 LightingChannels = new LightingChannelContainer(Ar);
             }
@@ -172,7 +172,7 @@ namespace CUE4Parse.UE4.Objects.Engine
             Num = Ar.Read<int>();
             Max = Ar.Read<int>();
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ElementOwnerAddedToUPolys)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SERIALIZE_TTRANSARRAY_OWNER)
             {
                 ElementOwner = new FPackageIndex(Ar);
             }

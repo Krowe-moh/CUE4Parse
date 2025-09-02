@@ -11,7 +11,7 @@ public class UTextureCube : UTexture
         base.Deserialize(Ar, validPos);
 
         
-        if (Ar.Game < EGame.GAME_UE4_0 && Ar.Ver < EUnrealEngineObjectUE3Version.DisplacedUTextureProperties)
+        if (Ar.Game < EGame.GAME_UE4_0 && Ar.Ver < EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR)
         {
             var SizeX = Ar.Read<int>();
             var SizeY = Ar.Read<int>();

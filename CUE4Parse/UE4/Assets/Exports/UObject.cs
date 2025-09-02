@@ -154,10 +154,17 @@ public class UObject : AbstractPropertyHolder
         }
         else
         {
+            if (Ar.Game < EGame.GAME_UE4_0 && Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
+            {
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP)
+                {
+                    Ar.Read<int>(); // NetIndex
+                }
+                DeserializePropertiesTagged(Properties = [], Ar, false);
+                return;
+            }
             if (Ar.Game < EGame.GAME_UE4_0 && Flags.HasFlag(EObjectFlags.RF_NonPIEDuplicateTransient))
             {
-                // turn this to a struct real
-              /*  
                 var temp = new FPackageIndex(Ar);
                 new FPackageIndex(Ar);
                 if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
@@ -183,16 +190,16 @@ public class UObject : AbstractPropertyHolder
                 if (temp.IsNull)
                 {
                     Ar.Read<int>();
-                }*/
+                }
             }
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.TemplateDataAddedToUComponent)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_REMOVE_SIZE_VJOINTPOS)
             {
                 if (this is UComponent)// Lazy way: Class?.Name?.Contains("Component") ?? false)
                 {
                     new FPackageIndex(Ar);
                 }
             }
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedNetIndex)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP)
             {
                 Ar.Read<int>(); // NetIndex
             }

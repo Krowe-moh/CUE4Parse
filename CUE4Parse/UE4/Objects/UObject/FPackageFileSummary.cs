@@ -42,7 +42,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             ExportCount = Ar.Read<int>();
             NameCount = Ar.Read<int>();
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedNetIndex)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP)
             {
                 NetObjectCount = Ar.Read<int>();
             }
@@ -278,12 +278,12 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.Ver = FileVersionUE;
             }
 
-            if ((FileVersionUE > EUnrealEngineObjectUE3Version.AddedSerialOffset || Ar.Game >= EGame.GAME_UE4_0) && FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
+            if ((FileVersionUE > EUnrealEngineObjectUE3Version.VER_MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE || Ar.Game >= EGame.GAME_UE4_0) && FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
             {
                 TotalHeaderSize = Ar.Read<int>();
             }
 
-            if (FileVersionUE > EUnrealEngineObjectUE3Version.AddedPackageGroup || Ar.Game >= EGame.GAME_UE4_0)
+            if (FileVersionUE > EUnrealEngineObjectUE3Version.VER_FOLDER_ADDED || Ar.Game >= EGame.GAME_UE4_0)
             {
                 PackageName = Ar.ReadFString();
             }
@@ -343,7 +343,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 MetaDataOffset = Ar.Read<int>();
             }
 
-            if (FileVersionUE >= EUnrealEngineObjectUE3Version.AddedDependsOffset || Ar.Game >= EGame.GAME_UE4_0)
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_LINKER_DEPENDENCIES || Ar.Game >= EGame.GAME_UE4_0)
             {
                 DependsOffset = Ar.Read<int>();
             }
@@ -417,12 +417,12 @@ namespace CUE4Parse.UE4.Objects.UObject
             }
             else
             {
-                if (FileVersionUE >= EUnrealEngineObjectUE3Version.AddedEngineVersion)
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_PACKAGEFILESUMMARY_CHANGE)
                 {
                     var EngineVersion = Ar.Read<int>();
                 }
 
-                if (FileVersionUE >= EUnrealEngineObjectUE3Version.AddedCookerVersion)
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_PACKAGEFILESUMMARY_CHANGE_COOK_VER_ADDED)
                 {
                     var CookerVersion = Ar.Read<int>();
                 }
@@ -444,7 +444,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 return (compressionFlags & ~CompressionFlagsMask) == 0;
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedCompression || Ar.Game >= EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_PACKAGE_COMPRESSION_SUPPORT || Ar.Game >= EGame.GAME_UE4_0)
             {
                 CompressionFlags = Ar.Read<ECompressionFlags>();
 

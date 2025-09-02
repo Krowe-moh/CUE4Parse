@@ -19,12 +19,12 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
         {
             base.Deserialize(Ar, validPos);
 
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedPCSoundData)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_PC_DATA)
             {
                 Ar.ReadFName(); // FileType
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedChannelsSoundInfo && Ar.Ver < EUnrealEngineObjectUE3Version.DisplacedSoundChannelProperties)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_UPDATED_SOUND_NODE_WAVE && Ar.Ver < EUnrealEngineObjectUE3Version.VER_CLEANUP_SOUNDNODEWAVE)
             {
                 Ar.ReadArray<int>(); // ChannelOffsets
                 Ar.ReadArray<int>(); // ChannelSizes
@@ -32,12 +32,12 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
 
             RawSound = new FByteBulkData(Ar);
             
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedChannelsSoundInfo && Ar.Ver < EUnrealEngineObjectUE3Version.DisplacedSoundChannelProperties)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_UPDATED_SOUND_NODE_WAVE && Ar.Ver < EUnrealEngineObjectUE3Version.VER_CLEANUP_SOUNDNODEWAVE)
             {
                 Ar.Read<int>(); // ChannelCount
             }
             
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPCSoundData)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_PC_DATA)
             {
                 PCSound = new FByteBulkData(Ar);
             }
@@ -47,12 +47,12 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
                 return;
             }
             
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedXenonSoundData)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_XBOX360_DATA)
             {
                 XboxSound = new FByteBulkData(Ar);
             }
             
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPS3SoundData)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_PS3_DATA)
             {
                 PS3Sound = new FByteBulkData(Ar);
             }
