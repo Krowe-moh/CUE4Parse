@@ -165,29 +165,29 @@ public class UObject : AbstractPropertyHolder
             }
             if (Ar.Game < EGame.GAME_UE4_0 && Flags.HasFlag(EObjectFlags.RF_NonPIEDuplicateTransient))
             {
-                var temp = new FPackageIndex(Ar);
-                new FPackageIndex(Ar);
+                var Node = new FPackageIndex(Ar);
+                new FPackageIndex(Ar); // StateNode
                 if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
                 {
-                    Ar.Read<long>();
+                    Ar.Read<long>(); // ProbeMask
                 }
                 else
                 {
-                    Ar.Read<int>();
+                    Ar.Read<int>(); // ProbeMask
                 }
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_REDUCED_STATEFRAME_LATENTACTION_SIZE)
                 {
-                    Ar.Read<short>();
+                    Ar.Read<short>(); // LatentAction
                 }
                 else
                 {
-                    Ar.Read<int>();
+                    Ar.Read<int>(); // LatentAction
                 }
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedStateStackToUStateFrame)
                 {
-                    Ar.ReadArray(() => Ar.ReadBytes(12));
+                    Ar.ReadArray(() => Ar.ReadBytes(9)); // StateStack
                 }
-                if (temp.IsNull)
+                if (!Node.IsNull)
                 {
                     Ar.Read<int>();
                 }
