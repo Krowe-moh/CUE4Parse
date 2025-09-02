@@ -30,7 +30,7 @@ public class UStruct : UField
             SuperStruct = SuperField;
         }
 
-        if (Ar.Game == EGame.GAME_UE3_0)
+        if (Ar.Game < EGame.GAME_UE4_0)
         {
             new FPackageIndex(Ar); // ScriptText
         }
@@ -52,10 +52,10 @@ public class UStruct : UField
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedCppTextToUStruct)
         {
-            new FPackageIndex(Ar);
+            new FPackageIndex(Ar); // CppText
         }
         
-        if (Ar.Game == EGame.GAME_UE3_0)
+        if (Ar.Game < EGame.GAME_UE4_0)
         {
             Ar.Read<int>(); // Line
             Ar.Read<int>(); // TextPos
@@ -81,8 +81,6 @@ public class UStruct : UField
         {
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE)
             {
-                serializedScriptSize = Ar.Read<int>();
-                
                 using var kismetAr = new FKismetArchive(Name, Ar.ReadBytes(serializedScriptSize), Ar.Owner, Ar.Versions);
                 var tempCode = new List<KismetExpression>();
                 try
@@ -111,7 +109,7 @@ public class UStruct : UField
             Ar.Position += serializedScriptSize;
         }
 
-        if (Ar.Game == EGame.GAME_UE3_0)
+        if (Ar.Game < EGame.GAME_UE4_0)
         {
             //DeserializePropertiesTagged(Properties, Ar, true);
         }

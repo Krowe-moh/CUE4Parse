@@ -45,7 +45,7 @@ public class UFunction : UStruct
         if (FunctionFlags.HasFlag(EFunctionFlags.FUNC_Net))
         {
             // Unused.
-            var repOffset = Ar.Read<short>();
+            var RepOffset = Ar.Read<short>();
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && !Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform != ETexturePlatform.XboxAndPlaystation)

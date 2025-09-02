@@ -65,6 +65,8 @@ public class UTexture2D : UTexture
                 }
             }
 
+            if (Ar.Game == EGame.GAME_DCUniverseOnline) return;
+            
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_TEXTURE_FILECACHE_GUIDS)
             {
                 var textureFileCacheGuidDeprecated = Ar.Read<FGuid>();

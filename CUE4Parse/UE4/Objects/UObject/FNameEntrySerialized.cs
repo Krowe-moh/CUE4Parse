@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 using System.Text;
+using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
@@ -26,11 +27,14 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.Release64 || Ar.Game >= EGame.GAME_UE4_0)
             {
-                Name = Ar.ReadFString().Trim();
-            }
-            else
-            {
-                //Name = Ar.ReadAnsiNullString();
+                if (Ar.Game == EGame.GAME_DCUniverseOnline)
+                {
+                    Name = ReadString(Ar);
+                }
+                else
+                {
+                    Name = Ar.ReadFString();
+                }
             }
 
             if (Ar.Game == EGame.GAME_PlayerUnknownsBattlegrounds)
@@ -128,6 +132,15 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.Serialize(nameData, length);
                 return new FNameEntrySerialized(new string((sbyte*) nameData, 0, length));
             }
+        }
+        
+        private string ReadString(FArchive Ar)
+        {
+            var len = Ar.Read<int>();
+            if (len < 0)
+                throw new ParserException("NameMap negative length string");
+            var text = Ar.ReadBytes(len);
+            return Encoding.ASCII.GetString(text);
         }
     }
 

@@ -503,6 +503,17 @@ namespace CUE4Parse.UE4.Objects.UObject
                 PackageSource = (int)(PackageSource ^ 0xEEB2CEC7);
                 AssetRegistryDataOffset = (int)(AssetRegistryDataOffset ^ 0xEEB2CEC7);
             }
+            
+            if (Ar.Game == EGame.GAME_DCUniverseOnline)
+            {
+                int offset = NameOffset - (int)Ar.Position;
+                NameOffset -= offset;
+                ImportOffset -= offset;
+                ExportOffset -= offset;
+                DependsOffset -= offset;
+                ImportExportGuidsOffset -= offset;
+                ThumbnailTableOffset -= offset;
+            }
 
             if (Ar.Game is EGame.GAME_SeaOfThieves or EGame.GAME_GearsOfWar4)
             {
