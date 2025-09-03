@@ -19,7 +19,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
         {
             base.Deserialize(Ar, validPos);
 
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_PC_DATA)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_PC_DATA && Ar.Game < EGame.GAME_UE4_0)
             {
                 Ar.ReadFName(); // FileType
             }
@@ -42,10 +42,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
                 PCSound = new FByteBulkData(Ar);
             }
 
-            if (Ar.Game == EGame.GAME_SuddenAttack2)
-            {
-                return;
-            }
+            if (Ar.Game == EGame.GAME_SuddenAttack2) return;
             
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_XBOX360_DATA)
             {
