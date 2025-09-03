@@ -67,36 +67,15 @@ public class UBoxComponent : UShapeComponent;
 public class UBoxFalloff : UFieldNodeFloat;
 public class UBoxReflectionCaptureComponent : UReflectionCaptureComponent;
 public class UBrainComponent : UActorComponent;
-
-public class FKCachedConvexDataElement
-{
-    public byte[] ConvexElementData;
-
-    public FKCachedConvexDataElement(FAssetArchive Ar)
-    {
-        ConvexElementData = Ar.ReadBulkArray<byte>();
-    }
-}
-
-public class FKCachedConvexData
-{
-    public FKCachedConvexDataElement[] CachedConvexElements;
-
-    public FKCachedConvexData(FAssetArchive Ar)
-    {
-        CachedConvexElements = Ar.ReadArray(() => new FKCachedConvexDataElement(Ar));
-    }
-}
-
 public class UBrushComponent : UPrimitiveComponent
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Game < EGame.GAME_UE4_0) // verify this or find version that added this.
+        if (Ar.Game < EGame.GAME_UE4_0)
         {
-            new FKCachedConvexData(Ar); // CachedPhysBrushData
+            Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>())); // CachedPhysBrushData
         }
     }
 };
@@ -293,9 +272,6 @@ public class USingleAnimSkeletalComponent : USkeletalMeshComponent;
 public class USkeletalMeshReplicatedComponent : USkeletalMeshComponent;
 public class UFPSSkeletalMeshComponent : USkeletalMeshComponent;
 public class USkinnedMeshComponent : UMeshComponent;
-public class USA2PartMeshToActorComp : UMeshComponent;
-public class USA2WeaponAIComponent : UActorComponent;
-public class USA2PickupComponent : UActorComponent; 
 public class USkyLightComponent : ULightComponentBase;
 public class UDynamicPausedLightEnvironmentComponent : UComponent;
 public class ULensFlareComponent : UComponent;

@@ -8,8 +8,8 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
         {
             base.Deserialize(Ar, validPos);
 
-            Ar.ReadArray(() => Ar.ReadArray<byte>());
-            Ar.ReadArray(() => Ar.ReadArray<byte>());
+            Ar.ReadArray(() => Ar.ReadArray<byte>()); // RawFaceFXAnimSetBytes
+            Ar.ReadArray(() => Ar.ReadArray<byte>()); // RawFaceFXMiniSessionBytes
         }
     }
 }

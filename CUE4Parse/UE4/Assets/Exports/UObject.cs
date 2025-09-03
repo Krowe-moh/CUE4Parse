@@ -154,55 +154,66 @@ public class UObject : AbstractPropertyHolder
         }
         else
         {
-            if (Ar.Game < EGame.GAME_UE4_0 && Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
+            if (Ar.Game < EGame.GAME_UE4_0)
             {
+                if (Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
+                {
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP)
+                    {
+                        Ar.Read<int>(); // NetIndex
+                    }
+
+                    DeserializePropertiesTagged(Properties = [], Ar, false);
+                    return;
+                }
+
+                if (Flags.HasFlag(EObjectFlags.RF_NonPIEDuplicateTransient))
+                {
+                    var Node = new FPackageIndex(Ar);
+                    new FPackageIndex(Ar); // StateNode
+                    if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
+                    {
+                        Ar.Read<long>(); // ProbeMask
+                    }
+                    else
+                    {
+                        Ar.Read<int>(); // ProbeMask
+                    }
+
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_REDUCED_STATEFRAME_LATENTACTION_SIZE)
+                    {
+                        Ar.Read<short>(); // LatentAction
+                    }
+                    else
+                    {
+                        Ar.Read<int>(); // LatentAction
+                    }
+
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedStateStackToUStateFrame)
+                    {
+                        Ar.ReadArray(() => Ar.ReadBytes(9)); // StateStack
+                    }
+
+                    if (!Node.IsNull)
+                    {
+                        Ar.Read<int>();
+                    }
+                }
+
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_REMOVE_SIZE_VJOINTPOS)
+                {
+                    if (this is UComponent)
+                    {
+                        new FPackageIndex(Ar);
+                    }
+                }
+
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP)
                 {
                     Ar.Read<int>(); // NetIndex
                 }
-                DeserializePropertiesTagged(Properties = [], Ar, false);
-                return;
             }
-            if (Ar.Game < EGame.GAME_UE4_0 && Flags.HasFlag(EObjectFlags.RF_NonPIEDuplicateTransient))
-            {
-                var Node = new FPackageIndex(Ar);
-                new FPackageIndex(Ar); // StateNode
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
-                {
-                    Ar.Read<long>(); // ProbeMask
-                }
-                else
-                {
-                    Ar.Read<int>(); // ProbeMask
-                }
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_REDUCED_STATEFRAME_LATENTACTION_SIZE)
-                {
-                    Ar.Read<short>(); // LatentAction
-                }
-                else
-                {
-                    Ar.Read<int>(); // LatentAction
-                }
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedStateStackToUStateFrame)
-                {
-                    Ar.ReadArray(() => Ar.ReadBytes(9)); // StateStack
-                }
-                if (!Node.IsNull)
-                {
-                    Ar.Read<int>();
-                }
-            }
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_REMOVE_SIZE_VJOINTPOS)
-            {
-                if (this is UComponent)// Lazy way: Class?.Name?.Contains("Component") ?? false)
-                {
-                    new FPackageIndex(Ar);
-                }
-            }
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP)
-            {
-                Ar.Read<int>(); // NetIndex
-            }
+
             DeserializePropertiesTagged(Properties = [], Ar, false);
         }
 

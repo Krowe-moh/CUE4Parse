@@ -21,7 +21,7 @@ public class UStruct : UField
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MOVED_SUPERFIELD_TO_USTRUCT)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MOVED_SUPERFIELD_TO_USTRUCT || Ar.Game >= EGame.GAME_UE4_0)
         {
             SuperStruct = new FPackageIndex(Ar);
         }
@@ -68,7 +68,7 @@ public class UStruct : UField
 
         var bytecodeBufferSize = Ar.Read<int>();
         var serializedScriptSize = 0;
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE | Ar.Game >= EGame.GAME_UE4_0)
         {
             serializedScriptSize = Ar.Read<int>();
         }

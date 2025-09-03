@@ -87,7 +87,6 @@ public class FTexture2DMipMap
     }
 }
 
-// temp
 public class FLegacyMipMap
 {
     public FByteBulkData? BulkData;

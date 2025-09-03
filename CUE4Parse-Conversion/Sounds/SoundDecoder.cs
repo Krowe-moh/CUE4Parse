@@ -29,36 +29,18 @@ public static class SoundDecoder
     public static void Decode(this USoundNodeWave nodeWave, bool shouldDecompress, out string audioFormat, out byte[]? data)
     {
         audioFormat = "OGG";
-        byte[]? input = null;
-
-        if (nodeWave.RawSound.Header.ElementCount > 0)
-        {
-            input = nodeWave.RawSound.Data;
-        }
-        else if (nodeWave.PCSound.Header.ElementCount > 0)
-        {
-            input = nodeWave.PCSound.Data;
-        }
-        else if (nodeWave.XboxSound.Header.ElementCount > 0)
-        {
-            input = nodeWave.XboxSound.Data;
-        }
-        else if (nodeWave.WIIUSound.Header.ElementCount > 0)
-        {
-            input = nodeWave.WIIUSound.Data;
-        }
-        else if (nodeWave.PS3Sound.Header.ElementCount > 0)
-        {
-            input = nodeWave.PS3Sound.Data;
-        }
-        else if (nodeWave.IPhoneSound.Header.ElementCount > 0)
-        {
-            input = nodeWave.IPhoneSound.Data;
-        }
-        else if (nodeWave.FlashSound.Header.ElementCount > 0)
-        {
-            input = nodeWave.FlashSound.Data;
-        }
+        byte[]? input = new[]
+            {
+                nodeWave.RawSound,
+                nodeWave.PCSound,
+                nodeWave.XboxSound,
+                nodeWave.WIIUSound,
+                nodeWave.PS3Sound,
+                nodeWave.IPhoneSound,
+                nodeWave.FlashSound
+            }
+            .Select(s => s.Header.ElementCount > 0 ? s.Data : null)
+            .FirstOrDefault(d => d != null);
 
         data = Decompress(shouldDecompress, ref audioFormat, input);
     }

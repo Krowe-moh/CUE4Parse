@@ -46,8 +46,7 @@ public class UTexture2D : UTexture
             Format = (EPixelFormat)format;
         }
         
-        // I've set this to 4.0 as TEXTURE_SOURCE_ART_REFACTOR is UE 4 Pre-release
-        if (Ar.Game <= EGame.GAME_UE4_0 && Ar.Ver < EUnrealEngineObjectUE4Version.TEXTURE_SOURCE_ART_REFACTOR)
+        if (Ar.Ver < EUnrealEngineObjectUE4Version.TEXTURE_SOURCE_ART_REFACTOR)
         {
             var legacyMips = Array.Empty<FTexture2DMipMap>();
 

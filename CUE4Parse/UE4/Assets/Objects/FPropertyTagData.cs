@@ -41,7 +41,7 @@ public class FPropertyTagData
                     StructGuid = Ar.Read<FGuid>();
                 break;
             case "BoolProperty":
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_PROPERTYTAG_BOOL_OPTIMIZATION)
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_PROPERTYTAG_BOOL_OPTIMIZATION && Ar.Game < EGame.GAME_UE4_0)
                 {
                     Bool = Ar.ReadBoolean();
                 }
@@ -53,7 +53,7 @@ public class FPropertyTagData
                 break;
             case "ByteProperty":
             case "EnumProperty":
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_BYTEPROP_SERIALIZE_ENUM || Ar.Game > EGame.GAME_UE4_0)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_BYTEPROP_SERIALIZE_ENUM || Ar.Game >= EGame.GAME_UE4_0)
                 {
                     EnumName = Ar.ReadFName().Text;
                 }
@@ -65,7 +65,8 @@ public class FPropertyTagData
                     InnerType = Ar.ReadFName().Text;
                 }
                 else
-                {   // "Points", moon UI
+                {   
+                    // temp manual mappings
                     var map = new Dictionary<string, string[]>
                     {
                         ["FloatProperty"] = new[]
@@ -93,7 +94,7 @@ public class FPropertyTagData
                         },
                         ["ObjectProperty"] = new[]
                         {
-                            "Expressions", "Sockets", "ComponentDynArray", "ModifiedComponent_Array", "ModifiedChild_Defined_Array", "UnmodifiedChild_Defined_Array", "ClientDestroyedActorContent", "m_affectedUsableObjects", "SilhouettePrimitives", "ActionsToExecute", "Children", "AdditiveBasePoseAnimSeq", "AdditiveTargetPoseAnimSeq", "SubTracks", "DefaultMaterials", "ParticleModuleEventsToSendToGame", "StatModComponents", "InventoryList", "ClothingAssets", "FemaleAnimSets", "DamageTypes", "IgnoreDamageTypes", "LinkedEvents", "ClassProximityTypes", "MaleAnimSets", "RelatedAdditiveAnimSeqs", "SkelControls", "ConstraintSetup", "BoundsBodies", "ClothingAssets", "Expression", "EditorComments", "MeshMaterials", "MaleLobbyAnimSets", "FemaleLobbyAnimSets", "HandSignalAnims", "WeaponProjectilesAT", "BloodSplatterDecalMaterial", "StaticMeshComponents", "FunctionExpressions", "LightComponents", "MetaData", "RootMorphNodes", "AnimTickArray",
+                            "Expressions", "Sockets", "ComponentDynArray", "MorphSets", "WeaponForeHandgripAnimSets", "DecalMaterials", "ModifiedComponent_Array", "ModifiedChild_Defined_Array", "UnmodifiedChild_Defined_Array", "ClientDestroyedActorContent", "m_affectedUsableObjects", "SilhouettePrimitives", "ActionsToExecute", "Children", "AdditiveBasePoseAnimSeq", "AdditiveTargetPoseAnimSeq", "SubTracks", "DefaultMaterials", "ParticleModuleEventsToSendToGame", "StatModComponents", "InventoryList", "ClothingAssets", "FemaleAnimSets", "DamageTypes", "IgnoreDamageTypes", "LinkedEvents", "ClassProximityTypes", "MaleAnimSets", "RelatedAdditiveAnimSeqs", "SkelControls", "ConstraintSetup", "BoundsBodies", "ClothingAssets", "Expression", "EditorComments", "MeshMaterials", "MaleLobbyAnimSets", "FemaleLobbyAnimSets", "HandSignalAnims", "WeaponProjectilesAT", "BloodSplatterDecalMaterial", "StaticMeshComponents", "FunctionExpressions", "LightComponents", "MetaData", "RootMorphNodes", "AnimTickArray",
                             "ParentNodes", "LinkedVariables", "InterpTracks", "InterpGroups", "BodySetup", "Bodies", "Styles",
                             "InactiveStates", "Flashlight_MeshComponents", "Flashlight_FlareComponents", "Flashlight_FlareSockets",
                             "Wheels", "Flashlight_LightSockets", "FlickerFunctionArchetypes", "GroupAnimSets", "Materials",
@@ -123,6 +124,9 @@ public class FPropertyTagData
                         case "RotKeys":
                             InnerTypeData = new FPropertyTagData("Quat", name);
                             break;
+                        case "DecalRotation":
+                            InnerTypeData = new FPropertyTagData("Rotator", name);
+                            break;
                         case "FacePlaneData":
                         case "PermutedVertexData":
                             InnerTypeData = new FPropertyTagData("Plane", name);
@@ -135,7 +139,6 @@ public class FPropertyTagData
                             InnerTypeData = new FPropertyTagData("FontCharacter", name);
                             break;
                         default:
-                            //Log.Information(name);
                             break;
                     }
                     InnerType = "StructProperty";

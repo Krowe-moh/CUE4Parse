@@ -18,7 +18,7 @@ public abstract class GameFile
     public static readonly string[] UeKnownExtensions =
     [
         ..UePackageExtensions, ..UePackagePayloadExtensions,
-        "bin", "ini", "uplugin", "upluginmanifest", "locres", "locmeta", "ewem", "wem", "bnk"
+        "bin", "ini", "uplugin", "upluginmanifest", "locres", "locmeta", "wem", "bnk"
     ];
 
     // hashset for quick lookup

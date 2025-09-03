@@ -49,15 +49,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
-            if (Ar.Game < EGame.GAME_UE4_0)
-            {
-                var obj = new UObject();
-                obj.Deserialize(Ar, validPos);
-            }
-            else
-            {
-                base.Deserialize(Ar, validPos);
-            }
+            base.Deserialize(Ar, validPos);
 
             NumFrames = GetOrDefault<int>(nameof(NumFrames));
             BoneCompressionSettings = GetOrDefault<ResolvedObject>(nameof(BoneCompressionSettings));
