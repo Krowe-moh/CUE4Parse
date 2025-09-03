@@ -189,7 +189,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         }
     }
     
-    public class UComponentProperty : UProperty { }
+    public class UComponentProperty : UObjectProperty { }
     
     public class UClassProperty : UObjectProperty
     {

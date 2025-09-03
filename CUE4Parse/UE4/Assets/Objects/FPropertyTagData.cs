@@ -78,22 +78,22 @@ public class FPropertyTagData
                             "Constraints", "RandomSeeds", "sintheta", "costheta", "LineBuffer", "Pages", "dr", "ClothIndexBuffer", "ClothWeldedIndices", "ClothWeldingMap", "Indices", "TrackIndices", "BoundsBodies", "FaceTriData", "SpawnOffsets",
                             "CompressedTrackOffsets", "LODMaterialMap", "SupportedEvents"
                         },
-                        ["ByteProperty"] = new[] { "Points", "LocalToCompReqBones", "RequiredBones", "RawData", "Types", "SystemMemoryData" },
+                        ["ByteProperty"] = new[] { "Points", "m_data", "LocalToCompReqBones", "RequiredBones", "RawData", "Types", "SystemMemoryData" },
                         ["BoolProperty"] = new[] { "bEnableShadowCasting", "bForceFireAnimLinkages" },
                         ["StrProperty"] = new[]
                         {
-                            "ParamNames", "BossLevels", "BoneNames", "HiddenLevels", "LibraryCategories", "BossArchetypeNames", "TemplateMapFolders", "ReferencedSwfs", "RequireZoneNames",
+                            "ParamNames", "BossLevels", "NestedStringArray", "StringArrayNeedCtor", "BoneNames", "HiddenLevels", "LibraryCategories", "BossArchetypeNames", "TemplateMapFolders", "ReferencedSwfs", "RequireZoneNames",
                             "HelpParamDescriptions", "HelpParamNames", "StyleGroups", "Commands", "EditPackages", "PackagesToBeFullyLoadedAtStartup"
                         },
                         ["NameProperty"] = new[]
                         {
-                            "BranchStartBoneName", "ClothBones", "DisabledEventAliases", "RolesToApplyOverlay", "UnfixedNames", "EnabledSpringNames", "HideBoneNames", "MaterialParameters", "InputNames", "ClothingTeleportRefBones", "AnimTypes", "ComposePrePassBoneNames", "LevelNames", "ArcheTypeNames", "FireModeTypes", "ChildClassNames", "UseTranslationBoneNames", "MonsterTypes", "ArenaNames",
+                            "BranchStartBoneName", "PerPolyCollisionBones", "ClothBones", "DisabledEventAliases", "RolesToApplyOverlay", "UnfixedNames", "EnabledSpringNames", "HideBoneNames", "MaterialParameters", "InputNames", "ClothingTeleportRefBones", "AnimTypes", "ComposePrePassBoneNames", "LevelNames", "ArcheTypeNames", "FireModeTypes", "ChildClassNames", "UseTranslationBoneNames", "MonsterTypes", "ArenaNames",
                             "SavedGameFileNames", "TargetParamNames", "AnimList", "TrackBoneNames",
                             "HiddenKismetClassNames", "BadPackageNames"
                         },
                         ["ObjectProperty"] = new[]
                         {
-                            "Expressions", "Sockets", "SilhouettePrimitives", "ActionsToExecute", "Children", "AdditiveBasePoseAnimSeq", "AdditiveTargetPoseAnimSeq", "SubTracks", "DefaultMaterials", "ParticleModuleEventsToSendToGame", "StatModComponents", "InventoryList", "ClothingAssets", "FemaleAnimSets", "DamageTypes", "IgnoreDamageTypes", "LinkedEvents", "ClassProximityTypes", "MaleAnimSets", "RelatedAdditiveAnimSeqs", "SkelControls", "ConstraintSetup", "BoundsBodies", "ClothingAssets", "Expression", "EditorComments", "MeshMaterials", "MaleLobbyAnimSets", "FemaleLobbyAnimSets", "HandSignalAnims", "WeaponProjectilesAT", "BloodSplatterDecalMaterial", "StaticMeshComponents", "FunctionExpressions", "LightComponents", "MetaData", "RootMorphNodes", "AnimTickArray",
+                            "Expressions", "Sockets", "ComponentDynArray", "ModifiedComponent_Array", "ModifiedChild_Defined_Array", "UnmodifiedChild_Defined_Array", "ClientDestroyedActorContent", "m_affectedUsableObjects", "SilhouettePrimitives", "ActionsToExecute", "Children", "AdditiveBasePoseAnimSeq", "AdditiveTargetPoseAnimSeq", "SubTracks", "DefaultMaterials", "ParticleModuleEventsToSendToGame", "StatModComponents", "InventoryList", "ClothingAssets", "FemaleAnimSets", "DamageTypes", "IgnoreDamageTypes", "LinkedEvents", "ClassProximityTypes", "MaleAnimSets", "RelatedAdditiveAnimSeqs", "SkelControls", "ConstraintSetup", "BoundsBodies", "ClothingAssets", "Expression", "EditorComments", "MeshMaterials", "MaleLobbyAnimSets", "FemaleLobbyAnimSets", "HandSignalAnims", "WeaponProjectilesAT", "BloodSplatterDecalMaterial", "StaticMeshComponents", "FunctionExpressions", "LightComponents", "MetaData", "RootMorphNodes", "AnimTickArray",
                             "ParentNodes", "LinkedVariables", "InterpTracks", "InterpGroups", "BodySetup", "Bodies", "Styles",
                             "InactiveStates", "Flashlight_MeshComponents", "Flashlight_FlareComponents", "Flashlight_FlareSockets",
                             "Wheels", "Flashlight_LightSockets", "FlickerFunctionArchetypes", "GroupAnimSets", "Materials",
