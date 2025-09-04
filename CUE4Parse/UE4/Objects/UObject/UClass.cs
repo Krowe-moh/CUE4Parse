@@ -82,7 +82,7 @@ public class UClass : UStruct
                 Ar.Read<byte>(); // classPlatformFlags
             }
         }
-        else
+        else if (Ar.Game < EGame.GAME_UE4_0)
         {
             Ar.Read<FGuid>();
         }

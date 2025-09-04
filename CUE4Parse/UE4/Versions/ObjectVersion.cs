@@ -2455,7 +2455,7 @@ namespace CUE4Parse.UE4.Versions
             {
                 if (FileVersionUE5 >= (int)EUnrealEngineObjectUE5Version.INITIAL_VERSION)
                     return FileVersionUE5;
-                if (FileVersionUE4 > 0)
+                if (FileVersionUE4 > (int)EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME)
                     return FileVersionUE4;
                 return FileVersionUE3;
             }
@@ -2463,7 +2463,7 @@ namespace CUE4Parse.UE4.Versions
             {
                 if (value >= (int)EUnrealEngineObjectUE5Version.INITIAL_VERSION)
                     FileVersionUE5 = value;
-                else if (value > 0)
+                else if (value > (int)EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME)
                     FileVersionUE4 = value;
                 else
                     FileVersionUE3 = value;
@@ -2559,7 +2559,7 @@ namespace CUE4Parse.UE4.Versions
         public override string ToString()
             => FileVersionUE5 >= (int)EUnrealEngineObjectUE5Version.INITIAL_VERSION
                 ? ((EUnrealEngineObjectUE5Version)FileVersionUE5).ToString()
-                : FileVersionUE4 > 0
+                : FileVersionUE4 > (int)EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME
                     ? ((EUnrealEngineObjectUE4Version)FileVersionUE4).ToString()
                     : ((EUnrealEngineObjectUE3Version)FileVersionUE3).ToString();
     }

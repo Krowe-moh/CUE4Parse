@@ -45,12 +45,12 @@ public class UStruct : UField
             Children = Ar.ReadArray(() => new FPackageIndex(Ar));
         }
         
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && Ar.Game < EGame.GAME_UE4_0)
         {
             Ar.ReadFName();
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedCppTextToUStruct)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedCppTextToUStruct && Ar.Game < EGame.GAME_UE4_0)
         {
             new FPackageIndex(Ar); // CppText
         }
@@ -68,7 +68,7 @@ public class UStruct : UField
 
         var bytecodeBufferSize = Ar.Read<int>();
         var serializedScriptSize = 0;
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE | Ar.Game >= EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE || Ar.Game >= EGame.GAME_UE4_0)
         {
             serializedScriptSize = Ar.Read<int>();
         }

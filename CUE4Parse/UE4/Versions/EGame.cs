@@ -208,14 +208,14 @@ public static class GameUtils
             };
         }
 
-        if (game >= EGame.GAME_UE3_0 && game < EGame.GAME_UE4_0)
+        if (game < EGame.GAME_UE4_0)
         {
             return FPackageFileVersion.CreateUE3Version(game switch
             {
-                < EGame.GAME_UE3_0 => 369,
                 _ => (int)EUnrealEngineObjectUE3Version.VER_AUTOMATIC_VERSION
             });
         }
+        
         return FPackageFileVersion.CreateUE4Version(game switch
         {
             // General UE4 Versions
