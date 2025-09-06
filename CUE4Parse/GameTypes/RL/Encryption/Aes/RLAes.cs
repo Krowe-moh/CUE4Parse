@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace CUE4Parse.GameTypes.RL.Encryption.Aes
 {
@@ -41,7 +42,7 @@ namespace CUE4Parse.GameTypes.RL.Encryption.Aes
             KeyList = allKeys.ToArray();
         }
 
-        public static bool Decrypt(byte[] inputData, int offset, out byte[] outputData)
+        public static bool Decrypt(byte[] inputData, int offset, bool upk, out byte[] outputData)
         {
             foreach (var key in KeyList)
             {
@@ -61,14 +62,25 @@ namespace CUE4Parse.GameTypes.RL.Encryption.Aes
                     using var ms = new MemoryStream(decrypted);
                     using var br = new BinaryReader(ms);
 
-                    br.ReadBytes(offset);
-                    int count = br.ReadInt32();
-                    long expectedSize = 4 + (count * 24L);
-
-                    if (expectedSize > 0 && expectedSize <= decrypted.Length)
+                    if (upk)
                     {
-                        outputData = decrypted;
-                        return true;
+                        br.ReadBytes(offset);
+                        int count = br.ReadInt32();
+                        long expectedSize = 4 + count * 24L;
+
+                        if (expectedSize > 0 && expectedSize <= decrypted.Length)
+                        {
+                            outputData = decrypted;
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        if (Encoding.ASCII.GetString(decrypted, 0, 4) == "RIFF")
+                        {
+                            outputData = decrypted;
+                            return true;
+                        }
                     }
                 }
                 catch

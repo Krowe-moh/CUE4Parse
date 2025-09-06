@@ -214,6 +214,16 @@ public class UObject : AbstractPropertyHolder
                 }
             }
 
+            // some issues happen after or before netindex with these flags (todo ig)
+            if (Flags.HasFlag(EObjectFlags.RF_Dynamic))
+            {
+                Ar.Read<int>();
+                new FPackageIndex(Ar); // this (self)
+            }
+            if (Flags.HasFlag(EObjectFlags.RF_MarkAsNative))
+            {
+            }
+            
             DeserializePropertiesTagged(Properties = [], Ar, false);
         }
 

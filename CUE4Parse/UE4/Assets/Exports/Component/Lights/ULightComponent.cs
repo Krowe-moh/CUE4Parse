@@ -150,6 +150,8 @@ public class UDominantSpotLightComponent : UPointLightComponent
     }
 }
 
+public class UDominantDirectionalLightComponent : UPointLightComponent;
+public class UParticleLightEnvironmentComponent : UPointLightComponent;
 public class UPointLightComponent : ULocalLightComponent
 {
     public float SourceRadius { get; private set; }

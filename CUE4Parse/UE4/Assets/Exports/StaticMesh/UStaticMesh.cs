@@ -3,12 +3,24 @@ using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Engine;
+using CUE4Parse.UE4.Objects.Meshes;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 using Serilog;
 
 namespace CUE4Parse.UE4.Assets.Exports.StaticMesh;
+
+struct FStaticMeshCollisionDataProvider
+{
+    public FStaticMeshCollisionDataProvider(FAssetArchive Ar)
+    {
+        new FPackageIndex(Ar);
+        new FPackageIndex(Ar);
+        Ar.Read<int>();
+        new FPositionVertexBuffer(Ar);
+    }
+};
 
 public class UStaticMesh : UObject
 {
@@ -41,14 +53,27 @@ public class UStaticMesh : UObject
 
         BodySetup = new FPackageIndex(Ar);
 
+        if(Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVE_STATICMESH_COLLISIONMODEL && Ar.Game < EGame.GAME_UE4_0)
+        {
+            new FPackageIndex(Ar); // DummyModel;
+        }
+        
         if (Ar.Versions["StaticMesh.HasNavCollision"])
             NavCollision = new FPackageIndex(Ar);
-
-        if (Ar.Game < EGame.GAME_UE4_0 || Ar.Game == EGame.GAME_RocketLeague)
+        
+        if (Ar.Game < EGame.GAME_UE4_0)
         {
             if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_COMPACTKDOPSTATICMESH)
             {
-                Ar.ReadBulkArray(() => Ar.ReadBytes(32)); // node
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.shortyes || Ar.Ver > EUnrealEngineObjectUE3Version.VER_CLEANUP_SOUNDNODEWAVE)
+                {
+                    Ar.ReadBulkArray(() => Ar.ReadBytes(32)); // node
+                }
+                else
+                {
+                    new FStaticMeshCollisionDataProvider(Ar);
+                    Ar.Read<short>();
+                }
             }
             else
             {
@@ -103,7 +128,7 @@ public class UStaticMesh : UObject
             Materials = new ResolvedObject[RenderData.LODs[0].Sections.Length];
             for (var i = 0; i < RenderData.LODs[0].Sections.Length; i++)
             {
-                Materials[i] = RenderData.LODs[0].Sections[i].Mat.ResolvedObject!;
+                Materials[i] = RenderData.LODs[0].Sections[i].Material.ResolvedObject!;
             }
             RenderData.Bounds = Bounds;
             
