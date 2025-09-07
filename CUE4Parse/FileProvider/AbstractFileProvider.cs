@@ -151,7 +151,6 @@ namespace CUE4Parse.FileProvider
         protected bool TryGetGameFile(string path, IReadOnlyDictionary<string, GameFile> collection, [MaybeNullWhen(false)] out GameFile file)
         {
             var fixedPath = FixPath(path);
-            fixedPath = fixedPath.Replace("uasset", "upk");
             if (!collection.TryGetValue(fixedPath, out file) && // any extension
                 !collection.TryGetValue(fixedPath.SubstringBeforeWithLast('.') + GameFile.UePackageExtensions[1], out file) && // umap
                 !collection.TryGetValue(path, out file)) // in case FixPath broke something

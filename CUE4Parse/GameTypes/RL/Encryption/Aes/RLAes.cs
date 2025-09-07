@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using CUE4Parse.UE4.Exceptions;
 
 namespace CUE4Parse.GameTypes.RL.Encryption.Aes
 {
@@ -88,9 +89,7 @@ namespace CUE4Parse.GameTypes.RL.Encryption.Aes
                     // ignore
                 }
             }
-
-            outputData = null;
-            return false;
+            throw new InvalidAesKeyException("No decryption valid key found");
         }
     }
 }

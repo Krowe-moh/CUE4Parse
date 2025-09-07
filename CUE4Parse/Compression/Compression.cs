@@ -69,13 +69,8 @@ namespace CUE4Parse.Compression
                     return;
                 case CompressionMethod.LZO:
                 {
-                    byte[] decompressed = Lzo.Decompress(
-                        new ReadOnlySpan<byte>(compressed, compressedOffset, compressedSize).ToArray(),
-                        uncompressedSize
-                    );
-                    if (decompressed.Length != uncompressedSize)
-                        throw new FileLoadException(
-                            $"Failed to decompress LZO data (Expected: {uncompressedSize}, Result: {decompressed.Length})");
+                    byte[] decompressed = Lzo.Decompress(new ReadOnlySpan<byte>(compressed, compressedOffset, compressedSize).ToArray(), uncompressedSize);
+                    if (decompressed.Length != uncompressedSize) throw new FileLoadException($"Failed to decompress LZO data (Expected: {uncompressedSize}, Result: {decompressed.Length})");
                     Buffer.BlockCopy(decompressed, 0, uncompressed, uncompressedOffset, uncompressedSize);
                     return;
                 }
@@ -88,7 +83,7 @@ namespace CUE4Parse.Compression
                 }
                 default:
                     if (reader != null) throw new UnknownCompressionMethodException(reader, $"Compression method \"{method}\" is unknown");
-                    else throw new UnknownCompressionMethodException($"Compression method \"{method}\" is unknown");
+                    throw new UnknownCompressionMethodException($"Compression method \"{method}\" is unknown");
             }
         }
     }
