@@ -53,13 +53,13 @@ namespace CUE4Parse.GameTypes.RL.Encryption.Aes
                     };
 
                     using var decryptor = aes.CreateDecryptor();
-                    byte[] decrypted = decryptor.TransformFinalBlock(inputData, 0, inputData.Length);
-
-                    using var ms = new MemoryStream(decrypted);
-                    using var br = new BinaryReader(ms);
 
                     if (upk)
                     {
+                        byte[] decrypted = decryptor.TransformFinalBlock(inputData, 0, inputData.Length);
+
+                        using var ms = new MemoryStream(decrypted);
+                        using var br = new BinaryReader(ms);
                         br.ReadBytes(offset);
                         int count = br.ReadInt32();
                         long expectedSize = 4 + count * 24L;
@@ -72,9 +72,11 @@ namespace CUE4Parse.GameTypes.RL.Encryption.Aes
                     }
                     else
                     {
+                        int headerLen = Math.Min(256, inputData.Length);
+                        byte[] decrypted = decryptor.TransformFinalBlock(inputData, 0, headerLen);
                         if (Encoding.ASCII.GetString(decrypted, 0, 4) == "RIFF")
                         {
-                            outputData = decrypted;
+                            outputData = decryptor.TransformFinalBlock(inputData, 0, inputData.Length);
                             return true;
                         }
                     }
