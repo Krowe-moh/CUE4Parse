@@ -11,6 +11,7 @@ using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 using CUE4Parse.GameTypes.MK1.Assets.Objects;
+using Serilog;
 
 namespace CUE4Parse.UE4.Assets.Exports.SkeletalMesh;
 
@@ -99,7 +100,7 @@ public class FStaticLODModel
             NumTexCoords = Ar.Read<int>();
             if (skelMeshVer < FSkeletalMeshCustomVersion.Type.SplitModelAndRenderData)
             {
-                VertexBufferGPUSkin = new FSkeletalMeshVertexBuffer(Ar);
+                VertexBufferGPUSkin = new FSkeletalMeshVertexBuffer(Ar, NumTexCoords);
                 if (skelMeshVer >= FSkeletalMeshCustomVersion.Type.UseSeparateSkinWeightBuffer)
                 {
                     var skinWeights = new FSkinWeightVertexBuffer(Ar, VertexBufferGPUSkin.bExtraBoneInfluences);
@@ -151,7 +152,7 @@ public class FStaticLODModel
     public FStaticLODModel(FAssetArchive Ar, bool bHasVertexColors) : this()
     {
         if (Ar.Game == EGame.GAME_SeaOfThieves) Ar.Position += 4;
-        var stripDataFlags = Ar.Read<FStripDataFlags>();
+        var stripDataFlags = new FStripDataFlags(Ar);
         var skelMeshVer = FSkeletalMeshCustomVersion.Get(Ar);
         if (Ar.Game == EGame.GAME_SeaOfThieves) Ar.Position += 4;
 
@@ -178,7 +179,17 @@ public class FStaticLODModel
         if (!stripDataFlags.IsAudioVisualDataStripped())
             NumVertices = Ar.Read<int>();
 
-        RequiredBones = Ar.ReadArray<short>();
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            var byteBones = Ar.ReadArray<byte>();
+            RequiredBones = new short[byteBones.Length];
+            for (int i = 0; i < byteBones.Length; i++)
+                RequiredBones[i] = byteBones[i];
+        } else
+        {
+            RequiredBones = Ar.ReadArray<short>();
+        }
+        
         if (!stripDataFlags.IsEditorDataStripped())
             RawPointIndices = new FIntBulkData(Ar);
 
@@ -193,7 +204,7 @@ public class FStaticLODModel
             NumTexCoords = Ar.Read<int>();
             if (skelMeshVer < FSkeletalMeshCustomVersion.Type.SplitModelAndRenderData)
             {
-                VertexBufferGPUSkin = new FSkeletalMeshVertexBuffer(Ar);
+                VertexBufferGPUSkin = new FSkeletalMeshVertexBuffer(Ar, NumTexCoords);
                 if (skelMeshVer >= FSkeletalMeshCustomVersion.Type.UseSeparateSkinWeightBuffer)
                 {
                     var skinWeights = new FSkinWeightVertexBuffer(Ar, VertexBufferGPUSkin.bExtraBoneInfluences);
@@ -230,9 +241,12 @@ public class FStaticLODModel
                     }
                 }
 
-                if (Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_EXTRA_SKELMESH_VERTEX_INFLUENCES)
-                    throw new ParserException("Unsupported: extra SkelMesh vertex influences (old mesh format)");
-
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCES)
+                {
+                    var ExtraVertexInfluences = Ar.Read<int>();
+                    if (ExtraVertexInfluences > 0) Log.Warning("unsupported currently");
+                }
+                
                 // https://github.com/gildor2/UEViewer/blob/master/Unreal/UnrealMesh/UnMesh4.cpp#L1415
                 if (Ar.Game == EGame.GAME_StateOfDecay2)
                     stripDataFlags.ClassStripFlags |= (byte) EClassDataStripFlag.CDSF_AdjacencyData;

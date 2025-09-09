@@ -32,11 +32,6 @@ public partial class USkeletalMesh : UObject
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        if (Ar.Game == EGame.GAME_UE3_0)
-        { // todo (it's impossible... real)
-            Ar.Position = validPos;
-            return;
-        }
         LODInfo = GetOrDefault<FSkeletalMeshLODGroupSettings[]>(nameof(LODInfo), []);
 
         bHasVertexColors = GetOrDefault<bool>(nameof(bHasVertexColors));
@@ -47,17 +42,36 @@ public partial class USkeletalMesh : UObject
         PhysicsAsset = GetOrDefault(nameof(PhysicsAsset), new FPackageIndex());
         AssetUserData = GetOrDefault(nameof(AssetUserData), Array.Empty<FPackageIndex>());
 
-        var stripDataFlags = Ar.Read<FStripDataFlags>();
+        var stripDataFlags = new FStripDataFlags(Ar);
         ImportedBounds = new FBoxSphereBounds(Ar);
 
-        SkeletalMaterials = Ar.ReadArray(() => new FSkeletalMaterial(Ar));
-        Materials = new ResolvedObject?[SkeletalMaterials.Length];
-        for (var i = 0; i < Materials.Length; i++)
+        if (Ar.Game < EGame.GAME_UE4_0)
         {
-            Materials[i] = SkeletalMaterials[i].Material;
+            var SkeletalMaterials = Ar.ReadArray(() => new FPackageIndex(Ar));
+            Materials = new ResolvedObject?[SkeletalMaterials.Length];
+            for (var i = 0; i < Materials.Length; i++)
+            {
+                Materials[i] = SkeletalMaterials[i].ResolvedObject;
+            }
+
+            Ar.Read<FVector>(); // MeshOrigin
+            Ar.Read<FRotator>(); // RotOrigin
+        }
+        else
+        {
+            SkeletalMaterials = Ar.ReadArray(() => new FSkeletalMaterial(Ar));
+            Materials = new ResolvedObject?[SkeletalMaterials.Length];
+            for (var i = 0; i < Materials.Length; i++)
+            {
+                Materials[i] = SkeletalMaterials[i].Material;
+            }
         }
 
         ReferenceSkeleton = new FReferenceSkeleton(Ar);
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            Ar.Read<int>(); // SkeletalDepth
+        }
 
         if (FSkeletalMeshCustomVersion.Get(Ar) < FSkeletalMeshCustomVersion.Type.SplitModelAndRenderData)
         {
@@ -124,6 +138,7 @@ public partial class USkeletalMesh : UObject
             }
         }
 
+        if (Ar.Game < EGame.GAME_UE4_0) return;
         if (Ar.Ver < EUnrealEngineObjectUE4Version.REFERENCE_SKELETON_REFACTOR)
         {
             var length = Ar.Read<int>();
@@ -146,7 +161,7 @@ public partial class USkeletalMesh : UObject
                 {
                     if (j < lodMatMap.Length && lodMatMap[j] >= 0 && lodMatMap[j] < Materials.Length)
                     {
-                        lodModel.Sections[j].MaterialIndex = (short) Math.Clamp((ushort) lodMatMap[j], 0, Materials.Length);
+                        lodModel.Sections[j].MaterialIndex = (short)Math.Clamp((ushort)lodMatMap[j], 0, Materials.Length);
                     }
                 }
             }

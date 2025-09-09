@@ -9,6 +9,7 @@ namespace CUE4Parse.UE4.Assets.Exports.SkeletalMesh;
 [JsonConverter(typeof(FSkelMeshVertexBaseConverter))]
 public class FSkelMeshVertexBase
 {
+    private const int MAX_INFLUENCES_UE3 = 4;
     public FVector Pos;
     public FPackedNormal[] Normal;
     public FSkinWeightInfo? Infs;
@@ -34,7 +35,18 @@ public class FSkelMeshVertexBase
     public void SerializeForEditor(FArchive Ar)
     {
         Normal = new FPackedNormal[3];
-        Pos = Ar.Read<FVector>();
+        if (Ar.Game > EGame.GAME_UE4_0)
+        {
+            Pos = Ar.Read<FVector>();
+        }
+        else
+        {
+            Normal[0] = new FPackedNormal(Ar);
+            Normal[1] = new FPackedNormal(Ar);
+            Ar.ReadArray<byte>(MAX_INFLUENCES_UE3); // BoneIndex
+            Ar.ReadArray<byte>(MAX_INFLUENCES_UE3); // BoneWeight
+        }
+
         if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.IncreaseNormalPrecision)
         {
             Normal[0] = new FPackedNormal(Ar);

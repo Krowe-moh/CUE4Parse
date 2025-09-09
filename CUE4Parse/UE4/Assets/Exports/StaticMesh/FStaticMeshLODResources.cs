@@ -29,7 +29,7 @@ public class FStaticMeshLODResources
     public FRawStaticIndexBuffer? WireframeIndexBuffer { get; private set; }
     public FRawStaticIndexBuffer? AdjacencyIndexBuffer { get; private set; }
     public bool SkipLod => VertexBuffer == null || IndexBuffer == null ||
-                           PositionVertexBuffer == null || ColorVertexBuffer == null;
+                           PositionVertexBuffer == null;
 
     public enum EClassDataStripFlag : byte
     {
@@ -157,7 +157,6 @@ public class FStaticMeshLODResources
     public void SerializeBuffersLegacy(FArchive Ar, FStripDataFlags stripDataFlags)
     {
         PositionVertexBuffer = new FPositionVertexBuffer(Ar);
-        //if( Ar.Ver() < VER_MESH_PAINT_SYSTEM_ENUM )
         VertexBuffer = new FStaticMeshVertexBuffer(Ar);
 
         if (Ar.Game == EGame.GAME_Borderlands3)
@@ -180,7 +179,9 @@ public class FStaticMeshLODResources
         {
             ColorVertexBuffer = new FColorVertexBuffer(Ar);
         }
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_SHADOW_VOLUMES) new FStaticMeshShadowVolumeStream(Ar); // FColorVertexBuffer but uses floats
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_SHADOW_VOLUMES) {
+            new FStaticMeshShadowVolumeStream(Ar); // FColorVertexBuffer but uses floats
+        }
         if (Ar.Game < EGame.GAME_UE4_0) Ar.Read<int>(); // NumVertices
         IndexBuffer = new FRawStaticIndexBuffer(Ar);
 
@@ -211,13 +212,14 @@ public class FStaticMeshLODResources
                 _ = new FDistanceFieldVolumeData(Ar); // distanceFieldData
             }
 
+            if (Ar.Game < EGame.GAME_UE4_0) WireframeIndexBuffer = new FRawStaticIndexBuffer(Ar);
             if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_SHADOW_VOLUMES)
             {
                 Ar.ReadBulkArray(() => Ar.ReadBytes(16)); // LegacyEdges
                 Ar.ReadArray<byte>(); // LegacyShadowTriangleDoubleSided
             }
             
-            if (!stripDataFlags.IsEditorDataStripped())
+            if (!stripDataFlags.IsEditorDataStripped() && Ar.Game >= EGame.GAME_UE4_0)
                 WireframeIndexBuffer = new FRawStaticIndexBuffer(Ar);
             
             if (!stripDataFlags.IsClassDataStripped((byte) EClassDataStripFlag.CDSF_AdjacencyData) && (Ar.Ver > EUnrealEngineObjectUE3Version.VER_CRACK_FREE_DISPLACEMENT_SUPPORT || Ar.Game >= EGame.GAME_UE4_0))

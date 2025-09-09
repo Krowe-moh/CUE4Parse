@@ -1,4 +1,3 @@
-using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Readers;
@@ -14,21 +13,27 @@ public class FSkeletalMeshVertexBuffer
     public FVector MeshExtension;
     public FVector MeshOrigin;
     public bool bUseFullPrecisionUVs;
+    public bool bUsePackedPosition;
     public bool bExtraBoneInfluences;
     public FGPUVertHalf[] VertsHalf;
     public FGPUVertFloat[] VertsFloat;
+    public FGPUVertHalfPacked[] VertsHalfPacked;
+    public FGPUVertFloatPacked[] VertsFloatPacked;
 
     public FSkeletalMeshVertexBuffer()
     {
         VertsHalf = [];
         VertsFloat = [];
+        VertsHalfPacked = [];
+        VertsFloatPacked = [];
     }
 
-    public FSkeletalMeshVertexBuffer(FArchive Ar) : this()
+    public FSkeletalMeshVertexBuffer(FArchive Ar, int NumTexCoords) : this()
     {
         var stripDataFlags = new FStripDataFlags(Ar, FPackageFileVersion.CreateUE4Version(EUnrealEngineObjectUE4Version.STATIC_SKELETAL_MESH_SERIALIZATION_FIX));
 
-        NumTexCoords = Ar.Read<int>();
+        // if rocket league remove?
+        //NumTexCoords = Ar.Read<int>();
         bUseFullPrecisionUVs = Ar.ReadBoolean();
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SUPPORT_GPUSKINNING_8_BONE_INFLUENCES &&
@@ -36,14 +41,40 @@ public class FSkeletalMeshVertexBuffer
         {
             bExtraBoneInfluences = Ar.ReadBoolean();
         }
-
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            bUsePackedPosition = Ar.ReadBoolean();
+        }
+        else
+        {
+            bUsePackedPosition = true;
+        }
+        
         MeshExtension = new FVector(Ar);
         MeshOrigin = new FVector(Ar);
 
         if (!bUseFullPrecisionUVs)
-            VertsHalf = Ar.ReadBulkArray(() => new FGPUVertHalf(Ar, bExtraBoneInfluences, NumTexCoords));
+        {
+            if (!bUsePackedPosition)
+            {
+                VertsHalfPacked = Ar.ReadBulkArray(() => new FGPUVertHalfPacked(Ar, NumTexCoords));
+            }
+            else
+            {
+                VertsHalf = Ar.ReadBulkArray(() => new FGPUVertHalf(Ar, bExtraBoneInfluences, NumTexCoords));
+            }
+        }
         else
-            VertsFloat = Ar.ReadBulkArray(() => new FGPUVertFloat(Ar, bExtraBoneInfluences, NumTexCoords));
+        {
+            if (bUsePackedPosition)
+            {
+                VertsFloatPacked = Ar.ReadBulkArray(() => new FGPUVertFloatPacked(Ar, NumTexCoords));
+            }
+            else
+            {
+                VertsFloat = Ar.ReadArray(() => new FGPUVertFloat(Ar, bExtraBoneInfluences, NumTexCoords));
+            }
+        }
     }
 
     public int GetVertexCount()

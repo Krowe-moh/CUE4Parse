@@ -220,9 +220,6 @@ public class UObject : AbstractPropertyHolder
                 Ar.Read<int>();
                 new FPackageIndex(Ar); // this (self)
             }
-            if (Flags.HasFlag(EObjectFlags.RF_MarkAsNative))
-            {
-            }
             
             DeserializePropertiesTagged(Properties = [], Ar, false);
         }

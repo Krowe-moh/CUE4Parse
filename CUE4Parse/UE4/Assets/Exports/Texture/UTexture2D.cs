@@ -66,15 +66,14 @@ public class UTexture2D : UTexture
 
             if (Ar.Game == EGame.GAME_DCUniverseOnline) return;
             
+            if (Ar.Game == EGame.GAME_RocketLeague)
+            {
+                goto skipPlatform;
+            }
+            
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_TEXTURE_FILECACHE_GUIDS)
             {
                 var textureFileCacheGuidDeprecated = Ar.Read<FGuid>();
-            }
-
-            if (Ar.Game == EGame.GAME_RocketLeague)
-            {
-                Ar.Position += 36; // unknown
-                goto skipPlatform;
             }
             
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_IPHONE_DATA)
