@@ -13,7 +13,7 @@ public class FGPUVertHalfPacked : FSkelMeshVertexBase
     }
     public FGPUVertHalfPacked(FArchive Ar, int numSkelUVSets) : this()
     {
-        SerializeForEditor(Ar);
+        SerializeForEditorr(Ar);
         
         Ar.Read<int>(); // packed index
         UV = Ar.ReadArray<FMeshUVHalf>(numSkelUVSets);

@@ -68,9 +68,21 @@ public class FSkelMeshSection
     {
         var stripDataFlags = new FStripDataFlags(Ar);
         var skelMeshVer = FSkeletalMeshCustomVersion.Get(Ar);
-
+        
         MaterialIndex = Ar.Read<short>();
 
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.OldformatDeprecated)
+        {
+            BaseIndex = Ar.Read<short>();
+            Ar.ReadArray<short>(6);
+            NumTriangles = Ar.Read<int>();
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.stuffig)
+            {
+                Ar.ReadArray<short>();
+            }
+            return;
+        }
+        
         if (skelMeshVer < FSkeletalMeshCustomVersion.Type.CombineSectionWithChunk)
         {
             var dummyChunkIndex = Ar.Read<ushort>();
@@ -79,7 +91,14 @@ public class FSkelMeshSection
         if (!stripDataFlags.IsAudioVisualDataStripped())
         {
             BaseIndex = Ar.Read<int>();
-            NumTriangles = Ar.Read<int>();
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_DWORD_SKELETAL_MESH_INDICES)
+            {
+                NumTriangles = Ar.Read<short>();
+            }
+            else
+            {
+                NumTriangles = Ar.Read<int>();
+            }
         }
 
         if ((Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SKELETAL_MESH_SORTING_OPTIONS || Ar.Game >= EGame.GAME_UE4_0) && skelMeshVer < FSkeletalMeshCustomVersion.Type.RemoveTriangleSorting)

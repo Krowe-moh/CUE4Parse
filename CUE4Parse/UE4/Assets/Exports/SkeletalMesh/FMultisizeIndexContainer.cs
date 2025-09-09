@@ -16,12 +16,16 @@ public class FMultisizeIndexContainer
 
     public FMultisizeIndexContainer(FArchive Ar) : this()
     {
-        if (Ar.Ver < EUnrealEngineObjectUE4Version.KEEP_SKEL_MESH_INDEX_DATA)
+        var dataSize = 0x02;
+        if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_DWORD_SKELETAL_MESH_INDICES)
         {
-            Ar.Position += 4; //var bOldNeedsCPUAccess = Ar.ReadBoolean();
-        }
+            if (Ar.Ver < EUnrealEngineObjectUE4Version.KEEP_SKEL_MESH_INDEX_DATA)
+            {
+                Ar.Position += 4; //var bOldNeedsCPUAccess = Ar.ReadBoolean();
+            }
 
-        var dataSize = Ar.Read<byte>();
+            dataSize = Ar.Read<byte>();
+        }
         if (Ar.Game == EGame.GAME_OutlastTrials) Ar.Position += 4;
 
         if (dataSize == 0x02)

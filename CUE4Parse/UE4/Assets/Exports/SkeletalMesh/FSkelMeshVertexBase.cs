@@ -35,6 +35,26 @@ public class FSkelMeshVertexBase
     public void SerializeForEditor(FArchive Ar)
     {
         Normal = new FPackedNormal[3];
+        Pos = Ar.Read<FVector>();
+
+        if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.IncreaseNormalPrecision)
+        {
+            Normal[0] = new FPackedNormal(Ar);
+            Normal[1] = new FPackedNormal(Ar);
+            Normal[2] = new FPackedNormal(Ar);
+        }
+        else
+        {
+            // New normals are stored with full floating point precision
+            Normal[0] = new FPackedNormal(Ar.Read<FVector>());
+            Normal[1] = new FPackedNormal(Ar.Read<FVector>());
+            Normal[2] = new FPackedNormal(Ar.Read<FVector4>());
+        }
+    }
+
+    public void SerializeForEditorr(FArchive Ar)
+    {
+        Normal = new FPackedNormal[3];
         if (Ar.Game > EGame.GAME_UE4_0)
         {
             Pos = Ar.Read<FVector>();

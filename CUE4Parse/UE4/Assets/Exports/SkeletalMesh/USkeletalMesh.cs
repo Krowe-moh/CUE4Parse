@@ -45,6 +45,11 @@ public partial class USkeletalMesh : UObject
         var stripDataFlags = new FStripDataFlags(Ar);
         ImportedBounds = new FBoxSphereBounds(Ar);
 
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.DeprecatedPointer)
+        {
+            new FPackageIndex(Ar);
+        }
+        
         if (Ar.Game < EGame.GAME_UE4_0)
         {
             var SkeletalMaterials = Ar.ReadArray(() => new FPackageIndex(Ar));

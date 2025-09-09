@@ -747,6 +747,7 @@ namespace CUE4Parse.UE4.Versions
         MovedFriendlyNameToUFunction = 160,
         TextureDeprecatedFromPoly = 170,
         CompactIndexDeprecated = 178,
+        DeprecatedPointer = 180,
         AddedDelegateSourceToUDelegateProperty = 185,
         ClassDependenciesDeprecated = 186,
         DisplacedHideCategories = 187, // todo
@@ -754,9 +755,12 @@ namespace CUE4Parse.UE4.Versions
         PropertyFlagsSizeExpandedTo64Bits = 195,
         AddedComponentGuid = 196,
         Use64BitFlag = 195,
+        stuffig = 202,
         PackageImportsDeprecated = 208,
         shortyes = 209,
+        fwefwef = 207,
         AddedComponentTemplatesToUClass = 210,
+        OldformatDeprecated = 215,
         todoa = 218,
         AddedArcheType = 220,
         AddedComponentMapToExports, // todo
