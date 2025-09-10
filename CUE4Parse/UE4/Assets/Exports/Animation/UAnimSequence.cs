@@ -76,7 +76,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
                     Ar.Position += array.Length * sizeof(short);
                 }
             }
-            
+
             var stripFlags = new FStripDataFlags(Ar);
             if (!stripFlags.IsEditorDataStripped())
             {

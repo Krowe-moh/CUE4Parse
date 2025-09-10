@@ -45,7 +45,7 @@ public class FModelElement
         if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.MapBuildDataSeparatePackage)
         {
             LegacyMapBuildData = new FMeshMapBuildData();
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_LIGHTMAP_NON_UOBJECT && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_LIGHTMAP_NON_UOBJECT)
             {
                 new FPackageIndex(Ar); // LightMap
             }

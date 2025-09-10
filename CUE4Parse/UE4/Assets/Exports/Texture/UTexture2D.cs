@@ -36,7 +36,7 @@ public class UTexture2D : UTexture
         var stripDataFlags = new FStripDataFlags(Ar);
         var bCooked = (Ar.Game >= EGame.GAME_UE4_0 && Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_COOKED_TO_TEXTURE2D) && Ar.ReadBoolean();
 
-        if (Ar.Game < EGame.GAME_UE4_0 && Ar.Ver < EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR)
         {
             var SizeX = Ar.Read<int>();
             var SizeY = Ar.Read<int>();

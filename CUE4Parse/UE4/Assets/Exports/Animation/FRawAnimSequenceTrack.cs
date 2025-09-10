@@ -13,7 +13,7 @@ public class FRawAnimSequenceTrack : IUStruct
 
     public FRawAnimSequenceTrack(FArchive Ar)
     {
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_NATIVE_RAWANIMDATA_SERIALIZATION && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_NATIVE_RAWANIMDATA_SERIALIZATION)
         {
             PosKeys = Ar.ReadArray<FVector>();
             RotKeys = Ar.ReadArray<FQuat>();

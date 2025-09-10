@@ -83,19 +83,16 @@ public class UStaticMesh : UObject
         LODForCollision = GetOrDefault(nameof(LODForCollision), 0);
 
         var stripDataFlags = new FStripDataFlags(Ar);
+        bCooked = Ar.Game >= EGame.GAME_UE4_0 && Ar.ReadBoolean();
         var Bounds = new FBoxSphereBounds();
-        if (Ar.Game >= EGame.GAME_UE4_0)
-        {
-            bCooked = Ar.ReadBoolean();
-        }
-        else
+        if (Ar.Game < EGame.GAME_UE4_0)
         {
             Bounds = new FBoxSphereBounds(Ar);
         }
 
         BodySetup = new FPackageIndex(Ar);
 
-        if(Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVE_STATICMESH_COLLISIONMODEL && Ar.Game < EGame.GAME_UE4_0)
+        if(Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVE_STATICMESH_COLLISIONMODEL)
         {
             new FPackageIndex(Ar); // DummyModel;
         }
@@ -109,16 +106,9 @@ public class UStaticMesh : UObject
             {
                 Ar.ReadBulkArray(() => new FkDOPNode3(Ar));
             }
-            else
+            else 
             {
-                if (Ar.Game == EGame.GAME_RocketLeague)
-                {
-                    Ar.Position += 24;
-                }
-                else
-                {
-                    Ar.ReadArray(() => Ar.ReadBytes(24)); // non legacy node
-                }
+                Ar.Position += 24;
                 Ar.ReadBulkArray(() => Ar.ReadBytes(6)); // bound
             }
 

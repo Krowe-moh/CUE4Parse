@@ -15,7 +15,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             base.Deserialize(Ar, validPos);
             
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_MOVED_SUPERFIELD_TO_USTRUCT && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_MOVED_SUPERFIELD_TO_USTRUCT)
             {
                 SuperField = new FPackageIndex(Ar);
             }

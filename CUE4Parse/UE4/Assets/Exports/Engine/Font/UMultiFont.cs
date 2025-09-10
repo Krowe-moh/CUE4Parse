@@ -9,7 +9,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Engine.Font
         {
             base.Deserialize(Ar, validPos);
 
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_FIXED_FONTS_SERIALIZATION && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_FIXED_FONTS_SERIALIZATION)
             {
                 Ar.ReadArray(() => Ar.Read<int>()); // ResolutionTestTable
             }

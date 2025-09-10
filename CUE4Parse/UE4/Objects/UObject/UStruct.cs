@@ -45,12 +45,12 @@ public class UStruct : UField
             Children = Ar.ReadArray(() => new FPackageIndex(Ar));
         }
         
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction)
         {
             Ar.ReadFName();
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedCppTextToUStruct && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedCppTextToUStruct)
         {
             new FPackageIndex(Ar); // CppText
         }

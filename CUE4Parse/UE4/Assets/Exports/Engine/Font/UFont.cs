@@ -13,7 +13,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Engine.Font
         {
             base.Deserialize(Ar, validPos);
 
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_CHANGED_COMPRESSION_CHUNK_SIZE_TO_128 && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_CHANGED_COMPRESSION_CHUNK_SIZE_TO_128)
             {
                 Ar.ReadArray(() => new FFontCharacter(Ar)); // Characters
                 Ar.ReadArray(() => new FPackageIndex(Ar)); // Textures
@@ -27,7 +27,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Engine.Font
                 CharRemap[Ar.Read<ushort>()] = Ar.Read<ushort>();
             }
 
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_CHANGED_COMPRESSION_CHUNK_SIZE_TO_128 && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_CHANGED_COMPRESSION_CHUNK_SIZE_TO_128)
             {
                 Ar.ReadBoolean(); // IsRemapped
             }

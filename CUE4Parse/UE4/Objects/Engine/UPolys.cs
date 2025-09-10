@@ -123,8 +123,7 @@ namespace CUE4Parse.UE4.Objects.Engine
                 PanV = Ar.Read<short>();
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.LightMapScaleAddedToPoly &&
-                Ar.Ver < EUnrealEngineObjectUE3Version.VER_TWOSIDEDSIGN_PARAMETERS)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.LightMapScaleAddedToPoly && Ar.Ver < EUnrealEngineObjectUE3Version.VER_TWOSIDEDSIGN_PARAMETERS)
             {
                 LightMapScale = Ar.Read<float>();
             }

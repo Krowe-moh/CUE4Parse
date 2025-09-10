@@ -10,7 +10,7 @@ public class UTextureRenderTarget : UTexture
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Game < EGame.GAME_UE4_0 && Ar.Ver < EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR)
         {
             var SizeX = Ar.Read<int>();
             var SizeY = Ar.Read<int>();

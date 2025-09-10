@@ -40,7 +40,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             ExportCount = Ar.Read<int>();
             NameCount = Ar.Read<int>();
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP && Ar.Game < EGame.GAME_UE4_0)
             {
                 NetObjectCount = Ar.Read<int>();
             }
@@ -217,7 +217,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
                 if (legacyFileVersion != -4)
                 {
-                    _ = Ar.Read<int>(); // legacyUE3Version
+                    FileVersionUE.FileVersionUE3 = Ar.Read<int>(); // legacyUE3Version
                 }
 
                 FileVersionUE.FileVersionUE4 = Ar.Read<int>();
@@ -276,12 +276,12 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.Ver = FileVersionUE;
             }
 
-            if ((FileVersionUE > EUnrealEngineObjectUE3Version.VER_MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE || Ar.Game >= EGame.GAME_UE4_0) && FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
+            if (FileVersionUE > EUnrealEngineObjectUE3Version.VER_MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE && FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
             {
                 TotalHeaderSize = Ar.Read<int>();
             }
 
-            if (FileVersionUE > EUnrealEngineObjectUE3Version.VER_FOLDER_ADDED || Ar.Game >= EGame.GAME_UE4_0)
+            if (FileVersionUE > EUnrealEngineObjectUE3Version.VER_FOLDER_ADDED)
             {
                 PackageName = Ar.ReadFString();
             }
@@ -322,7 +322,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             ImportCount = Ar.Read<int>();
             ImportOffset = Ar.Read<int>();
 
-            if (FileVersionUE < EUnrealEngineObjectUE3Version.DeprecatedHeritageTable && Ar.Game < EGame.GAME_UE4_0)
+            if (FileVersionUE < EUnrealEngineObjectUE3Version.DeprecatedHeritageTable)
             {
                 HeritageOffset = Ar.Read<int>();
                 HeritageCount = Ar.Read<int>();
@@ -341,12 +341,12 @@ namespace CUE4Parse.UE4.Objects.UObject
                 MetaDataOffset = Ar.Read<int>();
             }
 
-            if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_LINKER_DEPENDENCIES || Ar.Game >= EGame.GAME_UE4_0)
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_LINKER_DEPENDENCIES)
             {
                 DependsOffset = Ar.Read<int>();
             }
 
-            if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES || Ar.Game >= EGame.GAME_UE4_0)
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES)
             {
                 ImportExportGuidsOffset = Ar.Read<int>();
                 ImportGuidsCount = Ar.Read<int>();
@@ -364,7 +364,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 SearchableNamesOffset = Ar.Read<int>();
             }
 
-            if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ASSET_THUMBNAILS_IN_PACKAGES || Ar.Game >= EGame.GAME_UE4_0)
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ASSET_THUMBNAILS_IN_PACKAGES)
             {
                 ThumbnailTableOffset = Ar.Read<int>();
             }

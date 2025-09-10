@@ -16,7 +16,7 @@ namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
         public FStaticMeshUVItem(FArchive Ar, bool useHighPrecisionTangents, int numStaticUVSets, bool useStaticFloatUVs)
         {
             Normal = SerializeTangents(Ar, useHighPrecisionTangents);
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_MESH_PAINT_SYSTEM && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_MESH_PAINT_SYSTEM)
             {
                 Ar.Read<FColor>();
             }

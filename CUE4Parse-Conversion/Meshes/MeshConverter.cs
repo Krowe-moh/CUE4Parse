@@ -135,10 +135,8 @@ public static class MeshConverter
             };
 
             staticMeshLod.AllocateVerts(numVerts);
-            if (srcLod.ColorVertexBuffer != null && srcLod.ColorVertexBuffer.NumVertices != 0)
-            {
+            if (srcLod.ColorVertexBuffer?.NumVertices > 0)
                 staticMeshLod.AllocateVertexColorBuffer();
-            }
             
             for (var j = 0; j < numVerts; j++)
             {
@@ -166,11 +164,8 @@ public static class MeshConverter
                     staticMeshLod.ExtraUV.Value[k - 1][j].V = suv.UV[k].V;
                 }
 
-                if (srcLod.ColorVertexBuffer != null && srcLod.ColorVertexBuffer.NumVertices != 0 &&
-                    staticMeshLod.VertexColors != null)
-                {
+                if (srcLod.ColorVertexBuffer?.NumVertices != 0 && staticMeshLod.VertexColors != null)
                     staticMeshLod.VertexColors[j] = srcLod.ColorVertexBuffer.Data[j];
-                }
             }
 
             convertedMesh.LODs.Add(staticMeshLod);
@@ -388,9 +383,7 @@ public static class MeshConverter
             var skeletalMeshLod = new CSkelMeshLod
             {
                 NumTexCoords = numTexCoords,
-                ScreenSize = originalMesh.LODInfo != null && i < originalMesh.LODInfo.Length && originalMesh.LODInfo[i].ScreenSize != null
-                    ? originalMesh.LODInfo[i].ScreenSize.Default
-                    : 0f,
+                ScreenSize = i < originalMesh.LODInfo?.Length && originalMesh.LODInfo[i].ScreenSize is { } ss ? ss.Default : 0f,
                 HasNormals = true,
                 HasTangents = true,
                 Indices = new Lazy<FRawStaticIndexBuffer>(() => new FRawStaticIndexBuffer
@@ -415,6 +408,7 @@ public static class MeshConverter
                         if (materialIndex < 0) sections[j] = new CMeshSection(srcLod.Sections[j]);
                         else
                         {
+                            // todo
                             sections[j] = new CMeshSection(materialIndex, srcLod.Sections[j],
                                 "a",
                                 originalMesh.Materials[materialIndex]);
