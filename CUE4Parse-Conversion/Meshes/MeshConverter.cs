@@ -135,9 +135,11 @@ public static class MeshConverter
             };
 
             staticMeshLod.AllocateVerts(numVerts);
-            if (srcLod.ColorVertexBuffer!.NumVertices != 0)
+            if (srcLod.ColorVertexBuffer != null && srcLod.ColorVertexBuffer.NumVertices != 0)
+            {
                 staticMeshLod.AllocateVertexColorBuffer();
-
+            }
+            
             for (var j = 0; j < numVerts; j++)
             {
                 var suv = srcLod.VertexBuffer.UV[j];
@@ -164,8 +166,11 @@ public static class MeshConverter
                     staticMeshLod.ExtraUV.Value[k - 1][j].V = suv.UV[k].V;
                 }
 
-                if (srcLod.ColorVertexBuffer.NumVertices != 0)
-                    staticMeshLod.VertexColors![j] = srcLod.ColorVertexBuffer.Data[j];
+                if (srcLod.ColorVertexBuffer != null && srcLod.ColorVertexBuffer.NumVertices != 0 &&
+                    staticMeshLod.VertexColors != null)
+                {
+                    staticMeshLod.VertexColors[j] = srcLod.ColorVertexBuffer.Data[j];
+                }
             }
 
             convertedMesh.LODs.Add(staticMeshLod);
@@ -383,7 +388,9 @@ public static class MeshConverter
             var skeletalMeshLod = new CSkelMeshLod
             {
                 NumTexCoords = numTexCoords,
-                ScreenSize = originalMesh.LODInfo[i].ScreenSize.Default,
+                ScreenSize = originalMesh.LODInfo != null && i < originalMesh.LODInfo.Length && originalMesh.LODInfo[i].ScreenSize != null
+                    ? originalMesh.LODInfo[i].ScreenSize.Default
+                    : 0f,
                 HasNormals = true,
                 HasTangents = true,
                 Indices = new Lazy<FRawStaticIndexBuffer>(() => new FRawStaticIndexBuffer
@@ -409,8 +416,8 @@ public static class MeshConverter
                         else
                         {
                             sections[j] = new CMeshSection(materialIndex, srcLod.Sections[j],
-                                originalMesh.SkeletalMaterials[materialIndex].MaterialSlotName.Text,
-                                originalMesh.SkeletalMaterials[materialIndex].Material);
+                                "a",
+                                originalMesh.Materials[materialIndex]);
                         }
                     }
 
@@ -498,12 +505,13 @@ public static class MeshConverter
                 }
 
                 skeletalMeshLod.Verts[vert].Position = v.Pos;
-                UnpackNormals(v.Normal, skeletalMeshLod.Verts[vert]);
+                //UnpackNormals(v.Normal, skeletalMeshLod.Verts[vert]);
                 if (skeletalMeshLod.VertexColors != null)
                 {
                     skeletalMeshLod.VertexColors[vert] = srcLod.ColorVertexBuffer.Data[vert];
                 }
-
+                if (v.Infs == null)
+                    continue;
                 var scale = v.Infs.bUse16BitBoneWeight ? Constants.UShort_Bone_Scale : Constants.Byte_Bone_Scale;
                 foreach (var (weight, boneIndex) in v.Infs.BoneWeight.Zip(v.Infs.BoneIndex))
                 {

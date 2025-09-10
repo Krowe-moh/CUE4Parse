@@ -1,4 +1,5 @@
 ﻿using CUE4Parse.UE4.Objects.Core.Math;
+using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Writers;
 
 namespace CUE4Parse_Conversion.ActorX
@@ -9,7 +10,7 @@ namespace CUE4Parse_Conversion.ActorX
         public FVector Position;
         public float Length;
         public FVector Size;
-
+        
         public void Serialize(FArchiveWriter Ar)
         {
             Orientation.Serialize(Ar);

@@ -13,6 +13,56 @@ using Newtonsoft.Json;
 
 namespace CUE4Parse.UE4.Assets.Exports.Material;
 
+public class FTextureLookup
+{
+    public int TexCoordIndex;
+    public int TextureIndex;
+    public float UScale;
+    public float VScale;
+
+    public FTextureLookup(FAssetArchive Ar)
+    {
+        TexCoordIndex = Ar.Read<int>();
+        TextureIndex = Ar.Read<int>();
+
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_FONT_FORMAT_AND_UV_TILING_CHANGES)
+        {
+            float uAndVScale = Ar.Read<float>();
+            UScale = uAndVScale;
+            VScale = uAndVScale;
+        }
+        else
+        {
+            UScale = Ar.Read<float>();
+            VScale = Ar.Read<float>();
+        }
+    }
+}
+
+public class FMaterialUniformExpressionTexture
+{
+    public FPackageIndex LegacyTexture;
+    public int TextureIndex;
+
+    public FMaterialUniformExpressionTexture(FAssetArchive Ar)
+    {
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
+        {
+            LegacyTexture = new FPackageIndex(Ar);
+        }
+        else
+        {
+            TextureIndex = Ar.Read<int>();
+        }
+    }
+}public class UniformVectorExpressions
+{
+    public UniformVectorExpressions(FAssetArchive Ar)
+    {
+        var present = Ar.ReadFName();
+    }
+}
+
 public class UMaterial : UMaterialInterface
 {
     public bool TwoSided { get; private set; }
@@ -41,7 +91,7 @@ public class UMaterial : UMaterialInterface
         OpacityMaskClipValue = GetOrDefault(nameof(OpacityMaskClipValue), OpacityMaskClipValue);
 
         // 4.25+
-        if (Ar.Game >= EGame.GAME_UE4_25)
+        if (Ar.Game >= EGame.GAME_UE4_25 || Ar.Game < EGame.GAME_UE4_0)
         {
             CachedExpressionData ??= GetOrDefault<FStructFallback>(nameof(CachedExpressionData));
             if (CachedExpressionData != null && CachedExpressionData.TryGetValue(out UTexture[] referencedTextures, "ReferencedTextures"))
@@ -79,16 +129,62 @@ public class UMaterial : UMaterialInterface
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MATERIAL_QUALITY_LEVEL)
         {
-            Ar.Read<int>();
+            Ar.Read<int>(); // QualityMask
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
+        //2 = MSQ_MAX
+        for (int QualityIndex = 0; QualityIndex < 1; QualityIndex++)
         {
-            var StringArray = Ar.ReadArray((() => Ar.ReadString()));
-            var ObjectIntMap = Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>());
-            var FirstInt = Ar.Read<int>();
-            var GuidValue = Ar.Read<FGuid>();
-            var SecondInt = Ar.Read<int>();
+            Ar.ReadArray(Ar.ReadFString);
+            Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>());
+            Ar.Read<int>();
+            Ar.Read<FGuid>();
+            Ar.Read<int>(); // Ar << NumUserTexCoords;
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
+            {
+                Ar.ReadArray(() => new UniformVectorExpressions(Ar)); // UniformVectorExpressions
+                Ar.ReadArray(() => new UniformVectorExpressions(Ar)); // UniformScalarExpressions
+                Ar.ReadArray(() => new FMaterialUniformExpressionTexture(Ar)); // Uniform2DTextureExpressions
+                Ar.ReadArray(() => new FMaterialUniformExpressionTexture(Ar)); // UniformCubeTextureExpressions
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_EDITOR_VERTEX_SHADER)
+                {
+                    Ar.ReadArray(() => new UniformVectorExpressions(Ar));
+                    Ar.ReadArray(() => new UniformVectorExpressions(Ar));
+                }
+            }
+            else
+            {
+                Ar.ReadArray(() => new FPackageIndex(Ar));
+            }   
+
+            Ar.ReadBoolean();
+            Ar.ReadBoolean();
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICPARAMETERS_ADDED)
+            {
+                Ar.ReadBoolean();
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATEXP_LIGHTMAPUVS_ADDED)
+            {
+                Ar.ReadBoolean();
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_EDITOR_VERTEX_SHADER)
+            {
+                Ar.ReadBoolean();
+            }
+
+            Ar.Read<int>();
+            Ar.ReadArray(() => new FTextureLookup(Ar));
+            Ar.Read<long>();
+
+            //FMaterialResource::Serialize
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_BLEND_OVERRIDE)
+            {
+                Ar.Read<int>();
+                Ar.ReadBoolean();
+                Ar.ReadBoolean();
+            }
         }
     }
 
@@ -114,6 +210,7 @@ public class UMaterial : UMaterialInterface
                     _displayedReferencedTextures.Add(resolved);
                     ReferencedTextures.Add(texture);
                 }
+
                 break;
             }
             case Package pak: // ue5?
@@ -127,9 +224,11 @@ public class UMaterial : UMaterialInterface
                     _displayedReferencedTextures.Add(resolved);
                     ReferencedTextures.Add(texture);
                 }
+
                 break;
             }
         }
+
         _shouldDisplay = _displayedReferencedTextures.Count > 0;
     }
 
@@ -254,6 +353,7 @@ public class UMaterial : UMaterialInterface
             parameters.Diffuse = null;
         }
     }
+
     public override void GetParams(CMaterialParams2 parameters, EMaterialFormat format)
     {
         parameters.BlendMode = BlendMode;

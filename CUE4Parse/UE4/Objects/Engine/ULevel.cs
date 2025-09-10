@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using CommunityToolkit.HighPerformance;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
@@ -69,7 +71,7 @@ public readonly struct FPrecomputedVisibilityHandler : IUStruct
         PrecomputedVisibilityCellSizeZ = Ar.Read<float>();
         PrecomputedVisibilityCellBucketSizeXY = Ar.Read<int>();
         PrecomputedVisibilityNumCellBuckets = Ar.Read<int>();
-        PrecomputedVisibilityCellBuckets = Ar.ReadArray(() => new FPrecomputedVisibilityBucket(Ar));
+        //PrecomputedVisibilityCellBuckets = Ar.ReadArray(() => new FPrecomputedVisibilityBucket(Ar));
     }
 }
 
@@ -93,6 +95,68 @@ public readonly struct FPrecomputedVolumeDistanceField : IUStruct
     }
 }
 
+[StructLayout(LayoutKind.Sequential)]
+public readonly struct FStreamableTextureInstance : IUStruct
+{
+    public readonly FSphere BoundingSphere;
+    public readonly float TexelFactor;
+
+    public FStreamableTextureInstance(FAssetArchive Ar)
+    {
+        BoundingSphere = new FSphere(Ar);
+        TexelFactor = Ar.Read<float>();
+    }
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public readonly struct FDynamicTextureInstance : IUStruct
+{
+    // Base
+    public readonly FSphere BoundingSphere;
+    public readonly float TexelFactor;
+
+    // Extended
+    public readonly FPackageIndex Texture; // UTexture2D*
+    public readonly bool bAttached;
+    public readonly float OriginalRadius;
+
+    public FDynamicTextureInstance(FAssetArchive Ar)
+    {
+        BoundingSphere = new FSphere(Ar);
+        TexelFactor = Ar.Read<float>();
+        Texture = new FPackageIndex(Ar);
+        bAttached = Ar.ReadBoolean();
+        OriginalRadius = Ar.Read<float>();
+    }
+}
+
+
+[StructLayout(LayoutKind.Sequential)]
+public readonly struct FCachedPhysSMData : IUStruct
+{
+    public readonly FVector Scale3D;
+    public readonly int CachedDataIndex;
+
+    public FCachedPhysSMData(FAssetArchive Ar)
+    {
+        Scale3D = new FVector(Ar);
+        CachedDataIndex = Ar.Read<int>();
+    }
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public readonly struct FCachedPerTriPhysSMData : IUStruct
+{
+    public readonly FVector Scale3D;
+    public readonly int CachedDataIndex;
+
+    public FCachedPerTriPhysSMData(FAssetArchive Ar)
+    {
+        Scale3D = new FVector(Ar);
+        CachedDataIndex = Ar.Read<int>();
+    }
+}
+
 public class ULevel : Assets.Exports.UObject
 {
     public FPackageIndex?[] Actors;
@@ -104,6 +168,18 @@ public class ULevel : Assets.Exports.UObject
     public FPackageIndex? NavListEnd;
     public FPrecomputedVisibilityHandler? PrecomputedVisibilityHandler;
     public FPrecomputedVolumeDistanceField? PrecomputedVolumeDistanceField;
+    public FPackageIndex[] GameSequences;
+
+    public Dictionary<FPackageIndex, FStreamableTextureInstance[]> TextureToInstancesMap; // UTexture2D* -> FStreamableTextureInstance[]
+    public Dictionary<FPackageIndex, FDynamicTextureInstance[]> DynamicTextureInstances; // UPrimitiveComponent* -> FDynamicTextureInstance[]
+    public Dictionary<FPackageIndex, bool> ForceStreamTextures;
+
+    public FPackageIndex? CoverListStart;
+    public FPackageIndex? CoverListEnd;
+    public FPackageIndex? PylonListStart;
+    public FPackageIndex? PylonListEnd;
+
+    public FPackageIndex[] CrossLevelActors;
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
@@ -114,6 +190,57 @@ public class ULevel : Assets.Exports.UObject
         URL = new FURL(Ar);
         Model = new FPackageIndex(Ar);
         ModelComponents = Ar.ReadArray(() => new FPackageIndex(Ar));
+        Ar.ReadArray(() => new FPackageIndex(Ar)); // GameSequences
+        Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadArray(() => new FStreamableTextureInstance(Ar))); // TextureToInstancesMap
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICTEXTUREINSTANCES)
+        {
+            Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadArray(() => new FDynamicTextureInstance(Ar)));// DynamicTextureInstances
+        }
+        
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_APEX_DESTRUCTION)
+        {
+            Ar.Read<int>();
+            //var size = Ar.Read<long>();
+            //Ar.Position += size;
+        }
+        Ar.ReadBulkArray<byte>(); // CachedPhysBSPData
+        Ar.ReadMap(() => new FPackageIndex(Ar), () => new FCachedPhysSMData(Ar));// DynamicTextureInstances
+        Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>()));
+        Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>()));
+        Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>()));
+        Ar.Read<int>();
+        Ar.Read<int>();
+        Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadBoolean());
+        if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_CONVEX_BSP)
+        {
+            Ar.ReadArray(() => Ar.ReadBulkArray<byte>());
+            Ar.Read<int>();
+        }
+        NavListStart = new FPackageIndex(Ar);
+        NavListEnd = new FPackageIndex(Ar);
+        new FPackageIndex(Ar);
+        new FPackageIndex(Ar);
+        new FPackageIndex(Ar);
+        new FPackageIndex(Ar);
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_COVERGUIDREFS_IN_ULEVEL)
+        {
+            Ar.Read<int>();
+            Ar.Read<int>();
+            Ar.Read<int>();
+        }
+        Ar.Read<int>();
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_GI_CHARACTER_LIGHTING)
+        {
+            new FPackageIndex(Ar);
+        }
+
+        new FVector2D(Ar);
+        Ar.Read<float>();
+        Ar.Read<float>();
+        Ar.Read<int>();
+        Ar.Read<int>();
+        Ar.ReadArray(() => new FPrecomputedVisibilityHandler(Ar));
+        return;
         LevelScriptActor = new FPackageIndex(Ar);
         if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.RemovedTextureStreamingLevelData) return;
         NavListStart = new FPackageIndex(Ar);

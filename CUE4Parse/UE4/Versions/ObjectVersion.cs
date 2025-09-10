@@ -1516,12 +1516,16 @@ namespace CUE4Parse.UE4.Versions
         VER_TERRAIN_PATCHBOUNDS_ONDEMAND = 471,
         
         
+        wwwwasa = 472,
+        wwwwaa = 473,
+        wwwwaaaa = 474,
         
         // versions missing (LMK if you find it)
         
         AddedPackageFlags = 475,
         AddedPackageSource = 482,
         
+        aaqw = 492,
         
         // - Min version for content resave
         VER_CONTENT_RESAVE_AUGUST_2007_QA_BUILD = 491,

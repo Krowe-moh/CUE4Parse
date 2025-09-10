@@ -20,6 +20,7 @@ namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
             if (Ar.Ver < EUnrealEngineObjectUE4Version.SUPPORT_32BIT_STATIC_MESH_INDICES)
             {
                 Indices16 = Ar.ReadBulkArray<ushort>();
+                //  < 297 int
             }
             else
             {
