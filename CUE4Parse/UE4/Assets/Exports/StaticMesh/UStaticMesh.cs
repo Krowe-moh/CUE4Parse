@@ -264,10 +264,14 @@ public class UStaticMesh : UObject
                     Ar.SkipBulkArrayData();
                     Ar.SkipBulkArrayData();
                     if (Ar.Game is EGame.GAME_CrystalOfAtlan) Ar.SkipBulkArrayData();
-                    if (Ar.Game is EGame.GAME_Farlight84 && Ar.ReadBoolean())
+                    if (Ar.Game is EGame.GAME_Farlight84)
                     {
-                        Ar.SkipBulkArrayData();
-                        Ar.SkipBulkArrayData();
+                        var count = Ar.Read<int>();
+                        for (var i = 0; i < count; i++)
+                        {
+                            Ar.SkipBulkArrayData();
+                            Ar.SkipBulkArrayData();
+                        }
                     }
                 }
                 else
@@ -278,7 +282,7 @@ public class UStaticMesh : UObject
             }
         }
 
-        if (Ar.Game is EGame.GAME_FateTrigger) Ar.Position += 4;
+        if (Ar.Game is EGame.GAME_FateTrigger or EGame.GAME_GhostsofTabor) Ar.Position += 4;
 
         if (Ar.Game >= EGame.GAME_UE4_14)
         {

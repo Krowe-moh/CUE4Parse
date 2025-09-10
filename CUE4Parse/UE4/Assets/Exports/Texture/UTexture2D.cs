@@ -31,12 +31,9 @@ public class UTexture2D : UTexture
         SizeY = GetOrDefault<int>(nameof(SizeY));
         TextureFileCacheName = GetOrDefault<FName>(nameof(TextureFileCacheName));
 
-        var bCooked = false;
-        if (Ar.Game >= EGame.GAME_UE4_0)
-        {
-            var stripDataFlags = new FStripDataFlags(Ar);
-            bCooked = Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_COOKED_TO_TEXTURE2D && Ar.ReadBoolean();
-        }
+        if (Ar.Position == Ar.Length) return; // Textures in Editor Archives don't have data below
+        var stripDataFlags = new FStripDataFlags(Ar);
+        var bCooked = (Ar.Game >= EGame.GAME_UE4_0 && Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_COOKED_TO_TEXTURE2D) && Ar.ReadBoolean();
 
         if (Ar.Game < EGame.GAME_UE4_0 && Ar.Ver < EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR)
         {

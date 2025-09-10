@@ -22,6 +22,8 @@ public class UActorComponent : UComponent
         if (Ar.Position == validPos) // I think after validpos all read default to dummy data 000000s
             return;
 
+        if (Ar.Game is EGame.GAME_SuicideSquad) Ar.Position += 4;
+
         if (FFortniteReleaseBranchCustomObjectVersion.Get(Ar) >= FFortniteReleaseBranchCustomObjectVersion.Type.ActorComponentUCSModifiedPropertiesSparseStorage)
         {
             UCSModifiedProperties = Ar.ReadArray(() => new FSimpleMemberReference(Ar));

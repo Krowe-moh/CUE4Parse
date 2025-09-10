@@ -27,8 +27,9 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
     public FPackageIndex[] AssetUserData { get; private set; } = [];
     public EPixelFormat Format { get; protected set; } = EPixelFormat.PF_Unknown;
     public FTexturePlatformData PlatformData { get; private set; } = new();
+    public FEditorBulkData EditorData { get; private set; }
     public FByteBulkData? SourceArt { get; private set; }
-
+    
     public bool RenderNearestNeighbor => LODGroup == TextureGroup.TEXTUREGROUP_Pixels2D || Filter == TextureFilter.TF_Nearest;
     public bool IsNormalMap => CompressionSettings == TextureCompressionSettings.TC_Normalmap;
 
@@ -99,17 +100,28 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
         // If archive is has editor only data
         if (!stripFlags.IsEditorDataStripped())
         {
-            // if (FUE5MainStreamObjectVersion.Get(Ar) < FUE5MainStreamObjectVersion.Type.VirtualizedBulkDataHaveUniqueGuids)
-            // {
-            //
-            // }
-            // throw new NotImplementedException("Non-Cooked Textures are not supported");
+            if (FUE5MainStreamObjectVersion.Get(Ar) < FUE5MainStreamObjectVersion.Type.VirtualizedBulkDataHaveUniqueGuids)
+            {
+                if (FUE5MainStreamObjectVersion.Get(Ar) < FUE5MainStreamObjectVersion.Type.TextureSourceVirtualization)
+                {
+                    new FByteBulkData(Ar);
+                }
+                else
+                {
+                    EditorData = new FEditorBulkData(Ar);
+                }
+            }
+            else
+            {
+                EditorData = new FEditorBulkData(Ar);
+            }
         }
     }
 
     protected void DeserializeCookedPlatformData(FAssetArchive Ar, bool bSerializeMipData = true)
     {
         var pixelFormatName = Ar.ReadFName();
+        if (pixelFormatName.Text == "PF_BC6H_Signed") pixelFormatName = "PF_BC6H";
         while (!pixelFormatName.IsNone)
         {
             Enum.TryParse(pixelFormatName.Text, out EPixelFormat pixelFormat);
