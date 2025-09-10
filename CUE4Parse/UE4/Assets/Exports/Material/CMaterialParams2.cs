@@ -53,7 +53,7 @@ public class CMaterialParams2
             "Base Color Texture", "BaseColorTexture", "BaseColor_Texture", "Base_Color", "Base Color", "BaseColor", "Basecolor", "Tex_BC", "TexA_BC",
             "Base Texture Color", "BaseColorA", "BC", "BCA", "BC_Map", "BCE", "Color", "CO", "CO_", "CO_1", "Base_CO", "Base Color + Linework",
             "Tex", "Tex_Color", "Color Tex", "TexColor", "Tex_BaseColor", "AlbedMap", "Tex_Colormap", "ColorMap", "Main_T_BaseColor",
-            "Decal_Texture", "PetalDetailMap", "CliffTexture", "M1_T_BC", "Skin Diffuse", "Color_MAIN", "MainTex", "ToneRimTex", "TextureDiffuse"
+            "Decal_Texture", "PetalDetailMap", "CliffTexture", "M1_T_BC", "Skin Diffuse", "Color_MAIN", "MainTex", "ToneRimTex", "TextureDiffuse",
             "Primary Base Color", "BaseColor_NonVT", "L0_B/BM", "B/BM",
         ],
         ["Background Diffuse 2", "Diffuse_Texture_2", "DiffuseLayer2", "Diffuse B", "Diffuse B Map", "BaseColorB", "CO_2", "M2_T_BC"],
@@ -126,7 +126,7 @@ public class CMaterialParams2
     public static readonly string[][] DiffuseColors =
     [
         [
-            "ColorMult", "Color_mul", "Base Color", "BaseColor", "Color", "DiffuseColor", "tex1_CO", "CustomColor"
+            "ColorMult", "Color_mul", "Base Color", "BaseColor", "Color", "DiffuseColor", "tex1_CO", "CustomColor",
             "ColorA", "ALB", "AlbedoColor", "Layer A Tint"
         ],
         ["tex2_CO", "ColorB", "Layer B Tint"],
