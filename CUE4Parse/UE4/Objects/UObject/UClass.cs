@@ -187,7 +187,12 @@ public class UClass : UStruct
         }
 
         var dummy = Ar.ReadFName();
-
+        if (Ar.Game >= EGame.GAME_UE4_0)
+        {
+            _ = Ar.ReadBoolean();
+            _ = Ar.ReadFName();
+        }
+        
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_COOKED_TO_UCLASS)
         {
             bCooked = Ar.ReadBoolean();

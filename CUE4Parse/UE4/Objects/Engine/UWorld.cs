@@ -11,9 +11,10 @@ namespace CUE4Parse.UE4.Objects.Engine
         public FPackageIndex PersistentLevel { get; private set; }
         public FPackageIndex[] ExtraReferencedObjects { get; private set; }
         public FPackageIndex[] StreamingLevels { get; private set; }
-        
+
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
+            if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 8;
             base.Deserialize(Ar, validPos);
             PersistentLevel = new FPackageIndex(Ar);
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_WORLD_PERSISTENT_FACEFXANIMSET)
@@ -40,17 +41,17 @@ namespace CUE4Parse.UE4.Objects.Engine
                 StreamingLevels = Ar.ReadArray(() => new FPackageIndex(Ar));
             }
         }
-        
+
         protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
         {
             base.WriteJson(writer, serializer);
 
             writer.WritePropertyName("PersistentLevel");
             serializer.Serialize(writer, PersistentLevel);
-            
+
             writer.WritePropertyName("ExtraReferencedObjects");
             serializer.Serialize(writer, ExtraReferencedObjects);
-            
+
             writer.WritePropertyName("StreamingLevels");
             serializer.Serialize(writer, StreamingLevels);
         }
