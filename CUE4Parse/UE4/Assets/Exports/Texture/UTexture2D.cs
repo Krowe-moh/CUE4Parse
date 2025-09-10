@@ -60,7 +60,7 @@ public class UTexture2D : UTexture
                 }
                 else
                 {
-                    legacyMips = Ar.ReadArray(() => new FTexture2DMipMap(Ar));
+                    legacyMips = Ar.ReadArray(() => TextureFileCacheName.IsNone ? new FTexture2DMipMap(Ar) : new FTexture2DMipMap(Ar, TextureFileCacheName.Text));
                 }
             }
 

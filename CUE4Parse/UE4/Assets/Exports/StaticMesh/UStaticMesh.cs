@@ -22,6 +22,47 @@ struct FStaticMeshCollisionDataProvider
     }
 };
 
+
+public class FkDOPBounds
+{
+    public FVector V1;
+    public FVector V2;
+
+    public FkDOPBounds(FAssetArchive Ar)
+    {
+        V1 = Ar.Read<FVector>();
+        V2 = Ar.Read<FVector>();
+    }
+}
+
+public class FkDOPNode3
+{
+    public FkDOPBounds Bounds;
+    public int F18;
+    public short F1C;
+    public short F1E;
+
+    public FkDOPNode3(FAssetArchive Ar)
+    {
+        Bounds = new FkDOPBounds(Ar);
+
+        F18 = Ar.Read<int>();
+
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.shortyes || Ar.Ver > EUnrealEngineObjectUE3Version.VER_CLEANUP_SOUNDNODEWAVE)
+        {
+            F1C = Ar.Read<short>();
+            F1E = Ar.Read<short>();
+        }
+        else
+        {
+            int tmp1C = Ar.Read<int>();
+            int tmp1E = Ar.Read<int>();
+            F1C = (short) tmp1C;
+            F1E = (short) tmp1E;
+        }
+    }
+}
+
 public class UStaticMesh : UObject
 {
     public bool bCooked { get; private set; }
@@ -60,28 +101,34 @@ public class UStaticMesh : UObject
         
         if (Ar.Versions["StaticMesh.HasNavCollision"])
             NavCollision = new FPackageIndex(Ar);
-        
+
         if (Ar.Game < EGame.GAME_UE4_0)
         {
             if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_COMPACTKDOPSTATICMESH)
             {
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.shortyes || Ar.Ver > EUnrealEngineObjectUE3Version.VER_CLEANUP_SOUNDNODEWAVE)
-                {
-                    Ar.ReadBulkArray(() => Ar.ReadBytes(32)); // node
-                }
-                else
-                {
-                    new FStaticMeshCollisionDataProvider(Ar);
-                    Ar.Read<short>();
-                }
+                Ar.ReadBulkArray(() => new FkDOPNode3(Ar));
             }
             else
             {
-                Ar.Position += 24; // bound
-                Ar.ReadBulkArray(() => Ar.ReadBytes(6)); // non legacy node
+                if (Ar.Game == EGame.GAME_RocketLeague)
+                {
+                    Ar.Position += 24;
+                }
+                else
+                {
+                    Ar.ReadArray(() => Ar.ReadBytes(24)); // non legacy node
+                }
+                Ar.ReadBulkArray(() => Ar.ReadBytes(6)); // bound
             }
 
-            Ar.ReadBulkArray(() => Ar.ReadBytes(8)); // Collision Triangle
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.shortyes || Ar.Ver > EUnrealEngineObjectUE3Version.VER_CLEANUP_SOUNDNODEWAVE)
+            {
+                Ar.ReadBulkArray(() => Ar.ReadBytes(8)); // Collision Triangle
+            }
+            else
+            {
+                Ar.ReadBulkArray(() => Ar.ReadBytes(16)); // Collision Triangle
+            }
 
             var InternalVersion = Ar.Read<int>();
             var STATICMESH_VERSION_CONTENT_TAGS = 17; // Content tags were introduced in SM version 17

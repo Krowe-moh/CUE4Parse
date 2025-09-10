@@ -110,7 +110,8 @@ public class FSkeletalMeshVertexInfluences
             Usage = Ar.Read<byte>();
         }
     }
-    
+}
+
 [JsonConverter(typeof(FStaticLODModelConverter))]
 public class FStaticLODModel
 {

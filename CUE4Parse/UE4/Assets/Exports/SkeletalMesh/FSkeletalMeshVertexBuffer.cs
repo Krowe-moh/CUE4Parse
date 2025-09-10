@@ -33,7 +33,11 @@ public class FSkeletalMeshVertexBuffer
         var stripDataFlags = new FStripDataFlags(Ar, FPackageFileVersion.CreateUE4Version(EUnrealEngineObjectUE4Version.STATIC_SKELETAL_MESH_SERIALIZATION_FIX));
 
         // if rocket league remove?
-        //NumTexCoords = Ar.Read<int>();
+        if (Ar.Game != EGame.GAME_RocketLeague)
+        {
+            NumTexCoords = Ar.Read<int>();
+        }
+        
         bUseFullPrecisionUVs = Ar.ReadBoolean();
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SUPPORT_GPUSKINNING_8_BONE_INFLUENCES &&

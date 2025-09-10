@@ -193,6 +193,11 @@ namespace CUE4Parse.UE4.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T[] ReadBulkArray<T>(Func<T> getter)
         {
+            if (Ver < EUnrealEngineObjectUE3Version.VER_ADDED_BULKSERIALIZE_SANITY_CHECKING)
+            {
+                var elementCountLegacy = Read<int>();
+                return ReadArray(elementCountLegacy, getter);
+            }
             var elementSize = Read<int>();
             var elementCount = Read<int>();
             return ReadBulkArray(elementSize, elementCount, getter);
