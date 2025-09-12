@@ -252,7 +252,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             ObjectName = Ar.ReadFName();
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedArcheType)
             {
-                Ar.Read<uint>(); //Archetype
+                Ar.Read<int>(); // Archetype
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag)
@@ -275,7 +275,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                     goto exportflag;
                 }
 
-                if (SerialSize > 0 && (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE || Ar.Game >= EGame.GAME_UE4_0))
+                if (SerialSize > 0 && Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE)
                 {
                     SerialOffset = Ar.Read<int>();
                 }
@@ -313,7 +313,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP)
             {
                 Ar.ReadArray<int>(); // NetObjectCount
-                Ar.Read<FGuid>(); // PackageGuid
+                var test = Ar.Read<FGuid>(); // PackageGuid
 
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPackageFlags)
                 {

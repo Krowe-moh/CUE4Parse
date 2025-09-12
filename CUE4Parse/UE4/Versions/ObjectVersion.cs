@@ -763,6 +763,7 @@ namespace CUE4Parse.UE4.Versions
         OldformatDeprecated = 215,
         todoa = 218,
         AddedArcheType = 220,
+        AddedBulkLod = 221,
         AddedComponentMapToExports, // todo
         AddedInterfacesFeature = 222,
         

@@ -442,7 +442,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 return (compressionFlags & ~CompressionFlagsMask) == 0;
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_PACKAGE_COMPRESSION_SUPPORT || Ar.Game >= EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_PACKAGE_COMPRESSION_SUPPORT)
             {
                 CompressionFlags = Ar.Read<ECompressionFlags>();
 
@@ -454,7 +454,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 CompressedChunks = Ar.ReadArray(() => new FCompressedChunk(Ar));
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPackageSource || Ar.Game >= EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPackageSource)
             {
                 PackageSource = Ar.Read<int>();
             }
@@ -466,7 +466,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             // No longer used: List of additional packages that are needed to be cooked for this package (ie streaming levels)
             // Keeping the serialization code for backwards compatibility without bumping the package version
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDITIONAL_COOK_PACKAGE_SUMMARY || Ar.Game >= EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDITIONAL_COOK_PACKAGE_SUMMARY)
             {
                 var additionalPackagesToCook = Ar.ReadArray(Ar.ReadFString);
                 if (Ar.Game == EGame.GAME_RocketLeague)

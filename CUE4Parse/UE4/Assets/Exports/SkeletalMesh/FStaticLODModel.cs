@@ -288,7 +288,11 @@ public class FStaticLODModel
             if (!stripDataFlags.IsAudioVisualDataStripped())
                 NumVertices = Ar.Read<int>();
         }
-        // Ar << Lod.Edges;
+
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_SHADOW_VOLUMES)
+        {
+            Ar.ReadArray(() => Ar.ReadBytes(16));
+        }
         //  < 202
         
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.fwefwef && Ar.Game < EGame.GAME_UE4_0)
@@ -302,9 +306,7 @@ public class FStaticLODModel
             RequiredBones = Ar.ReadArray<short>();
         }
         
-        // > 221
-        // < 806 == short
-        if (!stripDataFlags.IsEditorDataStripped())
+        if (!stripDataFlags.IsEditorDataStripped() && Ar.Ver >= EUnrealEngineObjectUE3Version.AddedBulkLod)
             RawPointIndices = new FIntBulkData(Ar);
 
         if (Ar.Game != EGame.GAME_StateOfDecay2 && Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_SKELMESH_MESHTOIMPORTVERTEXMAP)

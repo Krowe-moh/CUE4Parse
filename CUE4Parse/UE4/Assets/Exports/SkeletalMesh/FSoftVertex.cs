@@ -7,9 +7,8 @@ namespace CUE4Parse.UE4.Assets.Exports.SkeletalMesh;
 
 public class FSoftVertex : FSkelMeshVertexBase
 {
-    private const int MAX_SKELETAL_UV_SETS_UE4 = 4;
     private const int MAX_INFLUENCES_UE3 = 4;
-    private int MAX_SKELETAL_UV_SETS_UE3 = 1;
+    private int MAX_SKELETAL_UV_SETS = 1;
 
     public FMeshUVFloat[] UV;
     public FColor Color;
@@ -18,8 +17,8 @@ public class FSoftVertex : FSkelMeshVertexBase
     {
         SerializeForEditor(Ar);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH) MAX_SKELETAL_UV_SETS_UE3 = 4;
-        UV = new FMeshUVFloat[MAX_SKELETAL_UV_SETS_UE4];
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH) MAX_SKELETAL_UV_SETS = 4;
+        UV = new FMeshUVFloat[MAX_SKELETAL_UV_SETS];
         for (var i = 0; i < UV.Length; i++)
             UV[i] = Ar.Read<FMeshUVFloat>();
 
@@ -32,9 +31,11 @@ public class FSoftVertex : FSkelMeshVertexBase
         {
             if (Ar.Game < EGame.GAME_UE4_0)
             {
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_IPHONE_AUDIO_VARIABLE_BLOCK_SIZE_COMPRESSION) Ar.Read<int>(); // BoneIndex
-
-                return;
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_IPHONE_AUDIO_VARIABLE_BLOCK_SIZE_COMPRESSION)
+                {
+                    Ar.Read<int>(); // BoneIndex
+                    return;
+                }
             }
         }
         else

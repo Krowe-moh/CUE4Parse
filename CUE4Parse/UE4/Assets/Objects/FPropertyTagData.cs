@@ -53,7 +53,7 @@ public class FPropertyTagData
                 break;
             case "ByteProperty":
             case "EnumProperty":
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_BYTEPROP_SERIALIZE_ENUM || Ar.Game >= EGame.GAME_UE4_0)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_BYTEPROP_SERIALIZE_ENUM)
                 {
                     EnumName = Ar.ReadFName().Text;
                 }

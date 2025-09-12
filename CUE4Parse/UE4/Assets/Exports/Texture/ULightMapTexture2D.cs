@@ -14,7 +14,7 @@ public class ULightMapTexture2D : UTexture2D
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LIGHTMAPFLAGS || Ar.Game >= EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LIGHTMAPFLAGS)
         {
             LightmapFlags = Ar.Read<ELightMapFlags>();
         }

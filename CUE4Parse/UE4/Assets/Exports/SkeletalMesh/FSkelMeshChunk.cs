@@ -32,9 +32,17 @@ public class FSkelMeshChunk
         }
 
         BoneMap = Ar.ReadArray<ushort>();
-        NumRigidVertices = Ar.Read<int>();
-        NumSoftVertices = Ar.Read<int>();
-        MaxBoneInfluences = Ar.Read<int>();
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USE_UMA_RESOURCE_ARRAY_MESH_DATA)
+        {
+            NumRigidVertices = Ar.Read<int>();
+            NumSoftVertices = Ar.Read<int>();
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_GPUSKIN_MAX_INFLUENCES_OPTIMIZATION)
+        {
+            MaxBoneInfluences = Ar.Read<int>();
+        }
+
         HasClothData = false;
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.APEX_CLOTH)

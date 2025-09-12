@@ -18,21 +18,21 @@ namespace CUE4Parse.UE4.Objects.Engine
 
         public FLightmassPrimitiveSettings(FArchive Ar)
         {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SHADOW_INDIRECT_ONLY_OPTION || Ar.Game >= EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SHADOW_INDIRECT_ONLY_OPTION)
             {
                 bUseTwoSidedLighting = Ar.ReadBoolean();
                 bShadowIndirectOnly = Ar.ReadBoolean();
                 FullyOccludedSamplesFraction = Ar.Read<float>();
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INTEGRATED_LIGHTMASS || Ar.Game >= EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INTEGRATED_LIGHTMASS)
             {
                 bUseEmissiveForStaticLighting = Ar.ReadBoolean();
                 bUseVertexNormalForHemisphereGather = Ar.Ver >= EUnrealEngineObjectUE4Version.NEW_LIGHTMASS_PRIMITIVE_SETTING ? Ar.ReadBoolean() : false;
                 EmissiveLightFalloffExponent = Ar.Read<float>();
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDDED_EXPLICIT_EMISSIVE_LIGHT_RADIUS || Ar.Game >= EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDDED_EXPLICIT_EMISSIVE_LIGHT_RADIUS)
             {
                 EmissiveLightExplicitInfluenceRadius = Ar.Read<float>();
             }

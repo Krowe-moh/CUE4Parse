@@ -101,7 +101,7 @@ public class FSkelMeshSection
             }
         }
 
-        if ((Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SKELETAL_MESH_SORTING_OPTIONS || Ar.Game >= EGame.GAME_UE4_0) && skelMeshVer < FSkeletalMeshCustomVersion.Type.RemoveTriangleSorting)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SKELETAL_MESH_SORTING_OPTIONS && skelMeshVer < FSkeletalMeshCustomVersion.Type.RemoveTriangleSorting)
         {
             var dummyTriangleSorting = Ar.Read<byte>(); // TEnumAsByte<ETriangleSortOption>
         }

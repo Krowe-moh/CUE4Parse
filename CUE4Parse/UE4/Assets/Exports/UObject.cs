@@ -154,6 +154,17 @@ public class UObject : AbstractPropertyHolder
         }
         else
         {
+            if (Flags.HasFlag(EObjectFlags.RF_Dynamic))
+            {
+                // objects with dynamic seems to be an export but very odd
+                Ar.ReadFName(); // Name
+                new FPackageIndex(Ar); // Outer
+                new FPackageIndex(Ar); // Class
+                new FPackageIndex(Ar); // _Linker
+                Ar.Read<int>(); // Archetype
+                return;
+            }
+
             if (Ar.Game < EGame.GAME_UE4_0)
             {
                 if (Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
@@ -212,13 +223,6 @@ public class UObject : AbstractPropertyHolder
                 {
                     Ar.Read<int>(); // NetIndex
                 }
-            }
-
-            // some issues happen after or before netindex with these flags (todo ig)
-            if (Flags.HasFlag(EObjectFlags.RF_Dynamic))
-            {
-                Ar.Read<int>();
-                new FPackageIndex(Ar); // this (self)
             }
             
             DeserializePropertiesTagged(Properties = [], Ar, false);

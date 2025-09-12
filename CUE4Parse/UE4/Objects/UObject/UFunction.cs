@@ -19,10 +19,10 @@ public class UFunction : UStruct
         {
             if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
             {
-                var paramsSize = Ar.Read<ushort>();
+                var paramsSize = Ar.Read<short>();
             }
 
-            var NativeToken = Ar.Read<ushort>();
+            var NativeToken = Ar.Read<short>();
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
             {
@@ -52,7 +52,7 @@ public class UFunction : UStruct
         {
             // ignore platform.
             // vro this broken vro
-            var FriendlyName = Ar.ReadFName();
+            //var FriendlyName = Ar.ReadFName();
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SERIALIZE_BLUEPRINT_EVENTGRAPH_FASTCALLS_IN_UFUNCTION)

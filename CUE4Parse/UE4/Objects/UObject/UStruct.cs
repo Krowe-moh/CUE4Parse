@@ -21,7 +21,7 @@ public class UStruct : UField
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MOVED_SUPERFIELD_TO_USTRUCT || Ar.Game >= EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MOVED_SUPERFIELD_TO_USTRUCT)
         {
             SuperStruct = new FPackageIndex(Ar);
         }
@@ -32,7 +32,7 @@ public class UStruct : UField
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            new FPackageIndex(Ar); // ScriptText
+            var ScriptText = new FPackageIndex(Ar); // ScriptText
         }
 
         if (FFrameworkObjectVersion.Get(Ar) < FFrameworkObjectVersion.Type.RemoveUField_Next)
@@ -52,7 +52,7 @@ public class UStruct : UField
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedCppTextToUStruct)
         {
-            new FPackageIndex(Ar); // CppText
+            var CppText = new FPackageIndex(Ar); // CppText
         }
         
         if (Ar.Game < EGame.GAME_UE4_0)
@@ -68,7 +68,7 @@ public class UStruct : UField
 
         var bytecodeBufferSize = Ar.Read<int>();
         var serializedScriptSize = 0;
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE || Ar.Game >= EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE)
         {
             serializedScriptSize = Ar.Read<int>();
         }
@@ -107,11 +107,6 @@ public class UStruct : UField
         else
         {
             Ar.Position += serializedScriptSize;
-        }
-
-        if (Ar.Game < EGame.GAME_UE4_0)
-        {
-            //DeserializePropertiesTagged(Properties, Ar, true);
         }
     }
 

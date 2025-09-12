@@ -183,7 +183,7 @@ public class FStaticMeshLODResources
                     ColorVertexBuffer = new FColorVertexBuffer();
                 }
             }
-            else if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MESH_PAINT_SYSTEM || Ar.Game >= EGame.GAME_UE4_0)
+            else if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MESH_PAINT_SYSTEM)
             {
                 ColorVertexBuffer = new FColorVertexBuffer(Ar);
             }
@@ -250,7 +250,7 @@ public class FStaticMeshLODResources
             if (!stripDataFlags.IsEditorDataStripped() && Ar.Game >= EGame.GAME_UE4_0)
                 WireframeIndexBuffer = new FRawStaticIndexBuffer(Ar);
 
-            if (!stripDataFlags.IsClassDataStripped((byte)EClassDataStripFlag.CDSF_AdjacencyData) && (Ar.Ver > EUnrealEngineObjectUE3Version.VER_CRACK_FREE_DISPLACEMENT_SUPPORT || Ar.Game >= EGame.GAME_UE4_0))
+            if (!stripDataFlags.IsClassDataStripped((byte)EClassDataStripFlag.CDSF_AdjacencyData) && Ar.Ver > EUnrealEngineObjectUE3Version.VER_CRACK_FREE_DISPLACEMENT_SUPPORT)
                 AdjacencyIndexBuffer = new FRawStaticIndexBuffer(Ar);
         }
 
