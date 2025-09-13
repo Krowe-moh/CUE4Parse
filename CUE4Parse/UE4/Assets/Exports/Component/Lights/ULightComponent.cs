@@ -3,6 +3,7 @@ using CUE4Parse.UE4.Assets.Exports.BuildData;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Engine;
+using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 
@@ -25,6 +26,16 @@ public class UUIDynamicFieldProvider : UObject
                 )
             ); // PersistentCollectionData
         }
+    }
+}
+
+public class UUIPrefabInstance : UObject
+{
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+        Ar.ReadMap(() => new FPackageIndex(Ar), () => new FPackageIndex(Ar));
+        Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>());
     }
 }
 
