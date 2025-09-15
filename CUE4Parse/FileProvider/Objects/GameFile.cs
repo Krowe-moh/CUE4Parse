@@ -14,7 +14,7 @@ namespace CUE4Parse.FileProvider.Objects;
 public abstract class GameFile
 {
     public static readonly string[] UePackageExtensions = ["uasset", "umap", "upk", "udk", "u"];
-    public static readonly string[] UePackagePayloadExtensions = ["uexp", "ubulk", "uptnl"];
+    public static readonly string[] UePackagePayloadExtensions = ["uexp", "ubulk", "uptnl", "tfc"];
     public static readonly string[] UeKnownExtensions =
     [
         ..UePackageExtensions, ..UePackagePayloadExtensions,

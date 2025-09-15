@@ -241,6 +241,20 @@ public static class TextureDecoder
                 }
                 break;
             }
+            case EPixelFormat.PF_DXT3:
+            {
+                if (UseAssetRipperTextureDecoder)
+                {
+                    Bc2.Decompress(bytes, sizeX, sizeY, out data);
+                    colorType = EPixelFormat.PF_B8G8R8A8;
+                }
+                else
+                {
+                    data = DXTDecoder.DXT3(bytes, sizeX, sizeY, sizeZ);
+                    colorType = EPixelFormat.PF_R8G8B8A8;
+                }
+                break;
+            }
             case EPixelFormat.PF_DXT5:
                 if (UseAssetRipperTextureDecoder)
                 {

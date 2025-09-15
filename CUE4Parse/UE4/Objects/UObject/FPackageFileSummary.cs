@@ -57,6 +57,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         private const uint PACKAGE_FILE_TAG_ONE = 0x00656E6FU; // SOD2
         private const uint PACKAGE_FILE_TAG_NTE = 0xD5A8D56E;
         private const uint PACKAGE_FILE_TAG_AE = 0x56DE5ECA; // AshEchoes
+        private const uint PACKAGE_FILE_TAG_LOS = 0x180477E3; // LineOfSight
 
         public readonly uint Tag;
         public FPackageFileVersion FileVersionUE;
@@ -186,8 +187,8 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Tag = Ar.Read<uint>();
             }
 
-            if (Tag == PACKAGE_FILE_TAG_AE) Tag = PACKAGE_FILE_TAG;
-
+            if (Tag == PACKAGE_FILE_TAG_AE || Tag == PACKAGE_FILE_TAG_LOS) Tag = PACKAGE_FILE_TAG;
+            
             if (Tag != PACKAGE_FILE_TAG && Tag != PACKAGE_FILE_TAG_SWAPPED)
             {
                 throw new ParserException($"Invalid uasset magic: 0x{Tag:X8} != 0x{PACKAGE_FILE_TAG:X8}");
@@ -202,6 +203,11 @@ namespace CUE4Parse.UE4.Objects.UObject
             }
 
             legacyFileVersion = Ar.Read<int>();
+            if (Ar.Game == EGame.GAME_MortalRoyale)
+            {
+                legacyFileVersion = (short)legacyFileVersion;
+                Ar.Position += 4;
+            }
             if (Ar.Game == EGame.GAME_DeltaForceHawkOps) legacyFileVersion /= 659;
 
             if (legacyFileVersion < 0) // means we have modern version numbers

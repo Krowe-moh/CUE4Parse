@@ -41,9 +41,9 @@ public class FTextureLookup
     }
 }
 
-public class UniformVectorExpressions
+public class UniformExpressions
 {
-    public UniformVectorExpressions(FAssetArchive Ar)
+    public UniformExpressions(FAssetArchive Ar)
     {
         var present = Ar.ReadFName();
         switch (present.Text)
@@ -66,29 +66,37 @@ public class UniformVectorExpressions
                 Ar.Read<int>(); // DefaultValue
                 break;
             }
+            case "FMaterialUniformExpressionClamp":
+            {
+                var Input = new UniformExpressions(Ar);
+                var Min = new UniformExpressions(Ar);
+                var Max = new UniformExpressions(Ar);
+                break;
+            }
             case "FMaterialUniformExpressionFoldedMath":
             {
-                var A = new UniformVectorExpressions(Ar);
-                var B = new UniformVectorExpressions(Ar);
+                var A = new UniformExpressions(Ar);
+                var B = new UniformExpressions(Ar);
                 var Op = Ar.Read<byte>();
                 break;
             }
             case "FMaterialUniformExpressionAppendVector":
             {
-                var A = new UniformVectorExpressions(Ar);
-                var B = new UniformVectorExpressions(Ar);
+                var A = new UniformExpressions(Ar);
+                var B = new UniformExpressions(Ar);
                 var NumComponentsA = Ar.Read<int>();
                 break;
             }
             case "FMaterialUniformExpressionAbs":
+            case "FMaterialUniformExpressionCeil":
             case "FMaterialUniformExpressionPeriodic":
             {
-                var x = new UniformVectorExpressions(Ar);
+                var x = new UniformExpressions(Ar);
                 break;
             }
             case "FMaterialUniformExpressionSine":
             {
-                var x = new UniformVectorExpressions(Ar);
+                var x = new UniformExpressions(Ar);
                 var bIsCosine = Ar.ReadBoolean();
                 break;
             }
@@ -118,6 +126,7 @@ public class UniformVectorExpressions
                 }
                 break;
             }
+            case "FMaterialUniformExpressionRealTime":
             case "FMaterialUniformExpressionTime":
                 break;
             default:
@@ -126,6 +135,8 @@ public class UniformVectorExpressions
         }
     }
 }
+
+public class UDecalMaterial : UMaterial;
 
 public class UMaterial : UMaterialInterface
 {
@@ -208,14 +219,14 @@ public class UMaterial : UMaterialInterface
             if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
             {
                 //return; // not working
-                Ar.ReadArray(() => new UniformVectorExpressions(Ar)); // UniformVectorExpressions
-                Ar.ReadArray(() => new UniformVectorExpressions(Ar)); // UniformScalarExpressions
-                Ar.ReadArray(() => new UniformVectorExpressions(Ar)); // Uniform2DTextureExpressions
-                Ar.ReadArray(() => new UniformVectorExpressions(Ar)); // UniformCubeTextureExpressions
+                Ar.ReadArray(() => new UniformExpressions(Ar)); // UniformVectorExpressions
+                Ar.ReadArray(() => new UniformExpressions(Ar)); // UniformScalarExpressions
+                Ar.ReadArray(() => new UniformExpressions(Ar)); // Uniform2DTextureExpressions
+                Ar.ReadArray(() => new UniformExpressions(Ar)); // UniformCubeTextureExpressions
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_EDITOR_VERTEX_SHADER)
                 {
-                    Ar.ReadArray(() => new UniformVectorExpressions(Ar));
-                    Ar.ReadArray(() => new UniformVectorExpressions(Ar));
+                    Ar.ReadArray(() => new UniformExpressions(Ar));
+                    Ar.ReadArray(() => new UniformExpressions(Ar));
                 }
             }
             else
