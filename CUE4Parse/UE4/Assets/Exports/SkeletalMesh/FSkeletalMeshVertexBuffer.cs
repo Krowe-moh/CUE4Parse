@@ -32,30 +32,30 @@ public class FSkeletalMeshVertexBuffer
     {
         var stripDataFlags = new FStripDataFlags(Ar, FPackageFileVersion.CreateUE4Version(EUnrealEngineObjectUE4Version.STATIC_SKELETAL_MESH_SERIALIZATION_FIX));
 
-        // if rocket league remove?
-        if (Ar.Game != EGame.GAME_RocketLeague)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_USE_FLOAT16_SKELETAL_MESH_UVS)
+        {
+            Ar.ReadBulkArray(() => new FSoftVertex(Ar));
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH && Ar.Game != EGame.GAME_RocketLeague)
         {
             NumTexCoords = Ar.Read<int>();
         }
-        
+
         bUseFullPrecisionUVs = Ar.ReadBoolean();
 
-        if (Ar.Ver >= EUnrealEngineObjectUE4Version.SUPPORT_GPUSKINNING_8_BONE_INFLUENCES &&
-            FSkeletalMeshCustomVersion.Get(Ar) < FSkeletalMeshCustomVersion.Type.UseSeparateSkinWeightBuffer)
+        if (Ar.Ver >= EUnrealEngineObjectUE4Version.SUPPORT_GPUSKINNING_8_BONE_INFLUENCES && FSkeletalMeshCustomVersion.Get(Ar) < FSkeletalMeshCustomVersion.Type.UseSeparateSkinWeightBuffer)
         {
             bExtraBoneInfluences = Ar.ReadBoolean();
         }
-        if (Ar.Game < EGame.GAME_UE4_0)
+
+        if (Ar.Game >= EGame.GAME_UE4_0) bUsePackedPosition = true;
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SKELETAL_MESH_SUPPORT_PACKED_POSITION && Ar.Game < EGame.GAME_UE4_0)
         {
             bUsePackedPosition = Ar.ReadBoolean();
+            MeshExtension = new FVector(Ar);
+            MeshOrigin = new FVector(Ar);
         }
-        else
-        {
-            bUsePackedPosition = true;
-        }
-        
-        MeshExtension = new FVector(Ar);
-        MeshOrigin = new FVector(Ar);
 
         if (!bUseFullPrecisionUVs)
         {
