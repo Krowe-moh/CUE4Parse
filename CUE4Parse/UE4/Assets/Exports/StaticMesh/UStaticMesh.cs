@@ -155,7 +155,7 @@ public class UStaticMesh : UObject
             Materials = new ResolvedObject[RenderData.LODs[0].Sections.Length];
             for (var i = 0; i < RenderData.LODs[0].Sections.Length; i++)
             {
-                Materials[i] = RenderData.LODs[0].Sections[i].Material.ResolvedObject!;
+                Materials[i] = RenderData.LODs[0].Sections[i].Material!;
             }
             RenderData.Bounds = Bounds;
             
@@ -166,7 +166,8 @@ public class UStaticMesh : UObject
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_VERSION_18)
             {
                 Ar.ReadFString(); // HighResSourceMeshName
-                Ar.Read<int>(); // HighResSourceMeshCRC
+                // some int idk where is overead so this is commented
+                //Ar.Read<int>(); // HighResSourceMeshCRC
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INTEGRATED_LIGHTMASS)

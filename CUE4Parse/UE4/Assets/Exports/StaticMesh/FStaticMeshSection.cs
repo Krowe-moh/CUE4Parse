@@ -33,7 +33,7 @@ public class FPS3StaticMeshData
 [JsonConverter(typeof(FStaticMeshSectionConverter))]
 public class FStaticMeshSection
 {
-    public FPackageIndex Material;
+    public ResolvedObject? Material;
     public int MaterialIndex;
     public int FirstIndex;
     public int NumTriangles;
@@ -50,9 +50,9 @@ public class FStaticMeshSection
     {
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            Material = new FPackageIndex((FAssetArchive)Ar);
+            Material = new FPackageIndex((FAssetArchive)Ar).ResolvedObject;
             bEnableCollision = Ar.ReadBoolean();
-            bEnableCollision = Ar.ReadBoolean();
+            Ar.ReadBoolean(); // OldEnableCollision
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.wwwwaa) bCastShadow = Ar.ReadBoolean();
             FirstIndex = Ar.Read<int>();
             NumTriangles = Ar.Read<int>();

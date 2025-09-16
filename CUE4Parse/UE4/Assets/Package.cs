@@ -89,13 +89,14 @@ namespace CUE4Parse.UE4.Assets
 
             Summary = new FPackageFileSummary(uassetAr);
 
+            // clean up later
             if (uassetAr.Game == EGame.GAME_RocketLeague)
             {
                 uassetAr.Position = 0;
                 byte[] before = uassetAr.ReadBytes(Summary.NameOffset);
                 
                 int encSize = Summary.TotalHeaderSize - Summary.GarbageSize - Summary.NameOffset;
-                encSize = (encSize + 15) & ~15; // AES block alignment (ignore this code for now as it's junk that's only meant to work.)
+                encSize = (encSize + 15) & ~15; // AES block alignment
                 byte[] encryptedData = uassetAr.ReadBytes(encSize);
 
                 RocketLeagueAes.Decrypt(encryptedData, Summary.CompressedChunkInfoOffset, true, out byte[] decryptedData);
