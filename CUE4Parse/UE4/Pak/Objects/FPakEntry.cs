@@ -106,7 +106,7 @@ public class FPakEntry : VfsEntry
         {
             if (CompressionMethod != CompressionMethod.None)
                 CompressionBlocks = Ar.ReadArray<FPakCompressedBlock>();
-            Flags = (uint) Ar.Read<byte>();
+            Flags = (uint) Ar.ReadByte();
             CompressionBlockSize = Ar.Read<uint>();
             if (Ar.Game == GAME_ConanExiles)
             {
@@ -450,7 +450,7 @@ public class FPakEntry : VfsEntry
             if (CompressionMethod != CompressionMethod.None)
                 CompressionBlocks = Ar.ReadArray<FPakCompressedBlock>();
             CompressionBlockSize = Ar.Read<uint>();
-            Flags = (uint) Ar.Read<byte>();
+            Flags = (uint) Ar.ReadByte();
         }
 
         StructSize = (int) (Ar.Position - startOffset);

@@ -143,12 +143,6 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             base.Deserialize(Ar, validPos);
             PropertyClass = new FPackageIndex(Ar);
-
-            // move this to UObjectProperty?
-            if (Ar.Game == EGame.GAME_RocketLeague)
-            {
-                Ar.ReadFName();
-            }
         }
 
         protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
@@ -160,7 +154,17 @@ namespace CUE4Parse.UE4.Objects.UObject
         }
     }
 
-    public class UObjectProperty : UObjectPropertyBase { }
+    public class UObjectProperty : UObjectPropertyBase
+    {
+        public override void Deserialize(FAssetArchive Ar, long validPos)
+        {
+            base.Deserialize(Ar, validPos);
+            if (Ar.Game == EGame.GAME_RocketLeague)
+            {
+                Ar.ReadFName();
+            }
+        }
+    }
 
     public class UWeakObjectProperty : UObjectPropertyBase { }
 
@@ -345,15 +349,10 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             base.Deserialize(Ar, validPos);
             SignatureFunction = new FPackageIndex(Ar);
-
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_ADDED_UExPORTER_PREFFERED_FORMAT)
-            {
-                var source = Ar.ReadFName();
-            }
             
             if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedDelegateSourceToUDelegateProperty)
             {
-                var Delegate = new FPackageIndex(Ar);
+                new FPackageIndex(Ar); // SourceDelegate
             }
         }
 

@@ -50,7 +50,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 if (Name != null && _pubgNameMap.TryGetValue(Name, out var name)) Name = name;
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag && Ar.Game < EGame.GAME_UE4_0)
             {
                 Ar.Read<long>(); // flags64
             }

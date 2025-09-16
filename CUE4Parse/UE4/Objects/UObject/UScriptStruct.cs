@@ -18,7 +18,7 @@ public class UScriptStruct : UStruct
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            Ar.Position += 4;
+            Ar.Position += 4; // unknown
             DeserializePropertiesTagged(Properties, Ar, true);
         }
     }

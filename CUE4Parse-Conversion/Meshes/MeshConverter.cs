@@ -135,9 +135,9 @@ public static class MeshConverter
             };
 
             staticMeshLod.AllocateVerts(numVerts);
-            if (srcLod.ColorVertexBuffer?.NumVertices > 0)
+            if (srcLod.ColorVertexBuffer?.NumVertices != 0)
                 staticMeshLod.AllocateVertexColorBuffer();
-            
+
             for (var j = 0; j < numVerts; j++)
             {
                 var suv = srcLod.VertexBuffer.UV[j];

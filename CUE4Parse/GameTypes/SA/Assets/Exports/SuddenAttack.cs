@@ -15,5 +15,3 @@ public class USA2PartMeshToMeshComp : UComponent;
 public class USA2RocketExplosionLight : UComponent;
 public class USA2WeapForegripStatModComponent : UComponent;
 public class USA2WeapStringStatModComponent : UComponent;
-public class UPixelIdComponent : UComponent;
-public class UUDKExplosionLight : UComponent;

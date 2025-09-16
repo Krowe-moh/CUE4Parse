@@ -240,8 +240,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 #pragma warning disable 8618
         public FObjectExport()
 #pragma warning restore 8618
-        {
-        }
+        { }
 
         public FObjectExport(FAssetArchive Ar)
         {
@@ -250,12 +249,12 @@ namespace CUE4Parse.UE4.Objects.UObject
             TemplateIndex = Ar.Ver >= EUnrealEngineObjectUE4Version.TemplateIndex_IN_COOKED_EXPORTS ? new FPackageIndex(Ar) : new FPackageIndex();
             OuterIndex = new FPackageIndex(Ar);
             ObjectName = Ar.ReadFName();
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedArcheType)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedArcheType && Ar.Game < EGame.GAME_UE4_0)
             {
                 Ar.Read<int>(); // Archetype
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag && Ar.Game < EGame.GAME_UE4_0)
             {
                 ObjectFlags = Ar.Read<long>();
                 ObjectFlags = (ObjectFlags >> 32) | (ObjectFlags << 32);
@@ -372,8 +371,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 #pragma warning disable 8618
         public FObjectImport()
 #pragma warning restore 8618
-        {
-        }
+        { }
 
         public FObjectImport(FAssetArchive Ar)
         {

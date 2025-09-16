@@ -2551,13 +2551,11 @@ namespace CUE4Parse.UE4.Versions
         /// corresponding version numbers of the other structure.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsCompatible(FPackageFileVersion other)
-            => FileVersionUE3 >= other.FileVersionUE3 && FileVersionUE4 >= other.FileVersionUE4 && FileVersionUE5 >= other.FileVersionUE5;
+        public bool IsCompatible(FPackageFileVersion other) => FileVersionUE3 >= other.FileVersionUE3 && FileVersionUE4 >= other.FileVersionUE4 && FileVersionUE5 >= other.FileVersionUE5;
 
         /// FPackageFileVersion comparisons
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(FPackageFileVersion a, FPackageFileVersion b)
-            => a.FileVersionUE3 == b.FileVersionUE3 && a.FileVersionUE4 == b.FileVersionUE4 && a.FileVersionUE5 == b.FileVersionUE5;
+        public static bool operator ==(FPackageFileVersion a, FPackageFileVersion b) => a.FileVersionUE3 == b.FileVersionUE3 && a.FileVersionUE4 == b.FileVersionUE4 && a.FileVersionUE5 == b.FileVersionUE5;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(FPackageFileVersion a, FPackageFileVersion b) => !(a == b);
