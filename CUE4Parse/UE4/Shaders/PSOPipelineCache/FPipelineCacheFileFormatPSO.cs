@@ -216,10 +216,10 @@ public readonly struct FPipelineFileCacheRasterizerState
     {
         DepthBias = Ar.Read<float>();
         SlopeScaleDepthBias = Ar.Read<float>();
-        FillMode = (ERasterizerFillMode)Ar.Read<byte>();
-        CullMode = (ERasterizerCullMode)Ar.Read<byte>();
+        FillMode = (ERasterizerFillMode)Ar.ReadByte();
+        CullMode = (ERasterizerCullMode)Ar.ReadByte();
         if (version >= EPipelineCacheFileFormatVersions.AddingDepthClipMode)
-            DepthClipMode = (ERasterizerDepthClipMode)Ar.Read<byte>();
+            DepthClipMode = (ERasterizerDepthClipMode)Ar.ReadByte();
         bAllowMSAA = Ar.ReadBoolean();
         if (version < EPipelineCacheFileFormatVersions.RemovingLineAA)
             bEnableLineAA = Ar.ReadBoolean();

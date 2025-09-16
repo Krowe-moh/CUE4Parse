@@ -21,8 +21,7 @@ public class FReferenceSkeleton
             FinalRefBonePose = new FTransform[FinalRefBoneInfo.Length];
             for (int i = 0; i < FinalRefBoneInfo.Length; i++)
             {
-                var pos = FinalRefBoneInfo[i].Pos;
-                FinalRefBonePose[i] = new FTransform(pos.Orientation, pos.Position, FVector.OneVector);
+                FinalRefBonePose[i] = new FTransform(FinalRefBoneInfo[i].BonePos.Orientation, FinalRefBoneInfo[i].BonePos.Position, FVector.OneVector);
             }
         }
         else

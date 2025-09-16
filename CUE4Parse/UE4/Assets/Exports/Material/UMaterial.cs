@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
+using CUE4Parse.UE4.Kismet;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Engine;
@@ -41,98 +42,39 @@ public class FTextureLookup
     }
 }
 
-public class UniformExpressions
+public class UniformExpression
 {
-    public UniformExpressions(FAssetArchive Ar)
+    private IUStruct? Expression;
+
+    public UniformExpression(FAssetArchive Ar)
     {
-        var present = Ar.ReadFName();
-        switch (present.Text)
+        var expressionName = Ar.ReadFName().Text;
+
+        Expression = expressionName switch
         {
-            case "FMaterialUniformExpressionVectorParameter":
-            {
-                Ar.ReadFName(); // ParameterName
-                Ar.Read<FLinearColor>(); // DefaultValue
-                break;
-            }
-            case "FMaterialUniformExpressionConstant":
-            {
-                Ar.Read<FLinearColor>(); // Value
-                var ValueType = Ar.Read<byte>();
-                break;
-            }
-            case "FMaterialUniformExpressionScalarParameter":
-            {
-                Ar.ReadFName(); // ParameterName
-                Ar.Read<int>(); // DefaultValue
-                break;
-            }
-            case "FMaterialUniformExpressionClamp":
-            {
-                var Input = new UniformExpressions(Ar);
-                var Min = new UniformExpressions(Ar);
-                var Max = new UniformExpressions(Ar);
-                break;
-            }
-            case "FMaterialUniformExpressionFoldedMath":
-            {
-                var A = new UniformExpressions(Ar);
-                var B = new UniformExpressions(Ar);
-                var Op = Ar.Read<byte>();
-                break;
-            }
-            case "FMaterialUniformExpressionAppendVector":
-            {
-                var A = new UniformExpressions(Ar);
-                var B = new UniformExpressions(Ar);
-                var NumComponentsA = Ar.Read<int>();
-                break;
-            }
-            case "FMaterialUniformExpressionAbs":
-            case "FMaterialUniformExpressionCeil":
-            case "FMaterialUniformExpressionPeriodic":
-            {
-                var x = new UniformExpressions(Ar);
-                break;
-            }
-            case "FMaterialUniformExpressionSine":
-            {
-                var x = new UniformExpressions(Ar);
-                var bIsCosine = Ar.ReadBoolean();
-                break;
-            }
-            case "FMaterialUniformExpressionFlipBookTextureParameter":
-            case "FMaterialUniformExpressionTexture":
-            {
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
-                {
-                    new FPackageIndex(Ar); // LegacyTexture
-                }
-                else
-                {
-                    Ar.Read<int>(); // TextureIndex
-                }
-                break;
-            }
-            case "FMaterialUniformExpressionTextureParameter":
-            {
-                Ar.ReadFName(); // ParameterName
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
-                {
-                    new FPackageIndex(Ar); // LegacyTexture
-                }
-                else
-                {
-                    Ar.Read<int>(); // TextureIndex
-                }
-                break;
-            }
-            case "FMaterialUniformExpressionRealTime":
-            case "FMaterialUniformExpressionTime":
-                break;
-            default:
-                Log.Warning("helpp " + present);
-                break;
-        }
+            "FMaterialUniformExpressionVectorParameter"          => new FMaterialExpressionVectorParameter(Ar),
+            "FMaterialUniformExpressionConstant"                 => new FMaterialUniformExpressionConstant(Ar),
+            "FMaterialUniformExpressionScalarParameter"          => new FMaterialExpressionScalarParameter(Ar),
+            "FMaterialUniformExpressionClamp"                    => new FMaterialUniformExpressionClamp(Ar),
+            "FMaterialUniformExpressionFoldedMath"               => new FMaterialUniformExpressionFoldedMath(Ar),
+            "FMaterialUniformExpressionAppendVector"             => new FMaterialUniformExpressionAppendVector(Ar),
+            "FMaterialUniformExpressionAbs"                      => new FMaterialUniformExpressionAbs(Ar),
+            "FMaterialUniformExpressionCeil"                     => new FMaterialUniformExpressionCeil(Ar),
+            "FMaterialUniformExpressionPeriodic"                 => new FMaterialUniformExpressionPeriodic(Ar),
+            "FMaterialUniformExpressionSine"                     => new FMaterialUniformExpressionSine(Ar),
+            "FMaterialUniformExpressionFlipBookTextureParameter" => new FMaterialUniformExpressionFlipBookTextureParameter(Ar),
+            "FMaterialUniformExpressionTexture"                  => new FMaterialExpressionTextureBase(Ar),
+            "FMaterialUniformExpressionTextureParameter"         => new FMaterialUniformExpressionTextureParameter(Ar),
+            "FMaterialUniformExpressionRealTime"                 => null,
+            "FMaterialUniformExpressionTime"                     => null,
+            _ => UnknownExpression(expressionName)
+        };
+    }
+
+    private static IUStruct? UnknownExpression(string name)
+    {
+        Log.Warning("Not defined " + name);
+        return null;
     }
 }
 
@@ -173,7 +115,7 @@ public class UMaterial : UMaterialInterface
             if (CachedExpressionData != null && CachedExpressionData.TryGetValue(out UTexture[] referencedTextures, "ReferencedTextures"))
                 ReferencedTextures.AddRange(referencedTextures);
 
-            if (TryGetValue(out referencedTextures, "ReferencedTextures")) // is this a thing ?
+            if (TryGetValue(out referencedTextures, "ReferencedTextures"))
                 ReferencedTextures.AddRange(referencedTextures);
         }
 
@@ -219,14 +161,14 @@ public class UMaterial : UMaterialInterface
             if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
             {
                 //return; // not working
-                Ar.ReadArray(() => new UniformExpressions(Ar)); // UniformVectorExpressions
-                Ar.ReadArray(() => new UniformExpressions(Ar)); // UniformScalarExpressions
-                Ar.ReadArray(() => new UniformExpressions(Ar)); // Uniform2DTextureExpressions
-                Ar.ReadArray(() => new UniformExpressions(Ar)); // UniformCubeTextureExpressions
+                Ar.ReadArray(() => new UniformExpression(Ar)); // UniformVectorExpressions
+                Ar.ReadArray(() => new UniformExpression(Ar)); // UniformScalarExpressions
+                Ar.ReadArray(() => new UniformExpression(Ar)); // Uniform2DTextureExpressions
+                Ar.ReadArray(() => new UniformExpression(Ar)); // UniformCubeTextureExpressions
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_EDITOR_VERTEX_SHADER)
                 {
-                    Ar.ReadArray(() => new UniformExpressions(Ar));
-                    Ar.ReadArray(() => new UniformExpressions(Ar));
+                    Ar.ReadArray(() => new UniformExpression(Ar));
+                    Ar.ReadArray(() => new UniformExpression(Ar));
                 }
             }
             else

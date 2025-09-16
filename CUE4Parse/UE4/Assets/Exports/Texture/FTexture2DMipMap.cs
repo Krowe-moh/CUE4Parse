@@ -54,7 +54,7 @@ public class FTexture2DMipMap
             var derivedDataKey = Ar.ReadFString();
         }
     }
-    
+
     public FTexture2DMipMap(FAssetArchive Ar, string tfc, bool bSerializeMipData = true)
     {
         var cooked = Ar.Ver >= EUnrealEngineObjectUE4Version.TEXTURE_SOURCE_ART_REFACTOR && Ar.Game < EGame.GAME_UE5_0 ? Ar.ReadBoolean() : Ar.IsFilterEditorOnly;
@@ -79,7 +79,7 @@ public class FTexture2DMipMap
             var derivedDataKey = Ar.ReadFString();
         }
     }
-    
+
     // temp tfc (ignore please)
     public FTexture2DMipMap(FAssetArchive Ar, string tfc, int sizeX, int sizeY)
     {
@@ -88,6 +88,7 @@ public class FTexture2DMipMap
         SizeY = Ar.Game == EGame.GAME_RocketLeague ? sizeY : Ar.Read<int>();
         SizeZ = Ar.Game >= EGame.GAME_UE4_20 ? Ar.Read<int>() : 1;
     }
+
     public bool EnsureValidBulkData(UTextureAllMipDataProviderFactory? provider, int mipLevel)
     {
         if (BulkData?.Data != null) return true;
@@ -116,23 +117,5 @@ public class FTexture2DMipMap
         }
 
         return false;
-    }
-}
-
-public class FLegacyMipMap
-{
-    public FByteBulkData? BulkData;
-    public int USize;
-    public int VSize;
-    public byte UBits;
-    public byte VBits;
-    public FLegacyMipMap(FAssetArchive Ar, bool bSerializeMipData = true)
-    {
-        BulkData = new FByteBulkData(Ar);
-
-        USize = Ar.Read<int>();
-        VSize = Ar.Read<int>();
-        UBits = Ar.Read<byte>();
-        VBits = Ar.Read<byte>();
     }
 }

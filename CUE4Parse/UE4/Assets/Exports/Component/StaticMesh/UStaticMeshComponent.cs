@@ -40,12 +40,9 @@ public class UStaticMeshComponent : UMeshComponent
                 MeshPaintTextureCooked = new FPackageIndex(Ar);
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_DEPRECATE_DOUBLY_SERIALISED_SMC)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_PRESERVE_SMC_VERT_COLORS && Ar.Ver < EUnrealEngineObjectUE3Version.VER_DEPRECATE_DOUBLY_SERIALISED_SMC)
         {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_PRESERVE_SMC_VERT_COLORS)
-            {
-                Ar.Read<int>(); // Dummy
-            }
+            Ar.Read<int>(); // Dummy
         }
     }
 
@@ -63,11 +60,13 @@ public class UStaticMeshComponent : UMeshComponent
                 break;
             current = current.Template.Load<UStaticMeshComponent>();
         }
+
         StaticMesh = mesh;
         return mesh;
     }
 
     private WeakReference<UStaticMesh> StaticMeshRef;
+
     public UStaticMesh? GetLoadedStaticMesh()
     {
         if (StaticMeshRef?.TryGetTarget(out var mesh) == true)
@@ -87,6 +86,7 @@ public class UStaticMeshComponent : UMeshComponent
             SetStaticMesh(mesh);
             return true;
         }
+
         return false;
     }
 

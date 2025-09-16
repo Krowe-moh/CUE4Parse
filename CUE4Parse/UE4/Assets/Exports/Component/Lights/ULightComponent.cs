@@ -16,15 +16,16 @@ public class UUIDynamicFieldProvider : UObject
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MULTICOLUMN_SUPPORT)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MULTICOLUMN_SUPPORT) // VER_ADDED_COLLECTION_DATA 
         {
+            // TMap<FName, TMap<FName,TArray<FString>>> PersistentCollectionData;
             Ar.ReadMap(
                 () => Ar.ReadFName(),
                 () => Ar.ReadMap(
                     () => Ar.ReadFName(),
                     () => Ar.ReadArray(() => Ar.ReadFString())
                 )
-            ); // PersistentCollectionData
+            );
         }
     }
 }
@@ -34,8 +35,8 @@ public class UUIPrefabInstance : UObject
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        Ar.ReadMap(() => new FPackageIndex(Ar), () => new FPackageIndex(Ar));
-        Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>());
+        Ar.ReadMap(() => new FPackageIndex(Ar), () => new FPackageIndex(Ar)); // ArchetypeToInstanceMap
+        Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>()); // PI_ObjectMap
     }
 }
 
@@ -149,14 +150,12 @@ public class USpotLightComponent : UPointLightComponent
 
 public class UDominantSpotLightComponent : UPointLightComponent
 {
-    public ushort[] DominantLightShadowMap { get; private set; }
-
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SPOTLIGHT_DOMINANTSHADOW_TRANSITION)
         {
-            DominantLightShadowMap = Ar.ReadArray(() => Ar.Read<ushort>());
+            Ar.ReadArray(() => Ar.Read<short>()); // DominantLightShadowMap
         }
     }
 }

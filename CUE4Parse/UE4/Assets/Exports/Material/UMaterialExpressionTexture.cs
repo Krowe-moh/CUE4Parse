@@ -64,6 +64,25 @@ namespace CUE4Parse.UE4.Assets.Exports.Material
         }
     }
 
+    public class FMaterialExpressionTextureBase : IUStruct
+    {
+        public FPackageIndex? Texture { get; private set; }
+
+        public FMaterialExpressionTextureBase(FAssetArchive Ar)
+        {
+            // if less than EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE it's a "TextureIndex"
+            Texture = new FPackageIndex(Ar);
+        }
+    }
+    
+    public class FMaterialUniformExpressionFlipBookTextureParameter : FMaterialExpressionTextureBase
+    {
+        public FMaterialUniformExpressionFlipBookTextureParameter(FAssetArchive Ar) 
+            : base(Ar)
+        {
+        }
+    }
+    
     public class UMaterialExpressionTextureSample : UMaterialExpressionTextureBase
     {
         public FExpressionInput? Coordinates { get; private set; }

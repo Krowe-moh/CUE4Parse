@@ -3,25 +3,12 @@ using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Engine;
-using CUE4Parse.UE4.Objects.Meshes;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 using Serilog;
 
 namespace CUE4Parse.UE4.Assets.Exports.StaticMesh;
-
-struct FStaticMeshCollisionDataProvider
-{
-    public FStaticMeshCollisionDataProvider(FAssetArchive Ar)
-    {
-        new FPackageIndex(Ar);
-        new FPackageIndex(Ar);
-        Ar.Read<int>();
-        new FPositionVertexBuffer(Ar);
-    }
-};
-
 
 public class FkDOPBounds
 {
@@ -179,7 +166,7 @@ public class UStaticMesh : UObject
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_VERSION_18)
             {
                 Ar.ReadFString(); // HighResSourceMeshName
-                //Ar.Read<int>(); // HighResSourceMeshCRC
+                Ar.Read<int>(); // HighResSourceMeshCRC
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INTEGRATED_LIGHTMASS)

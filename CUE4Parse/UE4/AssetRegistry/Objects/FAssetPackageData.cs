@@ -1,5 +1,4 @@
-﻿using System.Runtime.Intrinsics.Arm;
-using CUE4Parse.UE4.AssetRegistry.Readers;
+﻿using CUE4Parse.UE4.AssetRegistry.Readers;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Core.Serialization;
 using CUE4Parse.UE4.Objects.UObject;

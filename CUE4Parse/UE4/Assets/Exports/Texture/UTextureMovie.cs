@@ -9,7 +9,7 @@ public class UTextureMovie : UTexture
     {
         base.Deserialize(Ar, validPos);
 
-        new FByteBulkData(Ar);
-        // video is https://www.radgametools.com/bnkdown.htm
+        // Data is https://www.radgametools.com/bnkdown.htm encoding
+        new FByteBulkData(Ar); // RawData
     }
 }

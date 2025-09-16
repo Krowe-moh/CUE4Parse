@@ -62,8 +62,8 @@ public class FStaticMeshSection
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_FRAGMENTINDEX) Ar.SkipFixedArray(8); 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_PLATFORMMESHDATA)
             {
-                var LoadPlatformData = Ar.Read<byte>();
-                if (LoadPlatformData > 0)
+                var bLoadPlatformData = Ar.ReadFlag();
+                if (bLoadPlatformData)
                 {
                     new FPS3StaticMeshData(Ar);
                 }

@@ -3,7 +3,7 @@ using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.UE4.Assets.Exports.Engine.Font
 {
-    public class UMultiFont : UObject
+    public class UMultiFont : UFont
     {
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {

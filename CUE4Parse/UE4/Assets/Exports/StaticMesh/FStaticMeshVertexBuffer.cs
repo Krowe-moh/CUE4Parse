@@ -14,7 +14,7 @@ public class FStaticMeshVertexBuffer
     public int NumTexCoords;
     public int Strides;
     public int NumVertices;
-    public bool UseFullPrecisionUVs;
+    public bool UseFullPrecisionUVs = true;
     public bool UseHighPrecisionTangentBasis;
     public FStaticMeshUVItem[] UV;  // TangentsData ?
 
@@ -31,7 +31,6 @@ public class FStaticMeshVertexBuffer
         NumTexCoords = Ar.Read<int>();
         Strides = Ar.Game < EGame.GAME_UE4_19 ? Ar.Read<int>() : -1;
         NumVertices = Ar.Read<int>();
-        UseFullPrecisionUVs = true;
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.wwwwaaaa) UseFullPrecisionUVs = Ar.ReadBoolean();
         UseHighPrecisionTangentBasis = Ar.Game >= EGame.GAME_UE4_12 && Ar.ReadBoolean();
 

@@ -11,7 +11,6 @@ using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 using CUE4Parse.GameTypes.MK1.Assets.Objects;
-using Serilog;
 
 namespace CUE4Parse.UE4.Assets.Exports.SkeletalMesh;
 
@@ -33,47 +32,26 @@ public class FVertexInfluence
     }
 }
 
-public class FVertexInfluenceMap
+public struct FBoneIndexPair
 {
-    // Key
-    public int f0;
-    public int f4;
+    public int[] BoneIdx;
 
-    // Value
-    public int[] f8;
-
-    public FVertexInfluenceMap(FArchive Ar)
+    public FBoneIndexPair(FArchive Ar)
     {
-        f0 = Ar.Read<int>();
-        f4 = Ar.Read<int>();
-        f8 = Ar.ReadArray<int>();
-    }
-}
-public class FVertexInfluenceMapOld
-{
-    // Key
-    public int f0;
-    public int f4;
-
-    // Value
-    public ushort[] f8;
-
-    public FVertexInfluenceMapOld(FArchive Ar)
-    {
-        f0 = Ar.Read<int>();
-        f4 = Ar.Read<int>();
-        f8 = Ar.ReadArray<ushort>();
+        BoneIdx = new int[2];
+        BoneIdx[0] = Ar.Read<int>();
+        BoneIdx[1] = Ar.Read<int>();
     }
 }
 
 public class FSkeletalMeshVertexInfluences
 {
     public FVertexInfluence[] Influences;
-    public FVertexInfluenceMap[] VertexInfluenceMapping;
+    public Dictionary<FBoneIndexPair, int[]> VertexInfluenceMapping;
     public FSkelMeshSection[] Sections;
     public FSkelMeshChunk[] Chunks;
     public byte[] RequiredBones;
-    public byte Usage; // default = 0
+    public byte Usage;
 
     public FSkeletalMeshVertexInfluences(FArchive Ar)
     {
@@ -83,14 +61,23 @@ public class FSkeletalMeshVertexInfluences
         {
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DWORD_SKELETAL_MESH_INDICES_FIXUP)
             {
-                VertexInfluenceMapping = Ar.ReadArray(() => new FVertexInfluenceMap(Ar));
+                VertexInfluenceMapping = Ar.ReadMap(() => new FBoneIndexPair(Ar), () => Ar.ReadArray<int>());
             }
             else
             {
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DWORD_SKELETAL_MESH_INDICES)
-                    Ar.Read<byte>(); // unk1
-
-                var VertexInfluenceMappingOld = Ar.ReadArray(() => new FVertexInfluenceMapOld(Ar));
+                {
+                    Ar.Read<byte>(); // IndexSize
+                }
+                
+                VertexInfluenceMapping = Ar.ReadMap(() => new FBoneIndexPair(Ar), () => 
+                {
+                    var arr = Ar.ReadArray<short>();
+                    var ints = new int[arr.Length];
+                    for (int i = 0; i < arr.Length; i++)
+                        ints[i] = arr[i];
+                    return ints;
+                });
             }
         }
 

@@ -18,8 +18,7 @@ public class ULightMapTexture2D : UTexture2D
         {
             LightmapFlags = Ar.Read<ELightMapFlags>();
         }
-        else 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LIGHTMAPTEXTURE_VARIABLE)
+        else if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LIGHTMAPTEXTURE_VARIABLE)
         {
             var bSimpleLightmap = Ar.ReadBoolean();
             LightmapFlags = bSimpleLightmap ? ELightMapFlags.LMF_LQLightmap : ELightMapFlags.LMF_None;
