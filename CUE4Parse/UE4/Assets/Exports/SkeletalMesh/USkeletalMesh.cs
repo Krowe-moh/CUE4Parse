@@ -51,7 +51,7 @@ public partial class USkeletalMesh : UObject
         {
             new FPackageIndex(Ar);
         }
-        
+
         if (Ar.Game < EGame.GAME_UE4_0)
         {
             var SkeletalMaterials = Ar.ReadArray(() => new FPackageIndex(Ar));
@@ -145,7 +145,38 @@ public partial class USkeletalMesh : UObject
             }
         }
 
-        if (Ar.Game < EGame.GAME_UE4_0) return;
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            Ar.ReadMap(() => Ar.ReadFName(), () => Ar.Read<int>()); // NameIndexMap
+            Ar.ReadArray<int>(); // PerPolyBoneKDOPs
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_MAPPING)
+            {
+                Ar.ReadArray(Ar.ReadFString); // BoneBreakNames
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_CUSTOM_MAPPING)
+                {
+                    Ar.ReadArray(Ar.Read<int>); // BoneBreakOptions
+                }
+            }
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_APEX_CLOTHING)
+            {
+                // ApexClothingAsset doesn't have a serilize func??? help.
+                var ApexClothingAssetcount = Ar.Read<int>();
+                if (ApexClothingAssetcount > 0) return;
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICTEXTUREINSTANCES)
+                {
+                    Ar.ReadArray(Ar.Read<float>); // CachedStreamingTextureFactors
+                }
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SKELETAL_MESH_SIMPLIFICATION)
+                {
+                    var bHaveSourceData = Ar.ReadBoolean();
+                    if (bHaveSourceData)
+                    {
+                        new FStaticLODModel(Ar, bHasVertexColors);
+                    }
+                }
+            }
+            return;
+        }
         if (Ar.Game == EGame.GAME_WorldofJadeDynasty)
         {
             _ = Ar.Read<FStripDataFlags>();

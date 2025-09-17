@@ -45,7 +45,7 @@ public class FTextureLookup
 
 public class UniformExpression
 {
-    private IUStruct? Expression;
+    public IUStruct? Expression;
 
     public UniformExpression(FAssetArchive Ar)
     {
@@ -164,7 +164,18 @@ public class UMaterial : UMaterialInterface
             {
                 Ar.ReadArray(() => new UniformExpression(Ar)); // UniformVectorExpressions
                 Ar.ReadArray(() => new UniformExpression(Ar)); // UniformScalarExpressions
-                Ar.ReadArray(() => new UniformExpression(Ar)); // Uniform2DTextureExpressions
+                var textures = Ar.ReadArray(() => new UniformExpression(Ar)); // Uniform2DTextureExpressions
+                var texParams = textures
+                    .Select(u => u.Expression)
+                    .OfType<FMaterialUniformExpressionTextureParameter>()
+                    .Select(tp => tp.Texture)
+                    .ToArray();
+
+                ReferencedTextures.AddRange(
+                    texParams
+                        .Select(idx => idx.TryLoad(out UTexture tex) ? tex : null)
+                        .Where(t => t != null)!);
+
                 Ar.ReadArray(() => new UniformExpression(Ar)); // UniformCubeTextureExpressions
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_EDITOR_VERTEX_SHADER)
                 {

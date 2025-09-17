@@ -85,7 +85,7 @@ public class UStaticMesh : UObject
         {
             new FPackageIndex(Ar); // DummyModel;
         }
-        
+
         if (Ar.Versions["StaticMesh.HasNavCollision"])
             NavCollision = new FPackageIndex(Ar);
 
@@ -95,7 +95,7 @@ public class UStaticMesh : UObject
             {
                 Ar.ReadBulkArray(() => new FkDOPNode3(Ar));
             }
-            else 
+            else
             {
                 Ar.Position += 24;
                 Ar.ReadBulkArray(() => Ar.ReadBytes(6)); // bound
@@ -133,7 +133,7 @@ public class UStaticMesh : UObject
                 else
                 {
                     if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_ADDED_EXTRA_MESH_OPTIMIZATION_SETTINGS)
-                    { 
+                    {
                         Ar.ReadArray(() => Ar.ReadBytes(7));
                     }
                     else
@@ -151,14 +151,14 @@ public class UStaticMesh : UObject
             }
 
             RenderData = new FStaticMeshRenderData(Ar);
-            
+
             Materials = new ResolvedObject[RenderData.LODs[0].Sections.Length];
             for (var i = 0; i < RenderData.LODs[0].Sections.Length; i++)
             {
                 Materials[i] = RenderData.LODs[0].Sections[i].Material!;
             }
             RenderData.Bounds = Bounds;
-            
+
             Ar.ReadArray(() => new FPackageIndex(Ar));
             Ar.Read<FRotator>(); // ThumbnailAngle
             Ar.Read<int>(); // ThumbnailDistance
@@ -166,7 +166,7 @@ public class UStaticMesh : UObject
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_VERSION_18)
             {
                 Ar.ReadFString(); // HighResSourceMeshName
-                // some int idk where is overead so this is commented
+                // if this is removed, it works, why? idk
                 //Ar.Read<int>(); // HighResSourceMeshCRC
             }
 
@@ -183,17 +183,17 @@ public class UStaticMesh : UObject
             {
                 Ar.Read<int>(); // VertexPositionVersionNumber
             }
-            
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICTEXTUREINSTANCES)
             {
-                Ar.ReadArray<int>(); // CachedStreamingTextureFactors   
+                Ar.ReadArray<int>(); // CachedStreamingTextureFactors
             }
-            
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_KEEP_STATIC_MESH_DEGENERATES)
             {
                 Ar.ReadBoolean(); // bRemoveDegenerates
             }
-            
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INSTANCED_STATIC_MESH_PER_LOD_STATIC_LIGHTING)
             {
                 Ar.ReadBoolean(); // bPerLODStaticLightingForInstancing

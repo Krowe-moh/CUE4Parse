@@ -73,12 +73,12 @@ public class FPropertyTagData
                         {
                             "Points", "LookupTable", "ClothMovementScale", "AttackImpactDelay", "WeaponRange", "MaxMagazineSize", "AmmoCount", "ChildBlendTimes", "MagazineSize",
                             "fPerturbIncreaseSpeedFire", "MaxAmmoCount", "MaxMagazineSize", "AngleConstraint", "RandomSpawnPoints", "Value", "LODDistances",
-                            "LODSpawnRatios", "TargetWeight", "Child2PerBoneWeight", "ResolutionTestTable", "Weights", "InputVolume"
+                            "LODSpawnRatios", "TargetWeight", "Child2PerBoneWeight", "ResolutionTestTable", "Weights", "InputVolume", "CurveWeights"
                         },
                         ["IntProperty"] = new[]
                         {
                             "Constraints", "RandomSeeds", "FireInterval", "ThrusterOffsets", "strEquipItemCode", "ShotCost", "SubTunePriority", "sintheta", "costheta", "LineBuffer", "Pages", "dr",
-                            "ClothIndexBuffer", "ClothWeldedIndices", "ClothWeldingMap", "Indices", "TrackIndices", "BoundsBodies", "FaceTriData", "SpawnOffsets",
+                            "ClothIndexBuffer", "ClothWeldedIndices", "ClothWeldingMap", "Indices", "TrackIndices", "BoundsBodies", "FaceTriData", "SpawnOffsets", "m_CameraTrackNodes",
                             "CompressedTrackOffsets", "LODMaterialMap", "SupportedEvents", "InstantHitPenetratePower", "ClothingSectionInfo", "iDevotion", "ClothToGraphicsVertMap"
                         },
                         ["ByteProperty"] = new[] { "m_data", "LocalToCompReqBones", "RequiredBones", "RawData", "Types", "SystemMemoryData" },
@@ -94,16 +94,16 @@ public class FPropertyTagData
                             "BranchStartBoneName", "PerPolyCollisionBones", "TargetCategories", "PathList", "AdditionalEyeSocketNames", "GodModePickupNames", "FiringStatesArray",
                             "PawnStatus", "KeyNames", "ClothBones", "DisabledEventAliases", "RolesToApplyOverlay", "UnfixedNames", "EnabledSpringNames", "HideBoneNames", "MaterialParameters",
                             "InputNames", "ClothingTeleportRefBones", "AnimTypes", "ComposePrePassBoneNames", "LevelNames", "ArcheTypeNames", "FireModeTypes", "ChildClassNames", "UseTranslationBoneNames",
-                            "MonsterTypes", "ArenaNames",
+                            "MonsterTypes", "ArenaNames", "BendyBoneControllers", "AcceptableDamageTypes",
                             "SavedGameFileNames", "TargetParamNames", "MorphNames", "AnimList", "TrackBoneNames",
                             "HiddenKismetClassNames", "BadPackageNames"
                         },
                         ["ObjectProperty"] = new[]
                         {
-                            "Expressions", "Elements", "EquipMaterials", "ChildParts", "GameTypesSupportedOnThisMap",
-                            "DecalLeftMaterials", "ParticleTemplate", "OverideMaterials", "MeleeAttackAnim", "Attributes",
-                            "DecalRightMaterials", "AdditionalWeaponAnimset", "AlternateMaterials", "PawnWeapAnim_Attack",
-                            "WeaponProjectiles", "WeaponFireAnim", "WeaponIdleAnims", "EquipMorphTargets",
+                            "Expressions", "Elements", "EquipMaterials", "ChildParts", "GameTypesSupportedOnThisMap", "TreeNodes",
+                            "DecalLeftMaterials", "ParticleTemplate", "OverideMaterials", "MeleeAttackAnim", "Attributes", "AttachAll",
+                            "DecalRightMaterials", "AdditionalWeaponAnimset", "AlternateMaterials", "PawnWeapAnim_Attack", "DetachAny",
+                            "WeaponProjectiles", "WeaponFireAnim", "WeaponIdleAnims", "EquipMorphTargets", "Behaviors", "AttachAny",
                             "PropertyModifiers", "WeaponFireSnd", "WeaponFireSnd_3P", "EffectSockets", "Items", "Procedures", "SourceMaterials",
                             "AttachedTuningItems", "UnsupportedPaints", "ExcludePaints", "ShopExclusivePaints", "IncludePaints", "Overrides",
                             "StreamingLevels", "Sockets", "FaceFXAnimSets", "RefreshSubscriberNotifies", "Conditions", "PowerupDamageModifiers",
@@ -115,9 +115,9 @@ public class FPropertyTagData
                             "ClassProximityTypes", "MaleAnimSets", "RelatedAdditiveAnimSeqs", "SkelControls", "ConstraintSetup", "BoundsBodies", "ClothingAssets",
                             "Expression", "EditorComments", "MeshMaterials", "MaleLobbyAnimSets", "FemaleLobbyAnimSets", "HandSignalAnims", "WeaponProjectilesAT",
                             "BloodSplatterDecalMaterial", "StaticMeshComponents", "FunctionExpressions", "LightComponents", "MetaData", "RootMorphNodes", "AnimTickArray",
-                            "ParentNodes", "LinkedVariables", "InterpTracks", "InterpGroups", "BodySetup", "Bodies", "Styles",
+                            "ParentNodes", "LinkedVariables", "InterpTracks", "InterpGroups", "BodySetup", "Bodies", "Styles", "CollisionComponents",
                             "InactiveStates", "Flashlight_MeshComponents", "Flashlight_FlareComponents", "Flashlight_FlareSockets",
-                            "Wheels", "Flashlight_LightSockets", "FlickerFunctionArchetypes", "GroupAnimSets", "Materials",
+                            "Wheels", "Flashlight_LightSockets", "FlickerFunctionArchetypes", "GroupAnimSets", "Materials", "StreamingLevels",
                             "AchievementIcons", "ConnectorSockets", "ChildProFXTextures", "ChildNodes", "Sequences", "ReferencedObjects",
                             "References", "Textures", "RemovedArchetypes", "PrefabArchetypes", "Attached", "SequenceObjects", "LFMaterials",
                             "DecalList", "Anim", "ControlHead", "AnimSets", "Components", "Modules", "Targets", "Controls", "SpawnModules",

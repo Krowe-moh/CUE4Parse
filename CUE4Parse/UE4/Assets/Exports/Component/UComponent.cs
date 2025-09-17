@@ -5,6 +5,9 @@ public class UComponent : UObject;
 public class UDistributionFloat : UComponent;
 // sort later
 
+public class UFogVolumeSphericalDensityComponent : UComponent;
+public class USceneCapture2DComponent : UComponent;
+public class USpeedTreeComponent : UComponent;
 public class UPixelIdComponent : UComponent;
 public class UUDKExplosionLight : UComponent;
 public class UUIComp_Event : UComponent;
