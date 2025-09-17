@@ -742,8 +742,8 @@ public class FLifetimeProperty
 [Flags]
 public enum EClassSerializationControlExtension : byte
 {
-    NoExtension = 0x00,
-    ReserveForFutureUse = 0x01, // Can be use to add a next group of extension
+    NoExtension					= 0x00,
+    ReserveForFutureUse			= 0x01, // Can be use to add a next group of extension
 
     ////////////////////////////////////////////////
     // First extension group

@@ -65,11 +65,11 @@ namespace CUE4Parse.UE4.Assets.Objects
                     OffsetInFile = Ar.Position;
                 }
 
-                goto skip;
+                goto skipSize;
             }
             SizeOnDisk = BulkDataFlags.HasFlag(BULKDATA_Size64Bit) ? (uint) Ar.Read<long>() : Ar.Read<uint>();
             OffsetInFile = Ar.Ver >= EUnrealEngineObjectUE4Version.BULKDATA_AT_LARGE_OFFSETS ? Ar.Read<long>() : Ar.Read<int>();
-            skip:
+            skipSize:
             if (!BulkDataFlags.HasFlag(BULKDATA_NoOffsetFixUp) && Ar.Game >= EGame.GAME_UE4_26)
             {
                 OffsetInFile += Ar.Owner.Summary.BulkDataStartOffset;
