@@ -9,6 +9,7 @@ using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Objects.UObject;
+using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 using Serilog;
 
@@ -84,6 +85,7 @@ public abstract class AbstractUePackage : UObject, IPackage
         var validPos = serialOffset + serialSize;
         try
         {
+            if (Ar.Game < EGame.GAME_UE4_0 && validPos - Ar.Position == 0) return; // not sure why, but some objects called "None" are just empty (rocketleague issue?)
             obj.Deserialize(Ar, validPos);
 #if DEBUG
             var remaining = validPos - Ar.Position;
@@ -97,7 +99,7 @@ public abstract class AbstractUePackage : UObject, IPackage
                     Log.Warning("Did not read {0} correctly, {1} bytes exceeded", obj.ExportType, Math.Abs(remaining));
                     break;
                 default:
-                    Log.Debug("Successfully read {0} at {1} with size {2}", obj.ExportType, serialOffset, serialSize);
+                    //Log.Debug("Successfully read {0} at {1} with size {2}", obj.ExportType, serialOffset, serialSize);
                     break;
             }
 #endif

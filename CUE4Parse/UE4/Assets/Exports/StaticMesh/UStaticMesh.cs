@@ -123,7 +123,7 @@ public class UStaticMesh : UObject
                 var bHaveSourceData = Ar.ReadBoolean();
                 if (bHaveSourceData)
                 {
-                    RenderData = new FStaticMeshRenderData(Ar);
+                    RenderData = new FStaticMeshRenderData(Ar, true);
                 }
 
                 if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_STORE_MESH_OPTIMIZATION_SETTINGS)

@@ -37,7 +37,7 @@ public class FSkeletalMeshVertexBuffer
             Ar.ReadBulkArray(() => new FSoftVertex(Ar));
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH && Ar.Game != EGame.GAME_RocketLeague)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH)
         {
             NumTexCoords = Ar.Read<int>();
         }

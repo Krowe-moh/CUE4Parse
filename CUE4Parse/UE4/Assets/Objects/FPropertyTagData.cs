@@ -65,7 +65,7 @@ public class FPropertyTagData
                     InnerType = Ar.ReadFName().Text;
                 }
                 else
-                {   
+                {
                     // temp manual mappings
                     var map = new Dictionary<string, string[]>
                     {
@@ -92,20 +92,20 @@ public class FPropertyTagData
                         ["NameProperty"] = new[]
                         {
                             "BranchStartBoneName", "PerPolyCollisionBones", "TargetCategories", "PathList", "AdditionalEyeSocketNames", "GodModePickupNames", "FiringStatesArray",
-                            "PawnStatus", "KeyNames", "ClothBones", "DisabledEventAliases", "RolesToApplyOverlay", "UnfixedNames", "EnabledSpringNames", "HideBoneNames", "MaterialParameters", 
-                            "InputNames", "ClothingTeleportRefBones", "AnimTypes", "ComposePrePassBoneNames", "LevelNames", "ArcheTypeNames", "FireModeTypes", "ChildClassNames", "UseTranslationBoneNames", 
+                            "PawnStatus", "KeyNames", "ClothBones", "DisabledEventAliases", "RolesToApplyOverlay", "UnfixedNames", "EnabledSpringNames", "HideBoneNames", "MaterialParameters",
+                            "InputNames", "ClothingTeleportRefBones", "AnimTypes", "ComposePrePassBoneNames", "LevelNames", "ArcheTypeNames", "FireModeTypes", "ChildClassNames", "UseTranslationBoneNames",
                             "MonsterTypes", "ArenaNames",
                             "SavedGameFileNames", "TargetParamNames", "MorphNames", "AnimList", "TrackBoneNames",
                             "HiddenKismetClassNames", "BadPackageNames"
                         },
                         ["ObjectProperty"] = new[]
                         {
-                            "Expressions", "Elements", "EquipMaterials", "ChildParts", "GameTypesSupportedOnThisMap", 
-                            "DecalLeftMaterials", "ParticleTemplate", "OverideMaterials", "MeleeAttackAnim",
+                            "Expressions", "Elements", "EquipMaterials", "ChildParts", "GameTypesSupportedOnThisMap",
+                            "DecalLeftMaterials", "ParticleTemplate", "OverideMaterials", "MeleeAttackAnim", "Attributes",
                             "DecalRightMaterials", "AdditionalWeaponAnimset", "AlternateMaterials", "PawnWeapAnim_Attack",
                             "WeaponProjectiles", "WeaponFireAnim", "WeaponIdleAnims", "EquipMorphTargets",
                             "PropertyModifiers", "WeaponFireSnd", "WeaponFireSnd_3P", "EffectSockets", "Items", "Procedures", "SourceMaterials",
-                            "AttachedTuningItems", "UnsupportedPaints", "ExcludePaints", "ShopExclusivePaints", "IncludePaints", "Overrides", 
+                            "AttachedTuningItems", "UnsupportedPaints", "ExcludePaints", "ShopExclusivePaints", "IncludePaints", "Overrides",
                             "StreamingLevels", "Sockets", "FaceFXAnimSets", "RefreshSubscriberNotifies", "Conditions", "PowerupDamageModifiers",
                             "FragmentArches", "FireCrackerExplosionTemplates", "ComponentDynArray", "MorphSets", "WeaponForeHandgripAnimSets",
                             "DecalMaterials", "ModifiedComponent_Array", "ModifiedChild_Defined_Array", "UnmodifiedChild_Defined_Array",

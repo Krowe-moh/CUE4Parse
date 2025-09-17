@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CUE4Parse.UE4.Assets.Exports.Texture;
@@ -143,7 +144,8 @@ public class UMaterial : UMaterialInterface
             }
         }
 
-        if (Ar.Game >= EGame.GAME_UE4_0) return;
+        if (Ar.Game >= EGame.GAME_UE4_0)
+            return;
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MATERIAL_QUALITY_LEVEL)
         {
@@ -151,16 +153,15 @@ public class UMaterial : UMaterialInterface
         }
 
         //2 = MSQ_MAX
-        for (int QualityIndex = 0; QualityIndex < 2; QualityIndex++)
+        for (int QualityIndex = 0; QualityIndex < (Ar.Game == EGame.GAME_RocketLeague ? 1 : 2); QualityIndex++)
         {
             Ar.ReadArray(Ar.ReadFString); // CompileErrors
             Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>()); // TextureDependencyLengthMap
             Ar.Read<int>(); // MaxTextureDependencyLength
-            var krowe = Ar.Read<FGuid>(); // Id
+            Ar.Read<FGuid>(); // Id
             Ar.Read<int>(); // NumUserTexCoords;
             if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
             {
-                //return; // not working
                 Ar.ReadArray(() => new UniformExpression(Ar)); // UniformVectorExpressions
                 Ar.ReadArray(() => new UniformExpression(Ar)); // UniformScalarExpressions
                 Ar.ReadArray(() => new UniformExpression(Ar)); // Uniform2DTextureExpressions
@@ -173,7 +174,11 @@ public class UMaterial : UMaterialInterface
             }
             else
             {
-                Ar.ReadArray(() => new FPackageIndex(Ar)); // UniformExpressionTextures
+                ReferencedTextures.AddRange(
+                        Ar.ReadArray(() => new FPackageIndex(Ar))
+                            .Select(idx => idx.TryLoad(out UTexture texture) ? texture : null)
+                            .Where(t => t != null)!
+                    ); // UniformExpressionTextures
             }
 
             Ar.ReadBoolean(); // bUsesSceneColor
@@ -193,9 +198,9 @@ public class UMaterial : UMaterialInterface
                 Ar.ReadBoolean(); // bUsesMaterialVertexPositionOffset
             }
 
-            Ar.Read<int>();
+            Ar.Read<int>(); // UsingTransforms
             Ar.ReadArray(() => new FTextureLookup(Ar));
-            Ar.Read<int>();
+            Ar.Read<int>(); // DummyDroppedFallbackComponents
         }
 
         //FMaterialResource::Serialize

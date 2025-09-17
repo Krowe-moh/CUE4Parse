@@ -43,7 +43,7 @@ public class UTexture2D : UTexture
             var format = Ar.Read<int>();
             Format = (EPixelFormat)format;
         }
-        
+
         if (Ar.Ver < EUnrealEngineObjectUE4Version.TEXTURE_SOURCE_ART_REFACTOR)
         {
             var legacyMips = Array.Empty<FTexture2DMipMap>();
@@ -51,34 +51,21 @@ public class UTexture2D : UTexture
             var bHasLegacyMips = Ar.Game >= EGame.GAME_UE4_0 ? GetOrDefault("bDisableDerivedDataCache_DEPRECATED", false) : true;
             if (bHasLegacyMips)
             {
-                if (Ar.Game == EGame.GAME_RocketLeague)
-                {
-                    // ignore please
-                    legacyMips = [new FTexture2DMipMap(Ar, TextureFileCacheName.Text, SizeX, SizeY)];
-                }
-                else
-                {
-                    legacyMips = Ar.ReadArray(() => TextureFileCacheName.IsNone ? new FTexture2DMipMap(Ar) : new FTexture2DMipMap(Ar, TextureFileCacheName.Text));
-                }
+                legacyMips = Ar.ReadArray(() => TextureFileCacheName.IsNone ? new FTexture2DMipMap(Ar) : new FTexture2DMipMap(Ar, TextureFileCacheName.Text));
             }
 
             if (Ar.Game == EGame.GAME_DCUniverseOnline) return;
-            
-            if (Ar.Game == EGame.GAME_RocketLeague)
-            {
-                goto skipPlatform;
-            }
-            
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_TEXTURE_FILECACHE_GUIDS)
             {
                 var textureFileCacheGuidDeprecated = Ar.Read<FGuid>();
             }
-            
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_IPHONE_DATA)
             {
                 Ar.ReadArray(() => new FTexture2DMipMap(Ar));
             }
-            
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_VERSION_NUMBER_FIX_FOR_FLASH_TEXTURES)
             {
                 Ar.Read<int>();
@@ -91,7 +78,6 @@ public class UTexture2D : UTexture
                 Ar.ReadArray(() => new FTexture2DMipMap(Ar));
             }
 
-            skipPlatform:
             // Old versions use ByteProperty for enums
             Format = GetOrDefault<object>(nameof(Format), EPixelFormat.PF_Unknown) switch
             {

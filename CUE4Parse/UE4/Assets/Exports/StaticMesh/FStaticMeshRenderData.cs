@@ -22,9 +22,11 @@ public class FStaticMeshRenderData
     public bool bLODsShareStaticLighting;
     public float[] ScreenSize = [];
 
-    public FStaticMeshRenderData() { }
+    public FStaticMeshRenderData()
+    {
+    }
 
-    public FStaticMeshRenderData(FAssetArchive Ar)
+    public FStaticMeshRenderData(FAssetArchive Ar, bool SingleLod = false)
     {
         if (Ar.Versions["StaticMesh.KeepMobileMinLODSettingOnDesktop"])
             _ = Ar.Read<int>(); // minMobileLODIdx
@@ -61,12 +63,14 @@ public class FStaticMeshRenderData
         }
         else
         {
-            if (Ar.Game < EGame.GAME_UE4_0)
+            if (SingleLod)
             {
                 LODs = [new FStaticMeshLODResources(Ar)];
-                return; 
+                return;
             }
+
             LODs = Ar.ReadArray(() => new FStaticMeshLODResources(Ar));
+            if (Ar.Game < EGame.GAME_UE4_0) return;
         }
 
         // In Fortnite S8, engine is 4.22, but has static mesh from 4.23.
@@ -131,7 +135,7 @@ public class FStaticMeshRenderData
             if (Ar.ReadBoolean())
             {
                 _ = new FBox(Ar);
-                Ar.Position += 4+3*56;
+                Ar.Position += 4 + 3 * 56;
                 Ar.SkipFixedArray(1); // SDF array??
                 for (var i = 0; i < LODs.Length; i++)
                 {

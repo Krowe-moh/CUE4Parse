@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using CUE4Parse.MappingsProvider;
 using CUE4Parse.UE4.Assets.Exports.Actor;
-using CUE4Parse.UE4.Assets.Exports.Component;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Objects.Properties;
 using CUE4Parse.UE4.Assets.Objects.Unversioned;
@@ -90,8 +89,9 @@ public abstract class AbstractPropertyHolder : IPropertyHolder
         }
 
         obj = new T[maxIndex + 1];
-        foreach (var prop in collected) {
-            obj[prop.ArrayIndex] = (T)prop.Tag?.GetValue(typeof(T))!;
+        foreach (var prop in collected)
+        {
+            obj[prop.ArrayIndex] = (T) prop.Tag?.GetValue(typeof(T))!;
         }
 
         return obj.Length > 0;
@@ -132,6 +132,7 @@ public class UObject : AbstractPropertyHolder
             return top as IPackage;
         }
     }
+
     public virtual string ExportType => Class?.Name ?? GetType().Name;
 
     public UObject()
@@ -224,7 +225,7 @@ public class UObject : AbstractPropertyHolder
                     Ar.Read<int>(); // NetIndex
                 }
             }
-            
+
             DeserializePropertiesTagged(Properties = [], Ar, false);
         }
 
@@ -319,6 +320,7 @@ public class UObject : AbstractPropertyHolder
                 result = nextOuter;
             }
         }
+
         return result;
     }
 
@@ -338,7 +340,6 @@ public class UObject : AbstractPropertyHolder
          */
     public virtual void PostLoad()
     {
-
     }
 
     internal static void DeserializePropertiesUnversioned(List<FPropertyTag> properties, FAssetArchive Ar, UStruct struc)
@@ -472,6 +473,7 @@ public class UObject : AbstractPropertyHolder
                 writer.WritePropertyName(property.ArrayIndex > 0 ? $"{property.Name.Text}[{property.ArrayIndex}]" : property.Name.Text);
                 serializer.Serialize(writer, property.Tag);
             }
+
             writer.WriteEndObject();
         }
 
@@ -493,31 +495,26 @@ public class UObject : AbstractPropertyHolder
     /** Returns properties that are replicated for the lifetime of the actor channel */
     public virtual void GetLifetimeReplicatedProps(List<FLifetimeProperty> outLifetimeProps)
     {
-
     }
 
     /** Called right before receiving a bunch */
     public virtual void PreNetReceive()
     {
-
     }
 
     /** Called right after receiving a bunch */
     public virtual void PostNetReceive()
     {
-
     }
 
     /** Called right after calling all OnRep notifies (called even when there are no notifies) */
     public virtual void PostRepNotifies()
     {
-
     }
 
     /** Called right before being marked for destruction due to network replication */
     public virtual void PreDestroyFromReplication()
     {
-
     }
 
     /** IsNameStableForNetworking means an object can be referred to its path name (relative to outer) over the network */
@@ -528,7 +525,7 @@ public class UObject : AbstractPropertyHolder
     {
         if (Outer != null && !Outer.IsNameStableForNetworking())
         {
-            return false;	// If any outer isn't stable, we can't consider the full name stable
+            return false; // If any outer isn't stable, we can't consider the full name stable
         }
 
         return IsNameStableForNetworking();
@@ -595,6 +592,7 @@ public static class PropertyUtil
         {
             return value;
         }
+
         return defaultValue;
     }
 
@@ -643,11 +641,15 @@ public static class PropertyUtil
     {
         FPropertyTag? tag = null;
         int foundIndex = -1;
-        for (var i = 0; i < holder.Properties.Count; i++) {
+        for (var i = 0; i < holder.Properties.Count; i++)
+        {
             var prop = holder.Properties[i];
-            if (prop.Name.Text.Equals(name, comparisonType)) {
-                if (prop.Tag != null) {
-                    if (prop.Tag is ObjectProperty tagData && value is FPackageIndex idx) {
+            if (prop.Name.Text.Equals(name, comparisonType))
+            {
+                if (prop.Tag != null)
+                {
+                    if (prop.Tag is ObjectProperty tagData && value is FPackageIndex idx)
+                    {
                         tagData.Value = idx;
                         return;
                     }
@@ -740,12 +742,12 @@ public class FLifetimeProperty
 [Flags]
 public enum EClassSerializationControlExtension : byte
 {
-    NoExtension					= 0x00,
-    ReserveForFutureUse			= 0x01, // Can be use to add a next group of extension
+    NoExtension = 0x00,
+    ReserveForFutureUse = 0x01, // Can be use to add a next group of extension
 
     ////////////////////////////////////////////////
     // First extension group
-    OverridableSerializationInformation	= 0x02,
+    OverridableSerializationInformation = 0x02,
 
     //
     // Add more extension for the first group here

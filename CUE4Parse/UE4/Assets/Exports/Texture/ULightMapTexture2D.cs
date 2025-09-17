@@ -29,8 +29,8 @@ public class ULightMapTexture2D : UTexture2D
     {
         base.WriteJson(writer, serializer);
 
-        writer.WritePropertyName("LightmapFlags");
-        writer.WriteValue(LightmapFlags.ToStringBitfield());
+        //writer.WritePropertyName("LightmapFlags");
+        //writer.WriteValue(LightmapFlags.ToStringBitfield());
     }
 }
 

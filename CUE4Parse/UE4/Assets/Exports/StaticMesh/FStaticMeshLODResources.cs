@@ -50,10 +50,6 @@ public class FStaticMeshLODResources
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.todoa && Ar.Game < EGame.GAME_UE4_0)
         {
             new FByteBulkData((FAssetArchive)Ar, true); // RawTriangles
-            if (Ar.Game != EGame.GAME_RocketLeague)
-            {
-                Ar.Read<int>(); // unknown but i assume this is a issue because of FByteBulkData skip
-            }
         }
 
         if (Ar.Game == EGame.GAME_TheDivisionResurgence) Ar.Position += 4;
