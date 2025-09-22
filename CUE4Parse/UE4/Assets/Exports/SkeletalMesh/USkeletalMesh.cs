@@ -161,7 +161,11 @@ public partial class USkeletalMesh : UObject
             {
                 // ApexClothingAsset doesn't have a serilize func??? help.
                 var ApexClothingAssetcount = Ar.Read<int>();
-                if (ApexClothingAssetcount > 0) return;
+                if (ApexClothingAssetcount > 0)
+                {
+                    Ar.Position = validPos;
+                    return;
+                }
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICTEXTUREINSTANCES)
                 {
                     Ar.ReadArray(Ar.Read<float>); // CachedStreamingTextureFactors

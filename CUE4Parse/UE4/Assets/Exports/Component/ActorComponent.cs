@@ -1,4 +1,5 @@
 using CUE4Parse.UE4.Assets.Exports.Actor;
+using CUE4Parse.UE4.Assets.Exports.BuildData;
 using CUE4Parse.UE4.Assets.Exports.Component.Atmosphere;
 using CUE4Parse.UE4.Assets.Exports.Component.Landscape;
 using CUE4Parse.UE4.Assets.Exports.Component.Lights;
@@ -124,6 +125,7 @@ public class UEditorUtilityActorComponent : UActorComponent;
 public class UEnhancedInputComponent : UInputComponent;
 public class UEnvelopeFollowerListener : UActorComponent;
 public class UExponentialHeightFogComponent : USceneComponent;
+public class UHeightFogComponent : USceneComponent;
 public class UFXSystemComponent : UPrimitiveComponent;
 public class UFieldNodeBase : UActorComponent;
 public class UFieldNodeFloat : UFieldNodeBase;
@@ -294,6 +296,47 @@ public class USkeletalMeshReplicatedComponent : USkeletalMeshComponent;
 public class UFPSSkeletalMeshComponent : USkeletalMeshComponent;
 public class USkinnedMeshComponent : UMeshComponent;
 public class USkyLightComponent : ULightComponentBase;
+public class USpeedTreeComponent : UPrimitiveComponent
+{
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SPEEDTREE_STATICLIGHTING && Ar.Game < EGame.GAME_UE4_0)
+        {
+            FLightMap? BranchAndFrondLightMap = Ar.Read<ELightMapType>() switch
+            {
+                ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
+                ELightMapType.LMT_2D => new FLightMap2D(Ar),
+                _ => null
+            };
+
+            FLightMap? LeafCardLightMap = Ar.Read<ELightMapType>() switch
+            {
+                ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
+                ELightMapType.LMT_2D => new FLightMap2D(Ar),
+                _ => null
+            };
+
+            FLightMap? BillboardLightMap = Ar.Read<ELightMapType>() switch
+            {
+                ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
+                ELightMapType.LMT_2D => new FLightMap2D(Ar),
+                _ => null
+            };
+            if(Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SPEEDTREE_VERTEXSHADER_RENDERING)
+            {
+
+                FLightMap? LeafMeshLightMap = Ar.Read<ELightMapType>() switch
+                {
+                    ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
+                    ELightMapType.LMT_2D => new FLightMap2D(Ar),
+                    _ => null
+                };
+            }
+        }
+    }
+};
 public class UDynamicPausedLightEnvironmentComponent : UComponent;
 public class ULensFlareComponent : UComponent;
 public class UMapObjectiveVisualisation : UComponent;

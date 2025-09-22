@@ -18,7 +18,8 @@ public class UStaticMeshComponent : UMeshComponent
     {
         base.Deserialize(Ar, validPos);
         Ar.Position = validPos;
-        return;
+        if (Ar.Game < EGame.GAME_UE4_0) return; // todo
+
         if (Ar.Position == validPos || Ar.Ver < EUnrealEngineObjectUE3Version.VER_LIGHTMAP_NON_UOBJECT) return;
         if (Ar.Game is EGame.GAME_Borderlands3) Ar.ReadBoolean();
         if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 12;

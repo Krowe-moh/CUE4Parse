@@ -720,9 +720,10 @@ namespace CUE4Parse.UE4.Versions
         AUTOMATIC_VERSION_PLUS_ONE,
         AUTOMATIC_VERSION = AUTOMATIC_VERSION_PLUS_ONE - 1
     }
-    
+
     public enum EUnrealEngineObjectUE3Version
     {
+        Release61 = 61,
         Release62 = 62,
         Release64 = 64,
         DeprecatedHeritageTable = 68,
@@ -732,18 +733,18 @@ namespace CUE4Parse.UE4.Versions
         LightMapScaleAddedToPoly = 106,
         AddedCppTextToUStruct = 120,
         FontPagesDisplaced = 122,
-        
+
         // only comments exist for these three
-        
+
         // -	Added BoneCollisionSpheres, BoneCollisionBoxes & KPhysicsProps to USkeletalMesh - JAG
         AddedBoneCollisionSpheres = 124,
-        
+
         // -	Added BoneCollisionBoxesModels (UModels corresponding to the BoneCollisionBoxes array) - JAG
         AddedBoneCollisionBoxesModels = 125,
-            
+
         // -	Changed static mesh collision code - vogel
         Staticmeshstuff = 126,
-        
+
         MovedFriendlyNameToUFunction = 160,
         TextureDeprecatedFromPoly = 170,
         CompactIndexDeprecated = 178,
@@ -766,7 +767,7 @@ namespace CUE4Parse.UE4.Versions
         AddedBulkLod = 221,
         AddedComponentMapToExports, // todo
         AddedInterfacesFeature = 222,
-        
+
         // -	Removing Length, XSize, YSize and ZSize from VJointPos
         VER_REMOVE_SIZE_VJOINTPOS = 224,
 
@@ -997,7 +998,7 @@ namespace CUE4Parse.UE4.Versions
         // -	Terrain material resource serialization
         VER_TERRAIN_MATERIALRESOURCE_SERIALIZE = 298,
 
-        // -	Adding ScreenPositionScaleBiasParameter and SceneDepthCalcParameter 
+        // -	Adding ScreenPositionScaleBiasParameter and SceneDepthCalcParameter
         //		parameters to FMaterialPixelShaderParameters
         VER_SCREENPOSSCALEBIAS_SCENEDEPTHCALC_PARAMETERS = 299,
 
@@ -1188,7 +1189,7 @@ namespace CUE4Parse.UE4.Versions
         // -	Added setable max bone influences to GPU skin vertex factory and max influences to skel mesh chunks
         VER_GPUSKIN_MAX_INFLUENCES_OPTIMIZATION = 362,
 
-        // -	Added an option to control the depth bias when rendering shadow depths 
+        // -	Added an option to control the depth bias when rendering shadow depths
         VER_SHADOW_DEPTH_SHADER_RECOMPILE = 363,
 
         // -	Merge all static mesh vertex data into a single vertex buffer
@@ -1226,7 +1227,7 @@ namespace CUE4Parse.UE4.Versions
 
         // -	Added UExporter::PreferredFormatIndex.
         VER_ADDED_UExPORTER_PREFFERED_FORMAT = 375,
-        
+
         // -	Added cached cooked audio data for PS3
         VER_ADDED_CACHED_COOKED_PS3_DATA = 376,
 
@@ -1408,7 +1409,7 @@ namespace CUE4Parse.UE4.Versions
         // -	Add support for per-poly collision checks against specified rigid sections of skel meshes
         VER_SKELMESH_BONE_KDOP = 435,
 
-        // -	Shared vertex shader parameters								
+        // -	Shared vertex shader parameters
         VER_SHARED_SHADER_PARAMS = 436,
 
         // -	April 2007 XDK upgrade requires tossing cooked audio data
@@ -1515,19 +1516,19 @@ namespace CUE4Parse.UE4.Versions
 
         // -	Terrain patch bounds get generated 'on-demand'
         VER_TERRAIN_PATCHBOUNDS_ONDEMAND = 471,
-        
-        
+
+
         wwwwasa = 472,
         wwwwaa = 473,
         wwwwaaaa = 474,
-        
+
         // versions missing (LMK if you find it)
-        
+
         AddedPackageFlags = 475,
         AddedPackageSource = 482,
-        
+
         aaqw = 492,
-        
+
         // - Min version for content resave
         VER_CONTENT_RESAVE_AUGUST_2007_QA_BUILD = 491,
 
@@ -1543,7 +1544,7 @@ namespace CUE4Parse.UE4.Versions
         // - Removed DecalManager ref from UWorld
         VER_REMOVED_DECAL_MANAGER_FROM_UWORLD = 496,
 
-        // - Fix height-fog pixel shader 4-layer 
+        // - Fix height-fog pixel shader 4-layer
         VER_HEIGHTFOG_PIXELSHADER_START_DIST_FIX = 498,
 
         // - Separate pass for LDR BLEND_Modulate transparency mode
@@ -1569,13 +1570,13 @@ namespace CUE4Parse.UE4.Versions
         // - Fixed fonts serializing all members twice.
         VER_FIXED_FONTS_SERIALIZATION = 511,
 
-        // - 
+        // -
         VER_STATICMESH_FRAGMENTINDEX = 514,
 
-        // - Added Draw SkelTree Manager. Added FColor to FMeshBone serialization.	
+        // - Added Draw SkelTree Manager. Added FColor to FMeshBone serialization.
         VER_SKELMESH_DRAWSKELTREEMANAGER = 515,
 
-        // - Added AdditionalPackagesToCook to FPackageFileSummary	
+        // - Added AdditionalPackagesToCook to FPackageFileSummary
         VER_ADDITIONAL_COOK_PACKAGE_SUMMARY = 516,
 
         // - Add neighbor info to FFragmentInfo
@@ -1623,10 +1624,10 @@ namespace CUE4Parse.UE4.Versions
         // - Added automatic fog volume components to simplify workflow
         VER_AUTOMATIC_FOGVOLUME_COMPONENT = 533,
 
-        // - Added an optional array of skeletal mesh weights/bones for instancing 
+        // - Added an optional array of skeletal mesh weights/bones for instancing
         VER_ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCES = 534,
 
-        // - Added an optional array of skeletal mesh weights/bones for instancing 
+        // - Added an optional array of skeletal mesh weights/bones for instancing
         VER_UNIFORM_DISTRIBUTION_BAKING_UPDATE = 535,
 
         // - Replaced classes for sequences associated with PrefabInstances
@@ -1668,7 +1669,7 @@ namespace CUE4Parse.UE4.Versions
         // - New curve auto-tangent calculations; Clamped auto tangent support
         VER_NEW_CURVE_AUTO_TANGENTS = 550,
 
-        // - Removed 2x2 normal transform from decal vertices 
+        // - Removed 2x2 normal transform from decal vertices
         VER_DECAL_REMOVED_2X2_NORMAL_TRANSFORM = 551,
 
         // - Updated decal vertex factories
@@ -1987,7 +1988,7 @@ namespace CUE4Parse.UE4.Versions
         // - Fixup for ForceFeedbackSerialization
         VER_FORCEFEEDBACKWAVERFORM_NOEXPORT_CHANGE = 677,
 
-        // - Changed type OverrideVertexColors from TArray<FColor> to FColorVertexBuffer * 
+        // - Changed type OverrideVertexColors from TArray<FColor> to FColorVertexBuffer *
         VER_OVERWRITE_VERTEX_COLORS_MEM_OPTIMIZED = 678,
 
         // - Changed the default usage to be SVB_LoadingAndVisibility for level streaming volumes.
@@ -2071,7 +2072,7 @@ namespace CUE4Parse.UE4.Versions
         // - Lightmaps on GDOs
         VER_GDO_LIGHTMAPS = 721,
 
-        // - Explicit normal support for static meshes					
+        // - Explicit normal support for static meshes
         VER_STATIC_MESH_EXPLICIT_NORMALS = 723,
 
         // - Reverted HalfRes MotionBlur&DOF for now
@@ -2104,7 +2105,7 @@ namespace CUE4Parse.UE4.Versions
         // - Object based Motion Blur scale fix
         VER_HITMASK_MIRRORING_SUPPORT = 741,
 
-        // - Optimized AngleBasedSSAO 
+        // - Optimized AngleBasedSSAO
         VER_IMPROVED_ANGLEBASEDSSAO2 = 747,
 
         // - New character indirect lighting controls
@@ -2409,7 +2410,7 @@ namespace CUE4Parse.UE4.Versions
         VER_LIC_AUTOMATIC_VERSION_PLUS_ONE,
         VER_LIC_AUTOMATIC_VERSION = VER_LIC_AUTOMATIC_VERSION_PLUS_ONE - 1
     }
-    
+
     /// <summary>
     /// This object combines all of our version enums into a single easy to use structure
     /// which allows us to update older version numbers independently of the newer version numbers.

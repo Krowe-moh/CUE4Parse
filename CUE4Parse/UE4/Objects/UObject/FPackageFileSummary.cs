@@ -188,7 +188,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             }
 
             if (Tag == PACKAGE_FILE_TAG_AE || Tag == PACKAGE_FILE_TAG_LOS) Tag = PACKAGE_FILE_TAG;
-            
+
             if (Tag != PACKAGE_FILE_TAG && Tag != PACKAGE_FILE_TAG_SWAPPED)
             {
                 throw new ParserException($"Invalid uasset magic: 0x{Tag:X8} != 0x{PACKAGE_FILE_TAG:X8}");
@@ -199,7 +199,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             if (Tag == PACKAGE_FILE_TAG_SWAPPED)
             {
                 Tag = PACKAGE_FILE_TAG;
-                Ar.ReverseBytes = true;
+                Ar.ReverseBytes = true; // is only used to identify if an archive is reversed. no reverse logic currently
             }
 
             legacyFileVersion = Ar.Read<int>();
@@ -488,7 +488,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                     Ar.ReadArray<FTextureAllocations>();
                 }
             }
-            
+
             if (FileVersionUE >= EUnrealEngineObjectUE4Version.ASSET_REGISTRY_TAGS)
             {
                 AssetRegistryDataOffset = Ar.Read<int>();
@@ -507,7 +507,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 PackageSource = (int)(PackageSource ^ 0xEEB2CEC7);
                 AssetRegistryDataOffset = (int)(AssetRegistryDataOffset ^ 0xEEB2CEC7);
             }
-            
+
             if (Ar.Game == EGame.GAME_DCUniverseOnline)
             {
                 int offset = NameOffset - (int)Ar.Position;
@@ -567,7 +567,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 assetAr.AbsoluteOffset = NameOffset - (int)Ar.Position;
             }
-            
+
             if (Ar.Game == EGame.GAME_SuddenAttack2)
             {
                 Ar.Read<int>(); // count

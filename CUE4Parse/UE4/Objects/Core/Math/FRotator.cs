@@ -52,11 +52,18 @@ namespace CUE4Parse.UE4.Objects.Core.Math
                 Yaw = (float) Ar.Read<double>();
                 Roll = (float) Ar.Read<double>();
             }
-            else
+            else if (Ar.Game >= EGame.GAME_UE4_0)
             {
                 Pitch = Ar.Read<float>();
                 Yaw = Ar.Read<float>();
                 Roll = Ar.Read<float>();
+            }
+            else
+            {
+                const float scale = 360f / 65536f;
+                Pitch = Ar.Read<int>() * scale;
+                Yaw   = Ar.Read<int>() * scale;
+                Roll  = Ar.Read<int>() * scale;
             }
         }
 
@@ -184,7 +191,7 @@ namespace CUE4Parse.UE4.Objects.Core.Math
                                                                     MathF.Abs(NormalizeAxis(Yaw - r.Yaw)) <= tolerance &&
                                                                     MathF.Abs(NormalizeAxis(Roll - r.Roll)) <= tolerance;
 
-        public void Serialize(FArchiveWriter Ar) 
+        public void Serialize(FArchiveWriter Ar)
         {
             Ar.Write(Pitch);
             Ar.Write(Yaw);

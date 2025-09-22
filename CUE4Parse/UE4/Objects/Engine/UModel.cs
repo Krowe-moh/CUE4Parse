@@ -61,9 +61,9 @@ namespace CUE4Parse.UE4.Objects.Engine
         public const int MAX_ZONES = 64;
 
         // Persistent information.
-        public readonly FPlane Plane;  // 16 Plane the node falls into (X, Y, Z, W).
+        public readonly FPlane Plane; // 16 Plane the node falls into (X, Y, Z, W).
         public readonly int iVertPool; // 4  Index of first vertex in vertex pool, =iTerrain if NumVertices==0 and NF_TerrainFront.
-        public readonly int iSurf;     // 4  Index to surface information.
+        public readonly int iSurf; // 4  Index to surface information.
 
         /** The index of the node's first vertex in the UModel's vertex buffer. */
         public readonly int iVertexIndex;
@@ -89,6 +89,7 @@ namespace CUE4Parse.UE4.Objects.Engine
 
         /** 2 Visibility zone in 1=front, 0=back. */
         public readonly byte iZone0;
+
         public readonly byte iZone1;
 
         /**1  Number of vertices in node.*/
@@ -99,7 +100,39 @@ namespace CUE4Parse.UE4.Objects.Engine
 
         /**4  Leaf in back and front, INDEX_NONE=not a leaf.*/
         public readonly int iLeaf0;
+
         public readonly int iLeaf1;
+
+        public FBspNode(FAssetArchive Ar)
+        {
+            Plane = new FPlane(Ar);
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_ZONEMASK)
+            {
+                Ar.Read<FZoneSet>(); // zonemask
+            }
+
+            iVertPool = Ar.Read<int>();
+            iSurf = Ar.Read<int>();
+            iVertexIndex = Ar.Read<int>();
+            ComponentIndex = Ar.Read<ushort>();
+            ComponentNodeIndex = Ar.Read<ushort>();
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_COMPONENT_ELEMENT_INDEX)
+            {
+                ComponentElementIndex = Ar.Read<int>();
+            }
+
+            iBack = Ar.Read<int>();
+            iFront = Ar.Read<int>();
+            iPlane = Ar.Read<int>();
+            iCollisionBound = Ar.Read<int>();
+            iZone0 = Ar.Read<byte>();
+            iZone1 = Ar.Read<byte>();
+            NumVertices = Ar.Read<byte>();
+            NodeFlags = Ar.Read<EBspNodeFlags>();
+            iLeaf0 = Ar.Read<int>();
+            iLeaf1 = Ar.Read<int>();
+        }
     }
 
     public readonly struct FZoneSet : IUStruct
@@ -155,7 +188,15 @@ namespace CUE4Parse.UE4.Objects.Engine
             Actor = new FPackageIndex(Ar);
             Plane = Ar.Read<FPlane>();
             LightMapScale = Ar.Read<float>();
-            iLightmassIndex = Ar.Read<int>();
+            if (Ar.Game < EGame.GAME_UE4_0)
+            {
+                Ar.Read<int>(); // LightingChannels
+            }
+
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_INTEGRATED_LIGHTMASS)
+            {
+                iLightmassIndex = Ar.Read<int>();
+            }
         }
     }
 
@@ -258,7 +299,7 @@ namespace CUE4Parse.UE4.Objects.Engine
 
             Vectors = Ar.ReadBulkArray<FVector>();
             Points = Ar.ReadBulkArray<FVector>();
-            Nodes = Ar.ReadBulkArray<FBspNode>();
+            Nodes = Ar.ReadBulkArray(() => new FBspNode(Ar));
 
             if (Ar.Ver < EUnrealEngineObjectUE4Version.BSP_UNDO_FIX)
             {
@@ -269,6 +310,7 @@ namespace CUE4Parse.UE4.Objects.Engine
             {
                 Surfs = Ar.ReadArray(() => new FBspSurf(Ar));
             }
+
             Verts = Ar.ReadBulkArray<FVert>();
 
             NumSharedSides = Ar.Read<int>();
@@ -293,15 +335,26 @@ namespace CUE4Parse.UE4.Objects.Engine
                 var dummyPortalNodes = Ar.ReadBulkArray<int>();
             }
 
-            NumUniqueVertices = Ar.Read<uint>();
-
-            if (!stripData.IsEditorDataStripped() || !stripData.IsClassDataStripped(StripVertexBufferFlag))
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_SHADOW_VOLUMES)
             {
-                VertexBuffer = new FModelVertexBuffer(Ar);
+                var dummyEdges = Ar.ReadBulkArray(() => Ar.ReadBytes(16));
             }
 
-            LightingGuid = Ar.Read<FGuid>();
-            LightmassSettings = Ar.ReadArray(() => new FLightmassPrimitiveSettings(Ar));
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_USE_UMA_RESOURCE_ARRAY_MESH_DATA)
+            {
+                NumUniqueVertices = Ar.Read<uint>();
+
+                if (!stripData.IsEditorDataStripped() || !stripData.IsClassDataStripped(StripVertexBufferFlag))
+                {
+                    VertexBuffer = new FModelVertexBuffer(Ar);
+                }
+            }
+
+            if (Ar.Game >= EGame.GAME_UE4_0)
+            {
+                LightingGuid = Ar.Read<FGuid>();
+                LightmassSettings = Ar.ReadArray(() => new FLightmassPrimitiveSettings(Ar));
+            }
         }
 
         protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)

@@ -94,13 +94,13 @@ namespace CUE4Parse.UE4.Assets
             {
                 uassetAr.Position = 0;
                 byte[] before = uassetAr.ReadBytes(Summary.NameOffset);
-                
+
                 int encSize = Summary.TotalHeaderSize - Summary.GarbageSize - Summary.NameOffset;
                 encSize = (encSize + 15) & ~15; // AES block alignment
                 byte[] encryptedData = uassetAr.ReadBytes(encSize);
 
                 RocketLeagueAes.Decrypt(encryptedData, Summary.CompressedChunkInfoOffset, true, out byte[] decryptedData);
-                
+
                 long remaining = uassetAr.Length - uassetAr.Position;
                 byte[] after = uassetAr.ReadBytes((int)remaining);
 
@@ -169,7 +169,7 @@ namespace CUE4Parse.UE4.Assets
             uassetAr.SeekAbsolute(Summary.ImportOffset, SeekOrigin.Begin);
             ImportMap = new FObjectImport[Summary.ImportCount];
             uassetAr.ReadArray(ImportMap, () => new FObjectImport(uassetAr));
-            
+
             if (Summary is { HeritageOffset: > 0 })
             {
                 uassetAr.SeekAbsolute(Summary.HeritageOffset, SeekOrigin.Begin);
@@ -194,7 +194,7 @@ namespace CUE4Parse.UE4.Assets
                         Guids = uassetAr.ReadArray(() => uassetAr.Read<FGuid>())
                     };
                 }
-                
+
                 for (int i = 0; i < Summary.ExportGuidsCount; i++)
                 {
                     var objectGuid = uassetAr.Read<FGuid>();
@@ -209,7 +209,7 @@ namespace CUE4Parse.UE4.Assets
             {
                 uassetAr.SeekAbsolute(Summary.ThumbnailTableOffset, SeekOrigin.Begin);
                 var count = uassetAr.Read<int>();
-    
+
                 var thumbnailOffsets = new List<int>(count);
 
                 for (int i = 0; i < count; i++)
@@ -219,7 +219,7 @@ namespace CUE4Parse.UE4.Assets
                     var thumbnailOffset = uassetAr.Read<int>();
                     thumbnailOffsets.Add(thumbnailOffset);
                 }
-                
+
                 foreach (var offset in thumbnailOffsets)
                 {
                     uassetAr.SeekAbsolute(offset + 8, SeekOrigin.Begin);
@@ -298,7 +298,12 @@ namespace CUE4Parse.UE4.Assets
                         // Create
                         var obj = ConstructObject(ResolvePackageIndex(export.ClassIndex)?.Object?.Value as UStruct, this, (EObjectFlags) export.ObjectFlags);
                         obj.Name = export.ObjectName.Text;
-                        obj.Outer = (ResolvePackageIndex(export.OuterIndex) as ResolvedExportObject)?.Object.Value ?? this;
+                        var outerObj = ResolvePackageIndex(export.OuterIndex) as ResolvedExportObject;
+
+                        obj.Outer =
+                            (outerObj != null && outerObj.Object.IsValueCreated)
+                                ? outerObj.Object.Value
+                                : this;
                         obj.Super = ResolvePackageIndex(export.SuperIndex) as ResolvedExportObject;
                         obj.Template = ResolvePackageIndex(export.TemplateIndex) as ResolvedExportObject;
                         obj.Flags |= (EObjectFlags) export.ObjectFlags; // We give loaded objects the RF_WasLoaded flag in ConstructObject, so don't remove it again in here

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
-using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Engine;
@@ -368,9 +368,26 @@ public class FLightMap(FAssetArchive Ar)
 
 public class FLegacyLightMap1D : FLightMap
 {
+    private int NUM_DIRECTIONAL_LIGHTMAP_COEF = 2;
+    private int NUM_GATHERED_LIGHTMAP_COEF = 4;
     public FLegacyLightMap1D(FAssetArchive Ar) : base(Ar)
     {
-        throw new ParserException("Unsupported: FLegacyLightMap1D");
+        new FPackageIndex(Ar); // Owner
+        new FIntBulkData(Ar);
+        for (int elementIndex = 0; elementIndex < NUM_GATHERED_LIGHTMAP_COEF; elementIndex++)
+        {
+            if (elementIndex < NUM_DIRECTIONAL_LIGHTMAP_COEF || Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_SIMPLE_LIGHTING)
+            {
+                Ar.Read<float>(); // x
+                Ar.Read<float>(); // y
+                Ar.Read<float>(); // z
+            }
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_SIMPLE_LIGHTING)
+        {
+            new FIntBulkData(Ar);
+        }
     }
 }
 

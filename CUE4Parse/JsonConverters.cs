@@ -2149,7 +2149,7 @@ public class FStaticMeshSectionConverter : JsonConverter<FStaticMeshSection>
 
         writer.WritePropertyName("Material");
         serializer.Serialize(writer, value.Material);
-        
+
         writer.WritePropertyName("MaterialIndex");
         writer.WriteValue(value.MaterialIndex);
 
@@ -2603,6 +2603,9 @@ public class FTextLocalizationMetaDataResourceConverter : JsonConverter<FTextLoc
 
         writer.WritePropertyName("CompiledCultures");
         serializer.Serialize(writer, value.CompiledCultures);
+
+        writer.WritePropertyName("bIsUGC");
+        writer.WriteValue(value.bIsUGC);
 
         writer.WriteEndObject();
     }

@@ -9,10 +9,13 @@ namespace CUE4Parse.UE4.Assets.Exports.Component;
 public class UModelComponent : UPrimitiveComponent
 {
     public FPackageIndex Model;
+
     /** The elements used to render the nodes. */
     public FModelElement[] Elements = [];
+
     /** The index of this component in the ULevel's ModelComponents array. */
     public int ComponentIndex;
+
     /** The nodes which this component renders. */
     public ushort[] Nodes;
 
@@ -32,11 +35,15 @@ public class FModelElement
 {
     /** The model component containing this element. */
     public FPackageIndex Component;
+
     /** The material used by the nodes in this element. */
     public FPackageIndex Material;
+
     public FMeshMapBuildData? LegacyMapBuildData;
+
     /** The nodes in the element. */
     public ushort[] Nodes;
+
     /** Uniquely identifies this component's built map data. */
     public FGuid? MapBuildDataId;
 
@@ -49,7 +56,7 @@ public class FModelElement
             {
                 new FPackageIndex(Ar); // LightMap
             }
-            else
+            else if (Ar.Game < EGame.GAME_UE4_0)
             {
                 LegacyMapBuildData.LightMap = Ar.Read<ELightMapType>() switch
                 {
@@ -58,11 +65,20 @@ public class FModelElement
                     _ => null
                 };
             }
-            LegacyMapBuildData.ShadowMap = Ar.Read<EShadowMapType>() switch
+            else
             {
-                EShadowMapType.SMT_2D => new FShadowMap2D(Ar),
-                _ => null
-            };
+                LegacyMapBuildData.LightMap = Ar.Read<ELightMapType>() switch
+                {
+                    ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
+                    ELightMapType.LMT_2D => new FLightMap2D(Ar),
+                    _ => null
+                };
+                LegacyMapBuildData.ShadowMap = Ar.Read<EShadowMapType>() switch
+                {
+                    EShadowMapType.SMT_2D => new FShadowMap2D(Ar),
+                    _ => null
+                };
+            }
         }
 
         if (FRenderingObjectVersion.Get(Ar) >= FRenderingObjectVersion.Type.FixedBSPLightmaps)

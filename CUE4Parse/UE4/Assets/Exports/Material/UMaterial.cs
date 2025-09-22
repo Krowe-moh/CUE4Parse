@@ -61,6 +61,8 @@ public class UniformExpression
             "FMaterialUniformExpressionAppendVector"             => new FMaterialUniformExpressionAppendVector(Ar),
             "FMaterialUniformExpressionAbs"                      => new FMaterialUniformExpressionAbs(Ar),
             "FMaterialUniformExpressionCeil"                     => new FMaterialUniformExpressionCeil(Ar),
+            "FMaterialUniformExpressionMax"                      => new FMaterialUniformExpressionMax(Ar),
+            "FMaterialUniformExpressionMin"                      => new FMaterialUniformExpressionMin(Ar),
             "FMaterialUniformExpressionPeriodic"                 => new FMaterialUniformExpressionPeriodic(Ar),
             "FMaterialUniformExpressionSine"                     => new FMaterialUniformExpressionSine(Ar),
             "FMaterialUniformExpressionFlipBookTextureParameter" => new FMaterialUniformExpressionFlipBookTextureParameter(Ar),
@@ -221,6 +223,9 @@ public class UMaterial : UMaterialInterface
             Ar.ReadBoolean();
             Ar.ReadBoolean();
         }
+
+        // todo
+        Ar.Position = validPos;
     }
 
     public UTexture? GetFirstTexture() => ReferencedTextures.Count > 0 ? ReferencedTextures[0] : null;

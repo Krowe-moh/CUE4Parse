@@ -13,7 +13,7 @@ namespace CUE4Parse.FileProvider.Objects;
 
 public abstract class GameFile
 {
-    public static readonly string[] UePackageExtensions = ["uasset", "umap", "upk", "udk", "u"];
+    public static readonly string[] UePackageExtensions = ["uasset", "umap", "upk", "udk", "u", "mbamap", "rbd", "aa3", "ut3"];
     public static readonly string[] UePackagePayloadExtensions = ["uexp", "ubulk", "uptnl", "tfc"];
     public static readonly string[] UeKnownExtensions =
     [
@@ -133,18 +133,18 @@ public abstract class GameFile
     public async Task<FArchive?> SafeCreateReaderAsync() => await Task.Run(SafeCreateReader);
 
     public override string ToString() => Path;
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string InternExtension(string extension)
     {
         if (InternedExtensions.TryGetValue(extension, out var interned))
             return interned;
-        
+
         lock (InternedExtensions)
         {
             if (InternedExtensions.TryGetValue(extension, out interned))
                 return interned;
-            
+
             InternedExtensions[extension] = extension;
             return extension;
         }

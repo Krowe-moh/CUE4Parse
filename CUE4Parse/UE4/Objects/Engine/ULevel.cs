@@ -111,12 +111,9 @@ public readonly struct FStreamableTextureInstance : IUStruct
 [StructLayout(LayoutKind.Sequential)]
 public readonly struct FDynamicTextureInstance : IUStruct
 {
-    // Base
     public readonly FSphere BoundingSphere;
     public readonly float TexelFactor;
-
-    // Extended
-    public readonly FPackageIndex Texture; // UTexture2D*
+    public readonly FPackageIndex Texture;
     public readonly bool bAttached;
     public readonly float OriginalRadius;
 
@@ -197,21 +194,20 @@ public class ULevel : Assets.Exports.UObject
         {
             Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadArray(() => new FDynamicTextureInstance(Ar)));// DynamicTextureInstances
         }
-        
+
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_APEX_DESTRUCTION)
         {
-            Ar.Read<int>();
-            //var size = Ar.Read<long>();
-            //Ar.Position += size;
+            var size = Ar.Read<int>();
+            Ar.Position += size;
         }
         Ar.ReadBulkArray<byte>(); // CachedPhysBSPData
-        Ar.ReadMap(() => new FPackageIndex(Ar), () => new FCachedPhysSMData(Ar));// DynamicTextureInstances
-        Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>()));
-        Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>()));
-        Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>()));
-        Ar.Read<int>();
-        Ar.Read<int>();
-        Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadBoolean());
+        Ar.ReadMap(() => new FPackageIndex(Ar), () => new FCachedPhysSMData(Ar)); // CachedPhysSMDataMap
+        Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>())); // CachedPhysSMDataStore
+        Ar.ReadMap(() => new FPackageIndex(Ar), () => new FCachedPhysSMData(Ar)); // CachedPhysSMDataMap
+        Ar.ReadArray(() => Ar.ReadBulkArray<byte>()); // CachedPhysPerTriSMDataStore
+        Ar.Read<int>(); // CachedPhysBSPDataVersion
+        Ar.Read<int>(); // CachedPhysSMDataVersion
+        Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadBoolean()); // ForceStreamTextures
         if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_CONVEX_BSP)
         {
             Ar.ReadArray(() => Ar.ReadBulkArray<byte>());

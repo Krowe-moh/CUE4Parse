@@ -24,9 +24,9 @@ namespace CUE4Parse.GameTypes.RL.Encryption.Aes
                     0x93, 0xE2, 0xF2, 0x4E, 0x6B, 0x17, 0xE7, 0x79
                 }
             };
-            
+
             // I'd like to move this to fmodel but it's not simple, either a text field with all keys or url
-            string[] remoteKeys = HttpClient.GetStringAsync("https://gist.githubusercontent.com/Krowe-moh/08d201249b39a15484fd6d3a1f63c754/raw/005baf6e3dea9ccef2e558e1884bbf2a4ca9b2ac/keys.txt").GetAwaiter().GetResult().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] remoteKeys = HttpClient.GetStringAsync("https://gist.githubusercontent.com/Krowe-moh/08d201249b39a15484fd6d3a1f63c754/raw/ccc0191ebdb4dbb76951b0f65b0a1bd9eec1ec7b/keys.txt").GetAwaiter().GetResult().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
             var allKeys = new System.Collections.Generic.List<byte[]>(defaultKey);
             foreach (var line in remoteKeys)
@@ -86,7 +86,7 @@ namespace CUE4Parse.GameTypes.RL.Encryption.Aes
                     // ignore
                 }
             }
-            throw new InvalidAesKeyException("No decryption valid key found");
+            throw new InvalidAesKeyException("No valid decryption key found");
         }
     }
 }

@@ -169,7 +169,7 @@ public class FPropertyTag
 
             Size = Ar.Read<int>();
             ArrayIndex = Ar.Read<int>();
-            TagData = new FPropertyTagData(Ar, PropertyType.Text, Name.Text);
+            TagData = new FPropertyTagData(Ar, PropertyType.Text, Name.Text, Size);
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.PROPERTY_GUID_IN_PROPERTY_TAG)
             {
                 HasPropertyGuid = Ar.ReadFlag();

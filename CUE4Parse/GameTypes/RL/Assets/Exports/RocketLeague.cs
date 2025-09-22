@@ -1,8 +1,34 @@
 using CUE4Parse.UE4.Assets.Exports.Actor;
+using CUE4Parse.UE4.Assets.Readers;
 
 namespace CUE4Parse.GameTypes.RocketLeague.Assets.Exports;
 
+public class UDistributionFloatShakeParameter_X : UComponent;
+public class UBeamTraceComponent_TA : UComponent;
+public class UDemoExplosionHandler_TA : UComponent;
+public class UDefaultHitHandler_TA : UComponent;
+public class UApplyVelocityHitHandler_TA : UComponent;
+public class USkeletalMeshComponent_NoSlomo_TA  : UComponent;
+public class UGoalCollisionShape_X : UComponent;
+public class USphereCollisionShape_X : UComponent;
+public class UOverrideMaterialsHitHandler_TA : UComponent;
+public class UGameEvent_Soccar_TA : UComponent;
+public class UCamera_GameEditor_TA : UComponent;
+public class UViralItemFXComponent_TA : UComponent;
+public class UFXActor_BallBreakout_TA : UComponent;
+public class UBall_TA : UComponent;
+public class UCamera_TA : UComponent;
+public class UGameEvent_FTE_TA : UComponent;
+public class UGameInfo_GFxMenu_TA : UComponent;
+public class UGameEvent_GodBall_TA : UComponent;
+public class UBTAction_Face : UComponent;
+public class UBall_Breakout_TA : UComponent;
+public class UEndRoundComponent_Rugby_TA : UComponent;
+public class UTargetIndicator_TA : UComponent;
+
+
 public class UActionQueue_X : UComponent;
+public class UParameterDispenser_X : UComponent;
 public class UAudioFieldSideComponent_TA : UComponent;
 public class UAudioMixStateComponent_TA : UComponent;
 public class UAudioParamsSuperSonicReplayComponent_TA : UComponent;
@@ -73,16 +99,43 @@ public class ULightBarComponent_TA : UComponent;
 public class UNameplateMeshComponent_TA : UComponent;
 public class UNameplateComponentMatinee_TA : UComponent;
 public class USkyLightVolumeComponent_TA : UComponent;
-public class UProductOverride_ParticleSystemComponent_TA : UComponent;
+public class UParticleSystemComponent_TA : UComponent;
 public class UBallStaleTimerComponent_TA : UComponent;
 public class UAntennaComponent_TA : UComponent;
+public class UPSC_Constrained_TA : UComponent;
+public class UShakeComponent_X : UComponent;
+public class UStaticMeshComponent_TA : UComponent
+{
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+
+        Ar.ReadBoolean(); // bIgnoreScriptAttach
+    }
+}
+public class UCarJointSpinner_TA : UComponent;
+public class UAnimateParametersComponent_X : UComponent;
+public class UActivateAnimSeriesComponent_X : UComponent;
+public class UWheelAssetGenerator_FrontWheels_TA : UComponent;
+public class USkeletalMeshComponent_TA : UComponent;
+public class UWheelAssetGenerator_4Wheels_TA : UComponent;
+public class UWheelAssetGenerator_1Wheel_TA : UComponent;
+public class UWheelSkelMeshMAT_TA : UComponent;
+public class UCameraAttachmentComponent_X : UComponent;
 public class UWheelSpeedComponent_TA : UComponent;
 public class UThrottleShakeComponent_TA : UComponent;
 public class UCarMeshComponentBase_TA : UComponent;
-public class UCarComponent_FlipCar_TA : UComponent;
+public class UDistributionFloatSpeed_TA : UComponent;
+public class UWheelAssetGenerator_RightWheels_TA : UComponent;
+public class UWheelAssetSettings_TA : UComponent;
 public class UBallLocationComponent_TA : UComponent;
 public class UCarComponent_AirControl_TA : UComponent;
 public class UTeamDemoAudioComponent_TA : UComponent;
+public class URadialBlurComponent_X : UComponent;
+public class UPointLightComponent_X : UComponent;
+public class UVehicleSim_TA : UComponent;
+public class USkeletalMeshComponent_SplitBody_TA : UComponent;
+public class USkelControlBlendTargetComponent_X : UComponent;
 public class UBallPossessionComponent_TA : UComponent;
 public class UScriptedTextureComponent_TA : UComponent;
 public class UGFxNameplatesManager_TA : UComponent;
@@ -90,7 +143,9 @@ public class UAkPlaySoundComponent : UComponent;
 public class ULensFlareComponent_X : UComponent;
 public class UNameplateComponentCar_TA : UComponent;
 public class UGFxTourList_TA : UComponent;
+public class USimpleSpringComponent_TA : UComponent;
 public class UGroupComponent_ORS : UComponent;
+public class UMICParamDispenserComponent_X : UComponent;
 public class ULoadedMtxCatalog_TA : UComponent;
 public class ULocalPlayerAudioParamsComponent_TA : UComponent;
 public class UMapSelector_TA : UComponent;
@@ -98,6 +153,7 @@ public class UMatchBroadcastComponent_TA : UComponent;
 public class UOnlineClubCache_X : UComponent;
 public class UOnlineLegalText_X : UComponent;
 public class UOnlineMessageComponent_X : UComponent;
+public class UDistributionVectorConstantCurveParticleParameter : UComponent;
 public class UOnlineProductStore_TA : UComponent;
 public class UOnlineResource_X : UComponent;
 public class UOtherPlayerProfile_TA : UComponent;

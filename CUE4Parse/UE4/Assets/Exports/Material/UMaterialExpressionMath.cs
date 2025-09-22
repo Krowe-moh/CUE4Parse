@@ -5,7 +5,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Material;
 
 public class FMaterialUniformExpressionAbs : FMaterialUniformExpressionPeriodic
 {
-    public FMaterialUniformExpressionAbs(FAssetArchive Ar) 
+    public FMaterialUniformExpressionAbs(FAssetArchive Ar)
         : base(Ar)
     {
     }
@@ -13,7 +13,14 @@ public class FMaterialUniformExpressionAbs : FMaterialUniformExpressionPeriodic
 
 public class FMaterialUniformExpressionCeil : FMaterialUniformExpressionPeriodic
 {
-    public FMaterialUniformExpressionCeil(FAssetArchive Ar) 
+    public FMaterialUniformExpressionCeil(FAssetArchive Ar)
+        : base(Ar)
+    {
+    }
+}
+public class FMaterialUniformExpressionSquareRoot : FMaterialUniformExpressionPeriodic
+{
+    public FMaterialUniformExpressionSquareRoot(FAssetArchive Ar)
         : base(Ar)
     {
     }
@@ -69,6 +76,26 @@ public class FMaterialUniformExpressionFoldedMath : IUStruct
     }
 }
 
+public class FMaterialUniformExpressionMin : FMaterialUniformExpressionMax
+{
+    public FMaterialUniformExpressionMin(FAssetArchive Ar)
+        : base(Ar)
+    {
+    }
+}
+
+public class FMaterialUniformExpressionMax : IUStruct
+{
+    public UniformExpression A { get; private set; }
+    public UniformExpression B { get; private set; }
+
+    public FMaterialUniformExpressionMax(FAssetArchive Ar)
+    {
+        A = new UniformExpression(Ar);
+        B = new UniformExpression(Ar);
+    }
+}
+
 public class FMaterialUniformExpressionAppendVector : IUStruct
 {
     public UniformExpression A { get; private set; }
@@ -90,7 +117,7 @@ public class FMaterialUniformExpressionConstant : IUStruct
 
     public FMaterialUniformExpressionConstant(FAssetArchive Ar)
     {
-        Value = Ar.Read<FLinearColor>(); 
-        ValueType = Ar.Read<byte>(); 
+        Value = Ar.Read<FLinearColor>();
+        ValueType = Ar.Read<byte>();
     }
 }

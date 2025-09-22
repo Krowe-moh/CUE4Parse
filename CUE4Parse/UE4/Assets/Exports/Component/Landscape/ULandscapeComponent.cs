@@ -8,7 +8,7 @@ using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.UE4.Assets.Exports.Component.Landscape;
 
-public class ULandscapeComponent: UPrimitiveComponent
+public class ULandscapeComponent : UPrimitiveComponent
 {
     public int SectionBaseX;
     public int SectionBaseY;

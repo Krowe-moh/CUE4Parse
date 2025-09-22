@@ -64,3 +64,15 @@ public class UMorphTarget : UObject
         serializer.Serialize(writer, MorphLODModels);
     }
 }
+
+public class UMorphTargetSet : UObject
+{
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SERIALIZE_MORPHTARGETRAWVERTSINDICES && Ar.Game < EGame.GAME_UE4_0)
+        {
+            Ar.ReadArray<int>(); // RawWedgePointIndices
+        }
+    }
+}

@@ -38,7 +38,7 @@ namespace CUE4Parse.UE4.Objects.Core.Math
             {
                 W = (float) Ar.Read<double>();
             }
-            else
+            else if (Ar.Ver >= EUnrealEngineObjectUE3Version.Release61)
             {
                 W = Ar.Read<float>();
             }

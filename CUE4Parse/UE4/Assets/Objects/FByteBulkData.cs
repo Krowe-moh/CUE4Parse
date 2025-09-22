@@ -1,4 +1,6 @@
 using System;
+using System.Buffers.Binary;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -7,6 +9,7 @@ using CUE4Parse.FileProvider.Vfs;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Assets.Utils;
 using CUE4Parse.UE4.Exceptions;
+using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
@@ -20,14 +23,14 @@ public class FCompressedChunkBlock
 
     public FCompressedChunkBlock(FArchive Ar)
     {
-        CompressedSize = Ar.Read<int>();
-        UncompressedSize = Ar.Read<int>();
+        CompressedSize = Ar.ReverseBytes ? BinaryPrimitives.ReverseEndianness(Ar.Read<int>()) : Ar.Read<int>();
+        UncompressedSize = Ar.ReverseBytes ? BinaryPrimitives.ReverseEndianness(Ar.Read<int>()) : Ar.Read<int>();
     }
 
-    public FCompressedChunkBlock(Stream s)
+    public FCompressedChunkBlock(Stream s, bool reverse)
     {
-        CompressedSize = ReadInt32(s);
-        UncompressedSize = ReadInt32(s);
+        CompressedSize = reverse ? BinaryPrimitives.ReverseEndianness(ReadInt32(s)) : ReadInt32(s);
+        UncompressedSize = reverse ? BinaryPrimitives.ReverseEndianness(ReadInt32(s)) : ReadInt32(s);
     }
 
     private static int ReadInt32(Stream s)
@@ -41,34 +44,38 @@ public class FCompressedChunkBlock
 
 public class FCompressedChunkHeader
 {
-    public int Tag;
+    public uint Tag;
     public int ChunkSize;
     public FCompressedChunkBlock Sum;
     public FCompressedChunkBlock[] Blocks;
+
     public FCompressedChunkHeader(FArchive Ar)
     {
-        Tag = Ar.Read<int>();
-        ChunkSize = Ar.Read<int>();
-        // ignore, i'm lazy too finish rn
-        if (Tag == 0xC1832A9EU)
+        Tag = Ar.Read<uint>();
+        if (Tag == FPackageFileSummary.PACKAGE_FILE_TAG_SWAPPED)
         {
-            ChunkSize = 131072;
+            Ar.ReverseBytes = !Ar.ReverseBytes;
         }
-        //ChunkSize = 0x20000;
+
+        ChunkSize = Ar.Read<int>();
+        ChunkSize = 0x20000;
 
         Sum = new FCompressedChunkBlock(Ar);
-        int blockCount = (Sum.UncompressedSize + ChunkSize - 1) / ChunkSize;
-        Blocks = new FCompressedChunkBlock[blockCount];
-        int compSize = 0, uncompSize = 0, i = 0;
+        var blocksList = new List<FCompressedChunkBlock>((Sum.UncompressedSize + ChunkSize - 1) / ChunkSize);
+
+        int compSize = 0;
+        int uncompSize = 0;
 
         while (compSize < Sum.CompressedSize && uncompSize < Sum.UncompressedSize)
         {
             var block = new FCompressedChunkBlock(Ar);
-            Blocks[i++] = block;
+            blocksList.Add(block);
 
             compSize += block.CompressedSize;
             uncompSize += block.UncompressedSize;
         }
+
+        Blocks = blocksList.ToArray();
 
         if (Blocks.Length > 1)
             ChunkSize = Blocks[0].UncompressedSize;
@@ -79,21 +86,23 @@ public class FCompressedChunkHeader
 
     public FCompressedChunkHeader(Stream Ar)
     {
-        Tag = ReadInt32(Ar);
-        ChunkSize = ReadInt32(Ar);
-        if (Tag == 0xC1832A9EU)
+        Tag = ReadUInt32(Ar);
+        bool ReverseBytes = false;
+        if (Tag == FPackageFileSummary.PACKAGE_FILE_TAG_SWAPPED)
         {
-            ChunkSize = 0x20000;
+            ReverseBytes = true;
         }
+        ChunkSize = ReadInt32(Ar);
         ChunkSize = 0x20000;
-        Sum = new FCompressedChunkBlock(Ar);
+
+        Sum = new FCompressedChunkBlock(Ar, ReverseBytes);
         int blockCount = (Sum.UncompressedSize + ChunkSize - 1) / ChunkSize;
         Blocks = new FCompressedChunkBlock[blockCount];
 
         int compSize = 0, uncompSize = 0, i = 0;
         while (compSize < Sum.CompressedSize && uncompSize < Sum.UncompressedSize)
         {
-            var block = new FCompressedChunkBlock(Ar);
+            var block = new FCompressedChunkBlock(Ar, ReverseBytes);
             Blocks[i++] = block;
 
             compSize += block.CompressedSize;
@@ -114,6 +123,14 @@ public class FCompressedChunkHeader
         if (read != 4) throw new EndOfStreamException();
         return BitConverter.ToInt32(buffer);
     }
+
+    private static uint ReadUInt32(Stream s)
+    {
+        Span<byte> buffer = stackalloc byte[4];
+        int read = s.Read(buffer);
+        if (read != 4) throw new EndOfStreamException();
+        return BitConverter.ToUInt32(buffer);
+    }
 }
 
 namespace CUE4Parse.UE4.Assets.Objects
@@ -131,12 +148,12 @@ namespace CUE4Parse.UE4.Assets.Objects
 
         private readonly FAssetArchive _savedAr;
         private readonly long _dataPosition;
-        
+
         public static void ReadCompressedChunk(FArchive Ar, byte[] buffer, CompressionMethod Compression)
         {
             var header = new FCompressedChunkHeader(Ar);
 
-            var readBuffer = new byte[header.ChunkSize * 16]; // ignore everything here 
+            var readBuffer = new byte[header.ChunkSize * 16]; // ignore everything here
             int bufferOffset = 0;
 
             foreach (var block in header.Blocks)
@@ -148,7 +165,7 @@ namespace CUE4Parse.UE4.Assets.Objects
 
                 Ar.Read(readBuffer, 0, block.CompressedSize);
 
-                if (block.CompressedSize == block.UncompressedSize)//block.CompressedSize <= 36 && block.UncompressedSize <= 32
+                if (block.CompressedSize == block.UncompressedSize) //block.CompressedSize <= 36 && block.UncompressedSize <= 32
                 {
                     Buffer.BlockCopy(readBuffer, 0, buffer, bufferOffset, block.UncompressedSize);
                 }
@@ -167,10 +184,10 @@ namespace CUE4Parse.UE4.Assets.Objects
             if (bufferOffset != buffer.Length)
                 throw new Exception("Buffer not fully filled by decompressed data");
         }
-        
+
         public static void ReadCompressedChunk(Stream Ar, byte[] buffer, CompressionMethod Compression)
         {
-            var header = new FCompressedChunkHeader(Ar); 
+            var header = new FCompressedChunkHeader(Ar);
 
             int bufferOffset = 0;
 
@@ -188,7 +205,7 @@ namespace CUE4Parse.UE4.Assets.Objects
                     bytesRead += r;
                 }
 
-                if (block.CompressedSize == block.UncompressedSize)//block.CompressedSize <= 36 && block.UncompressedSize <= 32
+                if (block.CompressedSize == block.UncompressedSize) //block.CompressedSize <= 36 && block.UncompressedSize <= 32
                 {
                     Buffer.BlockCopy(readBuffer, 0, buffer, bufferOffset, block.UncompressedSize);
                 }
@@ -243,7 +260,7 @@ namespace CUE4Parse.UE4.Assets.Objects
                 _data = new Lazy<byte[]>(() => data);
                 return;
             }
-            
+
             if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
             {
                 var data = new byte[Header.ElementCount];
@@ -251,11 +268,11 @@ namespace CUE4Parse.UE4.Assets.Objects
                 _data = new Lazy<byte[]>(() => data);
                 return;
             }
-            
+
             if (LazyLoad)
             {
                 _data = new Lazy<byte[]?>(() =>
-               {
+                {
                     var data = new byte[Header.ElementCount];
                     return ReadBulkDataInto(data) ? data : null;
                 });
@@ -265,9 +282,10 @@ namespace CUE4Parse.UE4.Assets.Objects
                 var data = new byte[Header.ElementCount];
                 if (ReadBulkDataInto(data)) _data = new Lazy<byte[]?>(() => data);
             }
+
             if (Ar.Game < EGame.GAME_UE4_0) Ar.Position += Header.ElementCount;
         }
-        
+
         public FByteBulkData(FAssetArchive Ar, string tfc)
         {
             Header = new FByteBulkDataHeader(Ar);
@@ -284,9 +302,10 @@ namespace CUE4Parse.UE4.Assets.Objects
             {
                 Ar.Position += Header.ElementCount;
             }
+
             if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
             {
-                string tfcPath = Ar.Game == EGame.GAME_RocketLeague ? $@"C:\Program Files\Epic Games\rocketleague\TAGame\CookedPCConsole\{tfc}.tfc" : $@"C:\Program Files (x86)\Steam\steamapps\common\LET IT DIE\BrgGame\CookedPCConsole\{tfc}.tfc";//C:\Program Files (x86)\Steam\steamapps\common\Dev Guy\UDKGame\CookedPC C:\Program Files (x86)\Steam\steamapps\common\Line of Sight\LSGame\CookedPCConsole\ C:\Program Files (x86)\Steam\steamapps\common\King's Quest\DLC\E1\Content\GrahamsGame\CookedPCConsole\
+                string tfcPath = Ar.Game == EGame.GAME_RocketLeague ? $@"C:\Program Files\Epic Games\rocketleague\TAGame\CookedPCConsole\{tfc}.tfc" : $@"C:\Program Files (x86)\Steam\steamapps\common\Line of Sight\LSGame\CookedPCConsole\{tfc}.tfc"; //C:\Program Files (x86)\Steam\steamapps\common\LET IT DIE\BrgGame\CookedPCConsole\ C:\Program Files (x86)\Steam\steamapps\common\Dev Guy\UDKGame\CookedPC C:\Program Files (x86)\Steam\steamapps\common\Line of Sight\LSGame\CookedPCConsole\ C:\Program Files (x86)\Steam\steamapps\common\King's Quest\DLC\E1\Content\GrahamsGame\CookedPCConsole\
                 if (!File.Exists(tfcPath))
                     throw new FileNotFoundException($"TFC file not found: {tfcPath}");
 
@@ -316,7 +335,7 @@ namespace CUE4Parse.UE4.Assets.Objects
                 });
                 return;
             }
-            
+
             if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
             {
                 var data = new byte[Header.ElementCount];
@@ -324,7 +343,7 @@ namespace CUE4Parse.UE4.Assets.Objects
                 _data = new Lazy<byte[]?>(() => data);
                 return;
             }
-            
+
             if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
             {
                 var data = new byte[Header.ElementCount];
@@ -336,7 +355,7 @@ namespace CUE4Parse.UE4.Assets.Objects
             if (LazyLoad)
             {
                 _data = new Lazy<byte[]?>(() =>
-               {
+                {
                     var data = new byte[Header.ElementCount];
                     return ReadBulkDataInto(data) ? data : null;
                 });
@@ -346,9 +365,10 @@ namespace CUE4Parse.UE4.Assets.Objects
                 var data = new byte[Header.ElementCount];
                 if (ReadBulkDataInto(data)) _data = new Lazy<byte[]?>(() => data);
             }
+
             Ar.Position += Header.ElementCount;
         }
-        
+
         public FByteBulkData(FAssetArchive Ar, bool skip = false)
         {
             Header = new FByteBulkDataHeader(Ar);
@@ -380,7 +400,7 @@ namespace CUE4Parse.UE4.Assets.Objects
                 return false;
             }
 
-            var Ar = (FAssetArchive)_savedAr.Clone(); // TODO: remove and use FArchive.ReadAt
+            var Ar = (FAssetArchive) _savedAr.Clone(); // TODO: remove and use FArchive.ReadAt
             Ar.Position = _dataPosition;
             if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload))
             {

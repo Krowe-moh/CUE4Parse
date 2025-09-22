@@ -3,27 +3,16 @@ using System.Collections.Generic;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Readers;
+using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 
 namespace CUE4Parse.UE4.Objects.PhysicsEngine;
 
-public class UPhysicsAssetInstance : UPhysicsAsset;
-public class UPhysicsAsset : Assets.Exports.UObject
+public class UPhysicsAssetInstance : UPhysicsAsset
 {
-    public int[] BoundsBodies;
-    public FPackageIndex[] SkeletalBodySetups; // USkeletalBodySetup
-    public FPackageIndex[] ConstraintSetup; // UPhysicsConstraintTemplate
-    
-    public Dictionary<FRigidBodyIndexPair, bool>? CollisionDisableTable;
-
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-
-        BoundsBodies = GetOrDefault(nameof(BoundsBodies), Array.Empty<int>());
-        SkeletalBodySetups = GetOrDefault(nameof(SkeletalBodySetups), Array.Empty<FPackageIndex>());
-        ConstraintSetup = GetOrDefault(nameof(ConstraintSetup), Array.Empty<FPackageIndex>());
-
         var numRows = Ar.Read<int>();
         CollisionDisableTable = new Dictionary<FRigidBodyIndexPair, bool>(numRows);
         for (var i = 0; i < numRows; i++)
@@ -37,15 +26,62 @@ public class UPhysicsAsset : Assets.Exports.UObject
     {
         base.WriteJson(writer, serializer);
 
- //       writer.WritePropertyName("CollisionDisableTable");
-  //      writer.WriteStartArray();
+        writer.WritePropertyName("CollisionDisableTable");
+        writer.WriteStartArray();
 
-      //  foreach (var Table in CollisionDisableTable)
-       // {
-   //         serializer.Serialize(writer, Table);
-    //    }
+        if (CollisionDisableTable != null)
+        {
+            foreach (var Table in CollisionDisableTable)
+            {
+                serializer.Serialize(writer, Table);
+            }
+        }
 
-      //  writer.WriteEndArray();
+        writer.WriteEndArray();
+    }
+}
+public class UPhysicsAsset : Assets.Exports.UObject
+{
+    public int[] BoundsBodies;
+    public FPackageIndex[] SkeletalBodySetups; // USkeletalBodySetup
+    public FPackageIndex[] ConstraintSetup; // UPhysicsConstraintTemplate
+
+    public Dictionary<FRigidBodyIndexPair, bool>? CollisionDisableTable;
+
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+
+        BoundsBodies = GetOrDefault(nameof(BoundsBodies), Array.Empty<int>());
+        SkeletalBodySetups = GetOrDefault(nameof(SkeletalBodySetups), Array.Empty<FPackageIndex>());
+        ConstraintSetup = GetOrDefault(nameof(ConstraintSetup), Array.Empty<FPackageIndex>());
+
+        if (Ar.Game < EGame.GAME_UE4_0) return;
+        var numRows = Ar.Read<int>();
+        CollisionDisableTable = new Dictionary<FRigidBodyIndexPair, bool>(numRows);
+        for (var i = 0; i < numRows; i++)
+        {
+            var rowKey = new FRigidBodyIndexPair(Ar);
+            CollisionDisableTable[rowKey] = Ar.ReadBoolean();
+        }
+    }
+
+    protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
+    {
+        base.WriteJson(writer, serializer);
+
+        writer.WritePropertyName("CollisionDisableTable");
+        writer.WriteStartArray();
+
+        if (CollisionDisableTable != null)
+        {
+            foreach (var Table in CollisionDisableTable)
+            {
+                serializer.Serialize(writer, Table);
+            }
+        }
+
+        writer.WriteEndArray();
     }
 }
 

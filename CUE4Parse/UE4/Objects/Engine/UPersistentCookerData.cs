@@ -2,6 +2,7 @@ using System;
 using CUE4Parse.UE4.Assets.Readers;
 using System.Collections.Generic;
 using CUE4Parse.UE4.Objects.Core.Misc;
+using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 
@@ -18,39 +19,39 @@ namespace CUE4Parse.UE4.Objects.Engine
             ClassName = Ar.ReadFString();
         }
     }
-    
+
     public class FCookedBulkDataInfo
     {
-        public uint SavedBulkDataFlags;
-        public uint SavedElementCount;
-        public uint SavedBulkDataOffsetInFile;
-        public uint SavedBulkDataSizeOnDisk;
-        public String TextureFileCacheName;
+        public long SavedBulkDataFlags;
+        public int SavedElementCount;
+        public int SavedBulkDataOffsetInFile;
+        public int SavedBulkDataSizeOnDisk;
+        public FName TextureFileCacheName;
 
         public FCookedBulkDataInfo(FAssetArchive Ar)
         {
-            SavedBulkDataFlags = Ar.Read<uint>();
-            SavedElementCount = Ar.Read<uint>();
-            SavedBulkDataOffsetInFile = Ar.Read<uint>();
-            SavedBulkDataSizeOnDisk = Ar.Read<uint>();
-            TextureFileCacheName = Ar.ReadFName().Text;
+            SavedBulkDataFlags = Ar.Read<int>();
+            SavedElementCount = Ar.Read<int>();
+            SavedBulkDataOffsetInFile = Ar.Read<int>();
+            SavedBulkDataSizeOnDisk = Ar.Read<int>();
+            TextureFileCacheName = Ar.ReadFName();
         }
     }
-    
+
     public class FCookedTextureFileCacheInfo
     {
         public FGuid TextureFileCacheGuid;
-        public string TextureFileCacheName;
+        public FName TextureFileCacheName;
         public double LastSaved;
 
         public FCookedTextureFileCacheInfo(FAssetArchive Ar)
         {
             TextureFileCacheGuid = Ar.Read<FGuid>();
-            TextureFileCacheName = Ar.ReadFName().Text;
+            TextureFileCacheName = Ar.ReadFName();
             LastSaved = Ar.Read<double>();
         }
     }
-    
+
     public class UPersistentCookerData : Assets.Exports.UObject
     {
         public Dictionary<string, FPackageTreeEntry[]> ClassMap;
@@ -59,7 +60,7 @@ namespace CUE4Parse.UE4.Objects.Engine
         public Dictionary<string, FCookedTextureFileCacheInfo> CookedTextureFileCacheInfoMap;
         public Dictionary<string, double> FilenameToTimeMap;
         public Dictionary<string, int> FilenameToCookedVersion;
-        public ulong TextureFileCacheWaste;
+        public long TextureFileCacheWaste;
         public double LastNonSeekfreeCookTime;
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
@@ -73,11 +74,13 @@ namespace CUE4Parse.UE4.Objects.Engine
                     () => Ar.ReadFString(),
                     () => Ar.ReadMap(() => Ar.ReadFString(), () => Ar.ReadArray(() => new FPackageTreeEntry(Ar)))
                 );
+                Ar.Read<int>();
+                Ar.Read<int>();
             }
             CookedBulkDataInfoMap = Ar.ReadMap(() => Ar.ReadFString(), () => new FCookedBulkDataInfo(Ar));
             FilenameToTimeMap = Ar.ReadMap(() => Ar.ReadFString(), () => Ar.Read<double>());
-            TextureFileCacheWaste = Ar.Read<ulong>();
-            LastNonSeekfreeCookTime = Ar.Read<double>();
+            TextureFileCacheWaste = Ar.Read<long>();
+            //LastNonSeekfreeCookTime = Ar.Read<double>();
             FilenameToCookedVersion = Ar.ReadMap(() => Ar.ReadFString(), () => Ar.Read<int>());
             if(Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_TEXTURE_FILECACHE_GUIDS)
             {
@@ -108,7 +111,7 @@ namespace CUE4Parse.UE4.Objects.Engine
 
             writer.WritePropertyName("FilenameToCookedVersion");
             serializer.Serialize(writer, FilenameToCookedVersion);
-            
+
             writer.WritePropertyName("CookedTextureFileCacheInfoMap");
             serializer.Serialize(writer, CookedTextureFileCacheInfoMap);
         }

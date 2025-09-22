@@ -61,7 +61,7 @@ public class UStaticMesh : UObject
     public FPackageIndex[] Sockets { get; private set; } // UStaticMeshSocket[]
     public FStaticMeshRenderData? RenderData { get; private set; }
     public FStaticMaterial[]? StaticMaterials { get; private set; }
-    public ResolvedObject?[] Materials { get; private set; } // UMaterialInterface[]
+    public ResolvedObject?[] Materials { get; set; } // UMaterialInterface[]
     public int LODForCollision { get; private set; }
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
@@ -161,7 +161,10 @@ public class UStaticMesh : UObject
 
             Ar.ReadArray(() => new FPackageIndex(Ar));
             Ar.Read<FRotator>(); // ThumbnailAngle
-            Ar.Read<int>(); // ThumbnailDistance
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_THUMBNAIL_DISTANCE)
+            {
+                Ar.Read<int>(); // ThumbnailDistance
+            }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_VERSION_18)
             {

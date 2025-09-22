@@ -18,6 +18,12 @@ public class UInstancedStaticMeshComponent : UStaticMeshComponent
     {
         base.Deserialize(Ar, validPos);
 
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_BULKSERIALIZE_INSTANCE_DATA && Ar.Game < EGame.GAME_UE4_0)
+        {
+            Ar.SkipBulkArrayData(); // PerInstanceSMData
+            return;
+        }
+
         var bCooked = false;
         if (FFortniteMainBranchObjectVersion.Get(Ar) >= FFortniteMainBranchObjectVersion.Type.SerializeInstancedStaticMeshRenderData ||
             FEditorObjectVersion.Get(Ar) >= FEditorObjectVersion.Type.SerializeInstancedStaticMeshRenderData)
