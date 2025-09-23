@@ -178,6 +178,11 @@ namespace CUE4Parse.UE4.Readers
 
         public T[] ReadBulkArray<T>() where T : struct
         {
+            if (Ver < EUnrealEngineObjectUE3Version.VER_ADDED_BULKSERIALIZE_SANITY_CHECKING)
+            {
+                var elementCountLegacy = Read<int>();
+                return ReadArray<T>(elementCountLegacy);
+            }
             var elementSize = Read<int>();
             var elementCount = Read<int>();
             if (elementCount == 0)

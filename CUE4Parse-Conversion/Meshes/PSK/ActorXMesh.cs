@@ -413,7 +413,7 @@ public class ActorXMesh
     }
     public void ExportStaticSockets(FPackageIndex[] sockets, List<CSkelMeshBone> bones)
     {
-        if (sockets.Length == 0) return;
+        if (sockets == null || sockets.Length == 0) return;
         switch (Options.SocketFormat)
         {
             case ESocketFormat.Socket:

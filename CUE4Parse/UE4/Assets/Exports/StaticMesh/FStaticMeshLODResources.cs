@@ -19,6 +19,7 @@ public class FStaticMeshLODResources
     public FBoxSphereBounds? SourceMeshBounds;
     public FCardRepresentationData? CardRepresentationData { get; set; }
     public float MaxDeviation { get; }
+    public int NumVertices { get; set; }
     public FPositionVertexBuffer? PositionVertexBuffer { get; set; }
     public FStaticMeshVertexBuffer? VertexBuffer { get; private set; }
     public FColorVertexBuffer? ColorVertexBuffer { get; set; }
@@ -28,10 +29,6 @@ public class FStaticMeshLODResources
     public FRawStaticIndexBuffer? ReversedDepthOnlyIndexBuffer { get; private set; }
     public FRawStaticIndexBuffer? WireframeIndexBuffer { get; private set; }
     public FRawStaticIndexBuffer? AdjacencyIndexBuffer { get; private set; }
-
-    public bool SkipLod => VertexBuffer == null || IndexBuffer == null ||
-                           PositionVertexBuffer == null;
-
     public enum EClassDataStripFlag : byte
     {
         CDSF_AdjacencyData = 1,
@@ -190,7 +187,7 @@ public class FStaticMeshLODResources
             }
 
             skipStreams:
-            if (Ar.Game < EGame.GAME_UE4_0) Ar.Read<int>(); // NumVertices
+            if (Ar.Game < EGame.GAME_UE4_0) NumVertices = Ar.Read<int>();
         }
         else
         {

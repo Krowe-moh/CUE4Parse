@@ -12,6 +12,8 @@ namespace CUE4Parse_Conversion.Sounds;
 
 public static class SoundDecoder
 {
+    public const uint OGGMagic = 0x4F676753; // OGG
+    public const uint RIFFMagic = 0x46464952; // RIFF
     public static void Decode(this UObject export, bool shouldDecompress, out string audioFormat, out byte[]? data)
     {
         switch (export)
@@ -28,7 +30,6 @@ public static class SoundDecoder
 
     public static void Decode(this USoundNodeWave nodeWave, bool shouldDecompress, out string audioFormat, out byte[]? data)
     {
-        audioFormat = "OGG";
         byte[]? input = new[]
             {
                 nodeWave.RawSound,
@@ -41,7 +42,19 @@ public static class SoundDecoder
             }
             .Select(s => s.Header.ElementCount > 0 ? s.Data : null)
             .FirstOrDefault(d => d != null);
-
+        using var archive = new FByteArchive("WhoDoesntLoveCats", input);
+        var Magic = archive.Read<int>();
+        if (Magic == OGGMagic) // OGG
+        {
+            audioFormat = "OGG";
+        } else if (Magic == RIFFMagic)
+        {
+            audioFormat = "WEM";
+        }
+        else
+        {
+            throw new NotImplementedException(Magic.ToString());
+        }
         data = Decompress(shouldDecompress, ref audioFormat, input);
     }
 

@@ -62,7 +62,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         public readonly uint Tag;
         public FPackageFileVersion FileVersionUE;
         public EUnrealEngineObjectLicenseeUEVersion FileVersionLicenseeUE;
-        public FCustomVersionContainer CustomVersionContainer;
+        public FCustomVersionContainer? CustomVersionContainer;
         public EPackageFlags PackageFlags;
         public int TotalHeaderSize;
         public readonly string PackageName;

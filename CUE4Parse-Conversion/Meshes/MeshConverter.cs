@@ -85,10 +85,9 @@ public static class MeshConverter
         for (var i = 0; i < originalMesh.RenderData.LODs.Length; i++)
         {
             var srcLod = originalMesh.RenderData.LODs[i];
-            if (srcLod.SkipLod) continue;
 
-            var numTexCoords = srcLod.VertexBuffer!.NumTexCoords;
-            var numVerts = srcLod.PositionVertexBuffer!.Verts.Length;
+            var numTexCoords = srcLod.VertexBuffer?.NumTexCoords ?? 0;
+            var numVerts = srcLod.PositionVertexBuffer?.Verts?.Length ?? srcLod.NumVertices;
             if (numVerts == 0 && numTexCoords == 0)
             {
                 continue;
@@ -141,10 +140,8 @@ public static class MeshConverter
             for (var j = 0; j < numVerts; j++)
             {
                 var suv = srcLod.VertexBuffer.UV[j];
-                if (suv.Normal[1].Data != 0)
-                    throw new ParserException("Not implemented: should only be used in UE3");
 
-                var pos = srcLod.PositionVertexBuffer.Verts[j];
+                var pos = srcLod.PositionVertexBuffer?.Verts[j] ?? FVector.ZeroVector;
                 if (spline != null) // TODO normals
                 {
                     var distanceAlong = USplineMeshComponent.GetAxisValueRef(ref pos, spline.ForwardAxis);
@@ -153,7 +150,7 @@ public static class MeshConverter
                     pos = sliceTransform.TransformPosition(pos);
                 }
 
-                staticMeshLod.Verts[j].Position = pos;
+                staticMeshLod.Verts[j].Position = suv?.Position ?? pos;
                 UnpackNormals(suv.Normal, staticMeshLod.Verts[j]);
                 staticMeshLod.Verts[j].UV.U = suv.UV[0].U;
                 staticMeshLod.Verts[j].UV.V = suv.UV[0].V;
@@ -162,6 +159,11 @@ public static class MeshConverter
                 {
                     staticMeshLod.ExtraUV.Value[k - 1][j].U = suv.UV[k].U;
                     staticMeshLod.ExtraUV.Value[k - 1][j].V = suv.UV[k].V;
+                }
+
+                if (suv?.Color != null)
+                {
+                    staticMeshLod.VertexColors[j] = suv.Color;
                 }
 
                 if (srcLod.ColorVertexBuffer?.NumVertices > 0 &&
@@ -558,11 +560,7 @@ public static class MeshConverter
         v.Tangent = normal[0];
         v.Normal = normal[2];
 
-        // new UE3 version - binormal is not serialized and restored in vertex shader
-        if (normal[1] is not null && normal[1].Data != 0)
-        {
-            throw new NotImplementedException();
-        }
+        // UE3 - normal[1] not restored in vertex shader
     }
 
     public static bool TryConvert(this ALandscapeProxy landscape, ULandscapeComponent[]? landscapeComponents, ELandscapeExportFlags flags, out CStaticMesh? convertedMesh, out Dictionary<string,Image> heightMaps, out Dictionary<string, SKBitmap> weightMaps)

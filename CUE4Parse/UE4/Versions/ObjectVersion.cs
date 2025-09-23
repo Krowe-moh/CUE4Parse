@@ -1525,6 +1525,7 @@ namespace CUE4Parse.UE4.Versions
         // versions missing (LMK if you find it)
 
         AddedPackageFlags = 475,
+        AddedRemovedNormal = 477,
         AddedPackageSource = 482,
 
         aaqw = 492,
