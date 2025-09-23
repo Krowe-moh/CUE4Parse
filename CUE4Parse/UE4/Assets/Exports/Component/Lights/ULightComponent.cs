@@ -16,7 +16,7 @@ public class UUIDynamicFieldProvider : UObject
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MULTICOLUMN_SUPPORT) // VER_ADDED_COLLECTION_DATA 
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_COLLECTION_DATA)
         {
             // TMap<FName, TMap<FName,TArray<FString>>> PersistentCollectionData;
             Ar.ReadMap(

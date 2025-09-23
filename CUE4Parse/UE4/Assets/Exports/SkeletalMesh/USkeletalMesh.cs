@@ -147,8 +147,16 @@ public partial class USkeletalMesh : UObject
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            Ar.ReadMap(() => Ar.ReadFName(), () => Ar.Read<int>()); // NameIndexMap
-            Ar.ReadArray<int>(); // PerPolyBoneKDOPs
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADD_SKELMESH_NAMEINDEXMAP)
+            {
+                Ar.ReadMap(() => Ar.ReadFName(), () => Ar.Read<int>()); // NameIndexMap
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SKELMESH_BONE_KDOP)
+            {
+                Ar.ReadArray<int>(); // PerPolyBoneKDOPs
+            }
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_MAPPING)
             {
                 Ar.ReadArray(Ar.ReadFString); // BoneBreakNames

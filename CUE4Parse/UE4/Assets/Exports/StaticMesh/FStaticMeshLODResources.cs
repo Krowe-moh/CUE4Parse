@@ -157,8 +157,7 @@ public class FStaticMeshLODResources
             PositionVertexBuffer = new FPositionVertexBuffer(Ar);
             noPosition:
             VertexBuffer = new FStaticMeshVertexBuffer(Ar);
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_SEPARATED_STATIC_MESH_POSITIONS) goto skipStreams;
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SEPARATED_STATIC_MESH_POSITIONS && Ar.Ver < EUnrealEngineObjectUE3Version.wwwwasa) goto skipStreams;
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_SEPARATED_STATIC_MESH_POSITIONS || Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SEPARATED_STATIC_MESH_POSITIONS && Ar.Ver < EUnrealEngineObjectUE3Version.MovedColorFromUVItem) goto skipStreams;
 
             if (Ar.Game == EGame.GAME_Borderlands3)
             {

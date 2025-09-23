@@ -154,12 +154,26 @@ public class UMaterial : UMaterialInterface
             Ar.Read<int>(); // QualityMask
         }
 
-        //2 = MSQ_MAX
-        for (int QualityIndex = 0; QualityIndex < (Ar.Game == EGame.GAME_RocketLeague ? 1 : 2); QualityIndex++)
+        for (int QualityIndex = 0; QualityIndex < (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_FALLBACKS && Ar.Game != EGame.GAME_RocketLeague ? 2 : (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR ? 1 : 0)); QualityIndex++)
         {
-            Ar.ReadArray(Ar.ReadFString); // CompileErrors
-            Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>()); // TextureDependencyLengthMap
-            Ar.Read<int>(); // MaxTextureDependencyLength
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FMATERIAL_COMPILATION_ERRORS)
+            {
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_ERROR_RESAVE)
+                {
+                    Ar.ReadArray(Ar.ReadFString); // CompileErrors
+                }
+                else
+                {
+                    Ar.ReadMap(() => new FPackageIndex(Ar), Ar.ReadFString); // LegacyCompileErrors
+                }
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_TEXTUREDEPENDENCYLENGTH)
+            {
+                Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>()); // TextureDependencyLengthMap
+                Ar.Read<int>(); // MaxTextureDependencyLength
+            }
+
             Ar.Read<FGuid>(); // Id
             Ar.Read<int>(); // NumUserTexCoords;
             if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
@@ -188,32 +202,43 @@ public class UMaterial : UMaterialInterface
             else
             {
                 ReferencedTextures.AddRange(
-                        Ar.ReadArray(() => new FPackageIndex(Ar))
-                            .Select(idx => idx.TryLoad(out UTexture texture) ? texture : null)
-                            .Where(t => t != null)!
-                    ); // UniformExpressionTextures
+                    Ar.ReadArray(() => new FPackageIndex(Ar))
+                        .Select(idx => idx.TryLoad(out UTexture texture) ? texture : null)
+                        .Where(t => t != null)!
+                ); // UniformExpressionTextures
             }
 
-            Ar.ReadBoolean(); // bUsesSceneColor
-            Ar.ReadBoolean(); // bUsesSceneDepth
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICPARAMETERS_ADDED)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR)
             {
-                Ar.ReadBoolean(); // bUsesDynamicParameter
+                Ar.ReadBoolean(); // bUsesSceneColor
+                Ar.ReadBoolean(); // bUsesSceneDepth
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICPARAMETERS_ADDED)
+                {
+                    Ar.ReadBoolean(); // bUsesDynamicParameter
+                }
+
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATEXP_LIGHTMAPUVS_ADDED)
+                {
+                    Ar.ReadBoolean(); // bUsesLightmapUVs
+                }
+
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_EDITOR_VERTEX_SHADER)
+                {
+                    Ar.ReadBoolean(); // bUsesMaterialVertexPositionOffset
+                }
+
+                Ar.Read<int>(); // UsingTransforms
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATEXP_LIGHTMAPUVS_ADDED)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_TEXTUREDENSITY)
             {
-                Ar.ReadBoolean(); // bUsesLightmapUVs
+                Ar.ReadArray(() => new FTextureLookup(Ar));
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_EDITOR_VERTEX_SHADER)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FALLBACK_DROPPED_COMPONENTS_TRACKING)
             {
-                Ar.ReadBoolean(); // bUsesMaterialVertexPositionOffset
+                Ar.Read<int>(); // DummyDroppedFallbackComponents
             }
-
-            Ar.Read<int>(); // UsingTransforms
-            Ar.ReadArray(() => new FTextureLookup(Ar));
-            Ar.Read<int>(); // DummyDroppedFallbackComponents
         }
 
         //FMaterialResource::Serialize

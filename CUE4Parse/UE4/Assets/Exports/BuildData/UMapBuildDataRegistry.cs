@@ -378,15 +378,13 @@ public class FLegacyLightMap1D : FLightMap
         {
             if (elementIndex < NUM_DIRECTIONAL_LIGHTMAP_COEF || Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_SIMPLE_LIGHTING)
             {
-                Ar.Read<float>(); // x
-                Ar.Read<float>(); // y
-                Ar.Read<float>(); // z
+                Ar.Read<FVector>();
             }
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_SIMPLE_LIGHTING)
         {
-            new FIntBulkData(Ar);
+            new FIntBulkData(Ar); // SimpleSamples
         }
     }
 }

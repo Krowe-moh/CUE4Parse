@@ -13,7 +13,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
         public readonly FName Name;
         public readonly int ParentIndex;
         public readonly VJointPosPsk BonePos;
-        
+
         public FMeshBoneInfo(FArchive Ar)
         {
             Name = Ar.ReadFName();
@@ -24,14 +24,9 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
                 Ar.Read<int>(); // NumChildren
             }
             ParentIndex = Ar.Read<int>();
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SKELMESH_DRAWSKELTREEMANAGER && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SKELMESH_DRAWSKELTREEMANAGER && Ar.Ver < EUnrealEngineObjectUE4Version.REFERENCE_SKELETON_REFACTOR)
             {
-                Ar.Read<int>(); // BoneColor
-            }
-
-            if (Ar.Game >= EGame.GAME_UE4_0 && Ar.Ver < EUnrealEngineObjectUE4Version.REFERENCE_SKELETON_REFACTOR)
-            {
-                Ar.Read<FColor>();
+                Ar.Read<FColor>(); // BoneColor
             }
         }
 

@@ -249,7 +249,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             TemplateIndex = Ar.Ver >= EUnrealEngineObjectUE4Version.TemplateIndex_IN_COOKED_EXPORTS ? new FPackageIndex(Ar) : new FPackageIndex();
             OuterIndex = new FPackageIndex(Ar);
             ObjectName = Ar.ReadFName();
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedArcheType && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedArcheType && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_ARCHETYPE_INDEX_FROM_LINKER_TABLES)
             {
                 Ar.Read<int>(); // Archetype
             }

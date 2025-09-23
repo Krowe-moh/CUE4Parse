@@ -53,13 +53,13 @@ public class FStaticMeshSection
             Material = new FPackageIndex((FAssetArchive)Ar).ResolvedObject;
             bEnableCollision = Ar.ReadBoolean();
             Ar.ReadBoolean(); // OldEnableCollision
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.wwwwaa) bCastShadow = Ar.ReadBoolean();
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedCastShadow) bCastShadow = Ar.ReadBoolean();
             FirstIndex = Ar.Read<int>();
             NumTriangles = Ar.Read<int>();
             MinVertexIndex = Ar.Read<int>();
             MaxVertexIndex = Ar.Read<int>();
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.aaqw) MaterialIndex = Ar.Read<int>();
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_FRAGMENTINDEX) Ar.SkipFixedArray(8); 
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_VERSION_16) MaterialIndex = Ar.Read<int>();
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_FRAGMENTINDEX) Ar.SkipFixedArray(8);
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_PLATFORMMESHDATA)
             {
                 var bLoadPlatformData = Ar.ReadFlag();
@@ -70,7 +70,7 @@ public class FStaticMeshSection
             }
             return;
         }
-        
+
         MaterialIndex = Ar.Read<int>();
         FirstIndex = Ar.Read<int>();
         NumTriangles = Ar.Read<int>();

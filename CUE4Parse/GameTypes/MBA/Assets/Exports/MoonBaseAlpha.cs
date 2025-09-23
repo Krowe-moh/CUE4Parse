@@ -9,6 +9,7 @@ public class UMBA_UIComp_ServerBrowserPresenter : UComponent;
 public class UMBA_UIComp_ListPresenter : UComponent;
 public class UUDKSkeletalMeshComponent : UComponent;
 public class UMBA_SpriteComponent : UComponent;
+public class UMBA_SimCar : UComponent;
 public class UMBA_PositionReplicationErrorCorrector : UComponent;
 public class UMBA_BroadcastAnimationComponent : UComponent;
 public class UMBA_DockableActorComponent : UComponent;

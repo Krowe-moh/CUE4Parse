@@ -18,4 +18,4 @@ namespace CUE4Parse_Conversion.ActorX
             Size.Serialize(Ar);
         }
     }
-} 
+}

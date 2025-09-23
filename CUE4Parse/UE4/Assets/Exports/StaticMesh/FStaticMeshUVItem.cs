@@ -17,7 +17,7 @@ namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
 
         public FStaticMeshUVItem(FArchive Ar, bool useHighPrecisionTangents, int numStaticUVSets, bool useStaticFloatUVs)
         {
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.wwwwasa)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.MovedColorFromUVItem)
             {
                 Position = Ar.Read<FVector>();
                 Color = Ar.Read<FColor>();

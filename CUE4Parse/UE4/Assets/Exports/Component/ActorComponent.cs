@@ -224,6 +224,7 @@ public class UPaperGroupedSpriteComponent : UMeshComponent;
 public class UPaperRenderComponent : UPaperSpriteComponent;
 public class UPaperSpriteComponent : UMeshComponent;
 public class UPaperTerrainComponent : UPrimitiveComponent;
+public class UTerrainComponent : UPrimitiveComponent;
 public class UPaperTerrainSplineComponent : USplineComponent;
 public class UPaperTileMapComponent : UMeshComponent;
 public class UPaperTileMapRenderComponent : UPaperTileMapComponent;

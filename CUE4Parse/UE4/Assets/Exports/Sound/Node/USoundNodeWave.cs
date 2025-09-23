@@ -14,7 +14,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
         public FByteBulkData WIIUSound;
         public FByteBulkData IPhoneSound;
         public FByteBulkData FlashSound;
-        
+
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
@@ -31,39 +31,44 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
             }
 
             RawSound = new FByteBulkData(Ar);
-            
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_UPDATED_SOUND_NODE_WAVE && Ar.Ver < EUnrealEngineObjectUE3Version.VER_CLEANUP_SOUNDNODEWAVE)
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_RAW_SURROUND_DATA && Ar.Ver < EUnrealEngineObjectUE3Version.VER_UPDATED_SOUND_NODE_WAVE)
+            {
+                Ar.ReadArray(() => new FByteBulkData(Ar));
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_NUM_CHANNELS && Ar.Ver < EUnrealEngineObjectUE3Version.VER_CLEANUP_SOUNDNODEWAVE)
             {
                 Ar.Read<int>(); // ChannelCount
             }
-            
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_PC_DATA)
             {
                 PCSound = new FByteBulkData(Ar);
             }
 
             if (Ar.Game == EGame.GAME_SuddenAttack2) return;
-            
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_XBOX360_DATA)
             {
                 XboxSound = new FByteBulkData(Ar);
             }
-            
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_PS3_DATA)
             {
                 PS3Sound = new FByteBulkData(Ar);
             }
-            
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_WIIU_COMPRESSED_SOUNDS)
             {
                 WIIUSound = new FByteBulkData(Ar);
             }
-            
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_IPHONE_COMPRESSED_SOUNDS)
             {
                 IPhoneSound = new FByteBulkData(Ar);
             }
-            
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FLASH_MERGE_TO_MAIN)
             {
                 FlashSound = new FByteBulkData(Ar);

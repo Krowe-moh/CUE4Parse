@@ -24,5 +24,6 @@ public class FRawAnimSequenceTrack : IUStruct
         PosKeys = Ar.ReadBulkArray<FVector>();
         RotKeys = Ar.ReadBulkArray<FQuat>();
         ScaleKeys = Ar.Ver >= EUnrealEngineObjectUE4Version.ANIM_SUPPORT_NONUNIFORM_SCALE_ANIMATION ? Ar.ReadBulkArray<FVector>() : [];
+        KeyTimes = Ar.Ver < EUnrealEngineObjectUE3Version.VER_RAW_ANIMDATA_REDUX ? Ar.ReadBulkArray<float>() : [];
     }
 }

@@ -74,16 +74,24 @@ public class FStaticMeshComponentLODInfo
             }
         }
 
-        if (!stripFlags.IsClassDataStripped(OverrideColorsStripFlag))
+        if (!stripFlags.IsClassDataStripped(OverrideColorsStripFlag) && Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MESH_PAINT_SYSTEM_ENUM)
         {
-            var bLoadVertexColorData = Ar.Read<byte>();
-            if (bLoadVertexColorData == 1)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_OVERWRITE_VERTEX_COLORS_MEM_OPTIMIZED)
             {
-                OverrideVertexColors = new FColorVertexBuffer(Ar);
+                var bLoadVertexColorData = Ar.Read<byte>();
+                if (bLoadVertexColorData == 1)
+                {
+                    OverrideVertexColors = new FColorVertexBuffer(Ar);
+                }
+            }
+            else
+            {
+                // TODO: OverrideVertexColors =
+                Ar.ReadArray<FColor>();
             }
         }
 
-        if (!stripFlags.IsEditorDataStripped())
+        if (!stripFlags.IsEditorDataStripped() && Ar.Ver >= EUnrealEngineObjectUE3Version.VER_PRESERVE_SMC_VERT_COLORS)
         {
             PaintedVertices = Ar.ReadArray(() => new FPaintedVertex(Ar));
         }
