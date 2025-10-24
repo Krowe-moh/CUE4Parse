@@ -120,7 +120,7 @@ public class FStaticLODModel
     public FMultisizeIndexContainer AdjacencyIndexBuffer;
     public FSkeletalMeshVertexClothBuffer ClothVertexBuffer;
     public FSkeletalMeshHalfEdgeBuffer HalfEdgeBuffer;
-    public bool SkipLod => Indices == null || Indices.Indices16.Length < 1 && Indices.Indices32.Length < 1;
+    public bool SkipLod => Indices?.Buffer == null || Indices.Buffer.Length < 1;
     // Game specific data
     public object? AdditionalBuffer;
 
@@ -146,7 +146,7 @@ public class FStaticLODModel
         else
         {
             // UE4.19+ uses 32-bit index buffer (for editor data)
-            Indices = new FMultisizeIndexContainer { Indices32 = Ar.ReadBulkArray<uint>() };
+            Indices = new FMultisizeIndexContainer(Ar.ReadBulkArray<uint>());
         }
 
         ActiveBoneIndices = Ar.ReadArray<short>();
@@ -243,7 +243,7 @@ public class FStaticLODModel
         else
         {
             // UE4.19+ uses 32-bit index buffer (for editor data)
-            Indices = new FMultisizeIndexContainer { Indices32 = Ar.ReadBulkArray<uint>() };
+            Indices = new FMultisizeIndexContainer(Ar.ReadBulkArray<uint>());
         }
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.OldformatDeprecated)

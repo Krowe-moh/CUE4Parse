@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using CUE4Parse.GameTypes.Borderlands4.Assets.Objects.Properties;
 using CUE4Parse.GameTypes.FN.Assets.Exports;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Readers;
@@ -20,7 +21,8 @@ public enum ReadType : byte
     NORMAL,
     MAP,
     ARRAY,
-    OPTIONAL
+    OPTIONAL,
+    RAW,
 }
 
 public abstract class FPropertyTagType<T> : FPropertyTagType
@@ -152,8 +154,12 @@ public abstract class FPropertyTagType
             "WeakObjectProperty" => new WeakObjectProperty(Ar, type),
             "OptionalProperty" => new OptionalProperty(Ar, tagData, type),
             "VerseStringProperty" => new VerseStringProperty(Ar, type),
-            "VerseFunctionProperty" => null,
+            "VerseFunctionProperty" => new ObjectProperty(Ar, type),
             "VerseDynamicProperty" => new ObjectProperty(Ar, type), // idk, but for now read as ObjectProperty
+
+            "CustomProperty_FD" or "GbxDefPtrProperty" when Ar.Game == EGame.GAME_Borderlands4 => new GbxDefPtrProperty(Ar, type),
+            "CustomProperty_FE" or "GameDataHandleProperty" when Ar.Game == EGame.GAME_Borderlands4 => new GameDataHandleProperty(Ar, type),
+
             _ => null
         };
 #if DEBUG

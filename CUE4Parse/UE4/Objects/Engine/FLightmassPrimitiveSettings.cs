@@ -22,13 +22,14 @@ namespace CUE4Parse.UE4.Objects.Engine
             {
                 bUseTwoSidedLighting = Ar.ReadBoolean();
                 bShadowIndirectOnly = Ar.ReadBoolean();
+                if (Ar.Game is EGame.GAME_OutlastTrials) Ar.Position += 4;
                 FullyOccludedSamplesFraction = Ar.Read<float>();
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INTEGRATED_LIGHTMASS)
             {
                 bUseEmissiveForStaticLighting = Ar.ReadBoolean();
-                bUseVertexNormalForHemisphereGather = Ar.Ver >= EUnrealEngineObjectUE4Version.NEW_LIGHTMASS_PRIMITIVE_SETTING ? Ar.ReadBoolean() : false;
+                bUseVertexNormalForHemisphereGather = Ar.Ver >= EUnrealEngineObjectUE4Version.NEW_LIGHTMASS_PRIMITIVE_SETTING && Ar.ReadBoolean();
                 EmissiveLightFalloffExponent = Ar.Read<float>();
             }
 

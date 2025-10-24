@@ -50,8 +50,11 @@ public class UClass : UStruct
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        if (Ar.Game == EGame.GAME_AWayOut) Ar.Position += 4;
+        if (Ar.Game == EGame.GAME_AWayOut)
+            Ar.Position += 4;
 
+                <<<<<<<
+        HEAD
         if (Ar.Ver < EUnrealEngineObjectUE3Version.Release62)
         {
             // temp
@@ -91,19 +94,19 @@ public class UClass : UStruct
         {
             Ar.ReadArray(() => new Dependency(Ar));
         }
-        
+
         if (Ar.Ver < EUnrealEngineObjectUE3Version.PackageImportsDeprecated)
         {
             Ar.ReadArray(() => Ar.ReadFName());
         }
-        
+
         // Variables.
         ClassWithin = new FPackageIndex(Ar);
         ClassConfigName = Ar.ReadFName();
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedHideCategoriesToUClass && Ar.Game < EGame.GAME_UE4_0)
         {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DisplacedHideCategories && Ar.Ver < EUnrealEngineObjectUE3Version.VER_MP3ENC_TO_MSENC)// && Ar.UE4Version < 117
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DisplacedHideCategories && Ar.Ver < EUnrealEngineObjectUE3Version.VER_MP3ENC_TO_MSENC) // && Ar.UE4Version < 117
             {
                 Ar.ReadArray(() => Ar.ReadFName());
             }
@@ -121,9 +124,9 @@ public class UClass : UStruct
                 Ar.ReadArray(() => new FPackageIndex(Ar));
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.CompactIndexDeprecated)//&& Ar.UE4Version < 118
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.CompactIndexDeprecated) //&& Ar.UE4Version < 118
             {
-                 Ar.ReadMap(
+                Ar.ReadMap(
                     () => new FPackageIndex(Ar),
                     () => Ar.ReadFName()
                 );
@@ -162,6 +165,17 @@ public class UClass : UStruct
         }
 
         // Load serialized interface classes
+        ====== =
+
+        FuncMap = Ar.ReadMap(Ar.ReadFName, () => new FPackageIndex(Ar));
+        ClassFlags = Ar.Read<EClassFlags>();
+
+        if (Ar.Game is EGame.GAME_StarWarsJediFallenOrder or EGame.GAME_StarWarsJediSurvivor or EGame.GAME_AshesOfCreation) Ar.Position += 4;
+
+        ClassWithin = new FPackageIndex(Ar);
+        ClassConfigName = Ar.ReadFName();
+        ClassGeneratedBy = new FPackageIndex(Ar);
+            >>>>>>> upstream / master
         Interfaces = Ar.ReadArray(() => new FImplementedInterface(Ar));
 
         if (Ar.Game < EGame.GAME_UE4_0)
@@ -190,25 +204,26 @@ public class UClass : UStruct
         {
             _ = Ar.ReadFName();
         }
-        
+
         if (Ar.Game >= EGame.GAME_UE4_0)
         {
             _ = Ar.ReadBoolean();
             _ = Ar.ReadFName();
         }
-        
+
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_COOKED_TO_UCLASS)
         {
             bCooked = Ar.ReadBoolean();
         }
 
-        // Defaults.
         ClassDefaultObject = new FPackageIndex(Ar);
 
         if (Ar.Game == EGame.GAME_RocketLeague)
         {
-            Ar.ReadMap(Ar.ReadFName, Ar.ReadUObject);
+            Ar.ReadMap(Ar.ReadFName, () => new FPackageIndex(Ar));
         }
+
+        if (Ar.Game == EGame.GAME_Borderlands4) _ = Ar.ReadMap(Ar.Read<ulong>, Ar.Read<int>);
     }
 
     public Assets.Exports.UObject? ConstructObject(EObjectFlags flags)
