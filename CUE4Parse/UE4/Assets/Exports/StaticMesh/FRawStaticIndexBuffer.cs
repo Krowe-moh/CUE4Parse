@@ -19,7 +19,8 @@ public class FRawStaticIndexBuffer() : FRawIndexBuffer
 
             if (Ar.Versions["RawIndexBuffer.HasShouldExpandTo32Bit"])
             {
-                Indices16 = Ar.ReadBulkArray<ushort>();
+                //Indices16 =
+                    Ar.ReadBulkArray<ushort>();
                 if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR) Ar.Read<int>();
             }
             else

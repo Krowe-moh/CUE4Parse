@@ -13,7 +13,7 @@ public enum EGame : uint
         GAME_SuddenAttack2 = GAME_UE3_0 + 2,
         GAME_DCUniverseOnline = GAME_UE3_0 + 3,
         GAME_MortalRoyale = GAME_UE3_0 + 4,
-        
+
     GAME_UE4_0 = GameUtils.GameUe4Base + (0 << 16),
     GAME_UE4_1 = GameUtils.GameUe4Base + (1 << 16),
     GAME_UE4_2 = GameUtils.GameUe4Base + (2 << 16),
@@ -226,7 +226,7 @@ public static class GameUtils
                 < EGame.GAME_UE5_4 => new FPackageFileVersion(0, 522, 1009),
                 < EGame.GAME_UE5_5 => new FPackageFileVersion(0, 522, 1012),
                 < EGame.GAME_UE5_6 => new FPackageFileVersion(0, 522, 1013),
-                < EGame.GAME_UE5_8 => new FPackageFileVersion(522, 1017),
+                < EGame.GAME_UE5_8 => new FPackageFileVersion(0, 522, 1017),
                 _ => new FPackageFileVersion((int) EUnrealEngineObjectUE3Version.VER_AUTOMATIC_VERSION, (int) EUnrealEngineObjectUE4Version.AUTOMATIC_VERSION, (int) EUnrealEngineObjectUE5Version.AUTOMATIC_VERSION)
             };
         }
@@ -238,7 +238,7 @@ public static class GameUtils
                 _ => (int)EUnrealEngineObjectUE3Version.VER_AUTOMATIC_VERSION
             });
         }
-        
+
         return FPackageFileVersion.CreateUE4Version(game switch
         {
             // General UE4 Versions

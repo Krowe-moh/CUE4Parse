@@ -135,26 +135,13 @@ public class FCompressedChunkHeader
 
 namespace CUE4Parse.UE4.Assets.Objects
 {
-    public static bool LazyLoad = true;
-
-    public readonly FByteBulkDataHeader Header;
-    public EBulkDataFlags BulkDataFlags => Header.BulkDataFlags;
-
-    public byte[]? Data => _data?.Value;
-    private readonly Lazy<byte[]?>? _data;
-
-    private readonly FAssetArchive _savedAr;
-    private readonly long _dataPosition;
-
-    public FByteBulkData(byte[] data)
+    [JsonConverter(typeof(FByteBulkDataConverter))]
+    public class FByteBulkData
     {
-        _data = new Lazy<byte[]>(data);
-    }
+        public static bool LazyLoad = true;
 
-    public FByteBulkData(Lazy<byte[]?> data)
-    {
-        _data = data;
-    }
+        public readonly FByteBulkDataHeader Header;
+        public EBulkDataFlags BulkDataFlags => Header.BulkDataFlags;
 
         public byte[]? Data => _data?.Value;
         private readonly Lazy<byte[]?>? _data;
@@ -241,40 +228,25 @@ namespace CUE4Parse.UE4.Assets.Objects
 
         public FByteBulkData(byte[] data)
         {
-            // Log.Warning("Bulk with no data");
-            return;
+            _data = new Lazy<byte[]>(data);
         }
 
-        _dataPosition = Ar.Position;
-        _savedAr = Ar;
-
-        if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload))
+        public FByteBulkData(Lazy<byte[]?> data)
         {
-            Ar.Position += Header.ElementCount;
-        }
-        else if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB) && !BulkDataFlags.HasFlag(BULKDATA_PayloadInSeperateFile)) // but where is data? inlined or in separate file?
-        {
-            throw new ParserException(Ar, "TODO: CompressedZlib");
+            _data = data;
         }
 
-        if (LazyLoad)
+        public FByteBulkData(FAssetArchive Ar)
         {
-            _data = new Lazy<byte[]?>(() =>
+            Header = new FByteBulkDataHeader(Ar);
+            if (Header.ElementCount == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused))
             {
-                var data = new byte[Header.ElementCount];
-                return ReadBulkDataInto(data) ? data : null;
-            });
-        }
-        else
-        {
-            var data = new byte[Header.ElementCount];
-            if (ReadBulkDataInto(data)) _data = new Lazy<byte[]?>(() => data);
-        }
-    }
+                // Log.Warning("Bulk with no data");
+                return;
+            }
 
-    protected FByteBulkData(FAssetArchive Ar, bool skip = false)
-    {
-        Header = new FByteBulkDataHeader(Ar);
+            _dataPosition = Ar.Position;
+            _savedAr = Ar;
 
             if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload))
             {
@@ -297,60 +269,18 @@ namespace CUE4Parse.UE4.Assets.Objects
                 return;
             }
 
-        if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || Header.OffsetInFile == Ar.Position)
-        {
-            Ar.Position += Header.SizeOnDisk;
-        }
-    }
-
-    private void CheckReadSize(int read)
-    {
-        if (read != Header.ElementCount) {
-            Log.Warning("Read {read} bytes, expected {Header.ElementCount}", read, Header.ElementCount);
-        }
-    }
-
-    public bool ReadBulkDataInto(byte[] data, int offset = 0)
-    {
-        if (data.Length - offset < Header.ElementCount) {
-            Log.Error("Data buffer is too small");
-            return false;
-        }
-
-        var Ar = (FAssetArchive)_savedAr.Clone(); // TODO: remove and use FArchive.ReadAt
-        Ar.Position = _dataPosition;
-        if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload))
-        {
-#if DEBUG
-            Log.Debug("bulk data in .uexp file (Force Inline Payload) (flags={BulkDataFlags}, pos={HeaderOffsetInFile}, size={HeaderSizeOnDisk}))", BulkDataFlags, Header.OffsetInFile, Header.SizeOnDisk);
-#endif
-            CheckReadSize(Ar.Read(data, offset, Header.ElementCount));
-        }
-        else if (BulkDataFlags.HasFlag(BULKDATA_OptionalPayload))
-        {
-#if DEBUG
-            Log.Debug("bulk data in {CookedIndex}.uptnl file (Optional Payload) (flags={BulkDataFlags}, pos={HeaderOffsetInFile}, size={HeaderSizeOnDisk}))", Header.CookedIndex, BulkDataFlags, Header.OffsetInFile, Header.SizeOnDisk);
-#endif
-            if (!TryGetBulkPayload(Ar, PayloadType.UPTNL, out var uptnlAr)) return false;
-
-            CheckReadSize(uptnlAr.ReadAt(Header.OffsetInFile, data, offset, Header.ElementCount));
-        }
-        else if (BulkDataFlags.HasFlag(BULKDATA_PayloadInSeperateFile))
-        {
-#if DEBUG
-            Log.Debug("bulk data in {CookedIndex}.ubulk file (Payload In Separate File) (flags={BulkDataFlags}, pos={HeaderOffsetInFile}, size={HeaderSizeOnDisk}))", Header.CookedIndex, BulkDataFlags, Header.OffsetInFile, Header.SizeOnDisk);
-#endif
-            if (!TryGetBulkPayload(Ar, PayloadType.UBULK, out var ubulkAr)) return false;
-            if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
+            if (LazyLoad)
             {
-                var compressedData = new byte[Header.SizeOnDisk];
-                ubulkAr.ReadAt(Header.OffsetInFile, compressedData, offset, (int)Header.SizeOnDisk);
-                using var dataAr = new FByteArchive("", compressedData, Ar.Versions);
-                dataAr.SerializeCompressedNew(data, GetDataSize(), "Zlib", ECompressionFlags.COMPRESS_NoFlags, false, out var decompressedLength);
+                _data = new Lazy<byte[]?>(() =>
+                {
+                    var data = new byte[Header.ElementCount];
+                    return ReadBulkDataInto(data) ? data : null;
+                });
             }
             else
             {
-                CheckReadSize(ubulkAr.ReadAt(Header.OffsetInFile, data, offset, Header.ElementCount));
+                var data = new byte[Header.ElementCount];
+                if (ReadBulkDataInto(data)) _data = new Lazy<byte[]?>(() => data);
             }
 
             if (Ar.Game < EGame.GAME_UE4_0) Ar.Position += Header.ElementCount;
@@ -375,7 +305,7 @@ namespace CUE4Parse.UE4.Assets.Objects
 
             if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
             {
-                string tfcPath = Ar.Game == EGame.GAME_RocketLeague ? $@"C:\Program Files\Epic Games\rocketleague\TAGame\CookedPCConsole\{tfc}.tfc" : $@"C:\Program Files (x86)\Steam\steamapps\common\Line of Sight\LSGame\CookedPCConsole\{tfc}.tfc"; //C:\Program Files (x86)\Steam\steamapps\common\LET IT DIE\BrgGame\CookedPCConsole\ C:\Program Files (x86)\Steam\steamapps\common\Dev Guy\UDKGame\CookedPC C:\Program Files (x86)\Steam\steamapps\common\Line of Sight\LSGame\CookedPCConsole\ C:\Program Files (x86)\Steam\steamapps\common\King's Quest\DLC\E1\Content\GrahamsGame\CookedPCConsole\
+                string tfcPath = Ar.Game == EGame.GAME_RocketLeague ? $@"C:\Program Files\Epic Games\rocketleague\TAGame\CookedPCConsole\{tfc}.tfc" : $@"C:\Program Files (x86)\Steam\steamapps\common\Scourge Outbreak Demo\ScourgeGame\CookedPCConsole\{tfc}.tfc";//"C:\Program Files (x86)\Steam\steamapps\common\Painkiller Hell & Damnation Demo\PKHDGame\CookedPCConsole\{tfc}.tfc";//$@"C:\Program Files (x86)\Steam\steamapps\common\Tribes\TribesGame\CookedPC\{tfc}.tfc"; //$@"C:\Program Files (x86)\Steam\steamapps\common\Line of Sight\LSGame\CookedPCConsole\{tfc}.tfc"; //C:\Program Files (x86)\Steam\steamapps\common\LET IT DIE\BrgGame\CookedPCConsole\ C:\Program Files (x86)\Steam\steamapps\common\Dev Guy\UDKGame\CookedPC C:\Program Files (x86)\Steam\steamapps\common\Line of Sight\LSGame\CookedPCConsole\ C:\Program Files (x86)\Steam\steamapps\common\King's Quest\DLC\E1\Content\GrahamsGame\CookedPCConsole\
                 if (!File.Exists(tfcPath))
                     throw new FileNotFoundException($"TFC file not found: {tfcPath}");
 
@@ -441,24 +371,17 @@ namespace CUE4Parse.UE4.Assets.Objects
 
         public FByteBulkData(FAssetArchive Ar, bool skip = false)
         {
-#if DEBUG
-            Log.Debug("bulk data in .uexp file (Payload At End Of File) (flags={BulkDataFlags}, pos={HeaderOffsetInFile}, size={HeaderSizeOnDisk}))", BulkDataFlags, Header.OffsetInFile, Header.SizeOnDisk);
-#endif
-            // stored in same file, but at different position
-            // save archive position
-            if (Header.OffsetInFile + Header.ElementCount <= Ar.Length)
+            Header = new FByteBulkDataHeader(Ar);
+
+            if (BulkDataFlags.HasFlag(BULKDATA_Unused | BULKDATA_PayloadInSeperateFile | BULKDATA_PayloadAtEndOfFile))
             {
-                CheckReadSize(Ar.ReadAt(Header.OffsetInFile, data, offset, Header.ElementCount));
+                return;
             }
-            else throw new ParserException(Ar, $"Failed to read PayloadAtEndOfFile, {Header.OffsetInFile} is out of range");
-        }
-        else if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
-        {
-            throw new ParserException(Ar, "TODO: CompressedZlib");
-        }
-        else if (BulkDataFlags.HasFlag(BULKDATA_LazyLoadable) || BulkDataFlags.HasFlag(BULKDATA_None))
-        {
-            CheckReadSize(Ar.Read(data, offset, Header.ElementCount));
+
+            if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || Header.OffsetInFile == Ar.Position)
+            {
+                Ar.Position += Header.SizeOnDisk;
+            }
         }
 
         private void CheckReadSize(int read)
@@ -468,8 +391,6 @@ namespace CUE4Parse.UE4.Assets.Objects
                 Log.Warning("Read {read} bytes, expected {Header.ElementCount}", read, Header.ElementCount);
             }
         }
-        return payloadAr != null;
-    }
 
         public bool ReadBulkDataInto(byte[] data, int offset = 0)
         {
@@ -527,7 +448,9 @@ namespace CUE4Parse.UE4.Assets.Objects
             Ar.Dispose();
             return true;
         }
-        catch
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool TryGetBulkPayload(FAssetArchive Ar, PayloadType type, [MaybeNullWhen(false)] out FAssetArchive payloadAr)
         {
             payloadAr = null;
             if (Header.CookedIndex.IsDefault)
@@ -546,7 +469,7 @@ namespace CUE4Parse.UE4.Assets.Objects
             return payloadAr != null;
         }
 
-            return false;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int GetDataSize() => Header.ElementCount;
     }
 }

@@ -53,8 +53,6 @@ public class UClass : UStruct
         if (Ar.Game == EGame.GAME_AWayOut)
             Ar.Position += 4;
 
-                <<<<<<<
-        HEAD
         if (Ar.Ver < EUnrealEngineObjectUE3Version.Release62)
         {
             // temp
@@ -165,8 +163,6 @@ public class UClass : UStruct
         }
 
         // Load serialized interface classes
-        ====== =
-
         FuncMap = Ar.ReadMap(Ar.ReadFName, () => new FPackageIndex(Ar));
         ClassFlags = Ar.Read<EClassFlags>();
 
@@ -175,7 +171,6 @@ public class UClass : UStruct
         ClassWithin = new FPackageIndex(Ar);
         ClassConfigName = Ar.ReadFName();
         ClassGeneratedBy = new FPackageIndex(Ar);
-            >>>>>>> upstream / master
         Interfaces = Ar.ReadArray(() => new FImplementedInterface(Ar));
 
         if (Ar.Game < EGame.GAME_UE4_0)
