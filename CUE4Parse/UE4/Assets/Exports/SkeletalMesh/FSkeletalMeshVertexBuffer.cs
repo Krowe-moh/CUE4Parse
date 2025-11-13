@@ -61,11 +61,11 @@ public class FSkeletalMeshVertexBuffer
         {
             if (!bUsePackedPosition)
             {
-                VertsHalfPacked = Ar.ReadBulkArray(() => new FGPUVertHalfPacked(Ar, NumTexCoords));
+                VertsHalf = Ar.ReadBulkArray(() => new FGPUVertHalf(Ar, bExtraBoneInfluences, NumTexCoords));
             }
             else
             {
-                VertsHalf = Ar.ReadBulkArray(() => new FGPUVertHalf(Ar, bExtraBoneInfluences, NumTexCoords));
+                VertsHalfPacked = Ar.ReadBulkArray(() => new FGPUVertHalfPacked(Ar, NumTexCoords));
             }
         }
         else
