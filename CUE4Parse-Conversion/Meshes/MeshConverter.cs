@@ -86,8 +86,8 @@ public static class MeshConverter
         {
             var srcLod = originalMesh.RenderData.LODs[i];
 
-            var numTexCoords = srcLod.VertexBuffer?.NumTexCoords ?? 0;
-            var numVerts = srcLod.PositionVertexBuffer?.Verts?.Length ?? srcLod.NumVertices;
+            var numTexCoords = srcLod.VertexBuffer!.NumTexCoords;
+            var numVerts = srcLod.PositionVertexBuffer!.Verts.Length;
             if (numVerts == 0 && numTexCoords == 0)
             {
                 continue;
@@ -113,7 +113,7 @@ public static class MeshConverter
                 {
                     if (srcLod.IndexBuffer?.Buffer == null)
                         throw new ParserException("Static mesh LOD has no index buffer");
-                    
+
                     var copy = new uint[srcLod.IndexBuffer.Buffer.Length];
                     Array.Copy(srcLod.IndexBuffer.Buffer, copy, copy.Length);
                     return copy;
@@ -142,14 +142,14 @@ public static class MeshConverter
             };
 
             staticMeshLod.AllocateVerts(numVerts);
-            if (srcLod.ColorVertexBuffer?.NumVertices != 0)
+            if (srcLod.ColorVertexBuffer!.NumVertices != 0)
                 staticMeshLod.AllocateVertexColorBuffer();
 
             for (var j = 0; j < numVerts; j++)
             {
                 var suv = srcLod.VertexBuffer.UV[j];
 
-                var pos = srcLod.PositionVertexBuffer?.Verts[j] ?? FVector.ZeroVector;
+                var pos = srcLod.PositionVertexBuffer.Verts[j];
                 if (spline != null) // TODO normals
                 {
                     var distanceAlong = USplineMeshComponent.GetAxisValueRef(ref pos, spline.ForwardAxis);
@@ -158,7 +158,7 @@ public static class MeshConverter
                     pos = sliceTransform.TransformPosition(pos);
                 }
 
-                staticMeshLod.Verts[j].Position = suv?.Position ?? pos;
+                staticMeshLod.Verts[j].Position = pos;
                 UnpackNormals(suv.Normal, staticMeshLod.Verts[j]);
                 staticMeshLod.Verts[j].UV.U = suv.UV[0].U;
                 staticMeshLod.Verts[j].UV.V = suv.UV[0].V;
@@ -169,10 +169,10 @@ public static class MeshConverter
                     staticMeshLod.ExtraUV.Value[k - 1][j].V = suv.UV[k].V;
                 }
 
-                if (suv?.Color != null)
-                {
-                    staticMeshLod.VertexColors[j] = suv.Color;
-                }
+                //if (suv?.Color != null)
+                //{
+                    //staticMeshLod.VertexColors[j] = suv.Color;
+                //}
 
                 if (srcLod.ColorVertexBuffer?.NumVertices > 0 &&
                     srcLod.ColorVertexBuffer.Data != null &&
@@ -406,7 +406,7 @@ public static class MeshConverter
                 {
                     if (srcLod.Indices?.Buffer == null)
                         throw new ParserException("Skeletal mesh LOD has no index buffer");
-                    
+
                     var copy = new uint[srcLod.Indices.Buffer.Length];
                     Array.Copy(srcLod.Indices.Buffer, copy, copy.Length);
                     return copy;

@@ -1,4 +1,5 @@
 ﻿using CUE4Parse.ActorX;
+using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Readers;

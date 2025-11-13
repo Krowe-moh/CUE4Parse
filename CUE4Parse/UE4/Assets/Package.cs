@@ -10,6 +10,7 @@ using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Assets.Utils;
+using CUE4Parse.UE4.IO.Objects;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Objects.UObject;
@@ -25,6 +26,7 @@ namespace CUE4Parse.UE4.Assets
         public FName LevelName;
         public FGuid[] Guids;
     }
+
     [SkipObjectRegistration]
     public sealed class Package : AbstractUePackage
     {
@@ -43,7 +45,6 @@ namespace CUE4Parse.UE4.Assets
         public FPackageIndex[]? PreloadDependencies { get; }
         public FObjectDataResource[]? DataResourceMap { get; }
         public FSoftObjectPath[] SoftObjectPaths { get; }
-        public List<byte[]>? EditorThumbnails { get; }
         public FPackageTrailer? Trailer { get; }
 
         private ExportLoader[] _exportLoaders; // Nonnull if useLazySerialization is false
@@ -56,7 +57,8 @@ namespace CUE4Parse.UE4.Assets
                 uptnl != null ? new Lazy<FArchive?>(() => uptnl) : null,
                 provider,
                 useLazySerialization)
-        { }
+        {
+        }
 
         public Package(string name, byte[] uasset, byte[]? uexp, byte[]? ubulk = null, byte[]? uptnl = null, IFileProvider? provider = null, bool useLazySerialization = true)
             : this(
@@ -66,7 +68,8 @@ namespace CUE4Parse.UE4.Assets
                 uptnl != null ? new FByteArchive($"{name}.uptnl", uptnl) : null,
                 provider,
                 useLazySerialization)
-        { }
+        {
+        }
 
         public Package(
             FArchive uasset,
@@ -105,7 +108,7 @@ namespace CUE4Parse.UE4.Assets
                 RocketLeagueAes.Decrypt(encryptedData, Summary.CompressedChunkInfoOffset, true, out byte[] decryptedData);
 
                 long remaining = uassetAr.Length - uassetAr.Position;
-                byte[] after = uassetAr.ReadBytes((int)remaining);
+                byte[] after = uassetAr.ReadBytes((int) remaining);
 
                 byte[] fullBuffer = new byte[before.Length + decryptedData.Length + after.Length];
                 int offset = 0;
@@ -126,6 +129,7 @@ namespace CUE4Parse.UE4.Assets
                     uassetAr.SeekAbsolute(Summary.NameOffset + Summary.CompressedChunkInfoOffset, SeekOrigin.Begin);
                     Summary.CompressedChunks = uassetAr.ReadArray(() => new FCompressedChunk(uassetAr));
                 }
+
                 long totalSize = uassetAr.Length;
                 foreach (var chunk in Summary.CompressedChunks)
                 {
@@ -137,7 +141,7 @@ namespace CUE4Parse.UE4.Assets
                 var buffer = new byte[totalSize];
 
                 uassetAr.Position = 0;
-                uassetAr.Read(buffer, 0, (int)uassetAr.Length);
+                uassetAr.Read(buffer, 0, (int) uassetAr.Length);
 
                 foreach (var chunk in Summary.CompressedChunks)
                 {
@@ -156,7 +160,7 @@ namespace CUE4Parse.UE4.Assets
                         decompressedData,
                         0,
                         buffer,
-                        (int)chunk.UncompressedOffset,
+                        (int) chunk.UncompressedOffset,
                         decompressedData.Length
                     );
                 }
@@ -221,7 +225,7 @@ namespace CUE4Parse.UE4.Assets
                 uassetAr.SeekAbsolute(Summary.PreloadDependencyOffset, SeekOrigin.Begin);
                 PreloadDependencies = uassetAr.ReadArray(Summary.PreloadDependencyCount, () => new FPackageIndex(uassetAr));
             }
-            
+
             if (Summary is { ThumbnailTableOffset: > 0 })
             {
                 uassetAr.SeekAbsolute(Summary.ThumbnailTableOffset, SeekOrigin.Begin);
@@ -268,7 +272,8 @@ namespace CUE4Parse.UE4.Assets
                 if (uasset.Game == EGame.GAME_AceCombat7 && decryptor != null && xorKey != null)
                 {
                     uexpAr = new FAssetArchive(decryptor.DecryptUexpArchive(uexp, xorKey), this, (int) uassetAr.Length);
-                } else uexpAr = new FAssetArchive(uexp, this, (int) uassetAr.Length);
+                }
+                else uexpAr = new FAssetArchive(uexp, this, (int) uassetAr.Length);
             }
             else uexpAr = uassetAr;
 
@@ -352,68 +357,7 @@ namespace CUE4Parse.UE4.Assets
             return null;
         }
 
-     private ResolvedObject? ResolveImport(FPackageIndex importIndex)
-{
-    int firstIdx = -importIndex.Index - 1;
-    if (firstIdx < 0 || firstIdx >= ImportMap.Length)
-        return null; // invalid import upfront
-
-    var import = ImportMap[firstIdx];
-    var outerMostIndex = importIndex;
-    FObjectImport? outerMostImport = null;
-
-    while (true)
-    {
-        int idx = -outerMostIndex.Index - 1;
-        if (idx < 0 || idx >= ImportMap.Length)
-            break; // invalid index, bail out
-
-        outerMostImport = ImportMap[idx];
-
-        if (outerMostImport.OuterIndex.IsNull)
-            break;
-
-        outerMostIndex = outerMostImport.OuterIndex;
-    }
-
-    // revalidate before dereferencing again
-    int outerIdx = -outerMostIndex.Index - 1;
-    if (outerIdx < 0 || outerIdx >= ImportMap.Length)
-        return new ResolvedImportObject(import, this);
-
-    outerMostImport = ImportMap[outerIdx];
-
-    // We don't support loading script packages, so just return a fallback
-    if (outerMostImport.ObjectName.Text.StartsWith("/Script/"))
-    {
-        return new ResolvedImportObject(import, this);
-    }
-
-    if (Provider == null)
-        return null;
-
-    Package? importPackage = null;
-    if (Provider.TryLoadPackage(outerMostImport.ObjectName.Text, out var package))
-        importPackage = package as Package;
-
-    if (importPackage == null)
-    {
-#if DEBUG
-        // Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, import.ObjectName, Name);
-#endif
-        return new ResolvedImportObject(import, this);
-    }
-
-    string? outer = null;
-    if (outerMostIndex != import.OuterIndex && import.OuterIndex.IsImport)
-    {
-        int outerImportIdx = -import.OuterIndex.Index - 1;
-        if (outerImportIdx < 0 || outerImportIdx >= ImportMap.Length)
-            return new ResolvedImportObject(import, this);
-
-        var outerImport = ImportMap[outerImportIdx];
-        outer = ResolveImport(import.OuterIndex)?.GetPathName();
-        if (outer == null)
+        private ResolvedObject? ResolveImport(FPackageIndex importIndex)
         {
             var import = ImportMap[-importIndex.Index - 1];
             var outerMostIndex = importIndex;
@@ -463,32 +407,42 @@ namespace CUE4Parse.UE4.Assets
             if (importPackage == null)
             {
 #if DEBUG
-            Log.Fatal("Missing outer for import of ({0}): {1} in {2} was not found, but the package exists.",
-                Name, outerImport.ObjectName, importPackage.GetFullName());
+                Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, import.ObjectName, Name);
+#endif
+                return new ResolvedImportObject(import, this);
+            }
+
+            string? outer = null;
+            if (outerMostIndex != import.OuterIndex && import.OuterIndex.IsImport)
+            {
+                var outerImport = ImportMap[-import.OuterIndex.Index - 1];
+                outer = ResolveImport(import.OuterIndex)?.GetPathName();
+                if (outer == null)
+                {
+#if DEBUG
+                    Log.Fatal("Missing outer for import of ({0}): {1} in {2} was not found, but the package exists.", Name, outerImport.ObjectName, importPackage.GetFullName());
+#endif
+                    return new ResolvedImportObject(import, this);
+                }
+            }
+
+            for (var i = 0; i < importPackage.ExportMap.Length; i++)
+            {
+                var export = importPackage.ExportMap[i];
+                if (export.ObjectName.Text != import.ObjectName.Text)
+                    continue;
+                var thisOuter = importPackage.ResolvePackageIndex(export.OuterIndex);
+                if (thisOuter?.GetPathName() == outer)
+                    return new ResolvedExportObject(i, importPackage);
+            }
+
+#if DEBUG
+            Log.Fatal("Missing import of ({0}): {1} in {2} was not found, but the package exists.", Name, import.ObjectName, importPackage.GetFullName());
 #endif
             return new ResolvedImportObject(import, this);
         }
-    }
 
-    for (var i = 0; i < importPackage.ExportMap.Length; i++)
-    {
-        var export = importPackage.ExportMap[i];
-        if (export.ObjectName.Text != import.ObjectName.Text)
-            continue;
-
-        var thisOuter = importPackage.ResolvePackageIndex(export.OuterIndex);
-        if (thisOuter?.GetPathName() == outer)
-            return new ResolvedExportObject(i, importPackage);
-    }
-
-#if DEBUG
-    Log.Fatal("Missing import of ({0}): {1} in {2} was not found, but the package exists.",
-        Name, import.ObjectName, importPackage.GetFullName());
-#endif
-    return new ResolvedImportObject(import, this);
-}
-
-        private class ResolvedExportObject : ResolvedObject
+    private class ResolvedExportObject : ResolvedObject
         {
             private readonly FObjectExport _export;
 

@@ -32,7 +32,7 @@ public class UTextureCube : UTexture
             Format = (EPixelFormat)format;
             var numMips = Ar.Read<int>();
         }
-        
+
         if (Ar.Game >= EGame.GAME_UE4_0)
         {
             var stripFlags = new FStripDataFlags(Ar);

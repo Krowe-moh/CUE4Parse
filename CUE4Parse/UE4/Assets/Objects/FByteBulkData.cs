@@ -305,7 +305,8 @@ namespace CUE4Parse.UE4.Assets.Objects
 
             if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
             {
-                string tfcPath = Ar.Game == EGame.GAME_RocketLeague ? $@"C:\Program Files\Epic Games\rocketleague\TAGame\CookedPCConsole\{tfc}.tfc" : $@"C:\Program Files (x86)\Steam\steamapps\common\Scourge Outbreak Demo\ScourgeGame\CookedPCConsole\{tfc}.tfc";//"C:\Program Files (x86)\Steam\steamapps\common\Painkiller Hell & Damnation Demo\PKHDGame\CookedPCConsole\{tfc}.tfc";//$@"C:\Program Files (x86)\Steam\steamapps\common\Tribes\TribesGame\CookedPC\{tfc}.tfc"; //$@"C:\Program Files (x86)\Steam\steamapps\common\Line of Sight\LSGame\CookedPCConsole\{tfc}.tfc"; //C:\Program Files (x86)\Steam\steamapps\common\LET IT DIE\BrgGame\CookedPCConsole\ C:\Program Files (x86)\Steam\steamapps\common\Dev Guy\UDKGame\CookedPC C:\Program Files (x86)\Steam\steamapps\common\Line of Sight\LSGame\CookedPCConsole\ C:\Program Files (x86)\Steam\steamapps\common\King's Quest\DLC\E1\Content\GrahamsGame\CookedPCConsole\
+
+                string tfcPath = Ar.Owner.Provider.TextureCachePaths[tfc];
                 if (!File.Exists(tfcPath))
                     throw new FileNotFoundException($"TFC file not found: {tfcPath}");
 
