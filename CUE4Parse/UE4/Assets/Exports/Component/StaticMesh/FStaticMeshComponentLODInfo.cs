@@ -91,7 +91,7 @@ public class FStaticMeshComponentLODInfo
             }
         }
 
-        if (!stripFlags.IsEditorDataStripped() && Ar.Ver >= EUnrealEngineObjectUE3Version.VER_PRESERVE_SMC_VERT_COLORS)
+        if (!stripFlags.IsEditorDataStripped() && !Ar.IsFilterEditorOnly && Ar.Ver >= EUnrealEngineObjectUE3Version.VER_PRESERVE_SMC_VERT_COLORS)
         {
             PaintedVertices = Ar.ReadArray(() => new FPaintedVertex(Ar));
         }

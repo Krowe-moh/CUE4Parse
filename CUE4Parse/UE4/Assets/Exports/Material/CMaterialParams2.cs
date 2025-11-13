@@ -49,7 +49,7 @@ public class CMaterialParams2
             "Trunk_BaseColor", "ShadedDiffuse", "LitDiffuse", "Base Colour",
             "Background Diffuse", "BG Diffuse Texture", "Diffuse", "Diffuse_1", "DiffuseTexture", "DiffuseMap", "Diffuse A", "Base Color Map",
             "Diffuse A Map", "Diffuse Top", "Diffuse Side", "Base Diffuse", "Diffuse Base", "Diffuse Base Map", "Diffuse Color Map", "BaseColor_Tex",
-            "DiffuseLayer1", "1 - Albedo", "albedo", "Albedo", "ALB", "TextureAlbedo", "AlbedoTex", "Color_Texture", "color", "Base_D", "Tex_BaseColor",
+            "DiffuseLayer1", "1 - Albedo", "albedo", "Albedo", "Aldebo", "ALB", "TextureAlbedo", "AlbedoTex", "Color_Texture", "color", "Base_D", "Tex_BaseColor",
             "Base Color Texture", "BaseColorTexture", "BaseColor_Texture", "Base_Color", "Base Color", "BaseColor", "Basecolor", "Tex_BC", "TexA_BC",
             "Base Texture Color", "BaseColorA", "BC", "BCA", "BC_Map", "BCE", "Color", "CO", "CO_", "CO_1", "Base_CO", "Base Color + Linework",
             "Tex", "Tex_Color", "Color Tex", "TexColor", "Tex_BaseColor", "AlbedMap", "Tex_Colormap", "ColorMap", "Main_T_BaseColor",

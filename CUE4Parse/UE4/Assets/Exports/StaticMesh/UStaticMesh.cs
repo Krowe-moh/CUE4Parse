@@ -207,22 +207,27 @@ public class UStaticMesh : UObject
 
         if (!stripDataFlags.IsEditorDataStripped())
         {
-            Log.Warning("Static Mesh with Editor Data not implemented yet");
-            Ar.Position = validPos;
-            return;
-            // if (Ar.Ver < EUnrealEngineObjectUE4Version.DEPRECATED_STATIC_MESH_THUMBNAIL_PROPERTIES_REMOVED)
-            // {
-            //     var dummyThumbnailAngle = new FRotator(Ar);
-            //     var dummyThumbnailDistance = Ar.Read<float>();
-            // }
-            //
-            // var highResSourceMeshName = Ar.ReadFString();
-            // var highResSourceMeshCRC = Ar.Read<uint>();
+            if (Ar.Ver < EUnrealEngineObjectUE4Version.DEPRECATED_STATIC_MESH_THUMBNAIL_PROPERTIES_REMOVED)
+            {
+                 var dummyThumbnailAngle = new FRotator(Ar);
+                 var dummyThumbnailDistance = Ar.Read<float>();
+            }
+
+            if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.DeprecatedHighResSourceMesh)
+            {
+                var Deprecated_HighResSourceMeshName = Ar.ReadFString();
+                var Deprecated_HighResSourceMeshCRC = Ar.Read<uint>();
+            }
         }
 
         LightingGuid = Ar.Read<FGuid>(); // LocalLightingGuid
         Sockets = Ar.ReadArray(() => new FPackageIndex(Ar));
 
+        if (!Ar.IsFilterEditorOnly)
+        {
+            return; // so it doesn't throw
+        }
+        
         // https://github.com/EpicGames/UnrealEngine/blob/ue5-main/Engine/Source/Runtime/Engine/Private/StaticMesh.cpp#L6701
         if (bCooked)
         {
@@ -255,13 +260,14 @@ public class UStaticMesh : UObject
                         break;
                     case EGame.GAME_Farlight84:
                     {
+                        Ar.SkipBulkArrayData();
+                        Ar.SkipBulkArrayData();
                         var count = Ar.Read<int>();
                         for (var i = 0; i < count; i++)
                         {
                             Ar.SkipBulkArrayData();
                             Ar.SkipBulkArrayData();
                         }
-
                         break;
                     }
                     default:

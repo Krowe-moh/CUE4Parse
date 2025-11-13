@@ -45,6 +45,7 @@ public class FSkelMeshSection
     public int GenerateUpToLodIndex;
     public int OriginalDataSectionIndex;
     public int ChunkedParentSectionIndex;
+    public int? CustomData;
 
     public bool HasClothData => ClothMappingDataLODs.Any(data => data.Length > 0);
 
@@ -250,6 +251,7 @@ public class FSkelMeshSection
     {
         var stripDataFlags = new FStripDataFlags(Ar);
 
+        if (Ar.Game == EGame.GAME_Raven2) Ar.Position += 4;
         MaterialIndex = Ar.Read<short>();
         BaseIndex = Ar.Read<int>();
         NumTriangles = Ar.Read<int>();
@@ -282,12 +284,14 @@ public class FSkelMeshSection
             bDisabled = Ar.ReadBoolean();
         }
 
+        if (Ar.Game is EGame.GAME_InfinityNikki) CustomData = Ar.Read<int>();
+
         Ar.Position += Ar.Game switch
         {
             EGame.GAME_OutlastTrials => 1,
             EGame.GAME_RogueCompany or EGame.GAME_BladeAndSoul or EGame.GAME_SYNCED or EGame.GAME_StarWarsHunters => 4,
-            EGame.GAME_FragPunk => 8,
-            EGame.GAME_MortalKombat1 or EGame.GAME_InfinityNikki => 12,
+            EGame.GAME_FragPunk or EGame.GAME_InfinityNikki => 8,
+            EGame.GAME_MortalKombat1 => 12,
             EGame.GAME_FateTrigger => 15,
             EGame.GAME_Strinova => 18,
             EGame.GAME_SuicideSquad => 11,

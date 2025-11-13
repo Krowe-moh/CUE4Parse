@@ -14,7 +14,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
         public readonly int ParentIndex;
         public readonly VJointPosPsk BonePos;
 
-        public FMeshBoneInfo(FArchive Ar)
+        public FMeshBoneInfo(FAssetArchive Ar)
         {
             Name = Ar.ReadFName();
             if (Ar.Game < EGame.GAME_UE4_0)
@@ -27,6 +27,11 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SKELMESH_DRAWSKELTREEMANAGER && Ar.Ver < EUnrealEngineObjectUE4Version.REFERENCE_SKELETON_REFACTOR)
             {
                 Ar.Read<FColor>(); // BoneColor
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE4Version.STORE_BONE_EXPORT_NAMES && !Ar.IsFilterEditorOnly)
+            {
+                Ar.SkipFString(); // ExportName
             }
         }
 

@@ -1,21 +1,10 @@
 ﻿using System;
-using System.Buffers.Binary;
 using CUE4Parse.UE4.Assets.Readers;
-using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Objects.Core.Misc;
+using CUE4Parse.UE4.Objects.Core.Compression;
 using Serilog;
 
 namespace CUE4Parse.UE4.Assets.Objects;
-
-public enum EMethod : byte
-{
-    /** Header is followed by one uncompressed block. */
-    None = 0,
-    /** Header is followed by an array of compressed block sizes then the compressed blocks. */
-    Oodle = 3,
-    /** Header is followed by an array of compressed block sizes then the compressed blocks. */
-    LZ4 = 4,
-}
 
 [Flags]
 public enum EFlags
@@ -49,78 +38,15 @@ public enum EFlags
     WasDetached					= 1 << 11
 }
 
-public class FHeader
-{
-    /** A magic number to identify a compressed buffer. Always 0xb7756362. */
-    public uint Magic { get; set; }
-    
-    /** A CRC-32 used to check integrity of the buffer. Uses the polynomial 0x04c11db7. */
-    public int Crc32 { get; set; }
-    
-    /** The method used to compress the buffer. Affects layout of data following the header. */
-    public EMethod Method { get; set; }
-    
-    /** The method-specific compressor used to compress the buffer. */
-    public byte Compressor { get; set; }
-    
-    /** The method-specific compression level used to compress the buffer. */
-    public byte CompressionLevel { get; set; }
-    
-    /** The power of two size of every uncompressed block except the last. Size is 1 << BlockSizeExponent. */
-    public byte BlockSizeExponent { get; set; }
-    
-    /** The number of blocks that follow the header. */
-    public int BlockCount { get; set; }
-    
-    /** The total size of the uncompressed data. */
-    public long TotalRawSize { get; set; }
-    
-    /** The total size of the compressed data including the header. */
-    public long TotalCompressedSize { get; set; }
-    
-    public FHeader(FAssetArchive Ar)
-    {
-        var ExpectedMagic = 0xb7756362; // <dot>ucb
-        Magic = Ar.Read<uint>();
-        Magic = BinaryPrimitives.ReverseEndianness(Magic);
-        if (Magic != ExpectedMagic)
-        {
-            throw new ParserException("EditorBulkData: bad magic number");
-        }
-        
-        Crc32 = Ar.Read<int>();
-        Crc32 = BinaryPrimitives.ReverseEndianness(Crc32);
-        Method = Ar.Read<EMethod>();
-        if (Method != EMethod.None)
-        {
-            throw new NotSupportedException("EditorBulkData: Compression not supported");
-        }
-        
-        Compressor = Ar.Read<byte>();
-        CompressionLevel = Ar.Read<byte>();
-        BlockSizeExponent = Ar.Read<byte>();
-        BlockCount = Ar.Read<int>();
-        BlockCount = BinaryPrimitives.ReverseEndianness(BlockCount);
-
-        TotalRawSize = Ar.Read<long>();
-        TotalRawSize = BinaryPrimitives.ReverseEndianness(TotalRawSize);
-
-        TotalCompressedSize = Ar.Read<long>();
-        TotalCompressedSize = BinaryPrimitives.ReverseEndianness(TotalCompressedSize);
-        Ar.Position += 32; // FBlake3Hash
-    }
-}
-
 public class FEditorBulkData
 {
-    public FHeader Header { get; private set; }
     public EFlags Flags { get; set; }
     public FGuid BulkDataId { get; set; }
     public FSHAHash PayloadContentId { get; set; }
     public long PayloadSize { get; set; }
-    public int Offset { get; set; }
-    public byte[] RawData { get; set; }
-    
+    public long OffsetInFile { get; set; }
+    public FCompressedBuffer Payload { get; set; }
+
     public FEditorBulkData(FAssetArchive Ar)
     {
         Flags = Ar.Read<EFlags>();
@@ -129,16 +55,43 @@ public class FEditorBulkData
         PayloadSize = Ar.Read<long>();
         if (Flags.HasFlag(EFlags.StoredInPackageTrailer))
         {
-            // Seems to be something like bulkdata payloads? not sure
-            Log.Error("EditorBulkData: Stored In Package Trailer is not supported.");
+            if (Ar.Owner is Package package && package.Trailer is not null)
+            {
+                OffsetInFile = package.Trailer.FindPayloadOffsetInFile(PayloadContentId);
+            }
+            else
+            {
+                Log.Warning("BulkData marked as stored in package trailer, but package has no trailer");
+                Payload = new FCompressedBuffer();
+                return;
+            }
+        }
+        else
+        {
+            OffsetInFile = Ar.Read<long>();
+        }
+
+        if (OffsetInFile == -1)
+        {
+            Payload = new FCompressedBuffer();
             return;
         }
-        Offset = Ar.Read<int>();
 
-        Ar.Position = Offset;
-
-        Header = new FHeader(Ar);
-        RawData = Ar.ReadBytes((int)Header.TotalRawSize);
-        Ar.Read<int>(); // FPackage Magic
+        var savedPos = Ar.Position;
+        try
+        {
+            Ar.Position = OffsetInFile;
+            Payload = new FCompressedBuffer(Ar);
+        } 
+        catch (Exception e) 
+        { 
+            Log.Error(e, "Failed to read to EditorBulkData payload at offset {OffsetInFile}", OffsetInFile); 
+            Payload = new FCompressedBuffer(); 
+            return; 
+        }
+        finally
+        {
+            Ar.Position = savedPos;
+        }
     }
 }
