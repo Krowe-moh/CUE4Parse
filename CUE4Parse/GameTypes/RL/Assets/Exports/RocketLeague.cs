@@ -13,6 +13,8 @@ public class UStaticMeshComponent_TA : UComponent
     }
 }
 
+public class UAntennaComponent_TA : UComponent;
+public class UParameterDispenser_X : UComponent;
 public class UActivateAnimSeriesComponent_X : UComponent;
 public class UActionQueue_X : UComponent;
 public class UAkPlaySoundComponent : UComponent;
