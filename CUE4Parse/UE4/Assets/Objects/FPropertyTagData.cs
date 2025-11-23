@@ -97,7 +97,7 @@ public class FPropertyTagData
                             "InputNames", "ClothingTeleportRefBones", "AnimTypes", "ComposePrePassBoneNames", "LevelNames", "ArcheTypeNames", "FireModeTypes", "ChildClassNames", "UseTranslationBoneNames", "m_ControlledNodeNames",
                             "MonsterTypes", "ArenaNames", "BendyBoneControllers", "AcceptableDamageTypes", "CompleteActionPressList", "IgnoreActionPressList", "BoostEmitterSockets", "ComponentLayers", "DeleteCategories",
                             "SavedGameFileNames", "TargetParamNames", "MorphNames", "AnimList", "TrackBoneNames", "CompleteActionIgnorePressList", "ActionNames", "PressedKeys", "ValidAssociatedBones", "PrioritizedSkelBranches",
-                            "HiddenKismetClassNames", "BadPackageNames", "AlwaysShowInSelectedPlatforms", "StartActionPressList", "FailedActionPressList", "RegularPostMatchCelebrationAnims", "StrengthAnimNodeNameList",
+                            "HiddenKismetClassNames", "BadPackageNames", "AlwaysShowInSelectedPlatforms", "StartActionPressList", "FailedActionPressList", "RegularPostMatchCelebrationAnims", "StrengthAnimNodeNameList", "m_EntityList"
                         },
                         ["ObjectProperty"] = new[]
                         {

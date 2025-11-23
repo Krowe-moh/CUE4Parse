@@ -8,12 +8,12 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
     public class USoundNodeWave : UObject
     {
         public FByteBulkData RawSound;
-        public FByteBulkData PCSound;
-        public FByteBulkData XboxSound;
-        public FByteBulkData PS3Sound;
-        public FByteBulkData WIIUSound;
-        public FByteBulkData IPhoneSound;
-        public FByteBulkData FlashSound;
+        public FByteBulkData? PCSound;
+        public FByteBulkData? XboxSound;
+        public FByteBulkData? PS3Sound;
+        public FByteBulkData? WIIUSound;
+        public FByteBulkData? IPhoneSound;
+        public FByteBulkData? FlashSound;
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {

@@ -3,6 +3,7 @@ using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 
+// todo
 namespace CUE4Parse.UE4.Objects.Engine
 {
     public class UShaderCache : Assets.Exports.UObject
@@ -23,8 +24,8 @@ namespace CUE4Parse.UE4.Objects.Engine
                 }
             }
             var ShaderTypeCompressedShaderCode = Ar.ReadMap(
-                () => new FPackageIndex(),               // Key: FShaderType*
-                () => Ar.Read<byte>()  // Value: compressed shader code struct
+                () => new FPackageIndex(),
+                () => Ar.Read<byte>()
             );
 
         }

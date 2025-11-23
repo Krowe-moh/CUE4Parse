@@ -29,6 +29,7 @@ public static class SoundDecoder
 
     public static void Decode(this USoundNodeWave nodeWave, bool shouldDecompress, out string audioFormat, out byte[]? data)
     {
+        // sometimes some platforms can be null so search for non-null
         byte[]? input = new[]
             {
                 nodeWave.RawSound,
@@ -39,8 +40,17 @@ public static class SoundDecoder
                 nodeWave.IPhoneSound,
                 nodeWave.FlashSound
             }
-            .Select(s => s.Header.ElementCount > 0 ? s.Data : null)
-            .FirstOrDefault(d => d != null);
+            .Where(s => s?.Data != null)
+            .Select(s => s.Data)
+            .FirstOrDefault();
+
+        if (input == null)
+        {
+            audioFormat = string.Empty;
+            data = null;
+            return;
+        }
+
         using var archive = new FByteArchive("WhoDoesntLoveCats", input);
         var Magic = archive.Read<int>();
         audioFormat = "OGG";

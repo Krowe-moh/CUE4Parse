@@ -44,7 +44,7 @@ public class UStruct : UField
         {
             Children = Ar.ReadArray(() => new FPackageIndex(Ar));
         }
-        
+
         if (Ar.Ver < EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction)
         {
             Ar.ReadFName();
@@ -52,15 +52,15 @@ public class UStruct : UField
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedCppTextToUStruct)
         {
-            var CppText = new FPackageIndex(Ar); // CppText
+            new FPackageIndex(Ar); // CppText
         }
-        
+
         if (Ar.Game < EGame.GAME_UE4_0)
         {
             Ar.Read<int>(); // Line
             Ar.Read<int>(); // TextPos
         }
-        
+
         if (FCoreObjectVersion.Get(Ar) >= FCoreObjectVersion.Type.FProperties)
         {
             DeserializeProperties(Ar);

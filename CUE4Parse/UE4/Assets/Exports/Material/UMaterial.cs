@@ -149,13 +149,18 @@ public class UMaterial : UMaterialInterface
         if (Ar.Game >= EGame.GAME_UE4_0)
             return;
 
+        var QualityMask = 0;
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MATERIAL_QUALITY_LEVEL)
         {
-            Ar.Read<int>(); // QualityMask
+            QualityMask = Ar.Read<int>();
         }
 
         for (int QualityIndex = 0; QualityIndex < (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_FALLBACKS && Ar.Game != EGame.GAME_RocketLeague ? 2 : (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR ? 1 : 0)); QualityIndex++)
         {
+            if ((QualityMask & (1<<QualityIndex)) == 0)
+            {
+                continue;
+            }
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FMATERIAL_COMPILATION_ERRORS)
             {
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_ERROR_RESAVE)

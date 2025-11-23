@@ -20,7 +20,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Engine.Font
             StartV = Ar.Read<int>();
             USize = Ar.Read<int>();
             VSize = Ar.Read<int>();
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.FontPagesDisplaced)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.temp1)
             {
                 TextureIndex = Ar.Read<byte>();
             }

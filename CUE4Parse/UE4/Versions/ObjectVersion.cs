@@ -9,44 +9,62 @@ namespace CUE4Parse.UE4.Versions
         // this can be enabled should we ever deprecate UE4 versions entirely
         //OLDEST_LOADABLE_PACKAGE = ???,
         // The original UE5 version, at the time this was added the UE4 version was 522, so UE5 will start from 1000 to show a clear difference
+
         INITIAL_VERSION = 1000,
+
         // Support stripping names that are not referenced from export data
         NAMES_REFERENCED_FROM_EXPORT_DATA,
+
         // Added a payload table of contents to the package summary
         PAYLOAD_TOC,
+
         // Added data to identify references from and to optional package
         OPTIONAL_RESOURCES,
+
         // Large world coordinates converts a number of core types to double components by default.
         LARGE_WORLD_COORDINATES,
+
         // Remove package GUID from FObjectExport
         REMOVE_OBJECT_EXPORT_PACKAGE_GUID,
+
         // Add IsInherited to the FObjectExport entry
         TRACK_OBJECT_EXPORT_IS_INHERITED,
+
         // Replace FName asset path in FSoftObjectPath with (package name, asset name) pair FTopLevelAssetPath
         FSOFTOBJECTPATH_REMOVE_ASSET_PATH_FNAMES,
+
         // Add a soft object path list to the package summary for fast remap
         ADD_SOFTOBJECTPATH_LIST,
+
         // Added bulk/data resource table
         DATA_RESOURCES,
+
         // Added script property serialization offset to export table entries for saved, versioned packages
         SCRIPT_SERIALIZATION_OFFSET,
+
         // Adding property tag extension,
         // Support for overridable serialization on UObject,
         // Support for overridable logic in containers
         PROPERTY_TAG_EXTENSION_AND_OVERRIDABLE_SERIALIZATION,
+
         // Added property tag complete type name and serialization type
         PROPERTY_TAG_COMPLETE_TYPE_NAME,
+
         // Changed UE::AssetRegistry::WritePackageData to include PackageBuildDependencies
         ASSETREGISTRY_PACKAGEBUILDDEPENDENCIES,
+
         // Added meta data serialization offset to for saved, versioned packages
         METADATA_SERIALIZATION_OFFSET,
+
         // Added VCells to the object graph
         VERSE_CELLS,
+
         // Changed PackageFileSummary to write FIoHash PackageSavedHash instead of FGuid Guid
         PACKAGE_SAVED_HASH,
+
         // OS shadow serialization of subobjects
         OS_SUB_OBJECT_SHADOW_SERIALIZATION,
-        
+
         // Adds a table of hierarchical type information for imports in a package
         IMPORT_TYPE_HIERARCHIES,
 
@@ -59,6 +77,7 @@ namespace CUE4Parse.UE4.Versions
     public enum EUnrealEngineObjectUE4Version
     {
         DETERMINE_BY_GAME = 0,
+
         // Pre-release UE4 file versions
         ASSET_REGISTRY_TAGS = 112,
         TEXTURE_DERIVED_DATA2 = 124,
@@ -73,6 +92,7 @@ namespace CUE4Parse.UE4.Versions
         SUMMARY_HAS_BULKDATA_OFFSET = 212,
 
         OLDEST_LOADABLE_PACKAGE = 214,
+
         // Removed restriction on blueprint-exposed variables from being read-only
         BLUEPRINT_VARS_NOT_READ_ONLY,
         // Added manually serialized element to UStaticMesh (precalculated nav collision)
@@ -697,6 +717,7 @@ namespace CUE4Parse.UE4.Versions
         ASSETREGISTRY_DEPENDENCYFLAGS,
         // Fixed corrupt licensee flag in 4.26 assets
         CORRECT_LICENSEE_FLAG,
+
         // -----<new versions can be added before this line>-------------------------------------------------
         // this needs to be the last line (see note below)
         AUTOMATIC_VERSION_PLUS_ONE,
@@ -714,15 +735,23 @@ namespace CUE4Parse.UE4.Versions
         AddedHideCategoriesToUClass = 99,
         LightMapScaleAddedToPoly = 106,
         AddedCppTextToUStruct = 120,
-        FontPagesDisplaced = 122,
+
         // only comments exist for these three
 
-        // Added BoneCollisionSpheres, BoneCollisionBoxes & KPhysicsProps to USkeletalMesh - JAG
-        AddedBoneCollisionSpheres = 124,
-        // Added BoneCollisionBoxesModels (UModels corresponding to the BoneCollisionBoxes array) - JAG
-        AddedBoneCollisionBoxesModels = 125,
-        // Changed static mesh collision code - vogel
-        Staticmeshstuff = 126,
+        // Merge in skeletal collision stuff for SVehicle support.
+        temp1 = 122,
+        // removed InclusiveSphereBound from FBSPNode
+        temp2 = 123,
+        // Added BoneCollisionSpheres, BoneCollisionBoxes & KPhysicsProps to USkeletalMesh (Add bBlockKarma to per-bone primitives.)
+        temp3 = 124,
+        // Added BoneCollisionBoxesModels (UModels corresponding to the BoneCollisionBoxes array) (Add bBlockNonZeroExtent/bBlockZeroExtent to per-bone primitives.)
+        temp4 = 125,
+        // Changed static mesh collision code (Merged k-dop static mesh collision code.)
+        temp5 = 126,
+        // Static mesh collision for skeletal meshes. -pv
+        temp6 = 127,
+        // added DetailMode to FDecorationLayer
+        temp7 = 128,
 
         MovedFriendlyNameToUFunction = 160,
         TextureDeprecatedFromPoly = 170,
@@ -1276,8 +1305,12 @@ namespace CUE4Parse.UE4.Versions
         VER_TERRAIN_COLLISION_WORLD_SPACE = 495,
         // Removed DecalManager ref from UWorld
         VER_REMOVED_DECAL_MANAGER_FROM_UWORLD = 496,
+        // Modified SpeedTree vertex factory shader parameters.
+        VER_SPEEDTREE_SHADER_CHANGE	= 497,
         // Fix height-fog pixel shader 4-layer
         VER_HEIGHTFOG_PIXELSHADER_START_DIST_FIX = 498,
+        // MotionBlurShader recompile (added clamping to render target extents)
+        VER_MOTIONBLURSHADER_RECOMPILE_VER2 = 499,
         // Separate pass for LDR BLEND_Modulate transparency mode
         // Modulate preserves dest alpha (depth)
         VER_SM2_BLENDING_SHADER_FIXES = 500,
@@ -1287,9 +1320,17 @@ namespace CUE4Parse.UE4.Versions
         VER_ADDED_MULTICOLUMN_SUPPORT = 503,
         // Serialize cached displacement values for terrain
         VER_TERRAIN_SERIALIZE_DISPLACEMENTS = 504,
+        // Fixed bug which allowed multiple instances of a UIState class get added to style data maps
+        VER_REMOVED_PREFAB_STYLE_DATA = 505,
         // Exposed separate horizontal and vertical texture scale for material texture lookups
         //  Various font changes that affected serialization
         VER_FONT_FORMAT_AND_UV_TILING_CHANGES = 506,
+        // Changed UTVehicleFactory to use a string for class reference in its defaults
+        VER_UTVEHICLEFACTORY_USE_STRING_CLASS = 507,
+        // Fixed the special 0.0f value in the velocity buffer that is used to select between background velocity or dynamic velocity
+        VER_BACKGROUNDVELOCITYVALUE = 508,
+        // Reset vehicle usage flags on some NavigationPoints that had been incorrectly set
+        VER_FIXED_NAV_VEHICLE_USAGE_FLAGS = 509,
         // Changed Texture2DComposite to inherit from Texture instead of Texture2D.
         VER_TEXTURE2DCOMPOSITE_BASE_CHANGE = 510,
         // Fixed fonts serializing all members twice.
@@ -1652,6 +1693,12 @@ namespace CUE4Parse.UE4.Versions
         VER_IMPROVED_MOTIONBLUR2 = 740,
         // Object based Motion Blur scale fix
         VER_HITMASK_MIRRORING_SUPPORT = 741,
+        // Fixed RadialBlur look
+        VER_RADIALBLUR_FIX = 743,
+        // Add Landscape vertex factory LodBias Parameter
+        VER_LANDSCAPEVERTEXFACTORY_ADD_LODBIAS_PARAM = 744,
+        // Optimized AngleBasedSSAO, better quality
+        VER_IMPROVED_ANGLEBASEDSSAO = 746,
         // Optimized AngleBasedSSAO
         VER_IMPROVED_ANGLEBASEDSSAO2 = 747,
         // New character indirect lighting controls

@@ -298,6 +298,11 @@ namespace CUE4Parse.UE4.Objects.Engine
 
             Bounds = new FBoxSphereBounds(Ar);
 
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.DeprecatedPointer)
+            {
+                new FPackageIndex(Ar); // BodySetup
+            }
+
             Vectors = Ar.ReadBulkArray<FVector>();
             Points = Ar.ReadBulkArray<FVector>();
             Nodes = Ar.ReadBulkArray(() => new FBspNode(Ar));
@@ -324,6 +329,10 @@ namespace CUE4Parse.UE4.Objects.Engine
             if (bHasEditorOnlyData)
             {
                 var dummyPolys = new FPackageIndex(Ar);
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.DeprecatedPointer)
+                {
+                    Ar.ReadArray((() => new FBoxSphereBounds(Ar))); // Bounds
+                }
                 Ar.SkipBulkArrayData(); // DummyLeafHulls
                 Ar.SkipBulkArrayData(); // DummyLeaves
             }

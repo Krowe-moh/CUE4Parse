@@ -83,7 +83,7 @@ public class UStaticMesh : UObject
 
         if(Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVE_STATICMESH_COLLISIONMODEL)
         {
-            new FPackageIndex(Ar); // DummyModel;
+            new FPackageIndex(Ar); // CollisionModel;
         }
 
         if (Ar.Versions["StaticMesh.HasNavCollision"])
@@ -227,7 +227,7 @@ public class UStaticMesh : UObject
         {
             return; // so it doesn't throw
         }
-        
+
         // https://github.com/EpicGames/UnrealEngine/blob/ue5-main/Engine/Source/Runtime/Engine/Private/StaticMesh.cpp#L6701
         if (bCooked)
         {
