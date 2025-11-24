@@ -250,7 +250,6 @@ public class FSkelMeshSection
     public void SerializeRenderItem(FAssetArchive Ar)
     {
         var stripDataFlags = new FStripDataFlags(Ar);
-
         if (Ar.Game == EGame.GAME_Raven2) Ar.Position += 4;
         MaterialIndex = Ar.Read<short>();
         BaseIndex = Ar.Read<int>();

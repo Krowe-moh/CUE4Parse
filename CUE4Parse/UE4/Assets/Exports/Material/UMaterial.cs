@@ -135,6 +135,10 @@ public class UMaterial : UMaterialInterface
                 {
                     DeserializeInlineShaderMaps(Ar, LoadedMaterialResources);
                 }
+                catch (Exception e)
+                {
+                    Log.Warning(e, "Failed to deserialize inline shader maps.");
+                }
                 finally
                 {
                     Ar.Position = validPos;

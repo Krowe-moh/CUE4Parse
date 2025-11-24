@@ -29,6 +29,7 @@ public class FPropertyTagData
     public UStruct? Struct;
     public UEnum? Enum;
 
+    public FPropertyTagData() { }
     internal FPropertyTagData(FAssetArchive Ar, string type, string name = "", int size = 0)
     {
         Name = name;

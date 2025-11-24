@@ -193,7 +193,7 @@ public partial class USkeletalMesh : UObject
         }
         if (Ar.Game == EGame.GAME_WorldofJadeDynasty)
         {
-            _ = Ar.Read<FStripDataFlags>();
+            _ = new FStripDataFlags(Ar);
             for (var i = 0; i < LODModels.Length; i++)
             {
                 if (Ar.ReadBoolean() && GetOrDefault<bool>("bGenerateMeshDistanceField")) _ = new FDistanceFieldVolumeData5(Ar);
