@@ -245,10 +245,20 @@ namespace CUE4Parse.UE4.Objects.UObject
 
         public FObjectExport(FAssetArchive Ar)
         {
+            var AA3Obfuscator = 0;
+            if (Ar.Game == EGame.GAME_AmericanArmy3)
+            {
+                AA3Obfuscator = Ar.Read<int>();
+                ClassIndex = new FPackageIndex(Ar.Owner, Ar.Read<int>() ^ AA3Obfuscator);
+                SuperIndex = new FPackageIndex(Ar.Owner, Ar.Read<int>() ^ AA3Obfuscator);
+                OuterIndex = new FPackageIndex(Ar.Owner, Ar.Read<int>() ^ AA3Obfuscator);
+                goto aa3Skip;
+            }
             ClassIndex = new FPackageIndex(Ar);
             SuperIndex = new FPackageIndex(Ar);
             TemplateIndex = Ar.Ver >= EUnrealEngineObjectUE4Version.TemplateIndex_IN_COOKED_EXPORTS ? new FPackageIndex(Ar) : new FPackageIndex();
             OuterIndex = new FPackageIndex(Ar);
+            aa3Skip:
             ObjectName = Ar.ReadFName();
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedArcheType && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_ARCHETYPE_INDEX_FROM_LINKER_TABLES)
             {
@@ -284,6 +294,12 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 SerialSize = Ar.Read<long>();
                 SerialOffset = Ar.Read<long>();
+            }
+
+            if (Ar.Game == EGame.GAME_AmericanArmy3)
+            {
+                SerialSize   ^= AA3Obfuscator;
+                SerialOffset ^= AA3Obfuscator;
             }
 
             if (Ar.Game >= EGame.GAME_UE4_0)

@@ -931,6 +931,7 @@ namespace CUE4Parse.UE4.Versions
 
     public enum EUnrealEngineObjectUE3Version
     {
+        // early UE3 version not documented
         Release61 = 61,
         Release62 = 62,
         Release64 = 64,
@@ -960,28 +961,28 @@ namespace CUE4Parse.UE4.Versions
 
         MovedFriendlyNameToUFunction = 160,
         TextureDeprecatedFromPoly = 170,
-        CompactIndexDeprecated = 178,
+        DeprecatedCompactIndex = 178,
         DeprecatedPointer = 180,
         AddedDelegateSourceToUDelegateProperty = 185,
-        ClassDependenciesDeprecated = 186,
+        DeprecatedClassDependencies = 186,
         DisplacedHideCategories = 187, // todo
         AddedStateStackToUStateFrame = 189,
         PropertyFlagsSizeExpandedTo64Bits = 195,
         AddedComponentGuid = 196,
         Use64BitFlag = 195,
-        stuffig = 202,
+        DeprecateSkelMeshArray = 202,
         PackageImportsDeprecated = 208,
-        shortyes = 209,
-        fwefwef = 207,
+        DeprecatedShortProperties = 209,
+        BonesAsBytes = 207,
         AddedComponentTemplatesToUClass = 210,
-        OldformatDeprecated = 215,
-        todoa = 218,
+        DeprecatedOldLodformat = 215,
+        AddedRawTriangles = 218,
         AddedArcheType = 220,
         AddedBulkLod = 221,
-        AddedComponentMapToExports, // todo
+        AddedComponentMapToExports,
         AddedInterfacesFeature = 222,
 
-        // lowest known documented ver
+        // lowest found version for UE3 packages
 
         // Removing Length, XSize, YSize and ZSize from VJointPos
         VER_REMOVE_SIZE_VJOINTPOS = 224,
@@ -1441,8 +1442,7 @@ namespace CUE4Parse.UE4.Versions
         // Integrated SpeedTree vertex shader rendering
         VER_SPEEDTREE_VERTEXSHADER_RENDERING = 448,
         // Changed enum serialization to be by name
-        VER_ENUM_VALUE_SERIALIZED_BY_NAMEV2 = 449, // krowe, i added V2
-
+        VER_ENUM_VALUE_SERIALIZED_BY_NAMEV2 = 449, // I added v2 as the name were exact same, krowe moh
         // Force distributions to be rebuilt.
         VER_FDISTRIBUTION_FORCE_DIRTY3 = 450,
         // Recompile DistortionApply and DepthOnly shaders to apply optimizations.

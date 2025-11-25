@@ -37,13 +37,16 @@ public class FSkelMeshChunk
             NumRigidVertices = Ar.Read<int>();
             NumSoftVertices = Ar.Read<int>();
         }
+        else
+        {
+            NumRigidVertices = RigidVertices.Length;
+            NumSoftVertices = SoftVertices.Length;
+        }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_GPUSKIN_MAX_INFLUENCES_OPTIMIZATION)
         {
             MaxBoneInfluences = Ar.Read<int>();
         }
-
-        HasClothData = false;
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.APEX_CLOTH)
         {

@@ -35,7 +35,7 @@ public class FkDOPNode3
 
         F18 = Ar.Read<int>();
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.shortyes || Ar.Ver > EUnrealEngineObjectUE3Version.VER_CLEANUP_SOUNDNODEWAVE)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.DeprecatedShortProperties || Ar.Ver > EUnrealEngineObjectUE3Version.VER_CLEANUP_SOUNDNODEWAVE)
         {
             F1C = Ar.Read<short>();
             F1E = Ar.Read<short>();
@@ -101,7 +101,7 @@ public class UStaticMesh : UObject
                 Ar.ReadBulkArray(() => Ar.ReadBytes(6)); // bound
             }
 
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.shortyes || Ar.Ver > EUnrealEngineObjectUE3Version.VER_CLEANUP_SOUNDNODEWAVE)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.DeprecatedShortProperties || Ar.Ver > EUnrealEngineObjectUE3Version.VER_CLEANUP_SOUNDNODEWAVE)
             {
                 Ar.ReadBulkArray(() => Ar.ReadBytes(8)); // Collision Triangle
             }

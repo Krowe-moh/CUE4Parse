@@ -44,7 +44,7 @@ public class FStaticMeshLODResources
     {
         var stripDataFlags = new FStripDataFlags(Ar);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.todoa && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedRawTriangles && Ar.Game < EGame.GAME_UE4_0)
         {
             new FByteBulkData((FAssetArchive)Ar, true); // RawTriangles
         }

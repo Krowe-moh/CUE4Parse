@@ -247,7 +247,7 @@ public class FStaticLODModel
             Indices = new FMultisizeIndexContainer(Ar.ReadBulkArray<uint>());
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.OldformatDeprecated)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.DeprecatedOldLodformat)
         {
             var RigidVertices = Ar.ReadArray(() => new FRigidVertex(Ar));
             var SoftVertices = Ar.ReadArray(() => new FSoftVertex(Ar));
@@ -265,7 +265,7 @@ public class FStaticLODModel
             Ar.ReadArray<byte>(); // NumTriangles
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.OldformatDeprecated)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DeprecatedOldLodformat)
         {
             if (skelMeshVer < FSkeletalMeshCustomVersion.Type.CombineSectionWithChunk)
             {
@@ -283,7 +283,7 @@ public class FStaticLODModel
         }
         //  < 202
         
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.fwefwef && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.BonesAsBytes && Ar.Game < EGame.GAME_UE4_0)
         {
             var byteBones = Ar.ReadArray<byte>();
             RequiredBones = new short[byteBones.Length];

@@ -169,11 +169,6 @@ public static class MeshConverter
                     staticMeshLod.ExtraUV.Value[k - 1][j].V = suv.UV[k].V;
                 }
 
-                //if (suv?.Color != null)
-                //{
-                    //staticMeshLod.VertexColors[j] = suv.Color;
-                //}
-
                 if (srcLod.ColorVertexBuffer?.NumVertices > 0 &&
                     srcLod.ColorVertexBuffer.Data != null &&
                     staticMeshLod.VertexColors != null &&
@@ -181,6 +176,13 @@ public static class MeshConverter
                     j < srcLod.ColorVertexBuffer.Data.Length)
                 {
                     staticMeshLod.VertexColors[j] = srcLod.ColorVertexBuffer.Data[j];
+                }
+                else
+                {
+                    if (suv?.Color != null)
+                    {
+                  //      staticMeshLod.VertexColors = new FColor[] { suv.Color };
+                    }
                 }
             }
 

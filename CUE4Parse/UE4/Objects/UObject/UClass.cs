@@ -79,7 +79,7 @@ public class UClass : UStruct
             }
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.ClassDependenciesDeprecated)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.DeprecatedClassDependencies)
         {
             Ar.ReadArray(() => new Dependency(Ar));
         }
@@ -100,7 +100,7 @@ public class UClass : UStruct
                 Ar.ReadArray(() => Ar.ReadFName());
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.CompactIndexDeprecated && Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_COMPONENT_CLASS_BRIDGE)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex && Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_COMPONENT_CLASS_BRIDGE)
             {
                 var ComponentClassBridgeMap = Ar.ReadMap(
                     () => new FPackageIndex(Ar),
@@ -113,7 +113,7 @@ public class UClass : UStruct
                 Ar.ReadArray(() => new FPackageIndex(Ar));
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.CompactIndexDeprecated) //&& Ar.UE4Version < 118
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex) //&& Ar.UE4Version < 118
             {
                 Ar.ReadMap(
                     () => new FPackageIndex(Ar),

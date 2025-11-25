@@ -123,7 +123,9 @@ public class FPropertyTagData
                             "AchievementIcons", "ConnectorSockets", "ChildProFXTextures", "ChildNodes", "Sequences", "ReferencedObjects", "InvisiTekMaterials", "GameTypesToUseDefaultProduct", "OffsetNodes2",
                             "References", "Textures", "RemovedArchetypes", "PrefabArchetypes", "Attached", "SequenceObjects", "LFMaterials", "BeamSystems", "ReplacingBotCountdownMessages", "PlayerNodes",
                             "DecalList", "Anim", "ControlHead", "AnimSets", "Components", "Modules", "Targets", "Controls", "SpawnModules", "MapSetsToUseDefaultProduct", "Mutators", "UserReferences", "Flashlight_LightComponents",
-                            "UpdateModules", "Emitters", "LODLevels", "ReplayClips", "Skins", "Effects", "ReferencedTextures", "OverrideCarComponents", "SpawnPoints", "DefaultMutators", "c_TurnInPlaceNodes"
+                            "UpdateModules", "Emitters", "LODLevels", "ReplayClips", "Skins", "Effects", "ReferencedTextures", "OverrideCarComponents", "SpawnPoints", "DefaultMutators", "c_TurnInPlaceNodes",
+
+                            "AttackSnd", "DeathSnd", "HitSnd", "IdleSnd", "KnockedSnd", "PushedAwaySnd", "WakeUpSnd",
                         },
                         ["ClassProperty"] = new[] { "WeaponClasses", "PreviewAnimSets", "SupportSynchronizeClasses" }
                     };
