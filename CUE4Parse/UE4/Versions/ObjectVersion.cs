@@ -932,15 +932,26 @@ namespace CUE4Parse.UE4.Versions
     public enum EUnrealEngineObjectUE3Version
     {
         // early UE3 version not documented
+        Release40 = 40,
+        Release47 = 47,
+        Release50 = 50,
+        Release51 = 51,
+        Release52 = 52,
+        Release55 = 55,
+        Release57 = 57,
+        Release58 = 58,
         Release61 = 61,
         Release62 = 62,
         Release64 = 64,
+        Release69 = 69,
         DeprecatedHeritageTable = 68,
         PanUVRemovedFromPoly = 78,
         CompMipsDeprecated = 84,
         AddedHideCategoriesToUClass = 99,
         LightMapScaleAddedToPoly = 106,
+        Release119 = 119,
         AddedCppTextToUStruct = 120,
+        Release122 = 122,
 
         // only comments exist for these three
 

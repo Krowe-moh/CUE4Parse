@@ -158,6 +158,12 @@ public class UObject : AbstractPropertyHolder
         {
             if (Ar.Game < EGame.GAME_UE4_0)
             {
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.Release40)
+                {
+                    Ar.Read<int>(); // TempNum
+                    Ar.Read<int>(); // TempMax
+                }
+
                 if (Flags.HasFlag(EObjectFlags.RF_Dynamic))
                 {
                     // objects with dynamic seems to be an export but very odd
@@ -168,6 +174,7 @@ public class UObject : AbstractPropertyHolder
                     Ar.Read<int>(); // Archetype
                     return;
                 }
+
                 if (Class == null)
                 {
 
@@ -184,10 +191,28 @@ public class UObject : AbstractPropertyHolder
                     return;
                 }
 
-                if (Flags.HasFlag(EObjectFlags.RF_NonPIEDuplicateTransient))
+                if (Flags.HasFlag(EObjectFlags.RF_NonPIEDuplicateTransient) || Ar.Ver < EUnrealEngineObjectUE3Version.Release47)
                 {
-                    var Node = new FPackageIndex(Ar);
-                    new FPackageIndex(Ar); // StateNode
+                    var Node = new FPackageIndex();
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.Release51)
+                    {
+                        Node = new FPackageIndex(Ar);
+                        new FPackageIndex(Ar); // StateNode
+                    }
+                    else
+                    {
+                        var OldClass = new FPackageIndex(Ar); // OldClass
+                        if (!OldClass.IsNull)
+                        {
+                            Ar.Read<int>(); // iOldNode
+                        }
+                    }
+
+                    if (Ar.Ver < EUnrealEngineObjectUE3Version.Release52)
+                    {
+                        new FPackageIndex(Ar); // Tmp
+                    }
+
                     if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
                     {
                         Ar.Read<long>(); // ProbeMask
@@ -201,7 +226,7 @@ public class UObject : AbstractPropertyHolder
                     {
                         Ar.Read<short>(); // LatentAction
                     }
-                    else
+                    else if (Ar.Ver >= EUnrealEngineObjectUE3Version.Release55)
                     {
                         Ar.Read<int>(); // LatentAction
                     }
@@ -237,6 +262,16 @@ public class UObject : AbstractPropertyHolder
         if (Ar.Game >= EGame.GAME_UE4_0 && !Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject) && Ar.ReadBoolean() && Ar.Position + 16 <= validPos)
         {
             ObjectGuid = Ar.Read<FGuid>();
+        }
+
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.Release57)
+        {
+            Ar.ReadFName(); // TempState
+        }
+
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.Release58)
+        {
+            Ar.ReadFName(); // TempGroup
         }
 
         if (FUE5MainStreamObjectVersion.Get(Ar) < FUE5MainStreamObjectVersion.Type.SparseClassDataStructSerialization || !Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject))

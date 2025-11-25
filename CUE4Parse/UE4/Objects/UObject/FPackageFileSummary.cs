@@ -40,7 +40,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             ExportCount = Ar.Read<int>();
             NameCount = Ar.Read<int>();
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX)
             {
                 NetObjectCount = Ar.Read<int>();
             }
@@ -387,7 +387,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 ImportTypeHierarchiesCount = 0;
                 ImportTypeHierarchiesOffset = 0;
             }
-            
+
             if (FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
             {
                 Guid = Ar.Read<FGuid>();

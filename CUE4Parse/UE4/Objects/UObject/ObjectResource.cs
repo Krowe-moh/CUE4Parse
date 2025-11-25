@@ -257,7 +257,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             ClassIndex = new FPackageIndex(Ar);
             SuperIndex = new FPackageIndex(Ar);
             TemplateIndex = Ar.Ver >= EUnrealEngineObjectUE4Version.TemplateIndex_IN_COOKED_EXPORTS ? new FPackageIndex(Ar) : new FPackageIndex();
-            OuterIndex = new FPackageIndex(Ar);
+            OuterIndex = Ar.Ver >= EUnrealEngineObjectUE3Version.Release50 ? new FPackageIndex(Ar) : new FPackageIndex();
             aa3Skip:
             ObjectName = Ar.ReadFName();
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedArcheType && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_ARCHETYPE_INDEX_FROM_LINKER_TABLES)
@@ -321,12 +321,12 @@ namespace CUE4Parse.UE4.Objects.UObject
             }
 
             exportflag:
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FOBJECTEXPORT_EXPORTFLAGS)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FOBJECTEXPORT_EXPORTFLAGS && Ar.Game < EGame.GAME_UE4_0)
             {
                 Ar.Read<int>(); // ExportFlags
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX)
             {
                 Ar.ReadArray<int>(); // NetObjectCount
                 var test = Ar.Read<FGuid>(); // PackageGuid

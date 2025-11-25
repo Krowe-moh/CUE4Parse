@@ -7,12 +7,12 @@ namespace CUE4Parse.UE4.Objects.Engine;
 
 struct FUIMouseCursor
 {
-    private string CursorStyle;
+    private FName CursorStyle;
     private FPackageIndex Cursor;
 
     public FUIMouseCursor(FAssetArchive Ar)
     {
-        CursorStyle = Ar.ReadFName().Text;
+        CursorStyle = Ar.ReadFName();
         Cursor = new FPackageIndex(Ar);
     }
 };

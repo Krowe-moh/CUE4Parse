@@ -8,7 +8,6 @@ namespace CUE4Parse.UE4.Objects.Engine
 {
     public class UGuidCache : Assets.Exports.UObject
     {
-
         public Dictionary<FName, FGuid>? PackageGuidMap;
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
