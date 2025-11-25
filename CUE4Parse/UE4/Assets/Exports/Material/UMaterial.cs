@@ -165,88 +165,97 @@ public class UMaterial : UMaterialInterface
             {
                 continue;
             }
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FMATERIAL_COMPILATION_ERRORS)
+
+            if (Ar.Ver < EUnrealEngineObjectUE4Version.PURGED_FMATERIAL_COMPILE_OUTPUTS)
             {
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_ERROR_RESAVE)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FMATERIAL_COMPILATION_ERRORS)
                 {
-                    Ar.ReadArray(Ar.ReadFString); // CompileErrors
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_ERROR_RESAVE)
+                    {
+                        Ar.ReadArray(Ar.ReadFString); // CompileErrors
+                    }
+                    else
+                    {
+                        Ar.ReadMap(() => new FPackageIndex(Ar), Ar.ReadFString); // LegacyCompileErrors
+                    }
+                }
+
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_TEXTUREDEPENDENCYLENGTH)
+                {
+                    Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>()); // TextureDependencyLengthMap
+                    Ar.Read<int>(); // MaxTextureDependencyLength
+                }
+
+                Ar.Read<FGuid>(); // Id
+
+                if (Ar.Ver < EUnrealEngineObjectUE4Version.REMOVED_FMATERIAL_COMPILE_OUTPUTS)
+                {
+                    Ar.Read<int>(); // NumUserTexCoords;
+                }
+
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
+                {
+                    Ar.ReadArray(() => new UniformExpression(Ar)); // UniformVectorExpressions
+                    Ar.ReadArray(() => new UniformExpression(Ar)); // UniformScalarExpressions
+                    var textures = Ar.ReadArray(() => new UniformExpression(Ar)); // Uniform2DTextureExpressions
+                    var texParams = textures
+                        .Select(u => u.Expression)
+                        .OfType<FMaterialUniformExpressionTextureParameter>()
+                        .Select(tp => tp.Texture)
+                        .ToArray();
+
+                    ReferencedTextures.AddRange(
+                        texParams
+                            .Select(idx => idx.TryLoad(out UTexture tex) ? tex : null)
+                            .Where(t => t != null)!);
+
+                    Ar.ReadArray(() => new UniformExpression(Ar)); // UniformCubeTextureExpressions
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_EDITOR_VERTEX_SHADER)
+                    {
+                        Ar.ReadArray(() => new UniformExpression(Ar));
+                        Ar.ReadArray(() => new UniformExpression(Ar));
+                    }
                 }
                 else
                 {
-                    Ar.ReadMap(() => new FPackageIndex(Ar), Ar.ReadFString); // LegacyCompileErrors
+                    ReferencedTextures.AddRange(
+                        Ar.ReadArray(() => new FPackageIndex(Ar))
+                            .Select(idx => idx.TryLoad(out UTexture texture) ? texture : null)
+                            .Where(t => t != null)!
+                    ); // UniformExpressionTextures
                 }
-            }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_TEXTUREDEPENDENCYLENGTH)
-            {
-                Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>()); // TextureDependencyLengthMap
-                Ar.Read<int>(); // MaxTextureDependencyLength
-            }
-
-            Ar.Read<FGuid>(); // Id
-            Ar.Read<int>(); // NumUserTexCoords;
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
-            {
-                Ar.ReadArray(() => new UniformExpression(Ar)); // UniformVectorExpressions
-                Ar.ReadArray(() => new UniformExpression(Ar)); // UniformScalarExpressions
-                var textures = Ar.ReadArray(() => new UniformExpression(Ar)); // Uniform2DTextureExpressions
-                var texParams = textures
-                    .Select(u => u.Expression)
-                    .OfType<FMaterialUniformExpressionTextureParameter>()
-                    .Select(tp => tp.Texture)
-                    .ToArray();
-
-                ReferencedTextures.AddRange(
-                    texParams
-                        .Select(idx => idx.TryLoad(out UTexture tex) ? tex : null)
-                        .Where(t => t != null)!);
-
-                Ar.ReadArray(() => new UniformExpression(Ar)); // UniformCubeTextureExpressions
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_EDITOR_VERTEX_SHADER)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR)
                 {
-                    Ar.ReadArray(() => new UniformExpression(Ar));
-                    Ar.ReadArray(() => new UniformExpression(Ar));
-                }
-            }
-            else
-            {
-                ReferencedTextures.AddRange(
-                    Ar.ReadArray(() => new FPackageIndex(Ar))
-                        .Select(idx => idx.TryLoad(out UTexture texture) ? texture : null)
-                        .Where(t => t != null)!
-                ); // UniformExpressionTextures
-            }
+                    Ar.ReadBoolean(); // bUsesSceneColor
+                    Ar.ReadBoolean(); // bUsesSceneDepth
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICPARAMETERS_ADDED)
+                    {
+                        Ar.ReadBoolean(); // bUsesDynamicParameter
+                    }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR)
-            {
-                Ar.ReadBoolean(); // bUsesSceneColor
-                Ar.ReadBoolean(); // bUsesSceneDepth
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICPARAMETERS_ADDED)
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATEXP_LIGHTMAPUVS_ADDED)
+                    {
+                        Ar.ReadBoolean(); // bUsesLightmapUVs
+                    }
+
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_EDITOR_VERTEX_SHADER)
+                    {
+                        Ar.ReadBoolean(); // bUsesMaterialVertexPositionOffset
+                    }
+
+                    Ar.Read<int>(); // UsingTransforms
+                }
+
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_TEXTUREDENSITY)
                 {
-                    Ar.ReadBoolean(); // bUsesDynamicParameter
+                    Ar.ReadArray(() => new FTextureLookup(Ar));
                 }
 
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATEXP_LIGHTMAPUVS_ADDED)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FALLBACK_DROPPED_COMPONENTS_TRACKING)
                 {
-                    Ar.ReadBoolean(); // bUsesLightmapUVs
+                    Ar.Read<int>(); // DummyDroppedFallbackComponents
                 }
-
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_EDITOR_VERTEX_SHADER)
-                {
-                    Ar.ReadBoolean(); // bUsesMaterialVertexPositionOffset
-                }
-
-                Ar.Read<int>(); // UsingTransforms
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_TEXTUREDENSITY)
-            {
-                Ar.ReadArray(() => new FTextureLookup(Ar));
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FALLBACK_DROPPED_COMPONENTS_TRACKING)
-            {
-                Ar.Read<int>(); // DummyDroppedFallbackComponents
             }
         }
 

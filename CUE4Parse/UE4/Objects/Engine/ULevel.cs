@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using CommunityToolkit.HighPerformance;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
@@ -191,7 +190,7 @@ public class ULevel : Assets.Exports.UObject
     public FPackageIndex WorldSettings;
     public FPackageIndex WorldDataLayers;
     public FSoftObjectPath WorldPartitionRuntimeCell;
-    
+
     public FPackageIndex?[] Actors;
     public FURL URL;
     public FPackageIndex Model;
@@ -220,7 +219,7 @@ public class ULevel : Assets.Exports.UObject
         WorldSettings = GetOrDefault(nameof(WorldSettings), new FPackageIndex());
         WorldDataLayers = GetOrDefault(nameof(WorldDataLayers), new FPackageIndex());
         WorldPartitionRuntimeCell = GetOrDefault<FSoftObjectPath>(nameof(WorldPartitionRuntimeCell));
-        
+
         if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 16;
         if (Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject) || Ar.Position >= validPos) return;
         if (FReleaseObjectVersion.Get(Ar) < FReleaseObjectVersion.Type.LevelTransArrayConvertedToTArray) Ar.Position += 4;
@@ -229,7 +228,10 @@ public class ULevel : Assets.Exports.UObject
         Model = new FPackageIndex(Ar);
         ModelComponents = Ar.ReadArray(() => new FPackageIndex(Ar));
         // if ue3
-        Ar.ReadArray(() => new FPackageIndex(Ar)); // GameSequences
+        if (Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_USEQUENCE)
+        {
+            Ar.ReadArray(() => new FPackageIndex(Ar)); // GameSequences
+        }
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_SPLIT_SOUND_FROM_TEXTURE_STREAMING)
         {
@@ -303,7 +305,7 @@ public class ULevel : Assets.Exports.UObject
             NavListEnd = new FPackageIndex(Ar);
             new FPackageIndex(Ar); // CoverListStart
             new FPackageIndex(Ar); // CoverListEnd
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_PYLONLIST_IN_ULEVEL)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_PYLONLIST_IN_ULEVEL && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVED_OLD_NAVMESH)
             {
                 new FPackageIndex(Ar);
                 new FPackageIndex(Ar);

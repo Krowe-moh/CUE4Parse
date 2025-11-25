@@ -116,7 +116,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
-            if (Ar.Game >= EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE4Version.VARIABLE_BITFIELD_SIZE)
             {
                 BoolSize = Ar.Read<byte>();
                 bIsNativeBool = Ar.ReadFlag();
@@ -192,9 +192,9 @@ namespace CUE4Parse.UE4.Objects.UObject
             serializer.Serialize(writer, MetaClass);
         }
     }
-    
+
     public class UComponentProperty : UObjectProperty { }
-    
+
     public class UClassProperty : UObjectProperty
     {
         public FPackageIndex MetaClass; // UClass
@@ -349,7 +349,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             base.Deserialize(Ar, validPos);
             SignatureFunction = new FPackageIndex(Ar);
-            
+
             if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedDelegateSourceToUDelegateProperty)
             {
                 new FPackageIndex(Ar); // SourceDelegate

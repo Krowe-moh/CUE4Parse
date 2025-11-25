@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using CUE4Parse.MappingsProvider;
 using CUE4Parse.UE4.Assets.Exports.Actor;
+using CUE4Parse.UE4.Assets.Exports.Component;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Objects.Properties;
 using CUE4Parse.UE4.Assets.Objects.Unversioned;
@@ -155,19 +156,23 @@ public class UObject : AbstractPropertyHolder
         }
         else
         {
-            if (Flags.HasFlag(EObjectFlags.RF_Dynamic))
-            {
-                // objects with dynamic seems to be an export but very odd
-                Ar.ReadFName(); // Name
-                new FPackageIndex(Ar); // Outer
-                new FPackageIndex(Ar); // Class
-                new FPackageIndex(Ar); // _Linker
-                Ar.Read<int>(); // Archetype
-                return;
-            }
-
             if (Ar.Game < EGame.GAME_UE4_0)
             {
+                if (Flags.HasFlag(EObjectFlags.RF_Dynamic))
+                {
+                    // objects with dynamic seems to be an export but very odd
+                    Ar.ReadFName(); // Name
+                    new FPackageIndex(Ar); // Outer
+                    new FPackageIndex(Ar); // Class
+                    new FPackageIndex(Ar); // _Linker
+                    Ar.Read<int>(); // Archetype
+                    return;
+                }
+                if (Class == null)
+                {
+
+                }
+
                 if (Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
                 {
                     if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX) // ue4 part does nothing currently

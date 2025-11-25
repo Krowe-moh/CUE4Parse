@@ -59,33 +59,24 @@ public class UClass : UStruct
             Ar.Read<int>(); // classRecordSize
         }
 
-        // serialize the function map
-        if (Ar.Game >= EGame.GAME_UE4_0)
-        {
-            FuncMap = new Dictionary<FName, FPackageIndex>();
-            var funcMapNum = Ar.Read<int>();
-            for (var i = 0; i < funcMapNum; i++)
-            {
-                FuncMap[Ar.ReadFName()] = new FPackageIndex(Ar);
-            }
-        }
-
-        // Class flags first.
-        ClassFlags = Ar.Read<EClassFlags>();
-
         if (Ar.Game is EGame.GAME_StarWarsJediFallenOrder or EGame.GAME_StarWarsJediSurvivor or EGame.GAME_AshesOfCreation or EGame.GAME_RocketLeague) Ar.Position += 4;
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_PLATFORM_FLAGS)
+        if (Ar.Game < EGame.GAME_UE4_0)
         {
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_EMITTER_LODVALIDITY_FIX2)
+            FuncMap = Ar.ReadMap(Ar.ReadFName, () => new FPackageIndex(Ar));
+            ClassFlags = Ar.Read<EClassFlags>();
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_PLATFORM_FLAGS)
             {
-                // temp
-                Ar.Read<byte>(); // classPlatformFlags
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_EMITTER_LODVALIDITY_FIX2)
+                {
+                    // temp
+                    Ar.Read<byte>(); // classPlatformFlags
+                }
             }
-        }
-        else
-        {
-            Ar.Read<FGuid>();
+            else
+            {
+                Ar.Read<FGuid>();
+            }
         }
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.ClassDependenciesDeprecated)
@@ -99,8 +90,8 @@ public class UClass : UStruct
         }
 
         // Variables.
-        ClassWithin = new FPackageIndex(Ar);
-        ClassConfigName = Ar.ReadFName();
+    //    ClassWithin = new FPackageIndex(Ar);
+      //  ClassConfigName = Ar.ReadFName();
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedHideCategoriesToUClass && Ar.Game < EGame.GAME_UE4_0)
         {
@@ -157,7 +148,7 @@ public class UClass : UStruct
             }
         }
 
-        if (Ar.Game >= EGame.GAME_UE4_0)
+        if (Ar.Game < EGame.GAME_UE4_0)
         {
             ClassGeneratedBy = new FPackageIndex(Ar);
         }

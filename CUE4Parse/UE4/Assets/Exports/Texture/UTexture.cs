@@ -29,7 +29,7 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
     public FTexturePlatformData PlatformData { get; private set; } = new();
     public FEditorBulkData? EditorData { get; private set; }
     public FByteBulkData? SourceArt { get; private set; }
-    
+
     public bool RenderNearestNeighbor => LODGroup == TextureGroup.TEXTUREGROUP_Pixels2D || Filter == TextureFilter.TF_Nearest;
     public bool IsNormalMap => CompressionSettings == TextureCompressionSettings.TC_Normalmap;
 
@@ -77,24 +77,23 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
         SRGB = GetOrDefault(nameof(SRGB), true);
         AssetUserData = GetOrDefault<FPackageIndex[]>(nameof(AssetUserData), []);
 
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.CompMipsDeprecated)
         {
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.CompMipsDeprecated)
+            var bHasComp = GetOrDefault("bHasComp", false);
+            if (bHasComp)
             {
-                var bHasComp = GetOrDefault("bHasComp", false);
-                if (bHasComp)
-                {
-                    Ar.ReadArray(() => new FLegacyMipMap(Ar));
-                }
-                
-                Ar.ReadArray(() => new FTexture2DMipMap(Ar));
-                return;
+                Ar.ReadArray(() => new FLegacyMipMap(Ar));
             }
 
-            SourceArt = new FByteBulkData(Ar); // sometimes has data, dds format
+            Ar.ReadArray(() => new FTexture2DMipMap(Ar));
             return;
         }
 
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            SourceArt = new FByteBulkData(Ar); // sometimes has data, dds format
+            return;
+        }
 
         var stripFlags = new FStripDataFlags(Ar);
 

@@ -23,7 +23,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
             base.Deserialize(Ar, validPos);
             FirstNode = GetOrDefault<FPackageIndex>(nameof(FirstNode));
 
-            if (Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver < EUnrealEngineObjectUE4Version.SOUND_NODE_INHERIT_FROM_ED_GRAPH_NODE)
             {
                 EditorData = new Dictionary<FPackageIndex, NodeEditorData>();
                 int Count = Ar.Read<int>();
@@ -38,7 +38,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
 
                 return;
             }
-            
+
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.COOKED_ASSETS_IN_EDITOR_SUPPORT)
             {
                 var _ = new FStripDataFlags(Ar);

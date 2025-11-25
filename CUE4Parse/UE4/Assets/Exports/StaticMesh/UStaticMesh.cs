@@ -72,9 +72,9 @@ public class UStaticMesh : UObject
         LODForCollision = GetOrDefault(nameof(LODForCollision), 0);
 
         var stripDataFlags = new FStripDataFlags(Ar);
-        bCooked = Ar.Game >= EGame.GAME_UE4_0 && Ar.ReadBoolean();
+        bCooked = Ar.Ver >= EUnrealEngineObjectUE4Version.STATIC_MESH_REFACTOR && Ar.ReadBoolean();
         var Bounds = new FBoxSphereBounds();
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver < EUnrealEngineObjectUE4Version.STATIC_MESH_REFACTOR)
         {
             Bounds = new FBoxSphereBounds(Ar);
         }
@@ -160,48 +160,7 @@ public class UStaticMesh : UObject
             RenderData.Bounds = Bounds;
 
             Ar.ReadArray(() => new FPackageIndex(Ar));
-            Ar.Read<FRotator>(); // ThumbnailAngle
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_THUMBNAIL_DISTANCE)
-            {
-                Ar.Read<int>(); // ThumbnailDistance
-            }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_VERSION_18)
-            {
-                Ar.ReadFString(); // HighResSourceMeshName
-                // if this is removed, it works, why? idk
-                //Ar.Read<int>(); // HighResSourceMeshCRC
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INTEGRATED_LIGHTMASS)
-            {
-                LightingGuid = Ar.Read<FGuid>();
-            }
-            else
-            {
-                LightingGuid = FGuid.Random();
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_PRESERVE_SMC_VERT_COLORS)
-            {
-                Ar.Read<int>(); // VertexPositionVersionNumber
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICTEXTUREINSTANCES)
-            {
-                Ar.ReadArray<int>(); // CachedStreamingTextureFactors
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_KEEP_STATIC_MESH_DEGENERATES)
-            {
-                Ar.ReadBoolean(); // bRemoveDegenerates
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INSTANCED_STATIC_MESH_PER_LOD_STATIC_LIGHTING)
-            {
-                Ar.ReadBoolean(); // bPerLODStaticLightingForInstancing
-                Ar.Read<int>(); // ConsolePreallocateInstanceCount
-            }
             return;
         }
 
@@ -210,20 +169,55 @@ public class UStaticMesh : UObject
             if (Ar.Ver < EUnrealEngineObjectUE4Version.DEPRECATED_STATIC_MESH_THUMBNAIL_PROPERTIES_REMOVED)
             {
                  var dummyThumbnailAngle = new FRotator(Ar);
-                 var dummyThumbnailDistance = Ar.Read<float>();
+                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_THUMBNAIL_DISTANCE)
+                 {
+                     var dummyThumbnailDistance = Ar.Read<float>();
+                 }
             }
 
-            if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.DeprecatedHighResSourceMesh)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_VERSION_18 && FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.DeprecatedHighResSourceMesh)
             {
                 var Deprecated_HighResSourceMeshName = Ar.ReadFString();
                 var Deprecated_HighResSourceMeshCRC = Ar.Read<uint>();
             }
         }
 
-        LightingGuid = Ar.Read<FGuid>(); // LocalLightingGuid
-        Sockets = Ar.ReadArray(() => new FPackageIndex(Ar));
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INTEGRATED_LIGHTMASS)
+        {
+            LightingGuid = Ar.Read<FGuid>(); // LocalLightingGuid
+        }
+        else
+        {
+            LightingGuid = FGuid.Random();
+        }
 
-        if (!Ar.IsFilterEditorOnly)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_PRESERVE_SMC_VERT_COLORS && Ar.Ver < EUnrealEngineObjectUE4Version.STATIC_MESH_REFACTOR)
+        {
+            Ar.Read<int>(); // VertexPositionVersionNumber
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICTEXTUREINSTANCES && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_CACHED_STATIC_MESH_STREAMING_FACTORS)
+        {
+            Ar.ReadArray<int>(); // CachedStreamingTextureFactors
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_KEEP_STATIC_MESH_DEGENERATES && Ar.Ver < EUnrealEngineObjectUE4Version.STATIC_MESH_REFACTOR)
+        {
+            Ar.ReadBoolean(); // bRemoveDegenerates
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INSTANCED_STATIC_MESH_PER_LOD_STATIC_LIGHTING && Ar.Game < EGame.GAME_UE4_0)
+        {
+            Ar.ReadBoolean(); // bPerLODStaticLightingForInstancing
+            Ar.Read<int>(); // ConsolePreallocateInstanceCount
+        }
+
+        if (Ar.Ver > EUnrealEngineObjectUE4Version.STATIC_MESH_SOCKETS)
+        {
+            Sockets = Ar.ReadArray(() => new FPackageIndex(Ar));
+        }
+
+        if (!Ar.IsFilterEditorOnly || Ar.Game < EGame.GAME_UE4_0)
         {
             return; // so it doesn't throw
         }
@@ -280,7 +274,7 @@ public class UStaticMesh : UObject
 
         if (Ar.Game is EGame.GAME_FateTrigger or EGame.GAME_GhostsofTabor or EGame.GAME_Aion2) Ar.Position += 4;
 
-        if (Ar.Game >= EGame.GAME_UE4_14)
+        if (Ar.Ver >= EUnrealEngineObjectUE4Version.SPEEDTREE_STATICMESH)
         {
             var bHasSpeedTreeWind = Ar.ReadBoolean();
             if (bHasSpeedTreeWind)

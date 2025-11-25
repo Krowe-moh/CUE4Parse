@@ -1,13 +1,16 @@
 using System.IO;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
+using CUE4Parse.UE4.Objects.Core.Misc;
+using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
 {
     public class USoundNodeWave : UObject
     {
-        public FByteBulkData RawSound;
+        public FFormatContainer? CompressedFormatData;
+        public FByteBulkData? RawSound;
         public FByteBulkData? PCSound;
         public FByteBulkData? XboxSound;
         public FByteBulkData? PS3Sound;
@@ -18,6 +21,8 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
+
+            var bCooked = Ar.Ver > EUnrealEngineObjectUE4Version.ADD_COOKED_TO_SOUND_NODE_WAVE && Ar.ReadBoolean();
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_PC_DATA)
             {
@@ -30,7 +35,14 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
                 Ar.ReadArray<int>(); // ChannelSizes
             }
 
-            RawSound = new FByteBulkData(Ar);
+            if (bCooked)
+            {
+                CompressedFormatData = new FFormatContainer(Ar);
+            }
+            else
+            {
+                RawSound = new FByteBulkData(Ar);
+            }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_RAW_SURROUND_DATA && Ar.Ver < EUnrealEngineObjectUE3Version.VER_UPDATED_SOUND_NODE_WAVE)
             {
@@ -42,36 +54,45 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
                 Ar.Read<int>(); // ChannelCount
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_PC_DATA)
+            if (Ar.Ver < EUnrealEngineObjectUE4Version.ADD_SOUNDNODEWAVE_TO_DDC)
             {
-                PCSound = new FByteBulkData(Ar);
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_PC_DATA)
+                {
+                    PCSound = new FByteBulkData(Ar);
+                }
+
+                if (Ar.Game == EGame.GAME_SuddenAttack2) return;
+
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_XBOX360_DATA)
+                {
+                    XboxSound = new FByteBulkData(Ar);
+                }
+
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_PS3_DATA)
+                {
+                    PS3Sound = new FByteBulkData(Ar);
+                }
+
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_WIIU_COMPRESSED_SOUNDS)
+                {
+                    WIIUSound = new FByteBulkData(Ar);
+                }
+
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_IPHONE_COMPRESSED_SOUNDS)
+                {
+                    IPhoneSound = new FByteBulkData(Ar);
+                }
+
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FLASH_MERGE_TO_MAIN)
+                {
+                    FlashSound = new FByteBulkData(Ar);
+                }
             }
 
-            if (Ar.Game == EGame.GAME_SuddenAttack2) return;
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_XBOX360_DATA)
+            // todo find the date they removed, if they did.
+            if (Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_SOUNDNODEWAVE_GUID)
             {
-                XboxSound = new FByteBulkData(Ar);
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_COOKED_PS3_DATA)
-            {
-                PS3Sound = new FByteBulkData(Ar);
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_WIIU_COMPRESSED_SOUNDS)
-            {
-                WIIUSound = new FByteBulkData(Ar);
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_IPHONE_COMPRESSED_SOUNDS)
-            {
-                IPhoneSound = new FByteBulkData(Ar);
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FLASH_MERGE_TO_MAIN)
-            {
-                FlashSound = new FByteBulkData(Ar);
+                Ar.Read<FGuid>(); // CompressedDataGuid
             }
         }
     }

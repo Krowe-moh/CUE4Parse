@@ -30,9 +30,9 @@ public class UStruct : UField
             SuperStruct = SuperField;
         }
 
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver < EUnrealEngineObjectUE4Version.CONSOLIDATE_HEADER_PARSER_ONLY_PROPERTIES)
         {
-            var ScriptText = new FPackageIndex(Ar); // ScriptText
+            new FPackageIndex(Ar); // ScriptText
         }
 
         if (FFrameworkObjectVersion.Get(Ar) < FFrameworkObjectVersion.Type.RemoveUField_Next)
@@ -50,13 +50,9 @@ public class UStruct : UField
             Ar.ReadFName();
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.AddedCppTextToUStruct)
+        if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedCppTextToUStruct && Ar.Ver < EUnrealEngineObjectUE4Version.CONSOLIDATE_HEADER_PARSER_ONLY_PROPERTIES)
         {
             new FPackageIndex(Ar); // CppText
-        }
-
-        if (Ar.Game < EGame.GAME_UE4_0)
-        {
             Ar.Read<int>(); // Line
             Ar.Read<int>(); // TextPos
         }

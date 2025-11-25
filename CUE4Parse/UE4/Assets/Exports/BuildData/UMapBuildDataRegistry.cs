@@ -194,13 +194,42 @@ public class FStaticShadowDepthMapData(FArchive Ar)
     public FFloat16[] DepthSamples = Ar.ReadArray(() => new FFloat16(Ar));
 }
 
-public class FVolumeLightingSample(FAssetArchive Ar)
+public class FVolumeLightingSample
 {
-    public FVector Position = Ar.Read<FVector>();
-    public float Radius = Ar.Read<float>();
-    public float[][] Lighting = Ar.ReadArray(3, () => Ar.ReadArray<float>(9));
-    public FColor PackedSkyBentNormal = Ar.Read<FColor>();
-    public float DirectionalLightShadowing = Ar.Read<float>();
+    public FVector Position;
+    public float Radius;
+    public FColor PackedSkyBentNormal;
+    public float DirectionalLightShadowing;
+    public float[][]? Lighting;
+
+    public FVolumeLightingSample(FAssetArchive Ar)
+    {
+        Position = Ar.Read<FVector>();
+        Radius = Ar.Read<float>();
+
+        if (Ar.Ver < EUnrealEngineObjectUE4Version.CHANGED_VOLUME_SAMPLE_FORMAT)
+        {
+            Ar.Read<byte>();
+            Ar.Read<byte>();
+            Ar.Read<byte>();
+            Ar.Read<byte>();
+
+            Ar.Read<FColor>();
+            Ar.Read<FColor>();
+            Ar.Read<FColor>();
+
+            Ar.Read<byte>();
+        }
+        else
+        {
+            Lighting = Ar.ReadArray(3, () => Ar.ReadArray<float>(9));
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE4Version.VOLUME_SAMPLE_LOW_QUALITY_SUPPORT)
+        {
+            DirectionalLightShadowing = Ar.Read<float>();
+        }
+    }
 }
 
 public class FPrecomputedLightVolumeData
@@ -413,7 +442,21 @@ public class FLightMap2D : FLightMap
         VirtualTextures = new FPackageIndex[2];
         ScaleVectors = new FVector4[NUM_STORED_LIGHTMAP_COEF];
         AddVectors = new FVector4[NUM_STORED_LIGHTMAP_COEF];
-        if (Ar.Ver <= EUnrealEngineObjectUE4Version.LOW_QUALITY_DIRECTIONAL_LIGHTMAPS)
+        if (Ar.Ver <= EUnrealEngineObjectUE4Version.SH_LIGHTMAPS)
+        {
+            for (var CoefficientIndex = 0; CoefficientIndex < 3; CoefficientIndex++)
+            {
+                Ar.Position += 16;
+            }
+        }
+        else if (Ar.Ver <= EUnrealEngineObjectUE4Version.LIGHTMAP_COMPRESSION)
+        {
+            for (var CoefficientIndex = 0; CoefficientIndex < 5; CoefficientIndex++)
+            {
+                Ar.Position += 28;
+            }
+        }
+        else if (Ar.Ver <= EUnrealEngineObjectUE4Version.LOW_QUALITY_DIRECTIONAL_LIGHTMAPS)
         {
             for (var CoefficientIndex = 0; CoefficientIndex < 3; CoefficientIndex++)
             {
