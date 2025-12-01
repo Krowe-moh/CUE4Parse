@@ -70,7 +70,7 @@ public readonly struct FPrecomputedVisibilityHandler : IUStruct
         PrecomputedVisibilityCellSizeZ = Ar.Read<float>();
         PrecomputedVisibilityCellBucketSizeXY = Ar.Read<int>();
         PrecomputedVisibilityNumCellBuckets = Ar.Read<int>();
-        //PrecomputedVisibilityCellBuckets = Ar.ReadArray(() => new FPrecomputedVisibilityBucket(Ar));
+        PrecomputedVisibilityCellBuckets = Ar.ReadArray(() => new FPrecomputedVisibilityBucket(Ar));
     }
 }
 
@@ -318,18 +318,28 @@ public class ULevel : Assets.Exports.UObject
                 Ar.Read<int>();
             }
 
-            Ar.Read<int>();
+            Ar.ReadArray(() => new FPackageIndex(Ar));
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_GI_CHARACTER_LIGHTING)
             {
                 new FPackageIndex(Ar);
             }
 
-            new FVector2D(Ar);
-            Ar.Read<float>();
-            Ar.Read<float>();
-            Ar.Read<int>();
-            Ar.Read<int>();
-            Ar.ReadArray(() => new FPrecomputedVisibilityHandler(Ar));
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_NONUNIFORM_PRECOMPUTED_VISIBILITY)
+            {
+                new FPrecomputedVisibilityHandler(Ar);
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_PRECOMPUTED_VISIBILITY)
+            {
+                new FBox(Ar); // LegacyPrecomputedVisibilityVolume
+                Ar.Read<float>(); // LegacyPrecomputedVisibilityCellSize
+                Ar.ReadArray(() => Ar.ReadArray(() => Ar.Read<char>())); // LegacyPrecomputedVisibilityData
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_IMAGE_REFLECTION_SHADOWING)
+            {
+                //new FPrecomputedVolumeDistanceField(Ar);
+            }
         }
         return;
         LevelScriptActor = new FPackageIndex(Ar);

@@ -175,11 +175,6 @@ public class UObject : AbstractPropertyHolder
                     return;
                 }
 
-                if (Class == null)
-                {
-
-                }
-
                 if (Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
                 {
                     if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX) // ue4 part does nothing currently

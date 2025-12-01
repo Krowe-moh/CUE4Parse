@@ -160,8 +160,6 @@ public class UStaticMesh : UObject
             RenderData.Bounds = Bounds;
 
             Ar.ReadArray(() => new FPackageIndex(Ar));
-
-            return;
         }
 
         if (!stripDataFlags.IsEditorDataStripped())
@@ -178,7 +176,7 @@ public class UStaticMesh : UObject
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_VERSION_18 && FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.DeprecatedHighResSourceMesh)
             {
                 var Deprecated_HighResSourceMeshName = Ar.ReadFString();
-                var Deprecated_HighResSourceMeshCRC = Ar.Read<uint>();
+                var Deprecated_HighResSourceMeshCRC = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<ulong>() : Ar.Read<uint>();
             }
         }
 
@@ -198,18 +196,18 @@ public class UStaticMesh : UObject
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICTEXTUREINSTANCES && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_CACHED_STATIC_MESH_STREAMING_FACTORS)
         {
-            Ar.ReadArray<int>(); // CachedStreamingTextureFactors
+            //Ar.ReadArray<int>(); // CachedStreamingTextureFactors
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_KEEP_STATIC_MESH_DEGENERATES && Ar.Ver < EUnrealEngineObjectUE4Version.STATIC_MESH_REFACTOR)
         {
-            Ar.ReadBoolean(); // bRemoveDegenerates
+            //Ar.ReadBoolean(); // bRemoveDegenerates
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INSTANCED_STATIC_MESH_PER_LOD_STATIC_LIGHTING && Ar.Game < EGame.GAME_UE4_0)
         {
-            Ar.ReadBoolean(); // bPerLODStaticLightingForInstancing
-            Ar.Read<int>(); // ConsolePreallocateInstanceCount
+            //Ar.ReadBoolean(); // bPerLODStaticLightingForInstancing
+            //Ar.Read<int>(); // ConsolePreallocateInstanceCount
         }
 
         if (Ar.Ver > EUnrealEngineObjectUE4Version.STATIC_MESH_SOCKETS)

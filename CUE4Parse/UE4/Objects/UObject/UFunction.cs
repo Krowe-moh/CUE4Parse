@@ -15,13 +15,14 @@ public class UFunction : UStruct
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
+
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
+        {
+            var paramsSize = Ar.Read<short>();
+        }
+
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
-            {
-                var paramsSize = Ar.Read<short>();
-            }
-
             var NativeToken = Ar.Read<short>();
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
@@ -40,7 +41,7 @@ public class UFunction : UStruct
         FunctionFlags = Ar.Read<EFunctionFlags>();
         // rocket league, maybe use flag?
         if (Ar.Game is EGame.GAME_AshesOfCreation or EGame.GAME_RocketLeague) Ar.Position += 4;
-        
+
         // Replication info
         if (FunctionFlags.HasFlag(EFunctionFlags.FUNC_Net))
         {
@@ -50,9 +51,7 @@ public class UFunction : UStruct
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && !Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform != ETexturePlatform.XboxAndPlaystation)
         {
-            // ignore platform.
-            // vro this broken vro
-            //var FriendlyName = Ar.ReadFName();
+            Ar.ReadFName(); // FriendlyName
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SERIALIZE_BLUEPRINT_EVENTGRAPH_FASTCALLS_IN_UFUNCTION)

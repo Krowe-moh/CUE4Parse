@@ -327,6 +327,16 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             ExportCount = Ar.Read<int>();
             ExportOffset = Ar.Read<int>();
+
+            if (Ar.Game == EGame.GAME_APBReloaded)
+            {
+                if ((int)FileVersionLicenseeUE > 29) Ar.Read<int>();
+                if ((int) FileVersionLicenseeUE > 28)
+                {
+                    Ar.Read<int>();Ar.Read<int>();Ar.Read<int>();Ar.Read<int>();Ar.Read<int>();
+                }
+            }
+
             ImportCount = Ar.Read<int>();
             ImportOffset = Ar.Read<int>();
 
@@ -414,7 +424,14 @@ namespace CUE4Parse.UE4.Objects.UObject
                 }
             }
 
-            Generations = Ar.ReadArray(() => new FGenerationInfo(Ar));
+            var Count = Ar.Read<int>();
+
+            if (Ar.Game == EGame.GAME_APBReloaded && (int)FileVersionLicenseeUE > 32)
+            {
+                Ar.Read<FGuid>();
+            }
+
+            Generations = Ar.ReadArray(Count, () => new FGenerationInfo(Ar));
 
             if (Ar.Game == EGame.GAME_DeltaForceHawkOps) Ar.Position += 16;
 
@@ -475,6 +492,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPackageSource)
             {
+                // Value that is used to determine if the package was saved by Epic (or licensee) or by a modder, etc
                 PackageSource = Ar.Read<int>();
             }
 

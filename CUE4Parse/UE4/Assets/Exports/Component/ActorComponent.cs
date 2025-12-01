@@ -56,11 +56,11 @@ public class UAudioCaptureComponent : USynthComponent;
 public class UAudioComponent : USceneComponent
 {
     public USoundBase? Sound { get; protected set; }
-    
+
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        
+
         Sound = GetOrDefault<USoundBase?>(nameof(Sound));
     }
 }
@@ -88,10 +88,10 @@ public class UBillboardComponent : UPrimitiveComponent
         {
             var sprite = current.GetOrDefault<UTexture2D?>("Sprite");
             if (sprite != null) return sprite;
-            
+
             current = current.Template?.Load<UBillboardComponent>();
         }
-        
+
         return Owner?.Provider?.LoadPackageObject<UTexture2D>("Engine/Content/EditorResources/S_Actor.S_Actor");
     }
 }
@@ -260,6 +260,9 @@ public class UTerrainComponent : UPrimitiveComponent;
 public class UPaperTerrainSplineComponent : USplineComponent;
 public class UPaperTileMapComponent : UMeshComponent;
 public class UPaperTileMapRenderComponent : UPaperTileMapComponent;
+
+public class UUTParticleSystemComponent : UUDKParticleSystemComponent;
+public class UUDKParticleSystemComponent : UParticleSystemComponent;
 
 public class UParticleSystemComponent : UFXSystemComponent
 {

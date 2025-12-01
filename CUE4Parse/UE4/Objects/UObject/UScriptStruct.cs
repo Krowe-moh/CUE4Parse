@@ -13,13 +13,12 @@ public class UScriptStruct : UStruct
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LIGHTING_CHANNEL_SUPPORT)
         {
-            StructFlags = Ar.Read<EStructFlags>();
+            StructFlags = Ar.Game < EGame.GAME_UE4_0 ? (EStructFlags)Ar.Read<ulong>() : Ar.Read<EStructFlags>();
         }
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            Ar.Position += 4; // unknown
-            DeserializePropertiesTagged(Properties, Ar, true);
+            DeserializePropertiesTagged(Properties, Ar, false);
         }
     }
 }

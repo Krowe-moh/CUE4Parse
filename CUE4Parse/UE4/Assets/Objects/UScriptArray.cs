@@ -42,7 +42,13 @@ public class UScriptArray
                 $"ArrayProperty element count {elementCount} is larger than the remaining archive size {Ar.Length - Ar.Position}");
         }
 
-        if (Ar.HasUnversionedProperties || Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            var count = elementCount > 0 ? elementCount : 1;
+            var elemsize = (size - sizeof(int)) / count;
+            InnerTagData = FPropertyTagData.GetArrayStructType(tagData.Name, elemsize);
+        }
+        else if (Ar.HasUnversionedProperties)
         {
             InnerTagData = tagData.InnerTypeData;
         }

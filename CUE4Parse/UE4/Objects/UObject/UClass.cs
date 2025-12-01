@@ -50,8 +50,7 @@ public class UClass : UStruct
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        if (Ar.Game == EGame.GAME_AWayOut)
-            Ar.Position += 4;
+        if (Ar.Game == EGame.GAME_AWayOut) Ar.Position += 4;
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.Release62)
         {

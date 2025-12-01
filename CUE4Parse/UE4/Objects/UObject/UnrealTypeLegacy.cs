@@ -193,7 +193,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         }
     }
 
-    public class UComponentProperty : UObjectProperty { }
+    public class UComponentProperty : UObjectProperty;
 
     public class UClassProperty : UObjectProperty
     {
@@ -343,14 +343,14 @@ namespace CUE4Parse.UE4.Objects.UObject
 
     public class UDelegateProperty : UProperty
     {
-        public FPackageIndex SignatureFunction; // UFunction
+        public FPackageIndex SignatureFunction;
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
             SignatureFunction = new FPackageIndex(Ar);
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedDelegateSourceToUDelegateProperty)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedDelegateSourceToUDelegateProperty && Ar.Game < EGame.GAME_UE4_0)
             {
                 new FPackageIndex(Ar); // SourceDelegate
             }

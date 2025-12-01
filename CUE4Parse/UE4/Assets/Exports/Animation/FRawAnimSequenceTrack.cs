@@ -15,9 +15,9 @@ public class FRawAnimSequenceTrack : IUStruct
     {
         if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_NATIVE_RAWANIMDATA_SERIALIZATION)
         {
-            PosKeys = Ar.ReadArray<FVector>();
-            RotKeys = Ar.ReadArray<FQuat>();
-            KeyTimes = Ar.ReadArray<float>();
+           // PosKeys = Ar.ReadArray<FVector>();
+           // RotKeys = Ar.ReadArray<FQuat>();
+          //  KeyTimes = Ar.ReadArray<float>();
             return;
         }
 

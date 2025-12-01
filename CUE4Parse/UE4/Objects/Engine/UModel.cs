@@ -360,7 +360,7 @@ namespace CUE4Parse.UE4.Objects.Engine
                 }
             }
 
-            if (Ar.Game >= EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INTEGRATED_LIGHTMASS)
             {
                 LightingGuid = Ar.Read<FGuid>();
                 LightmassSettings = Ar.ReadArray(() => new FLightmassPrimitiveSettings(Ar));

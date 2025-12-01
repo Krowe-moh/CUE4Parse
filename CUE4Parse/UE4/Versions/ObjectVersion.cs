@@ -969,6 +969,10 @@ namespace CUE4Parse.UE4.Versions
         temp6 = 127,
         // added DetailMode to FDecorationLayer
         temp7 = 128,
+        // empty?
+        temp8 = 128,
+        // StaticMeshActor Socket Type Added
+        temp9 = 128,
 
         MovedFriendlyNameToUFunction = 160,
         TextureDeprecatedFromPoly = 170,

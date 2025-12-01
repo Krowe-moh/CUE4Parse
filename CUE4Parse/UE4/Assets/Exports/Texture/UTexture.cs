@@ -77,6 +77,11 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
         SRGB = GetOrDefault(nameof(SRGB), true);
         AssetUserData = GetOrDefault<FPackageIndex[]>(nameof(AssetUserData), []);
 
+        if (Ar.Game == EGame.GAME_APBReloaded)
+        {
+            Ar.Position += 8 * 2;
+        }
+
         if (Ar.Ver < EUnrealEngineObjectUE3Version.CompMipsDeprecated)
         {
             var bHasComp = GetOrDefault("bHasComp", false);

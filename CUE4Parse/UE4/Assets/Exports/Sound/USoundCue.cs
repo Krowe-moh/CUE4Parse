@@ -23,7 +23,8 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
             base.Deserialize(Ar, validPos);
             FirstNode = GetOrDefault<FPackageIndex>(nameof(FirstNode));
 
-            if (Ar.Ver < EUnrealEngineObjectUE4Version.SOUND_NODE_INHERIT_FROM_ED_GRAPH_NODE)
+            // ver is temp.
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_IMPROVED_ANGLEBASEDSSAO && Ar.Ver < EUnrealEngineObjectUE4Version.SOUND_NODE_INHERIT_FROM_ED_GRAPH_NODE)
             {
                 EditorData = new Dictionary<FPackageIndex, NodeEditorData>();
                 int Count = Ar.Read<int>();
@@ -35,8 +36,6 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
                     if (key != null)
                         EditorData[key] = value;
                 }
-
-                return;
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.COOKED_ASSETS_IN_EDITOR_SUPPORT)

@@ -4,7 +4,7 @@ using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.UE4.Objects.UObject;
-    
+
 [Flags]
 public enum StateFlags : uint
 {
@@ -20,25 +20,19 @@ public class UState : UStruct
     public short LabelTableOffset;
     public StateFlags StateFlags;
     public Dictionary<FName, FPackageIndex /*UFunction*/> FuncMap;
-    
+
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        
-        if (Ar.Game >= EGame.GAME_UE4_0) return;
-        
+
+        ProbeMask = Ar.Read<long>();
         if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
         {
-            ProbeMask = Ar.Read<long>();
             IgnoreMask = Ar.Read<long>();
-        }
-        else
-        {
-            ProbeMask = Ar.Read<long>();
         }
 
         LabelTableOffset = Ar.Read<short>();
-        StateFlags = (StateFlags)Ar.Read<int>();
+        StateFlags = Ar.Read<StateFlags>();
         if (Ar.Ver > EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction)
         {
             FuncMap = new Dictionary<FName, FPackageIndex>();

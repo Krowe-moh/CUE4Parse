@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using CUE4Parse.UE4.Assets.Exports.BuildData;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
@@ -13,13 +15,35 @@ public abstract class ULightComponentBase : USceneComponent;
 
 public class UUIDynamicFieldProvider : UObject
 {
+    public Dictionary<FName, Dictionary<FName, string[]>> PersistentCollectionData;
+
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_COLLECTION_DATA)
+
+        if (Ar.Ver <= EUnrealEngineObjectUE3Version.VER_CHANGED_COMPRESSION_CHUNK_SIZE_TO_128) return; // should not exist.
+
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_ADDED_COLLECTION_DATA)
         {
-            // TMap<FName, TMap<FName,TArray<FString>>> PersistentCollectionData;
-            Ar.ReadMap(
+            var oldVersion = Ar.ReadMap(
+                () => Ar.ReadFName(),
+                () => Ar.ReadMap(
+                    () => Ar.ReadFName(),
+                    () => Ar.ReadFString()
+                )
+            );
+
+            PersistentCollectionData = oldVersion.ToDictionary(
+                outer => outer.Key,
+                outer => outer.Value.ToDictionary(
+                    inner => inner.Key,
+                    inner => new [] { inner.Value }
+                )
+            );
+        }
+        else
+        {
+            PersistentCollectionData = Ar.ReadMap(
                 () => Ar.ReadFName(),
                 () => Ar.ReadMap(
                     () => Ar.ReadFName(),
@@ -150,17 +174,36 @@ public class USpotLightComponent : UPointLightComponent
 
 public class UDominantSpotLightComponent : UPointLightComponent
 {
+    public short[] DominantLightShadowMap;
+
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        base.Deserialize(Ar, validPos);
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SPOTLIGHT_DOMINANTSHADOW_TRANSITION)
+        // Before super
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SPOTLIGHT_DOMINANTSHADOW_TRANSITION && Ar.Game < EGame.GAME_UE4_0)
         {
-            Ar.ReadArray(() => Ar.Read<short>()); // DominantLightShadowMap
+            DominantLightShadowMap = Ar.ReadArray(() => Ar.Read<short>());
         }
+
+        base.Deserialize(Ar, validPos);
     }
 }
 
-public class UDominantDirectionalLightComponent : UPointLightComponent;
+public class UDominantDirectionalLightComponent : UPointLightComponent
+{
+    public short[] DominantLightShadowMap;
+
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        // Before super
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SPOTLIGHT_DOMINANTSHADOW_TRANSITION && Ar.Game < EGame.GAME_UE4_0)
+        {
+            DominantLightShadowMap = Ar.ReadArray(() => Ar.Read<short>());
+        }
+
+        base.Deserialize(Ar, validPos);
+    }
+}
+public class UDominantPointLightComponent : UPointLightComponent;
 public class UParticleLightEnvironmentComponent : UPointLightComponent;
 public class UPointLightComponent : ULocalLightComponent
 {
