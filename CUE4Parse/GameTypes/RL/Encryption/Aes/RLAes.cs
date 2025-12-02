@@ -26,7 +26,7 @@ namespace CUE4Parse.GameTypes.RL.Encryption.Aes
             };
 
             // I'd like to move this to fmodel but it's not simple, either a text field with all keys or url
-            string[] remoteKeys = HttpClient.GetStringAsync("https://gist.githubusercontent.com/Krowe-moh/08d201249b39a15484fd6d3a1f63c754/raw/keys.txt").GetAwaiter().GetResult().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] remoteKeys = HttpClient.GetStringAsync("https://raw.githubusercontent.com/ShinyEmii/Toga-Files/refs/heads/master/aes.txt").GetAwaiter().GetResult().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
             var allKeys = new System.Collections.Generic.List<byte[]>(defaultKey);
             foreach (var line in remoteKeys)

@@ -1680,6 +1680,8 @@ namespace CUE4Parse.UE4.Versions
         VER_PYLONLIST_IN_ULEVEL = 585,
         // Added local object version number to ULevel and NavMesh
         VER_NAVMESH_COVERREF = 586,
+        // Updates and replaces several kismet objects
+        VER_CONVERT_KISMET_OBJECTS = 587,
         // poly height var added to polygons in navmesh
         VER_NAVMESH_POLYHEIGHT = 588,
         // simple element shader recompile
