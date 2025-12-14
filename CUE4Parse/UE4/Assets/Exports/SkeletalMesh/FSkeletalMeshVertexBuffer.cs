@@ -35,6 +35,7 @@ public class FSkeletalMeshVertexBuffer
         if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_USE_FLOAT16_SKELETAL_MESH_UVS)
         {
             Ar.ReadBulkArray(() => new FSoftVertex(Ar));
+            return;
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH)
@@ -57,6 +58,7 @@ public class FSkeletalMeshVertexBuffer
             MeshOrigin = new FVector(Ar);
         }
 
+        if (Ar.Game < EGame.GAME_UE4_0 && Ar.Game != EGame.GAME_RocketLeague) bUsePackedPosition = false;
         if (!bUseFullPrecisionUVs)
         {
             if (!bUsePackedPosition)

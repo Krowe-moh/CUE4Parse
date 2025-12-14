@@ -220,7 +220,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                     // Make sure that the linker will fail to load with it.
                     FileVersionUE.Reset();
                     FileVersionLicenseeUE = 0;
-                    throw new ParserException("Can't load legacy UE3 file");
+                    throw new ParserException("Can't load legacy UE3 file"); // todo: findout what this is, no UE3 game gets this so i assume it's UE4 early
                 }
 
                 if (legacyFileVersion != -4)

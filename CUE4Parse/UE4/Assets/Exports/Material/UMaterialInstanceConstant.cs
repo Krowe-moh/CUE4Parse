@@ -21,7 +21,7 @@ public class UMaterialInstanceConstant : UMaterialInstance
         TextureParameterValues = GetOrDefault(nameof(TextureParameterValues), Array.Empty<FTextureParameterValue>());
         VectorParameterValues = GetOrDefault(nameof(VectorParameterValues), Array.Empty<FVectorParameterValue>());
         // todo
-        Ar.Position = validPos;
+        Ar.Position = validPos; // might be rocket league only
     }
 
     public override void GetParams(CMaterialParams parameters)

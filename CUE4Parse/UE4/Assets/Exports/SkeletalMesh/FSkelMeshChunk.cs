@@ -39,8 +39,8 @@ public class FSkelMeshChunk
         }
         else
         {
-            NumRigidVertices = RigidVertices.Length;
-            NumSoftVertices = SoftVertices.Length;
+            NumRigidVertices = RigidVertices!.Length;
+            NumSoftVertices = SoftVertices!.Length;
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_GPUSKIN_MAX_INFLUENCES_OPTIMIZATION)

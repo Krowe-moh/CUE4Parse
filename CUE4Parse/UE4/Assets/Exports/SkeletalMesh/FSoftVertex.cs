@@ -27,32 +27,6 @@ public class FSoftVertex : FSkelMeshVertexBase
             Color = Ar.Read<FColor>();
         }
 
-        if (isRigid)
-        {
-            if (Ar.Game < EGame.GAME_UE4_0)
-            {
-                //if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_IPHONE_AUDIO_VARIABLE_BLOCK_SIZE_COMPRESSION)
-                {
-                    Ar.Read<int>(); // BoneIndex
-                    return;
-                }
-            }
-        }
-        else
-        {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USE_UMA_RESOURCE_ARRAY_MESH_DATA)
-            {
-                Ar.ReadArray<byte>(MAX_INFLUENCES_UE3); // BoneIndex
-                Ar.ReadArray<byte>(MAX_INFLUENCES_UE3); // BoneWeight
-            }
-            else
-            {
-                Ar.ReadArray<short>(MAX_INFLUENCES_UE3); // BoneIndex & BoneWeight
-            }
-
-            return;
-        }
-
         Infs = !isRigid ?
             new FSkinWeightInfo(Ar, Ar.Ver >= EUnrealEngineObjectUE4Version.SUPPORT_8_BONE_INFLUENCES_SKELETAL_MESHES) :
             new FSkinWeightInfo { BoneIndex = { [0] = Ar.Read<byte>() }, BoneWeight = { [0] = 255 } };

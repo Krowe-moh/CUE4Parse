@@ -42,3 +42,23 @@ public class UDistributionVectorParticleParameter : UDistributionVector;
 public class UDistributionVectorUniform : UDistributionVector;
 public class UDistributionVectorUniformCurve : UDistributionVector;
 public class UDistributionVectorUniformRange : UDistributionVector;
+
+
+public class UUTVehicleScorpionWheel : UComponent;
+
+// sort
+public class UEvilDissolvingStaticMeshComponent : UComponent;
+public class UEvilDynamicLight_Base : UComponent;
+public class UEvilSceneCaptureHighlightComponent : UComponent;
+
+public class UUTAmbientSoundComponent : UComponent;
+public class UUTHoverWheel : UComponent;
+public class UUTGibStaticMeshComponent : UComponent;
+public class UUDKVehicleSimHover : UComponent;
+public class UUDKVehicleSimHoverboard : UComponent;
+public class UUDKVehicleSimChopper : UComponent;
+public class UUDKVehicleSimCar : UComponent;
+
+public class URFlashingLightComponent : UComponent;
+public class URRollComponent : UComponent;
+public class URBrushComponent : UComponent;

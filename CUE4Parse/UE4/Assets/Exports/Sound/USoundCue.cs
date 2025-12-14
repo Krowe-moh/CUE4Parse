@@ -24,7 +24,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
             FirstNode = GetOrDefault<FPackageIndex>(nameof(FirstNode));
 
             // ver is temp.
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_IMPROVED_ANGLEBASEDSSAO && Ar.Ver < EUnrealEngineObjectUE4Version.SOUND_NODE_INHERIT_FROM_ED_GRAPH_NODE)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_CONVERT_KISMET_OBJECTS && Ar.Ver < EUnrealEngineObjectUE4Version.SOUND_NODE_INHERIT_FROM_ED_GRAPH_NODE)
             {
                 EditorData = new Dictionary<FPackageIndex, NodeEditorData>();
                 int Count = Ar.Read<int>();

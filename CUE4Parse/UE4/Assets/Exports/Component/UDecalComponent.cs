@@ -17,7 +17,7 @@ public class FStaticReceiverData
     FPackageIndex Component;
 
     /** Source vertex data. */
-    FOldDecalVertex[] Vertices;
+    IUStruct[] Vertices;
 
     /** Index buffer. */
     short[] Indices;
@@ -31,7 +31,14 @@ public class FStaticReceiverData
     public FStaticReceiverData(FAssetArchive Ar)
     {
         Component = new FPackageIndex(Ar);
-        Vertices = Ar.ReadBulkArray(() => new FOldDecalVertex(Ar));
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_DECAL_ADDED_DECAL_VERTEX_LIGHTMAP_COORD)
+        {
+            Vertices = Ar.ReadBulkArray(() => new FOldDecalVertex(Ar));
+        }
+        else
+        {
+            Vertices = Ar.ReadBulkArray(() => new FDecalVertex(Ar));
+        }
         Indices = Ar.ReadBulkArray<short>();
         Ar.Read<int>(); // NumTriangles
         if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_DECAL_STATIC_DECALS_SERIALIZED) return;
@@ -41,10 +48,25 @@ public class FStaticReceiverData
             ELightMapType.LMT_2D => new FLightMap2D(Ar),
             _ => null
         };
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DECAL_SHADOWMAPS)
+        {
+            Ar.ReadArray(() => new FPackageIndex(Ar)); // ShadowMap1D;
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DECAL_SERIALIZE_BSP_ELEMENT)
+        {
+            Ar.Read<int>(); // Data
+        }
+
+        if( Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATIC_DECAL_INSTANCE_INDEX)
+        {
+            Ar.Read<int>(); // InstanceIndex
+        }
     }
 }
 
-public class FOldDecalVertex
+public class FOldDecalVertex : IUStruct
 {
     FVector Position;
     FPackedNormal TangentX;
@@ -56,7 +78,6 @@ public class FOldDecalVertex
 
     /** Transforms receiver tangent basis into decal tangent basis for normal map lookup. */
     FVector2D NormalTransform0;
-
     FVector2D NormalTransform1;
 
     public FOldDecalVertex(FArchive Ar)
@@ -68,6 +89,58 @@ public class FOldDecalVertex
         UV = Ar.Read<FVector2D>();
         NormalTransform0 = new FVector2D(Ar);
         NormalTransform1 = new FVector2D(Ar);
+    }
+}
+
+public class FDecalVertex : IUStruct
+{
+    FVector Position;
+    FPackedNormal TangentX;
+    FPackedNormal? TangentY;
+    FPackedNormal TangentZ;
+
+    /** Decal mesh texture coordinates. */
+    FVector2D UV;
+
+    /** Decal vertex light map coordinated.  Added in engine version VER_DECAL_ADDED_DECAL_VERTEX_LIGHTMAP_COORD. */
+    FVector2D		LightMapCoordinate;
+
+    /** Transforms receiver tangent basis into decal tangent basis for normal map lookup. */
+    FVector2D NormalTransform0;
+    FVector2D NormalTransform1;
+
+    public FDecalVertex(FArchive Ar)
+    {
+        Position = Ar.Read<FVector>();
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DECAL_VERTEX_FACTORY_VER1 && Ar.Ver < EUnrealEngineObjectUE3Version.VER_DECAL_VERTEX_FACTORY_VER2)
+        {
+        }
+        else
+        {
+            TangentX = new FPackedNormal(Ar);
+        }
+
+        if (false) // Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVE_BINORMAL_TANGENT_VECTOR
+        {
+            TangentY = new FPackedNormal(Ar);
+        }
+        TangentZ = new FPackedNormal(Ar);
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_DECAL_VERTEX_FACTORY_VER1)
+        {
+            UV = new FVector2D(Ar);
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DECAL_ADDED_DECAL_VERTEX_LIGHTMAP_COORD)
+        {
+            LightMapCoordinate = new FVector2D(Ar);
+        }
+
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_DECAL_REMOVED_2X2_NORMAL_TRANSFORM)
+        {
+            NormalTransform0 = new FVector2D(Ar);
+            NormalTransform1 = new FVector2D(Ar);
+        }
     }
 }
 

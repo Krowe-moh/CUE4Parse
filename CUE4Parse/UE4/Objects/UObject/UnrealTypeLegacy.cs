@@ -17,7 +17,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             base.Deserialize(Ar, validPos);
             ArrayDim = Ar.Read<int>();
-            PropertyFlags = (EPropertyFlags)(Ar.Ver >= EUnrealEngineObjectUE3Version.PropertyFlagsSizeExpandedTo64Bits ? Ar.Read<ulong>() : Ar.Read<uint>());
+            PropertyFlags = Ar.Ver >= EUnrealEngineObjectUE3Version.PropertyFlagsSizeExpandedTo64Bits ? Ar.Read<EPropertyFlags>() : (EPropertyFlags)Ar.Read<uint>();
             if (Ar.Game >= EGame.GAME_UE4_0)
             {
                 RepNotifyFunc = Ar.ReadFName();
@@ -27,11 +27,11 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 if (!Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform != ETexturePlatform.XboxAndPlaystation) // ignore for now
                 {
-                    Ar.ReadFName();
-                    new FPackageIndex(Ar);
+                    Ar.ReadFName(); // CategoryName
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES) new FPackageIndex(Ar); // ArrayEnum
                 }
 
-                if (PropertyFlags.HasFlag(EPropertyFlags.Net))
+                if (PropertyFlags.HasFlag(EPropertyFlags.Net)) // edit?
                 {
                     Ar.Read<ushort>();
                 }

@@ -14,8 +14,8 @@ public class FGPUVertFloatPacked : FSkelMeshVertexBase
 
     public FGPUVertFloatPacked(FArchive Ar, int numSkelUVSets) : this()
     {
-        SerializeForEditorr(Ar);
-        
+        SerializeForGPU(Ar);
+
         Ar.Read<int>(); // packed index
         UV = Ar.ReadArray<FMeshUVFloat>(numSkelUVSets);
     }

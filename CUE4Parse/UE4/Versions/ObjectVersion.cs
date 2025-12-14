@@ -1847,6 +1847,10 @@ namespace CUE4Parse.UE4.Versions
         VER_APEX_DESTRUCTION = 681,
         // Added spotlight dominant shadow transition handling
         VER_SPOTLIGHT_DOMINANTSHADOW_TRANSITION = 682,
+        // Added common game type package object lists to GPCD
+        VER_PREFIX_GAMETYPE_OBJECTS_IN_GPCD = 683,
+        // Added PMap forced object lists to GPCD
+        VER_PMAP_FORCED_OBJECTS_IN_GPCD = 684,
         // Added support for preshadows on translucency
         VER_TRANSLUCENT_PRESHADOWS = 685,
         // Removed shadow volume support

@@ -13,7 +13,7 @@ public class UScriptStruct : UStruct
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LIGHTING_CHANNEL_SUPPORT)
         {
-            StructFlags = Ar.Game < EGame.GAME_UE4_0 ? (EStructFlags)Ar.Read<ulong>() : Ar.Read<EStructFlags>();
+            StructFlags = Ar.Read<EStructFlags>();
         }
 
         if (Ar.Game < EGame.GAME_UE4_0)

@@ -36,13 +36,13 @@ public class AActor : UObject
     protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
     {
         base.WriteJson(writer, serializer);
-        
+
         if (!string.IsNullOrEmpty(ActorLabel))
         {
             writer.WritePropertyName("ActorLabel");
             writer.WriteValue(ActorLabel);
         }
-        
+
         if (ActorInstanceGuid is not null)
         {
             writer.WritePropertyName("ActorInstanceGuid");
@@ -238,7 +238,18 @@ public class ALightmassPortal : AActor;
 public class ALocalFogVolume : AInfo;
 public class ALocationVolume : AVolume;
 public class AManipulator : AActor;
-public class AMaterialInstanceActor : AActor;
+public class AMaterialInstanceActor : AActor
+{
+    public FPackageIndex MatInst;
+
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+
+        MatInst = GetOrDefault(nameof(MatInst), new FPackageIndex());
+    }
+}
+
 public class AMediaBundleActorBase : AActor;
 public class AMediaPlate : AActor;
 public class AMeshMergeCullingVolume : AVolume;
@@ -410,12 +421,12 @@ public class AWorldPartitionVolume : AVolume;
 public class AWorldSettings : AInfo
 {
     public FPackageIndex WorldPartition;
-    
+
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 20;
         base.Deserialize(Ar, validPos);
-        
+
         WorldPartition = GetOrDefault(nameof(WorldPartition), new FPackageIndex());
     }
 }

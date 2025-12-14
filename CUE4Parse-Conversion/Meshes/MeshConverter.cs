@@ -142,7 +142,7 @@ public static class MeshConverter
             };
 
             staticMeshLod.AllocateVerts(numVerts);
-            if (srcLod.ColorVertexBuffer!.NumVertices != 0)
+            if (srcLod?.ColorVertexBuffer?.NumVertices != 0)
                 staticMeshLod.AllocateVertexColorBuffer();
 
             for (var j = 0; j < numVerts; j++)
@@ -500,29 +500,57 @@ public static class MeshConverter
                 }
                 else if (!vertBuffer.bUseFullPrecisionUVs)
                 {
-                    var v0 = vertBuffer.VertsHalf[vert];
-                    v = v0;
-
-                    skeletalMeshLod.Verts[vert].UV = (FMeshUVFloat) v0.UV[0]; // UV: convert half -> float
-                    for (var texCoordIndex = 1; texCoordIndex < numTexCoords; texCoordIndex++)
+                    if (!vertBuffer.bUseFullPrecisionUVs)
                     {
-                        skeletalMeshLod.ExtraUV.Value[texCoordIndex - 1][vert] = (FMeshUVFloat) v0.UV[texCoordIndex];
+                        var v0 = vertBuffer.VertsHalf[vert];
+                        v = v0;
+
+                        skeletalMeshLod.Verts[vert].UV = (FMeshUVFloat) v0.UV[0]; // UV: convert half -> float
+                        for (var texCoordIndex = 1; texCoordIndex < numTexCoords; texCoordIndex++)
+                        {
+                            skeletalMeshLod.ExtraUV.Value[texCoordIndex - 1][vert] = (FMeshUVFloat) v0.UV[texCoordIndex];
+                        }
+                    }
+                    else
+                    {
+                        var v0 = vertBuffer.VertsHalfPacked[vert];
+                        v = v0;
+
+                        skeletalMeshLod.Verts[vert].UV = (FMeshUVFloat) v0.UV[0]; // UV: convert half -> float
+                        for (var texCoordIndex = 1; texCoordIndex < numTexCoords; texCoordIndex++)
+                        {
+                            skeletalMeshLod.ExtraUV.Value[texCoordIndex - 1][vert] = (FMeshUVFloat) v0.UV[texCoordIndex];
+                        }
                     }
                 }
                 else
                 {
-                    var v0 = vertBuffer.VertsFloat[vert];
-                    v = v0;
-
-                    skeletalMeshLod.Verts[vert].UV = v0.UV[0]; // UV: simply copy float data
-                    for (var texCoordIndex = 1; texCoordIndex < numTexCoords; texCoordIndex++)
+                    if (!vertBuffer.bUseFullPrecisionUVs)
                     {
-                        skeletalMeshLod.ExtraUV.Value[texCoordIndex - 1][vert] = v0.UV[texCoordIndex];
+                        var v0 = vertBuffer.VertsFloat[vert];
+                        v = v0;
+
+                        skeletalMeshLod.Verts[vert].UV = v0.UV[0]; // UV: simply copy float data
+                        for (var texCoordIndex = 1; texCoordIndex < numTexCoords; texCoordIndex++)
+                        {
+                            skeletalMeshLod.ExtraUV.Value[texCoordIndex - 1][vert] = v0.UV[texCoordIndex];
+                        }
+                    }
+                    else
+                    {
+                        var v0 = vertBuffer.VertsFloatPacked[vert];
+                        v = v0;
+
+                        skeletalMeshLod.Verts[vert].UV = v0.UV[0]; // UV: simply copy float data
+                        for (var texCoordIndex = 1; texCoordIndex < numTexCoords; texCoordIndex++)
+                        {
+                            skeletalMeshLod.ExtraUV.Value[texCoordIndex - 1][vert] = v0.UV[texCoordIndex];
+                        }
                     }
                 }
 
                 skeletalMeshLod.Verts[vert].Position = v.Pos;
-                //UnpackNormals(v.Normal, skeletalMeshLod.Verts[vert]);
+                UnpackNormals(v.Normal, skeletalMeshLod.Verts[vert]);
                 if (skeletalMeshLod.VertexColors != null)
                 {
                     skeletalMeshLod.VertexColors[vert] = srcLod.ColorVertexBuffer.Data[vert];
