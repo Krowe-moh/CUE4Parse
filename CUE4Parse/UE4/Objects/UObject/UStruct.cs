@@ -72,7 +72,7 @@ public class UStruct : UField
         {
             serializedScriptSize = bytecodeBufferSize;
         }
-
+        serializedScriptSize = bytecodeBufferSize;
         if (Ar.Owner!.Provider?.ReadScriptData == true && serializedScriptSize > 0)
         {
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE)
@@ -103,6 +103,11 @@ public class UStruct : UField
         else
         {
             Ar.Position += serializedScriptSize;
+        }
+
+        if (Ar.Game < EGame.GAME_UE4_0 && GetType() is UStruct)
+        {
+            DeserializePropertiesTagged(Properties, Ar, false);
         }
     }
 

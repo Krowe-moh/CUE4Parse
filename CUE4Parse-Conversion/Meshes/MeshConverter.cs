@@ -392,7 +392,6 @@ public static class MeshConverter
         for (var i = 0; i < originalMesh.LODModels.Length; i++)
         {
             var srcLod = originalMesh.LODModels[i];
-            if (srcLod.SkipLod) continue;
 
             var numTexCoords = srcLod.NumTexCoords;
             if (numTexCoords > Constants.MAX_MESH_UV_SETS)
@@ -555,8 +554,6 @@ public static class MeshConverter
                 {
                     skeletalMeshLod.VertexColors[vert] = srcLod.ColorVertexBuffer.Data[vert];
                 }
-                if (v.Infs == null)
-                    continue;
                 var scale = v.Infs.bUse16BitBoneWeight ? Constants.UShort_Bone_Scale : Constants.Byte_Bone_Scale;
                 foreach (var (weight, boneIndex) in v.Infs.BoneWeight.Zip(v.Infs.BoneIndex))
                 {

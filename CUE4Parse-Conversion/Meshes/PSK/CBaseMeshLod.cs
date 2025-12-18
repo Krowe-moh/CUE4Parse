@@ -22,7 +22,6 @@ public class CBaseMeshLod : IDisposable
     public FColor[]? VertexColors;
     public CVertexColor[]? ExtraVertexColors;
     public Lazy<uint[]>? Indices;
-    public bool SkipLod => Sections?.Value.Length < 1 || Indices?.Value.Length < 1;
 
     public void AllocateUVBuffers()
     {
@@ -54,7 +53,7 @@ public class CBaseMeshLod : IDisposable
 
     public List<MaterialExporter2> GetMaterials(ExporterOptions options)
     {
-        if (SkipLod || !options.ExportMaterials) return [];
+        if (!options.ExportMaterials) return [];
 
         var materials = new List<MaterialExporter2>();
         foreach (var section in Sections.Value)

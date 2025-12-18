@@ -880,6 +880,9 @@ public class FPackageFileSummaryConverter : JsonConverter<FPackageFileSummary>
         writer.WritePropertyName("CustomVersions");
         serializer.Serialize(writer, value.CustomVersionContainer?.Versions);
 
+        writer.WritePropertyName("TextureAllocations");
+        serializer.Serialize(writer, value.TextureAllocations);
+
         writer.WritePropertyName(nameof(value.bUnversioned));
         writer.WriteValue(value.bUnversioned);
 

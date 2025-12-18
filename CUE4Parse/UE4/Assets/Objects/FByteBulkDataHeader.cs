@@ -52,6 +52,12 @@ namespace CUE4Parse.UE4.Assets.Objects
             }
 
             BulkDataFlags = Ar.Read<EBulkDataFlags>();
+            if (Ar.Game == EGame.GAME_APBReloaded && (BulkDataFlags & (EBulkDataFlags) 0x100) != 0)
+            {
+                BulkDataFlags &= ~(EBulkDataFlags) 0x100;
+                BulkDataFlags |= BULKDATA_CompressedLZO;
+            }
+
             ElementCount = BulkDataFlags.HasFlag(BULKDATA_Size64Bit) ? (int) Ar.Read<long>() : Ar.Read<int>();
             if (Ar.Game == EGame.GAME_RocketLeague)
             {

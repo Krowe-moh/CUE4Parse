@@ -70,8 +70,8 @@ public class FSkeletalMeshVertexInfluences
                 {
                     Ar.Read<byte>(); // IndexSize
                 }
-                
-                VertexInfluenceMapping = Ar.ReadMap(() => new FBoneIndexPair(Ar), () => 
+
+                VertexInfluenceMapping = Ar.ReadMap(() => new FBoneIndexPair(Ar), () =>
                 {
                     var arr = Ar.ReadArray<short>();
                     var ints = new int[arr.Length];
@@ -121,7 +121,6 @@ public class FStaticLODModel
     public FMultisizeIndexContainer AdjacencyIndexBuffer;
     public FSkeletalMeshVertexClothBuffer ClothVertexBuffer;
     public FSkeletalMeshHalfEdgeBuffer HalfEdgeBuffer;
-    public bool SkipLod => Indices?.Buffer == null || Indices.Buffer.Length < 1;
     // Game specific data
     public object? AdditionalBuffer;
 
@@ -257,9 +256,9 @@ public class FStaticLODModel
         {
             Ar.ReadArray<short>(); // indices
         }
-        
+
         ActiveBoneIndices = Ar.ReadArray<short>();
-        
+
         if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_SHADOW_VOLUMES)
         {
             Ar.ReadArray<byte>(); // NumTriangles
@@ -282,7 +281,7 @@ public class FStaticLODModel
             Ar.ReadArray(() => Ar.ReadBytes(16));
         }
         //  < 202
-        
+
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.BonesAsBytes && Ar.Game < EGame.GAME_UE4_0)
         {
             var byteBones = Ar.ReadArray<byte>();
@@ -293,10 +292,16 @@ public class FStaticLODModel
         {
             RequiredBones = Ar.ReadArray<short>();
         }
-        
+
+        if (Ar.Game == EGame.GAME_APBReloaded)
+        {
+            Ar.Position += 8;
+            goto SkipBulkdata;
+        }
         if (!stripDataFlags.IsEditorDataStripped() && Ar.Ver >= EUnrealEngineObjectUE3Version.AddedBulkLod)
             RawPointIndices = new FIntBulkData(Ar);
 
+        SkipBulkdata:
         if (Ar.Game != EGame.GAME_StateOfDecay2 && Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_SKELMESH_MESHTOIMPORTVERTEXMAP)
         {
             MeshToImportVertexMap = Ar.ReadArray<int>();
@@ -359,7 +364,7 @@ public class FStaticLODModel
                 {
                     Ar.ReadArray(() => new FSkeletalMeshVertexInfluences(Ar));
                 }
-                
+
                 // https://github.com/gildor2/UEViewer/blob/master/Unreal/UnrealMesh/UnMesh4.cpp#L1415
                 if (Ar.Game == EGame.GAME_StateOfDecay2)
                     stripDataFlags.ClassStripFlags |= (byte) EClassDataStripFlag.CDSF_AdjacencyData;

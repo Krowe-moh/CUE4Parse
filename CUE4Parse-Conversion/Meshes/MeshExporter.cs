@@ -87,11 +87,6 @@ namespace CUE4Parse_Conversion.Meshes
             foreach (var lod in convertedMesh.LODs)
             {
                 i++;
-                if (lod.SkipLod)
-                {
-                    Log.Warning($"LOD {i} in mesh '{ExportName}' should be skipped");
-                    continue;
-                }
 
                 using var Ar = new FArchiveWriter();
                 var materialExports = options.ExportMaterials ? new List<MaterialExporter2>() : null;
@@ -167,12 +162,6 @@ namespace CUE4Parse_Conversion.Meshes
             for (var lodIndex = 0; lodIndex < convertedMesh.LODs.Count; lodIndex++)
             {
                 var lod = convertedMesh.LODs[lodIndex];
-                if (lod.SkipLod)
-                {
-                    Log.Warning($"LOD {i} in mesh '{ExportName}' should be skipped");
-                    continue;
-                }
-
                 using var Ar = new FArchiveWriter();
                 var materialExports = options.ExportMaterials ? new List<MaterialExporter2>() : null;
                 var ext = "";
