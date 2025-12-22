@@ -264,7 +264,7 @@ namespace CUE4Parse.UE4.Readers
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool ReadBoolean()
+        public virtual bool ReadBoolean()
         {
             var i = Read<int>();
             return i switch

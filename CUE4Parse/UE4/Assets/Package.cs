@@ -53,8 +53,8 @@ namespace CUE4Parse.UE4.Assets
             : this(
                 uasset,
                 uexp,
-                ubulk != null ? new Lazy<FArchive?>(() => ubulk) : null,
-                uptnl != null ? new Lazy<FArchive?>(() => uptnl) : null,
+                ubulk != null ? _ => ubulk : null,
+                uptnl != null ? _ => uptnl : null,
                 provider,
                 useLazySerialization)
         {
@@ -74,8 +74,8 @@ namespace CUE4Parse.UE4.Assets
         public Package(
             FArchive uasset,
             FArchive? uexp,
-            Lazy<FArchive?>? ubulk = null,
-            Lazy<FArchive?>? uptnl = null,
+            Func<FByteBulkDataHeader?, FArchive?>? ubulk = null,
+            Func<FByteBulkDataHeader?, FArchive?>? uptnl = null,
             IFileProvider? provider = null,
             bool useLazySerialization = true)
             : base(uasset.Name.SubstringBeforeLast('.'), provider)
