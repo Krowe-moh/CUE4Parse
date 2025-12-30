@@ -213,6 +213,10 @@ public class FScriptStruct
             "TextureParameterValue" when Ar.Game == EGame.GAME_GTATheTrilogyDefinitiveEdition => new FTextureParameterValue(Ar),
             "MaterialTextureInfo" when Ar.Game == EGame.GAME_GTATheTrilogyDefinitiveEdition => new FMaterialTextureInfo(Ar),
 
+            "ScalarParameterValues" when Ar.Game < EGame.GAME_UE4_0 => new FScalarParameterValue(Ar),
+            "VectorParameterValues" when Ar.Game < EGame.GAME_UE4_0 => new FVectorParameterValue(Ar),
+            "TextureParameterValues" when Ar.Game < EGame.GAME_UE4_0 => new FTextureParameterValue(Ar),
+
             // STAR WARS Jedi: Survivor
             "SwBitfield_TargetRotatorMask" => new FRsBitfield(Ar, structName),
             "RsBitfield_NavPermissionDetailFlags" => new FRsBitfield(Ar, structName),
@@ -335,7 +339,7 @@ public class FScriptStruct
             "BlueprintDefinedScript" when Ar.Game is EGame.GAME_OuterWorlds2 => new FBlueprintFunctionLibraryConditional(Ar, false),
             "AIGroupBehaviorClassSelector" when Ar.Game is EGame.GAME_OuterWorlds2 => new FSoftObjectPath(Ar),
 
-            // The Last Caretaker 
+            // The Last Caretaker
             "VoyagePackedLocalTransform" => new VoyagePackedLocalTransform(Ar),
             "VoyageFloat16" => Ar.Read<FRawStruct<Half>>(),
 

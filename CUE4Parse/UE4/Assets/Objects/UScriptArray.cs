@@ -4,6 +4,7 @@ using CUE4Parse.GameTypes.DaysGone.Assets;
 using CUE4Parse.UE4.Assets.Objects.Properties;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Exceptions;
+using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 using Serilog;
@@ -33,7 +34,7 @@ public class UScriptArray
 
     public UScriptArray(FAssetArchive Ar, FPropertyTagData? tagData, ReadType type, int size)
     {
-        InnerType = tagData?.InnerType ?? throw new ParserException(Ar, "UScriptArray needs inner type");
+        InnerType = tagData?.InnerType;
         var elementCount = Ar.Read<int>();
 
         if (elementCount > Ar.Length - Ar.Position)
@@ -46,7 +47,16 @@ public class UScriptArray
         {
             var count = elementCount > 0 ? elementCount : 1;
             var elemsize = (size - sizeof(int)) / count;
-            InnerTagData = FPropertyTagData.GetArrayStructType(tagData.Name, elemsize);
+            InnerTagData = FPropertyTagData.GetArrayStructType(Ar, tagData.Name, elemsize);
+            if (InnerTagData.StructType == "StructProperty")
+            {
+                InnerType = InnerTagData.StructType;
+                InnerTagData.StructType = InnerTagData.Name;
+            }
+            else
+            {
+                InnerType = InnerTagData.StructType;
+            }
         }
         else if (Ar.HasUnversionedProperties)
         {
@@ -71,6 +81,8 @@ public class UScriptArray
                 InnerTagData = DaysGoneProperties.GetArrayStructType(tagData.Name, elemsize);
             }
         }
+
+        if (InnerType == null) throw new ParserException(Ar, "UScriptArray needs inner type");
 
         Properties = new List<FPropertyTagType>(elementCount);
         if (elementCount == 0) return;

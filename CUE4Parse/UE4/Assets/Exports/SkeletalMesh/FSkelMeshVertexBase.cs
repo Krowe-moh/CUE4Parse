@@ -53,32 +53,4 @@ public class FSkelMeshVertexBase
             Normal[2] = new FPackedNormal(Ar.Read<FVector4>());
         }
     }
-
-    public void SerializeForEditorr(FArchive Ar)
-    {
-        Normal = new FPackedNormal[3];
-        if (Ar.Game > EGame.GAME_UE4_0)
-        {
-            Pos = Ar.Read<FVector>();
-        }
-
-        if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.IncreaseNormalPrecision)
-        {
-            Normal[0] = new FPackedNormal(Ar);
-            Normal[1] = new FPackedNormal(Ar);
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_SKELETAL_MESH_REMOVE_BINORMAL_TANGENT_VECTOR) Normal[2] = new FPackedNormal(Ar);
-            if (Ar.Game < EGame.GAME_UE4_0)
-            {
-                Ar.ReadArray<byte>(MAX_INFLUENCES_UE3); // BoneIndex
-                Ar.ReadArray<byte>(MAX_INFLUENCES_UE3); // BoneWeight
-            }
-        }
-        else
-        {
-            // New normals are stored with full floating point precision
-            Normal[0] = new FPackedNormal(Ar.Read<FVector>());
-            Normal[1] = new FPackedNormal(Ar.Read<FVector>());
-            Normal[2] = new FPackedNormal(Ar.Read<FVector4>());
-        }
-    }
 }

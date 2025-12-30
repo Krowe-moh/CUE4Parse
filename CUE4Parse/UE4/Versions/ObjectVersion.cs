@@ -976,9 +976,23 @@ namespace CUE4Parse.UE4.Versions
 
         MovedFriendlyNameToUFunction = 160,
         TextureDeprecatedFromPoly = 170,
+        // Deprecated FCompactIndex
         DeprecatedCompactIndex = 178,
+        // Change InterpData to being a subclass of SequenceVariable attached to SeqAct_Interps
+        temp10 = 179,
+        // Removed UPrimitive
         DeprecatedPointer = 180,
+        // Store precomputed streaming data in ULevel
+        temp11 = 181,
+        // Removed UStatickMesh::StreamingTextureFactor
+        temp12 = 182,
+        // Changed static mesh lightmaps to be a UTexture2D and create mipmaps based on coverage
+        temp13 = 183,
+        // Cleaned up the mess I created when I clobbered Scott's change in the first "183"
+        temp14 = 184,
+        // Added "AutoExpandCategories" array to UClass
         AddedDelegateSourceToUDelegateProperty = 185,
+        // Removed FDependency
         DeprecatedClassDependencies = 186,
         DisplacedHideCategories = 187, // todo
         AddedStateStackToUStateFrame = 189,
