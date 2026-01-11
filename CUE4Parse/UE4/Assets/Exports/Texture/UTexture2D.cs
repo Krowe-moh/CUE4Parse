@@ -32,7 +32,6 @@ public class UTexture2D : UTexture
         SizeY = GetOrDefault<int>(nameof(SizeY));
         TextureFileCacheName = GetOrDefault<FName>(nameof(TextureFileCacheName));
 
-        if (Ar.Position == Ar.Length) return; // Textures in Editor Archives don't have data below
         var stripDataFlags = new FStripDataFlags(Ar);
         var bCooked = Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_COOKED_TO_TEXTURE2D && Ar.ReadBoolean();
 

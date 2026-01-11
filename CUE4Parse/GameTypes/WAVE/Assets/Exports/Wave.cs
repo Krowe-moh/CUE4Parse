@@ -9,7 +9,7 @@ public class UWavesArenaBGMeshBase : UComponent
     {
         base.Deserialize(Ar, validPos);
 
-        Ar.ReadFName();
+        Ar.ReadFName(); // unknown
     }
 }
 

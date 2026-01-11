@@ -310,6 +310,9 @@ public partial class USkeletalMesh : UObject
         writer.WritePropertyName(nameof(SkeletalMaterials));
         serializer.Serialize(writer, SkeletalMaterials);
 
+        writer.WritePropertyName(nameof(Materials));
+        serializer.Serialize(writer, Materials);
+
         writer.WritePropertyName(nameof(LODModels));
         serializer.Serialize(writer, LODModels);
 

@@ -92,6 +92,20 @@ namespace CUE4Parse.UE4.Assets.Exports.Material
         }
     }
 
+    public class UMaterialExpressionDepthBiasedAlpha : UMaterialExpression
+    {
+        public FExpressionInput? Alpha { get; private set; }
+        public FExpressionInput? Bias { get; private set; }
+
+        public override void Deserialize(FAssetArchive Ar, long validPos)
+        {
+            base.Deserialize(Ar, validPos);
+
+            Alpha = GetOrDefault<FExpressionInput>(nameof(Alpha));
+            Bias = GetOrDefault<FExpressionInput>(nameof(Bias));
+        }
+    }
+
     public class UMaterialExpressionPower : UMaterialExpression
     {
         public FExpressionInput? Base { get; private set; }

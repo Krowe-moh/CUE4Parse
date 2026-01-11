@@ -2,7 +2,7 @@
 
 namespace CUE4Parse.UE4.Assets.Exports
 {
-    /** 
+    /**
 	 * Flags describing an object instance
 	 */
     [Flags]

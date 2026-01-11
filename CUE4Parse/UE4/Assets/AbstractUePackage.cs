@@ -24,7 +24,6 @@ public abstract class AbstractUePackage : UObject, IPackage
     public abstract FPackageFileSummary Summary { get; }
     public abstract FNameEntrySerialized[] NameMap { get; }
     public abstract int ImportMapLength { get; }
-    public abstract List<byte[]> EditorThumbnails { get; }
     public abstract int ExportMapLength { get; }
 
     public Lazy<UObject>[] ExportsLazy { get; protected init; }
@@ -87,7 +86,7 @@ public abstract class AbstractUePackage : UObject, IPackage
         {
             if (Ar.Game < EGame.GAME_UE4_0 && validPos - Ar.Position == 0) return; // not sure why, but some objects called "None" are just empty (rocketleague issue?)
             obj.Deserialize(Ar, validPos);
-#if DEBUG
+//#if DEBUG
             var remaining = validPos - Ar.Position;
             switch (remaining)
             {
@@ -102,7 +101,7 @@ public abstract class AbstractUePackage : UObject, IPackage
                     //Log.Debug("Successfully read {0} at {1} with size {2}", obj.ExportType, serialOffset, serialSize);
                     break;
             }
-#endif
+//#endif
         }
         catch (Exception e)
         {

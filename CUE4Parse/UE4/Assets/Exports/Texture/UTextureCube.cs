@@ -29,19 +29,17 @@ public class UTextureCube : UTexture
             var SizeX = Ar.Read<int>();
             var SizeY = Ar.Read<int>();
             var format = Ar.Read<int>();
-            Format = (EPixelFormat)format;
+            Format = (EPixelFormat) format;
             var numMips = Ar.Read<int>();
         }
 
-        if (Ar.Game >= EGame.GAME_UE4_0)
-        {
-            var stripFlags = new FStripDataFlags(Ar);
-            var bCooked = Ar.ReadBoolean();
+        if (Ar.Game < EGame.GAME_UE4_0) return; // Nothing left
+        var stripFlags = new FStripDataFlags(Ar);
+        var bCooked = Ar.ReadBoolean();
 
-            if (bCooked)
-            {
-                DeserializeCookedPlatformData(Ar);
-            }
+        if (bCooked)
+        {
+            DeserializeCookedPlatformData(Ar);
         }
     }
 }
