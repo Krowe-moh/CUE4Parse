@@ -40,8 +40,6 @@ public class UUIDynamicFieldProvider : UObject
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver <= EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128) return; // should not exist.
-
         if (Ar.Ver < EUnrealEngineObjectUE3Version.ADDED_COLLECTION_DATA)
         {
             var oldVersion = Ar.ReadMap(

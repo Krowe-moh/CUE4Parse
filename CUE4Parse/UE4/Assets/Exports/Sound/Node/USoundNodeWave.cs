@@ -61,7 +61,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
                     PCSound = new FByteBulkData(Ar);
                 }
 
-                if (Ar.Game == EGame.GAME_SuddenAttack2) return;
+                if (Ar.Game == EGame.GAME_SuddenAttack2) return; // Only pc
 
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_CACHED_COOKED_XBOX360_DATA)
                 {
@@ -89,7 +89,6 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound.Node
                 }
             }
 
-            // todo find the date they removed, if they did.
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_SOUNDNODEWAVE_GUID)
             {
                 Ar.Read<FGuid>(); // CompressedDataGuid

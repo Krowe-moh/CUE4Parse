@@ -12,7 +12,6 @@ namespace CUE4Parse_Conversion.Sounds;
 
 public static class SoundDecoder
 {
-    public const uint RIFFMagic = 0x46464952; // RIFF
     public static void Decode(this UObject export, bool shouldDecompress, out string audioFormat, out byte[]? data)
     {
         switch (export)
@@ -52,9 +51,9 @@ public static class SoundDecoder
         }
 
         using var archive = new FByteArchive("WhoDoesntLoveCats", input);
-        var Magic = archive.Read<int>();
+        var Magic = archive.Read<EChunkIdentifier>();
         audioFormat = "OGG";
-        if (Magic == RIFFMagic)
+        if (Magic == EChunkIdentifier.RIFF)
         {
             audioFormat = "WEM";
         }

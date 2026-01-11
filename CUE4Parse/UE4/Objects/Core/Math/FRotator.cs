@@ -54,6 +54,7 @@ namespace CUE4Parse.UE4.Objects.Core.Math
                 Roll  = Ar.Read<int>() * scale;
                 return;
             }
+
             Pitch = Ar.ReadFReal();
             Yaw = Ar.ReadFReal();
             Roll = Ar.ReadFReal();

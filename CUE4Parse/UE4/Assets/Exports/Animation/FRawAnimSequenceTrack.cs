@@ -13,14 +13,6 @@ public class FRawAnimSequenceTrack : IUStruct
 
     public FRawAnimSequenceTrack(FArchive Ar)
     {
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.NATIVE_RAWANIMDATA_SERIALIZATION)
-        {
-           // PosKeys = Ar.ReadArray<FVector>();
-           // RotKeys = Ar.ReadArray<FQuat>();
-          //  KeyTimes = Ar.ReadArray<float>();
-            return;
-        }
-
         PosKeys = Ar.ReadBulkArray<FVector>();
         RotKeys = Ar.ReadBulkArray<FQuat>();
         ScaleKeys = Ar.Ver >= EUnrealEngineObjectUE4Version.ANIM_SUPPORT_NONUNIFORM_SCALE_ANIMATION ? Ar.ReadBulkArray<FVector>() : [];

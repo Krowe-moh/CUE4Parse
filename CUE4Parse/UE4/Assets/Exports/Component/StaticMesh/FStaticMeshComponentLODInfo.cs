@@ -86,8 +86,7 @@ public class FStaticMeshComponentLODInfo
             }
             else
             {
-                // TODO: OverrideVertexColors =
-                Ar.ReadArray<FColor>();
+                OverrideVertexColors = new FColorVertexBuffer(Ar.ReadArray<FColor>());
             }
         }
 

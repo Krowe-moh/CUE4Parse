@@ -18,6 +18,11 @@ public class FColorVertexBuffer
         Data = [];
     }
 
+    public FColorVertexBuffer(FColor[] data)
+    {
+        Data = data;
+    }
+
     public FColorVertexBuffer(FArchive Ar)
     {
         var stripDataFlags = new FStripDataFlags(Ar, FPackageFileVersion.CreateUE4Version(EUnrealEngineObjectUE4Version.STATIC_SKELETAL_MESH_SERIALIZATION_FIX));

@@ -225,6 +225,11 @@ public class FVolumeLightingSample
             Lighting = Ar.ReadArray(3, () => Ar.ReadArray<float>(9));
         }
 
+        if (Ar.Game >= EGame.GAME_UE4_0)
+        {
+            PackedSkyBentNormal = Ar.Read<FColor>();
+        }
+
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.VOLUME_SAMPLE_LOW_QUALITY_SUPPORT)
         {
             DirectionalLightShadowing = Ar.Read<float>();

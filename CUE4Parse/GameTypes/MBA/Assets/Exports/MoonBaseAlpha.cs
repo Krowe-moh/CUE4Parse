@@ -16,7 +16,6 @@ public class UMBA_DockableActorComponent : UComponent;
 public class UMBA_MapIconComponent : UComponent;
 public class UMBA_SilhouetteComponent : UComponent;
 public class UMBA_SkeletalMeshComponent : UComponent;
-
 public class UMBA_PawnJumpHelper : UComponent;
 public class UMBA_RBWeldToBone : UComponent;
 public class UMBA_RoverWheel : UComponent;

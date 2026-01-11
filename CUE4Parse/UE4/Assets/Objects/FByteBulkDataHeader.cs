@@ -59,9 +59,9 @@ namespace CUE4Parse.UE4.Assets.Objects
             }
 
             ElementCount = BulkDataFlags.HasFlag(BULKDATA_Size64Bit) ? (int) Ar.Read<long>() : Ar.Read<int>();
+            SizeOnDisk = BulkDataFlags.HasFlag(BULKDATA_Size64Bit) ? (uint) Ar.Read<long>() : Ar.Read<uint>();
             if (Ar.Game == EGame.GAME_RocketLeague)
             {
-                SizeOnDisk = Ar.Read<uint>();
                 if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
                 {
                     OffsetInFile = (uint) Ar.Read<long>();
@@ -70,12 +70,11 @@ namespace CUE4Parse.UE4.Assets.Objects
                 {
                     OffsetInFile = Ar.Position;
                 }
-
-                goto skipSize;
             }
-            SizeOnDisk = BulkDataFlags.HasFlag(BULKDATA_Size64Bit) ? (uint) Ar.Read<long>() : Ar.Read<uint>();
-            OffsetInFile = Ar.Ver >= EUnrealEngineObjectUE4Version.BULKDATA_AT_LARGE_OFFSETS ? Ar.Read<long>() : Ar.Read<int>();
-            skipSize:
+            else
+            {
+                OffsetInFile = Ar.Ver >= EUnrealEngineObjectUE4Version.BULKDATA_AT_LARGE_OFFSETS ? Ar.Read<long>() : Ar.Read<int>();
+            }
             if (!BulkDataFlags.HasFlag(BULKDATA_NoOffsetFixUp) && Ar.Game >= EGame.GAME_UE4_26)
             {
                 OffsetInFile += Ar.Owner.Summary.BulkDataStartOffset;

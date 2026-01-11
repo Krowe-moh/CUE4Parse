@@ -18,9 +18,7 @@ public class FPropertyTagData
     public string? Module;
     public FGuid? StructGuid;
     public bool? Bool;
-
     public string? EnumName;
-
     //public bool IsEnumAsByte;
     public string? InnerType;
     public string? ValueType;
@@ -42,14 +40,7 @@ public class FPropertyTagData
                     StructGuid = Ar.Read<FGuid>();
                 break;
             case "BoolProperty":
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.PROPERTYTAG_BOOL_OPTIMIZATION)
-                {
-                    Bool = Ar.ReadBoolean();
-                }
-                else
-                {
-                    Bool = Ar.ReadFlag();
-                }
+                Bool = Ar.Ver < EUnrealEngineObjectUE3Version.PROPERTYTAG_BOOL_OPTIMIZATION ? Ar.ReadBoolean() : Ar.ReadFlag();
                 break;
             case "ByteProperty":
             case "EnumProperty":
@@ -94,7 +85,6 @@ public class FPropertyTagData
                     // doesn't use StructGuid anyway
                     // if (typeName.GetParameter(1) is { } guid) StructGuid = new Guid(guid.GetName);
                 }
-
                 break;
             case "ByteProperty":
             case "EnumProperty":
@@ -103,7 +93,6 @@ public class FPropertyTagData
                     EnumName = enumType.GetName();
                     Module = enumType.GetParameter(0).GetName();
                 }
-
                 break;
             case "ArrayProperty":
             case "SetProperty":
@@ -113,7 +102,6 @@ public class FPropertyTagData
                     InnerType = innerType.GetName();
                     InnerTypeData = InnerType != "None" && innerType[0].InnerCount != 0 ? new FPropertyTagData(innerType, InnerType) : null;
                 }
-
                 break;
             case "MapProperty":
                 if (typeName.GetParameter(0) is { IsEmpty: false } keyType && typeName.GetParameter(1) is { IsEmpty: false } valueType)
@@ -123,7 +111,6 @@ public class FPropertyTagData
                     ValueType = valueType.GetName();
                     ValueTypeData = InnerType != "None" && valueType[0].InnerCount != 0 ? new FPropertyTagData(valueType, ValueType) : null;
                 }
-
                 break;
         }
     }

@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 using System.Text;
-using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
@@ -27,14 +26,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.Release64)
             {
-                if (Ar.Game == EGame.GAME_DCUniverseOnline)
-                {
-                    Name = ReadString(Ar);
-                }
-                else
-                {
-                    Name = Ar.ReadFString();
-                }
+                Name = Ar.Game == EGame.GAME_DCUniverseOnline ? Ar.ReadFUtf8String() : Ar.ReadFString();
             }
 
             if (Ar.Game == EGame.GAME_PlayerUnknownsBattlegrounds)
@@ -50,13 +42,11 @@ namespace CUE4Parse.UE4.Objects.UObject
                 if (Name != null && _pubgNameMap.TryGetValue(Name, out var name)) Name = name;
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Game < EGame.GAME_UE4_0)
             {
-                Ar.Read<long>(); // flags64
-            }
-            else if (Ar.Game < EGame.GAME_UE4_0)
-            {
-                Ar.Read<int>(); // flags32
+                _ = (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag)
+                    ? Ar.Read<long>()
+                    : Ar.Read<int>(); // flags
             }
             if (bHasNameHashes)
             {
@@ -132,15 +122,6 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.Serialize(nameData, length);
                 return new FNameEntrySerialized(new string((sbyte*) nameData, 0, length));
             }
-        }
-        
-        private string ReadString(FArchive Ar)
-        {
-            var len = Ar.Read<int>();
-            if (len < 0)
-                throw new ParserException("NameMap negative length string");
-            var text = Ar.ReadBytes(len);
-            return Encoding.ASCII.GetString(text);
         }
     }
 

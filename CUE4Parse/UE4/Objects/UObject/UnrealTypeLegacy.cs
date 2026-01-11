@@ -25,13 +25,17 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Game < EGame.GAME_UE4_0)
             {
-                if (!Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform != ETexturePlatform.XboxAndPlaystation) // ignore for now
+                // consoles don't seem to have this, add a platform option for users. Maybe reuse TexturePlatform (Ar.Platform)
+                if (!Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
                 {
                     Ar.ReadFName(); // CategoryName
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES) new FPackageIndex(Ar); // ArrayEnum
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES)
+                    {
+                        new FPackageIndex(Ar); // ArrayEnum
+                    }
                 }
 
-                if (PropertyFlags.HasFlag(EPropertyFlags.Net)) // edit?
+                if (PropertyFlags.HasFlag(EPropertyFlags.Net)) // Todo: Should this be edit flag?
                 {
                     Ar.Read<ushort>();
                 }
@@ -161,7 +165,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             base.Deserialize(Ar, validPos);
             if (Ar.Game == EGame.GAME_RocketLeague)
             {
-                Ar.ReadFName();
+                Ar.ReadFName(); // unknown
             }
         }
     }
@@ -243,7 +247,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             InterfaceClass = new FPackageIndex(Ar);
             if (Ar.Game == EGame.GAME_RocketLeague)
             {
-                Ar.ReadFName();
+                Ar.ReadFName(); // unknown
             }
         }
 

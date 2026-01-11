@@ -8,7 +8,7 @@ namespace CUE4Parse.UE4.Objects.Engine
 {
     public class UGuidCache : Assets.Exports.UObject
     {
-        public Dictionary<FName, FGuid>? PackageGuidMap;
+        public Dictionary<FName, FGuid> PackageGuidMap;
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
@@ -16,15 +16,15 @@ namespace CUE4Parse.UE4.Objects.Engine
             PackageGuidMap = Ar.ReadMap(Ar.ReadFName, () => Ar.Read<FGuid>());
         }
 
-        protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
+        /*protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
         {
             base.WriteJson(writer, serializer);
 
-            if (PackageGuidMap?.Count > 0)
+            if (PackageGuidMap.Count > 0)
             {
                 writer.WritePropertyName("PackageGuidMap");
                 serializer.Serialize(writer, PackageGuidMap);
             }
-        }
+        }*/
     }
 }

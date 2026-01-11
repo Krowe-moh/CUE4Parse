@@ -13,6 +13,11 @@ public class UStaticMeshComponent_TA : UComponent
     }
 }
 
+public class UBTAction_Face : UComponent;
+public class UBTComponent : UComponent;
+public class UBTLockCollection : UComponent;
+public class UBTMoveModifier_Boost : UComponent;
+
 public class UAntennaComponent_TA : UComponent;
 public class UParameterDispenser_X : UComponent;
 public class UActivateAnimSeriesComponent_X : UComponent;
@@ -38,10 +43,6 @@ public class UBallTrajectoryComponent_Mesh_TA : UComponent;
 public class UBallTrajectoryComponent_Spline_TA : UComponent;
 public class UBallTrajectoryComponent_TA : UComponent;
 public class UBall_TA : UComponent;
-public class UBTAction_Face : UComponent;
-public class UBTComponent : UComponent;
-public class UBTLockCollection : UComponent;
-public class UBTMoveModifier_Boost : UComponent;
 public class UCacheTimer_X : UComponent;
 public class UCameraAttachmentComponent_X : UComponent;
 public class UCamera_GameEditor_TA : UComponent;

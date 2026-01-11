@@ -26,7 +26,7 @@ public class FStaticMeshRenderData
     {
     }
 
-    public FStaticMeshRenderData(FAssetArchive Ar, bool SingleLod = false)
+    public FStaticMeshRenderData(FAssetArchive Ar, bool isSingleLod = false)
     {
         if (Ar.Versions["StaticMesh.KeepMobileMinLODSettingOnDesktop"])
             _ = Ar.Read<int>(); // minMobileLODIdx
@@ -63,7 +63,7 @@ public class FStaticMeshRenderData
         }
         else
         {
-            if (SingleLod)
+            if (isSingleLod)
             {
                 LODs = [new FStaticMeshLODResources(Ar)];
                 return;
