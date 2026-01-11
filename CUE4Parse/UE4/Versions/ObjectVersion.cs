@@ -2060,7 +2060,7 @@ namespace CUE4Parse.UE4.Versions
         FOLIAGE_INSTANCE_SAVE_EDITOR_DATA = 830,
         // Removed unused lighting properties
         REMOVE_UNUSED_LIGHTING_PROPERTIES = 829,
-        // Fixing up version as VER_REMOVE_UNUSED_LIGHTING_PROPERTIES is less than VER_FOLIAGE_INSTANCE_SAVE_EDITOR_DATA and not unique.
+        // Fixing up version as REMOVE_UNUSED_LIGHTING_PROPERTIES is less than FOLIAGE_INSTANCE_SAVE_EDITOR_DATA and not unique.
         FIXED_UP_VERSION = 831,
         // SphereMask material expression hardness was defined wrong
         SPHEREMASK_HARDNESS = 832,
@@ -2178,9 +2178,17 @@ namespace CUE4Parse.UE4.Versions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public FPackageFileVersion(int ue3Version, int ue4Version, int ue5Version)
+        public FPackageFileVersion(int ue4Version, int ue5Version)
         {
             FileVersionUE3 = 0;
+            FileVersionUE4 = ue4Version;
+            FileVersionUE5 = ue5Version;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public FPackageFileVersion(int ue3Version, int ue4Version, int ue5Version)
+        {
+            FileVersionUE3 = ue3Version;
             FileVersionUE4 = ue4Version;
             FileVersionUE5 = ue5Version;
         }

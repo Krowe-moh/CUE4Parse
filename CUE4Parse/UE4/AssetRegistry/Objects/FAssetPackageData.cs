@@ -49,7 +49,7 @@ namespace CUE4Parse.UE4.AssetRegistry.Objects
             {
                 if (Ar.Header.Version >= FAssetRegistryVersionType.PackageFileSummaryVersionChange)
                 {
-                    FileVersionUE = new FPackageFileVersion(0, Ar.Read<int>(), Ar.Read<int>());
+                    FileVersionUE = new FPackageFileVersion(Ar.Read<int>(), Ar.Read<int>());
                 }
                 else
                 {
