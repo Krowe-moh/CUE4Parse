@@ -100,7 +100,7 @@ namespace CUE4Parse.FileProvider
                     continue;
                 }
 
-                if (uproject == null && upperExt is "TFC")
+                if (upperExt is "TFC")
                 {
                     RegisterTextureCache(file);
                     continue;

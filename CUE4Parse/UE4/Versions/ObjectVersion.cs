@@ -80,220 +80,220 @@ namespace CUE4Parse.UE4.Versions
 
         // Pre-release UE4 file versions
 
-	    // Added array support to blueprints
-	    ADD_PINTYPE_ARRAY = 108,
-	    // Remove redundant key from raw animation data
-	    REMOVE_REDUNDANT_KEY,
-	    // Changing from WORDs to UINTs in the shader cache serialization, needs a new version
-	    SUPPORT_LARGE_SHADERS,
-	    // Added material functions to FMaterialShaderMapId
-	    FUNCTIONS_IN_SHADERMAPID,
-	    // Added asset registry tags to the package summary so the editor can learn more about the assets in the package without loading it
-	    ASSET_REGISTRY_TAGS,
-	    // Removed DontSortCategories option to classes
-	    DONTSORTCATEGORIES_REMOVED,
-	    // Added Tiled navmesh generation and redone navmesh serialization
-	    TILED_NAVMESH,
-	    // Removed old pylon-based navigation mesh system
-	    REMOVED_OLD_NAVMESH,
-	    // AnimNotify name change
-	    ANIMNOTIFY_NAMECHANGE,
-	    // Removed/consolidated some properties used only in the header parser that should never be serialized
-	    CONSOLIDATE_HEADER_PARSER_ONLY_PROPERTIES,
-	    // Made ComponentNameToDefaultObjectMap non-serialized
-	    STOPPED_SERIALIZING_COMPONENTNAMETODEFAULTOBJECTMAP,
-	    // Reset ModifyFrequency on static lights
-	    RESET_MODIFYFREQUENCY_STATICLIGHTS,
-	    // Add a GUID to SoundNodeWave
-	    ADD_SOUNDNODEWAVE_GUID,
-	    // Add audio to DDC
-	    ADD_SOUNDNODEWAVE_TO_DDC,
-	    // - Fix for Material Blend Mode override
-	    MATERIAL_BLEND_OVERRIDE,
-	    // Ability to save cooked audio
-	    ADD_COOKED_TO_SOUND_NODE_WAVE,
-	    // Update the derived data key for textures.
-	    TEXTURE_DERIVED_DATA2,
-	    // Textures can now be cooked into packages
-	    ADD_COOKED_TO_TEXTURE2D,
-	    // Ability to save cooked PhysX meshes
-	    ADD_COOKED_TO_BODY_SETUP,
-	    // Blueprint saved before this may need Event Graph change to Local/Server Graph
-	    ADD_KISMETNETWORKGRAPHS,
-	    // - Added material quality level switches
-	    MATERIAL_QUALITY_LEVEL_SWITCH,
-	    // - Debugging material shader uniform expression sets.
-	    VER_DEBUG_MATERIALSHADER_UNIFORM_EXPRESSIONS,
-	    // Removed StripData
-	    REMOVED_STRIP_DATA,
-	    // Setting RF_Transactional object flag on blueprint's SimpleConstructionScript
-	    FLAG_SCS_TRANSACTIONAL,
-	    // - Fixing chunk bounding boxes in imported NxDestructibleAssets.
-	    NX_DESTRUCTIBLE_ASSET_CHUNK_BOUNDS_FIX,
-	    // Add support for StaticMesh sockets
-	    STATIC_MESH_SOCKETS,
-	    // - Removed extra skelmesh vert weights
-	    REMOVE_EXTRA_SKELMESH_VERTEX_INFLUENCES,
-	    // - Change UCurve objects to use FRichCurve
-	    UCURVE_USING_RICHCURVES,
-	    // Add support for inline shaders
-	    INLINE_SHADERS,
-	    // Change additive types to include mesh rotation only to be baked
-	    ADDITIVE_TYPE_CHANGE,
-	    // Readd cooker versioning to package
-	    READD_COOKER,
-	    // Serialize class properties
-	    ADDED_SCRIPT_SERIALIZATION_FOR_BLUEPRINT_GENERATED_CLASSES,
-	    // Variable UBoolProperty size.
-	    VARIABLE_BITFIELD_SIZE,
-	    // Fix skeletons which only list active bones in their required bones list.
-	    FIX_REQUIRED_BONES,
-	    // Switched 'cooked package' version to simply be the package version itself.
-	    COOKED_PACKAGE_VERSION_IS_PACKAGE_VERSION,
-	    // Refactor how texture source art is stored to better isolate editor-only data.
-	    TEXTURE_SOURCE_ART_REFACTOR,
-	    // Add additional settings to static and skeletal mesh optimization struct (FStaticMeshOptimizationSettings and FSkeletalMeshOptimizationSettings)
-	    ADDED_EXTRA_MESH_OPTIMIZATION_SETTINGS,
-	    // Add BodySetup to DestructibleMesh, use it to store the destructible physical material.
-	    DESTRUCTIBLE_MESH_BODYSETUP_HOLDS_PHYSICAL_MATERIAL,
-	    // Remove USequence class and references
-	    REMOVE_USEQUENCE,
-	    // Added by-ref parameters to blueprints
-	    ADD_PINTYPE_BYREF,
-	    // Change to make public blueprint variables 'read only'
-	    PUBLIC_BLUEPRINT_VARS_READONLY,
-	    // change HiddenGame, DrawInGame, DrawInEditor to bVisible, and bHiddenInGame
-	    VISIBILITY_FLAG_CHANGES,
-	    // change Light/Fog/Blur bEnable to use bVisible
-	    REMOVE_COMPONENT_ENABLED_FLAG,
-	    // change Particle/Audio/Thrust/RadialForce bEnable/bAutoPlay to use bAutoActivate
-	    CONFORM_COMPONENT_ACTIVATE_FLAG,
-	    // make the 'mesh to import vertex map' in skelmesh always loaded so it can be used by vertex anim
-	    ADD_SKELMESH_MESHTOIMPORTVERTEXMAP,
-	    // remove serialization for properties added with UE3 version 864 serialization
-	    REMOVE_UE3_864_SERIALIZATION,
-	    // Spherical harmonic lightmaps
-	    SH_LIGHTMAPS,
-	    // Removed per-shader DDC entries
-	    REMOVED_PERSHADER_DDC,
-	    // Core split into Core and CoreUObject
-	    CORE_SPLIT,
-	    // Removed some compile outputs being stored in FMaterial
-	    REMOVED_FMATERIAL_COMPILE_OUTPUTS,
-	    // New physical material model
-	    PHYSICAL_MATERIAL_MODEL,
-	    // Added a usage to FMaterialShaderMapId
-	    ADDED_MATERIALSHADERMAP_USAGE,
-	    // Covert blueprint PropertyFlags from int32 to uint64
-	    BLUEPRINT_PROPERTYFLAGS_SIZE_CHANGE,
-	    // Consolidate UpdateSkelWhenNotRendered and TickAnimationWhenNotRendered to enum
-	    CONSOLIDATE_SKINNEDMESH_UPDATE_FLAGS,
-	    // Remove Internal Archetype
-	    REMOVE_INTERNAL_ARCHETYPE,
-	    // Remove Internal Archetype
-	    REMOVE_ARCHETYPE_INDEX_FROM_LINKER_TABLES,
-	    // Made change to UK2Node_Variable so that VariableSourceClass is NULL if bSelfContext is TRUE
-	    VARK2NODE_NULL_VARSRCCLASS_ON_SELF,
-	    // Removed SpecularBoost
-	    REMOVED_SPECULAR_BOOST,
-	    // Add CPF_BlueprintVisible flag
-	    ADD_KISMETVISIBLE,
-	    // UDistribution* objects moved to PostInitProperties.
-	    MOVE_DISTRIBUITONS_TO_POSTINITPROPS,
-	    // Add optimized shadow-only index buffers to static meshes.
-	    SHADOW_ONLY_INDEX_BUFFERS,
-	    // Changed indirect lighting volume sample format
-	    CHANGED_VOLUME_SAMPLE_FORMAT,
-	    /** Change bool bEnableCollision in BodyInstance to enum CollisionEnabled */
-	    CHANGE_BENABLECOLLISION_TO_COLLISIONENABLED,
-	    // Changed irrelevant light guids
-	    CHANGED_IRRELEVANT_LIGHT_GUIDS,
-	    /** Rename bDisableAllRigidBody to bCreatePhysicsState */
-	    RENAME_DISABLEALLRIGIDBODIES,
-	    // Unified SoundNodeAttenuation settings with other attenuation settings
-	    SOUND_NODE_ATTENUATION_SETTINGS_CHANGE,
-	    // Add a NodeGuid to EdGraphNode, upping version to generate for existing nodes
-	    ADD_EDGRAPHNODE_GUID,
-	    // Fix the outer of InterpData objects
-	    FIX_INTERPDATA_OUTERS,
-	    // Natively serialize blueprint core classes
-	    BLUEPRINT_NATIVE_SERIALIZATION,
-	    // Inherit SoundNode from EdGraphNOde
-	    SOUND_NODE_INHERIT_FROM_ED_GRAPH_NODE,
-	    // Unify ambient sound actor classes in to single ambient actor class
-	    UNIFY_AMBIENT_SOUND_ACTORS,
-	    // Lightmap compression
-	    LIGHTMAP_COMPRESSION,
-	    // MorphTarget data type integration to curve
-	    MORPHTARGET_CURVE_INTEGRATION,
-	    // Fix LevelScriptBlueprints being standalone
-	    CLEAR_STANDALONE_FROM_LEVEL_SCRIPT_BLUEPRINTS,
-	    // Natively serialize blueprint core classes
-	    NO_INTERFACE_PROPERTY,
-	    // Category field moved to metadata.
-	    CATEGORY_MOVED_TO_METADATA,
-	    // We removed the ctor link flag, this just clears this flag on load for future use
-	    REMOVE_CTOR_LINK,
-	    // Short to long package name associations removal.
-	    REMOVE_SHORT_PACKAGE_NAME_ASSOCIATIONS,
-	    // Add bCreatedByConstructionScript flag to ActorComponent
-	    ADD_CREATEDBYCONSTRUCTIONSCRIPT,
-	    // Fix loading of bogus NxDestructibleAssetAuthoring
-	    NX_DESTRUCTIBLE_ASSET_AUTHORING_LOAD_FIX,
-	    // Added angular constraint options
-	    ANGULAR_CONSTRAINT_OPTIONS,
-	    /** Changed material expression constants 3 and 4 to use a FLinearColor rather than separate floats to make it more artist friendly */
-	    CHANGE_MATERIAL_EXPRESSION_CONSTANTS_TO_LINEARCOLOR,
-	    // Added built lighting flag to primitive component
-	    PRIMITIVE_BUILT_LIGHTING_FLAG,
-	    // Added Counter for atmospheric fog
-	    ATMOSPHERIC_FOG_CACHE_TEXTURE,
-	    // Ressurrected precomputed shadowmaps
-	    PRECOMPUTED_SHADOW_MAPS,
-	    // Eliminated use of distribution for USoundNodeModulatorContinuous
-	    MODULATOR_CONTINUOUS_NO_DISTRIBUTION,
-	    // Added a 4-byte magic number at the end of the package for file corruption validation
-	    PACKAGE_MAGIC_POSTTAG,
-	    // Discard invalid irrelevant lights
-	    TOSS_IRRELEVANT_LIGHTS,
-	    // Removed NetIndex
-	    REMOVE_NET_INDEX,
-	    // Moved blueprint authoritative data from Skeleton CDO to the Generated CDO
-	    BLUEPRINT_CDO_MIGRATION,
-	    // Bulkdata is stored at the end of package files and can be located at offsets > 2GB
-	    BULKDATA_AT_LARGE_OFFSETS,
-	    // Explicitly track whether streaming texture data has been built
-	    EXPLICIT_STREAMING_TEXTURE_BUILT,
-	    // Precomputed shadowmaps on bsp and landscape
-	    PRECOMPUTED_SHADOW_MAPS_BSP,
-	    // Refactor of static mesh build pipeline.
-	    STATIC_MESH_REFACTOR,
-	    // Remove cached static mesh streaming texture factors. They have been moved to derived data.
-	    REMOVE_CACHED_STATIC_MESH_STREAMING_FACTORS,
-	    // Added Atmospheric fog Material support
-	    ATMOSPHERIC_FOG_MATERIAL,
-	    // Fixup BSP brush type
-	    FIX_BSP_BRUSH_TYPE,
-	    // Removed ClientDestroyedActorContent from UWorld
-	    REMOVE_CLIENTDESTROYEDACTORCONTENT,
-	    // Added SoundCueGraph for new SoundCue editor
-	    SOUND_CUE_GRAPH_EDITOR,
-	    // Strip TransLevelMoveBuffers out of Worlds
-	    STRIP_TRANS_LEVEL_MOVE_BUFFER,
-	    // Deprecated PrimitiveComponent.bNoEncroachCheck
-	    DEPRECATED_BNOENCROACHCHECK,
-	    // Light component bUseIESBrightness now defaults to false
-	    LIGHTS_USE_IES_BRIGHTNESS_DEFAULT_CHANGED,
-	    // Material attributes multiplex
-	    MATERIAL_ATTRIBUTES_MULTIPLEX,
-	    // Renamed & moved TSF_RGBA8/E8 to TSF_BGRA8/E8
-	    TEXTURE_FORMAT_RGBA_SWIZZLE,
-	    // Package summary stores the offset to the beginning of the area where the bulkdata gets stored */
-	    SUMMARY_HAS_BULKDATA_OFFSET,
-	    // The SimpleConstructionScript now marks the default root component as transactional, and bCreatedByConstructionScript true
-	    DEFAULT_ROOT_COMP_TRANSACTIONAL,
-	    // Hashed material compile output stored in packages to detect mismatches
-	    HASHED_MATERIAL_OUTPUT,
+        // Added array support to blueprints
+        ADD_PINTYPE_ARRAY = 108,
+        // Remove redundant key from raw animation data
+        REMOVE_REDUNDANT_KEY,
+        // Changing from WORDs to UINTs in the shader cache serialization, needs a new version
+        SUPPORT_LARGE_SHADERS,
+        // Added material functions to FMaterialShaderMapId
+        FUNCTIONS_IN_SHADERMAPID,
+        // Added asset registry tags to the package summary so the editor can learn more about the assets in the package without loading it
+        ASSET_REGISTRY_TAGS,
+        // Removed DontSortCategories option to classes
+        DONTSORTCATEGORIES_REMOVED,
+        // Added Tiled navmesh generation and redone navmesh serialization
+        TILED_NAVMESH,
+        // Removed old pylon-based navigation mesh system
+        REMOVED_OLD_NAVMESH,
+        // AnimNotify name change
+        ANIMNOTIFY_NAMECHANGE,
+        // Removed/consolidated some properties used only in the header parser that should never be serialized
+        CONSOLIDATE_HEADER_PARSER_ONLY_PROPERTIES,
+        // Made ComponentNameToDefaultObjectMap non-serialized
+        STOPPED_SERIALIZING_COMPONENTNAMETODEFAULTOBJECTMAP,
+        // Reset ModifyFrequency on static lights
+        RESET_MODIFYFREQUENCY_STATICLIGHTS,
+        // Add a GUID to SoundNodeWave
+        ADD_SOUNDNODEWAVE_GUID,
+        // Add audio to DDC
+        ADD_SOUNDNODEWAVE_TO_DDC,
+        // - Fix for Material Blend Mode override
+        MATERIAL_BLEND_OVERRIDE,
+        // Ability to save cooked audio
+        ADD_COOKED_TO_SOUND_NODE_WAVE,
+        // Update the derived data key for textures.
+        TEXTURE_DERIVED_DATA2,
+        // Textures can now be cooked into packages
+        ADD_COOKED_TO_TEXTURE2D,
+        // Ability to save cooked PhysX meshes
+        ADD_COOKED_TO_BODY_SETUP,
+        // Blueprint saved before this may need Event Graph change to Local/Server Graph
+        ADD_KISMETNETWORKGRAPHS,
+        // - Added material quality level switches
+        MATERIAL_QUALITY_LEVEL_SWITCH,
+        // - Debugging material shader uniform expression sets.
+        DEBUG_MATERIALSHADER_UNIFORM_EXPRESSIONS,
+        // Removed StripData
+        REMOVED_STRIP_DATA,
+        // Setting RF_Transactional object flag on blueprint's SimpleConstructionScript
+        FLAG_SCS_TRANSACTIONAL,
+        // - Fixing chunk bounding boxes in imported NxDestructibleAssets.
+        NX_DESTRUCTIBLE_ASSET_CHUNK_BOUNDS_FIX,
+        // Add support for StaticMesh sockets
+        STATIC_MESH_SOCKETS,
+        // - Removed extra skelmesh vert weights
+        REMOVE_EXTRA_SKELMESH_VERTEX_INFLUENCES,
+        // - Change UCurve objects to use FRichCurve
+        UCURVE_USING_RICHCURVES,
+        // Add support for inline shaders
+        INLINE_SHADERS,
+        // Change additive types to include mesh rotation only to be baked
+        ADDITIVE_TYPE_CHANGE,
+        // Readd cooker versioning to package
+        READD_COOKER,
+        // Serialize class properties
+        ADDED_SCRIPT_SERIALIZATION_FOR_BLUEPRINT_GENERATED_CLASSES,
+        // Variable UBoolProperty size.
+        VARIABLE_BITFIELD_SIZE,
+        // Fix skeletons which only list active bones in their required bones list.
+        FIX_REQUIRED_BONES,
+        // Switched 'cooked package' version to simply be the package version itself.
+        COOKED_PACKAGE_VERSION_IS_PACKAGE_VERSION,
+        // Refactor how texture source art is stored to better isolate editor-only data.
+        TEXTURE_SOURCE_ART_REFACTOR,
+        // Add additional settings to static and skeletal mesh optimization struct (FStaticMeshOptimizationSettings and FSkeletalMeshOptimizationSettings)
+        ADDED_EXTRA_MESH_OPTIMIZATION_SETTINGS,
+        // Add BodySetup to DestructibleMesh, use it to store the destructible physical material.
+        DESTRUCTIBLE_MESH_BODYSETUP_HOLDS_PHYSICAL_MATERIAL,
+        // Remove USequence class and references
+        REMOVE_USEQUENCE,
+        // Added by-ref parameters to blueprints
+        ADD_PINTYPE_BYREF,
+        // Change to make public blueprint variables 'read only'
+        PUBLIC_BLUEPRINT_VARS_READONLY,
+        // change HiddenGame, DrawInGame, DrawInEditor to bVisible, and bHiddenInGame
+        VISIBILITY_FLAG_CHANGES,
+        // change Light/Fog/Blur bEnable to use bVisible
+        REMOVE_COMPONENT_ENABLED_FLAG,
+        // change Particle/Audio/Thrust/RadialForce bEnable/bAutoPlay to use bAutoActivate
+        CONFORM_COMPONENT_ACTIVATE_FLAG,
+        // make the 'mesh to import vertex map' in skelmesh always loaded so it can be used by vertex anim
+        ADD_SKELMESH_MESHTOIMPORTVERTEXMAP,
+        // remove serialization for properties added with UE3 version 864 serialization
+        REMOVE_UE3_864_SERIALIZATION,
+        // Spherical harmonic lightmaps
+        SH_LIGHTMAPS,
+        // Removed per-shader DDC entries
+        REMOVED_PERSHADER_DDC,
+        // Core split into Core and CoreUObject
+        CORE_SPLIT,
+        // Removed some compile outputs being stored in FMaterial
+        REMOVED_FMATERIAL_COMPILE_OUTPUTS,
+        // New physical material model
+        PHYSICAL_MATERIAL_MODEL,
+        // Added a usage to FMaterialShaderMapId
+        ADDED_MATERIALSHADERMAP_USAGE,
+        // Covert blueprint PropertyFlags from int32 to uint64
+        BLUEPRINT_PROPERTYFLAGS_SIZE_CHANGE,
+        // Consolidate UpdateSkelWhenNotRendered and TickAnimationWhenNotRendered to enum
+        CONSOLIDATE_SKINNEDMESH_UPDATE_FLAGS,
+        // Remove Internal Archetype
+        REMOVE_INTERNAL_ARCHETYPE,
+        // Remove Internal Archetype
+        REMOVE_ARCHETYPE_INDEX_FROM_LINKER_TABLES,
+        // Made change to UK2Node_Variable so that VariableSourceClass is NULL if bSelfContext is TRUE
+        VARK2NODE_NULL_VARSRCCLASS_ON_SELF,
+        // Removed SpecularBoost
+        REMOVED_SPECULAR_BOOST,
+        // Add CPF_BlueprintVisible flag
+        ADD_KISMETVISIBLE,
+        // UDistribution* objects moved to PostInitProperties.
+        MOVE_DISTRIBUITONS_TO_POSTINITPROPS,
+        // Add optimized shadow-only index buffers to static meshes.
+        SHADOW_ONLY_INDEX_BUFFERS,
+        // Changed indirect lighting volume sample format
+        CHANGED_VOLUME_SAMPLE_FORMAT,
+        /** Change bool bEnableCollision in BodyInstance to enum CollisionEnabled */
+        CHANGE_BENABLECOLLISION_TO_COLLISIONENABLED,
+        // Changed irrelevant light guids
+        CHANGED_IRRELEVANT_LIGHT_GUIDS,
+        /** Rename bDisableAllRigidBody to bCreatePhysicsState */
+        RENAME_DISABLEALLRIGIDBODIES,
+        // Unified SoundNodeAttenuation settings with other attenuation settings
+        SOUND_NODE_ATTENUATION_SETTINGS_CHANGE,
+        // Add a NodeGuid to EdGraphNode, upping version to generate for existing nodes
+        ADD_EDGRAPHNODE_GUID,
+        // Fix the outer of InterpData objects
+        FIX_INTERPDATA_OUTERS,
+        // Natively serialize blueprint core classes
+        BLUEPRINT_NATIVE_SERIALIZATION,
+        // Inherit SoundNode from EdGraphNOde
+        SOUND_NODE_INHERIT_FROM_ED_GRAPH_NODE,
+        // Unify ambient sound actor classes in to single ambient actor class
+        UNIFY_AMBIENT_SOUND_ACTORS,
+        // Lightmap compression
+        LIGHTMAP_COMPRESSION,
+        // MorphTarget data type integration to curve
+        MORPHTARGET_CURVE_INTEGRATION,
+        // Fix LevelScriptBlueprints being standalone
+        CLEAR_STANDALONE_FROM_LEVEL_SCRIPT_BLUEPRINTS,
+        // Natively serialize blueprint core classes
+        NO_INTERFACE_PROPERTY,
+        // Category field moved to metadata.
+        CATEGORY_MOVED_TO_METADATA,
+        // We removed the ctor link flag, this just clears this flag on load for future use
+        REMOVE_CTOR_LINK,
+        // Short to long package name associations removal.
+        REMOVE_SHORT_PACKAGE_NAME_ASSOCIATIONS,
+        // Add bCreatedByConstructionScript flag to ActorComponent
+        ADD_CREATEDBYCONSTRUCTIONSCRIPT,
+        // Fix loading of bogus NxDestructibleAssetAuthoring
+        NX_DESTRUCTIBLE_ASSET_AUTHORING_LOAD_FIX,
+        // Added angular constraint options
+        ANGULAR_CONSTRAINT_OPTIONS,
+        /** Changed material expression constants 3 and 4 to use a FLinearColor rather than separate floats to make it more artist friendly */
+        CHANGE_MATERIAL_EXPRESSION_CONSTANTS_TO_LINEARCOLOR,
+        // Added built lighting flag to primitive component
+        PRIMITIVE_BUILT_LIGHTING_FLAG,
+        // Added Counter for atmospheric fog
+        ATMOSPHERIC_FOG_CACHE_TEXTURE,
+        // Ressurrected precomputed shadowmaps
+        PRECOMPUTED_SHADOW_MAPS,
+        // Eliminated use of distribution for USoundNodeModulatorContinuous
+        MODULATOR_CONTINUOUS_NO_DISTRIBUTION,
+        // Added a 4-byte magic number at the end of the package for file corruption validation
+        PACKAGE_MAGIC_POSTTAG,
+        // Discard invalid irrelevant lights
+        TOSS_IRRELEVANT_LIGHTS,
+        // Removed NetIndex
+        REMOVE_NET_INDEX,
+        // Moved blueprint authoritative data from Skeleton CDO to the Generated CDO
+        BLUEPRINT_CDO_MIGRATION,
+        // Bulkdata is stored at the end of package files and can be located at offsets > 2GB
+        BULKDATA_AT_LARGE_OFFSETS,
+        // Explicitly track whether streaming texture data has been built
+        EXPLICIT_STREAMING_TEXTURE_BUILT,
+        // Precomputed shadowmaps on bsp and landscape
+        PRECOMPUTED_SHADOW_MAPS_BSP,
+        // Refactor of static mesh build pipeline.
+        STATIC_MESH_REFACTOR,
+        // Remove cached static mesh streaming texture factors. They have been moved to derived data.
+        REMOVE_CACHED_STATIC_MESH_STREAMING_FACTORS,
+        // Added Atmospheric fog Material support
+        ATMOSPHERIC_FOG_MATERIAL,
+        // Fixup BSP brush type
+        FIX_BSP_BRUSH_TYPE,
+        // Removed ClientDestroyedActorContent from UWorld
+        REMOVE_CLIENTDESTROYEDACTORCONTENT,
+        // Added SoundCueGraph for new SoundCue editor
+        SOUND_CUE_GRAPH_EDITOR,
+        // Strip TransLevelMoveBuffers out of Worlds
+        STRIP_TRANS_LEVEL_MOVE_BUFFER,
+        // Deprecated PrimitiveComponent.bNoEncroachCheck
+        DEPRECATED_BNOENCROACHCHECK,
+        // Light component bUseIESBrightness now defaults to false
+        LIGHTS_USE_IES_BRIGHTNESS_DEFAULT_CHANGED,
+        // Material attributes multiplex
+        MATERIAL_ATTRIBUTES_MULTIPLEX,
+        // Renamed & moved TSF_RGBA8/E8 to TSF_BGRA8/E8
+        TEXTURE_FORMAT_RGBA_SWIZZLE,
+        // Package summary stores the offset to the beginning of the area where the bulkdata gets stored */
+        SUMMARY_HAS_BULKDATA_OFFSET,
+        // The SimpleConstructionScript now marks the default root component as transactional, and bCreatedByConstructionScript true
+        DEFAULT_ROOT_COMP_TRANSACTIONAL,
+        // Hashed material compile output stored in packages to detect mismatches
+        HASHED_MATERIAL_OUTPUT,
 
 
         OLDEST_LOADABLE_PACKAGE = 214,
@@ -931,6 +931,7 @@ namespace CUE4Parse.UE4.Versions
 
     public enum EUnrealEngineObjectUE3Version
     {
+        DETERMINE_BY_GAME = 0,
         // early UE3 version not documented
         Release40 = 40,
         Release47 = 47,
@@ -1014,508 +1015,508 @@ namespace CUE4Parse.UE4.Versions
         // lowest found version for UE3 packages
 
         // Removing Length, XSize, YSize and ZSize from VJointPos
-        VER_REMOVE_SIZE_VJOINTPOS = 224,
+        REMOVE_SIZE_VJOINTPOS = 224,
         // Added BackfaceShadowTexCoord to FVert.
-        VER_BACKFACESHADOWTEXCOORD = 225,
+        BACKFACESHADOWTEXCOORD = 225,
         // Added ThumbnailDistance to the natively serialized StaticMesh.
-        VER_STATICMESH_THUMBNAIL_DISTANCE = 226,
+        STATICMESH_THUMBNAIL_DISTANCE = 226,
         // Converted FPoly::Vertex to a TArray.
-        VER_FPOLYVERTEXARRAY = 227,
+        FPOLYVERTEXARRAY = 227,
         // Converted FQuantizedLightSample to use FColor instead of BYTE[4]. Needed to byte swap correctly on Xenon
-        VER_QUANT_LIGHTSAMPLE_BYTE_TO_COLOR = 228,
+        QUANT_LIGHTSAMPLE_BYTE_TO_COLOR = 228,
         // Low poly collision data for terrain is serialized
-        VER_TERRAIN_COLLISION = 229,
+        TERRAIN_COLLISION = 229,
         // Added texture LOD groups. Version incremented to set default values.
-        VER_TEXTURE_GROUPS = 230,
+        TEXTURE_GROUPS = 230,
         // Converted ULightMap1D::Scale to FLOAT[3] instead of FLinearColor
-        VER_LIGHTMAP_SCALE_TO_FLOAT_ARRAY = 231,
+        LIGHTMAP_SCALE_TO_FLOAT_ARRAY = 231,
         // Added decal manager to ULevel.
-        VER_ADDED_DECAL_MANAGER = 232,
+        ADDED_DECAL_MANAGER = 232,
         // Added ParticleModuleRequired to support LOD levels in particle emitters.
         // Changed to LOD model for emitters.
-        VER_CHANGE_EMITTER_TO_LODMODEL = 233,
+        CHANGE_EMITTER_TO_LODMODEL = 233,
         // Changed streaming code around to split texture and sound streaming into separate arrays
-        VER_SPLIT_SOUND_FROM_TEXTURE_STREAMING = 234,
+        SPLIT_SOUND_FROM_TEXTURE_STREAMING = 234,
         // Serialize terrain patch bounds
-        VER_SERIALIZE_TERRAIN_PATCHBOUNDS = 235,
+        SERIALIZE_TERRAIN_PATCHBOUNDS = 235,
         // Add structures to BSP and terrain for pre-cooked Novodex collision data.
-        VER_PRECOOK_PHYS_BSP_TERRAIN = 236,
+        PRECOOK_PHYS_BSP_TERRAIN = 236,
         // Add structures to BrushComponent for pre-cooked Novodex collision data.
-        VER_PRECOOK_PHYS_BRUSHES = 237,
+        PRECOOK_PHYS_BRUSHES = 237,
         // Add pre-cooked static mesh data cache to ULevel
-        VER_PRECOOK_PHYS_STATICMESH_CACHE = 238,
+        PRECOOK_PHYS_STATICMESH_CACHE = 238,
         // UDecalComponent's RenderData is now serialized.
-        VER_DECAL_RENDERDATA = 239,
+        DECAL_RENDERDATA = 239,
         // UDecalComponent's RenderData is now serialized as pointers.
-        VER_DECAL_RENDERDATA_POINTER = 240,
+        DECAL_RENDERDATA_POINTER = 240,
         // Repairs bad centroid calculation of the collision data
-        VER_REPAIR_STATICMESH_COLLISION = 241,
+        REPAIR_STATICMESH_COLLISION = 241,
         // Added lighting channel support
-        VER_LIGHTING_CHANNEL_SUPPORT = 242,
+        LIGHTING_CHANNEL_SUPPORT = 242,
         // LODGroups for particle systems
-        VER_PARTICLESYSTEM_LODGROUP_SUPPORT = 243,
+        PARTICLESYSTEM_LODGROUP_SUPPORT = 243,
         // Changed default volumes for MikeL, propagating to all instances
-        VER_SOUNDNODEWAVE_DEFAULT_CHANGE = 244,
+        SOUNDNODEWAVE_DEFAULT_CHANGE = 244,
         // Added EngineVersion to FPackageFileSummary
-        VER_PACKAGEFILESUMMARY_CHANGE = 245,
+        PACKAGEFILESUMMARY_CHANGE = 245,
         // Particles with linear color
-        VER_PARTICLESYSTEM_LINEARCOLOR_SUPPORT = 246,
+        PARTICLESYSTEM_LINEARCOLOR_SUPPORT = 246,
         // Added ExportFlags to FObjectExport
-        VER_FOBJECTEXPORT_EXPORTFLAGS = 247,
+        FOBJECTEXPORT_EXPORTFLAGS = 247,
         // Removed COMPONENT_CLASS_BRIDGE code
-        VER_REMOVED_COMPONENT_CLASS_BRIDGE = 248,
+        REMOVED_COMPONENT_CLASS_BRIDGE = 248,
         // Moved ExportMap and ImportMap to beginning of file and extended FPackageFileSummary
-        VER_MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE = 249,
+        MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE = 249,
         // Introduced concept of default poly flags
-        VER_DEFAULTPOLYFLAGS_CHANGE = 250,
-        VER_USTRUCT_SERIALIZETAGGEDPROPERTIES_BROKEN = 250,
+        DEFAULTPOLYFLAGS_CHANGE = 250,
+        USTRUCT_SERIALIZETAGGEDPROPERTIES_BROKEN = 250,
         // Changed lazy array serialization
-        VER_LAZYARRAY_SERIALIZATION_CHANGE = 251,
+        LAZYARRAY_SERIALIZATION_CHANGE = 251,
         // Added USoundNodeMixer::InputVolume
-        VER_USOUNDNODEMIXER_INPUTVOLUME = 252,
+        USOUNDNODEMIXER_INPUTVOLUME = 252,
         // Added version number for precooked physics data
-        VER_SAVE_PRECOOK_PHYS_VERSION = 253,
+        SAVE_PRECOOK_PHYS_VERSION = 253,
         // Added compression support to TLazyArray
-        VER_LAZYARRAY_COMPRESSION = 254,
+        LAZYARRAY_COMPRESSION = 254,
         // Changed the UI system to use instances of UIState for tracking ui menu states, rather than child classes of UIState
-        VER_CHANGED_UISTATES = 255,
+        CHANGED_UISTATES = 255,
         // Fixed brush polyflags defaulting to PF_DefaultFlags which should ONLY be the case for surfaces and polys but not for brushes
-        VER_FIXED_BRUSH_POLYFLAGS = 256,
+        FIXED_BRUSH_POLYFLAGS = 256,
         // Made UIAction.ActionMap transient
-        VER_MADE_ACTIONMAP_TRANSIENT = 257,
+        MADE_ACTIONMAP_TRANSIENT = 257,
         // Safe version for UStruct serialization bug
-        VER_USTRUCT_SERIALIZETAGGEDPROPERTIES_FIXED = 258,
+        USTRUCT_SERIALIZETAGGEDPROPERTIES_FIXED = 258,
         // Added terrain InfoFlags
-        VER_TERRAIN_ADDING_INFOFLAGS = 259,
+        TERRAIN_ADDING_INFOFLAGS = 259,
         // Added PayloadFilename to FLazyLoader
-        VER_LAZYLOADER_PAYLOADFILENAME = 260,
+        LAZYLOADER_PAYLOADFILENAME = 260,
         // Added CursorMap to UISkin
-        VER_ADDED_CURSOR_MAP = 261,
+        ADDED_CURSOR_MAP = 261,
         // Static mesh property fixup
-        VER_STATICMESH_PROPERTY_FIXUP = 262,
+        STATICMESH_PROPERTY_FIXUP = 262,
         // InfoData in terrains error... wasn't copy-n-pasting correctly so saved maps are botched
-        VER_TERRAIN_INFODATA_ERROR = 263,
+        TERRAIN_INFODATA_ERROR = 263,
         // NavigationPoints were having their DrawScale incorrectly changed by the editor, so saved maps need to have it reset to the default
-        VER_NAVIGATIONPOINT_DRAWSCALE_FIXUP = 264,
+        NAVIGATIONPOINT_DRAWSCALE_FIXUP = 264,
         // Changed USequenceOp.SeqOpOutputLink.LinkAction from name to object reference
-        VER_CHANGED_LINKACTION_TYPE = 265,
+        CHANGED_LINKACTION_TYPE = 265,
         // Replaced TLazyArray with FUntypedBulkData
-        VER_REPLACED_LAZY_ARRAY_WITH_UNTYPED_BULK_DATA = 266,
+        REPLACED_LAZY_ARRAY_WITH_UNTYPED_BULK_DATA = 266,
         // Components no longer serialize TemplateName unless the component is a template
         // Fixed ObjectArchetype for components not always pointing to correct object
-        VER_FIXED_COMPONENT_TEMPLATES = 267,
+        FIXED_COMPONENT_TEMPLATES = 267,
         // Static mesh property fixup... again
-        VER_STATICMESH_PROPERTY_FIXUP_2 = 268,
+        STATICMESH_PROPERTY_FIXUP_2 = 268,
         // Added folder name to UPackage
-        VER_FOLDER_ADDED = 269,
+        FOLDER_ADDED = 269,
         // Changed WarGame's ActorFactories to be name only and on save store a reference to the content they
         //      need to spawn.  This makes it so we don't have all possible content loaded when only needed a subset
-        VER_WARFARE_FACTORIES_ONLY_REF_WHAT_THEY_NEED = 270,
+        WARFARE_FACTORIES_ONLY_REF_WHAT_THEY_NEED = 270,
         // Fixed 2D array of floats serialized by FStaticMeshTriangleBulkData::SerializeElement for UVs to match
         //		the memory layout as required by bulk serialization
-        VER_FIXED_TRIANGLE_BULK_DATA_SERIALIZATION = 271,
+        FIXED_TRIANGLE_BULK_DATA_SERIALIZATION = 271,
         // Hardcoded FTerrainMaterialMask bit size
-        VER_HARDCODED_TERRAIN_MATERIAL_MASK_SIZE = 272,
+        HARDCODED_TERRAIN_MATERIAL_MASK_SIZE = 272,
         // Removed UPrimitiveComponent->ComponentGuid
-        VER_REMOVED_COMPONENT_GUID = 273,
+        REMOVED_COMPONENT_GUID = 273,
         // Refactored UISkin into two classes (UISkin/UICustomSkin)
-        VER_REFACTORED_UISKIN = 274,
+        REFACTORED_UISKIN = 274,
         // Added level only lighting option, defaults to TRUE for static only lights
-        VER_ADDED_LEVEL_ONLY_LIGHTING_OPTION = 275,
+        ADDED_LEVEL_ONLY_LIGHTING_OPTION = 275,
         // Added platform flags to UClass
-        VER_ADDED_PLATFORM_FLAGS = 276,
+        ADDED_PLATFORM_FLAGS = 276,
         // Added CookedContentVersion to FPackageFileSummary
-        VER_PACKAGEFILESUMMARY_CHANGE_COOK_VER_ADDED = 277,
+        PACKAGEFILESUMMARY_CHANGE_COOK_VER_ADDED = 277,
         // Made FLinearColor serialize as a unit
-        VER_CHANGED_FLINEARCOLOR_SERIALIZATION = 278,
+        CHANGED_FLINEARCOLOR_SERIALIZATION = 278,
         // Made FLinearColor serialize as a unit
-        VER_MADE_IMMUTABLE_NONINHERIT = 279,
+        MADE_IMMUTABLE_NONINHERIT = 279,
         // Added per level navigation lists for streaming level fixups
-        VER_PERLEVEL_NAVLIST = 280,
+        PERLEVEL_NAVLIST = 280,
         // Added SourceStyleID to UIStyle_Combo
-        VER_ADDED_SOURCESTYLEID = 281,
+        ADDED_SOURCESTYLEID = 281,
         // Integrated FaceFX 1.5 and cleaned up FaceFX serialization
-        VER_FACEFX_1_5_UPGRADE = 282,
+        FACEFX_1_5_UPGRADE = 282,
         // Remapped SoundCueLocalized instances to SoundCue
-        VER_REMAPPED_SOUNDCUELOCALIZED_TO_SOUNDCUE = 283,
+        REMAPPED_SOUNDCUELOCALIZED_TO_SOUNDCUE = 283,
         // Added USoundNodeConcatenator::InputVolume
-        VER_USOUNDNODECONCATENATOR_INPUTVOLUME = 284,
+        USOUNDNODECONCATENATOR_INPUTVOLUME = 284,
         // Pre-cook physics data for per-triangle static mesh collision.
-        VER_PRECOOK_PERTRI_PHYS_STATICMESH = 285,
+        PRECOOK_PERTRI_PHYS_STATICMESH = 285,
         // Changed FInputKeyAction to have a array of UIAction instead of a single UIAction.
-        VER_INPUTKEYACTION_HAS_ARRAY_OF_UIACTION = 286,
+        INPUTKEYACTION_HAS_ARRAY_OF_UIACTION = 286,
         // Added UInterpTrackSound::PostLoad for setting the volume and pitch of existing Matinee sound keys.
-        VER_INTERP_TRACK_SOUND_VOLUME_PITCH = 287,
+        INTERP_TRACK_SOUND_VOLUME_PITCH = 287,
         // Changed UClass.Interfaces to be a map
-        VER_CHANGED_INTERFACES_TO_MAP = 288,
+        CHANGED_INTERFACES_TO_MAP = 288,
         // Added animation compression.
-        VER_ANIMATION_COMPRESSION = 289,
+        ANIMATION_COMPRESSION = 289,
         // Rewrote simplified collision.
-        VER_NEW_SIMPLE_CONVEX_COLLISION = 290,
+        NEW_SIMPLE_CONVEX_COLLISION = 290,
         // Eliminated book-keeping overhead in animation compression.
-        VER_ANIMATION_COMPRESSION_SINGLE_BYTESTREAM = 291,
+        ANIMATION_COMPRESSION_SINGLE_BYTESTREAM = 291,
         // Operations on UAnimSequence::CompressedByteStream are now aligned to four bytes.
-        VER_ANIMATION_COMPRESSION_FOUR_BYTE_ALIGNED = 292,
+        ANIMATION_COMPRESSION_FOUR_BYTE_ALIGNED = 292,
         // Added inclusion/ exclusion volumes to light component
-        VER_ADDED_LIGHT_VOLUME_SUPPORT = 293,
+        ADDED_LIGHT_VOLUME_SUPPORT = 293,
         // Added permuted data for simplified collision to use SIMD instructions
-        VER_SIMD_SIMPLIFIED_COLLISION_DATA = 294,
+        SIMD_SIMPLIFIED_COLLISION_DATA = 294,
         // Fix distributions on DistanceCrossFade
-        VER_DISTANCE_CROSSFADE_DISTRIBUTIONS_RESET = 295,
+        DISTANCE_CROSSFADE_DISTRIBUTIONS_RESET = 295,
         // Added NameIndexMap to USkeletalMesh to speed up MatchRefBone
-        VER_ADD_SKELMESH_NAMEINDEXMAP = 296,
+        ADD_SKELMESH_NAMEINDEXMAP = 296,
         // Rendering refactor
-        VER_RENDERING_REFACTOR = 297,
+        RENDERING_REFACTOR = 297,
         // Terrain material resource serialization
-        VER_TERRAIN_MATERIALRESOURCE_SERIALIZE = 298,
+        TERRAIN_MATERIALRESOURCE_SERIALIZE = 298,
         // Adding ScreenPositionScaleBiasParameter and SceneDepthCalcParameter
         //		parameters to FMaterialPixelShaderParameters
-        VER_SCREENPOSSCALEBIAS_SCENEDEPTHCALC_PARAMETERS = 299,
+        SCREENPOSSCALEBIAS_SCENEDEPTHCALC_PARAMETERS = 299,
         // Added TwoSidedSignParameter to FMaterialPixelShaderParameters
-        VER_TWOSIDEDSIGN_PARAMETERS = 300,
+        TWOSIDEDSIGN_PARAMETERS = 300,
         // A checkpoint to force all materials to be recompiled
-        VER_MATERIAL_RECOMPILE_CHECKPOINT = 301,
+        MATERIAL_RECOMPILE_CHECKPOINT = 301,
         // FDistributions
-        VER_FDISTRIBUTIONS = 302,
+        FDISTRIBUTIONS = 302,
         // Encapsulated UIDockingSet
-        VER_UIDOCKINGSET_CHANGED = 303,
+        UIDOCKINGSET_CHANGED = 303,
         // Implemented FalloffExponent in Gemini
-        VER_FALLOFF_EXPONENT_GEMINI = 304,
+        FALLOFF_EXPONENT_GEMINI = 304,
         // Remapping TextureRenderTarget to TextureRenderTarget2D
-        VER_REMPAP_TEXTURE_RENDER_TARGET = 305,
+        REMPAP_TEXTURE_RENDER_TARGET = 305,
         // Added compilation errors to FMaterial
-        VER_FMATERIAL_COMPILATION_ERRORS = 306,
+        FMATERIAL_COMPILATION_ERRORS = 306,
         // Added platform mask to shader cache
-        VER_ADDED_PLATFORMTOSERIALIZEMASK = 307,
+        ADDED_PLATFORMTOSERIALIZEMASK = 307,
         // Forcing all FRawSistributions to be rebuilt
-        VER_FDISTRIBUTION_FORCE_DIRTY = 308,
+        FDISTRIBUTION_FORCE_DIRTY = 308,
         // Enabled single-pass component instancing
-        VER_SINGLEPASS_COMPONENT_INSTANCING = 309,
+        SINGLEPASS_COMPONENT_INSTANCING = 309,
         // Added profiles to AimOffset node
-        VER_AIMOFFSET_PROFILES = 310,
+        AIMOFFSET_PROFILES = 310,
         // Added NumInstructions to FShader
-        VER_SHADER_NUMINSTRUCTIONS = 311,
+        SHADER_NUMINSTRUCTIONS = 311,
         // Rewrote decals for the new renderer.
-        VER_DECAL_REFACTOR = 312,
+        DECAL_REFACTOR = 312,
         // Moved lowest LOD regeneration to PostLoad.
-        VER_EMITTER_LOWEST_LOD_REGENERATION = 313,
+        EMITTER_LOWEST_LOD_REGENERATION = 313,
         // Rotated light-map basis to allow seamless mirroring of UVs over texture X axis.
-        VER_LIGHTMAP_SYMMETRIC_OVER_X = 314,
+        LIGHTMAP_SYMMETRIC_OVER_X = 314,
         // Remove CollisionModel from StaticMesh
-        VER_REMOVE_STATICMESH_COLLISIONMODEL = 315,
+        REMOVE_STATICMESH_COLLISIONMODEL = 315,
         // Code to convert legacy skylight-primitive interaction semantics to light channels.
-        VER_LEGACY_SKYLIGHT_CHANNELS = 316,
+        LEGACY_SKYLIGHT_CHANNELS = 316,
         // Recompile shaders for depth-bias expression fix.
-        VER_DEPTHBIAS_SHADER_RECOMPILE = 317,
+        DEPTHBIAS_SHADER_RECOMPILE = 317,
         // Recompile shaders for vertex light-map fix.
-        VER_VERTEX_LIGHTMAP_SHADER_RECOMPILE = 318,
+        VERTEX_LIGHTMAP_SHADER_RECOMPILE = 318,
         // Recompile global shaders for modulated shadows
-        VER_MOD_SHADOW_SHADER_RECOMPILE = 319,
+        MOD_SHADOW_SHADER_RECOMPILE = 319,
         // Recompile emissive shaders for sky light lower hemisphere support.
-        VER_SKYLIGHT_LOWERHEMISPHERE_SHADER_RECOMPILE = 320,
+        SKYLIGHT_LOWERHEMISPHERE_SHADER_RECOMPILE = 320,
         // Serialize TTransArray owner
-        VER_SERIALIZE_TTRANSARRAY_OWNER = 321,
+        SERIALIZE_TTRANSARRAY_OWNER = 321,
         // Rewritten package map that can replicate objects by index without linkers
-        VER_LINKERFREE_PACKAGEMAP = 322,
+        LINKERFREE_PACKAGEMAP = 322,
         // Added gamma correction to simple element pixel shader
-        VER_SIMPLEELEMENTSHADER_GAMMACORRECTION = 323,
+        SIMPLEELEMENTSHADER_GAMMACORRECTION = 323,
         // Fixed up PreviewLightRadius for PointLightComponents
-        VER_FIXED_POINTLIGHTCOMPONENT_LIGHTRADIUS = 324,
+        FIXED_POINTLIGHTCOMPONENT_LIGHTRADIUS = 324,
         // Added ColorScale and OverlayColor to GammaCorrectionPixelShader
-        VER_GAMMACORRECTION_SHADER_RECOMPILE = 325,
+        GAMMACORRECTION_SHADER_RECOMPILE = 325,
         // Added texture dependency length information to FMaterial
-        VER_MATERIAL_TEXTUREDEPENDENCYLENGTH = 326,
+        MATERIAL_TEXTUREDEPENDENCYLENGTH = 326,
         // Added cached cooked audio data for Xbox 360
-        VER_ADDED_CACHED_COOKED_XBOX360_DATA = 327,
+        ADDED_CACHED_COOKED_XBOX360_DATA = 327,
         // Added color saturate when doing a pow to the simple/gamma pixel shaders
-        VER_SATURATE_COLOR_SHADER_RECOMPILE = 328,
+        SATURATE_COLOR_SHADER_RECOMPILE = 328,
         // Changed the DeviceZ to WorldZ conversion shader
-        VER_DEVICEZ_CONVERT_SHADER_RECOMPILE = 329,
+        DEVICEZ_CONVERT_SHADER_RECOMPILE = 329,
         // Added bIsMasked to UMaterial (affects velocity shaders)
-        VER_MATERIAL_ISMASKED_FLAG = 330,
+        MATERIAL_ISMASKED_FLAG = 330,
         // AimOffset Nodes used Quaterions intead of Rotators
-        VER_AIMOFFSET_ROT2QUAT = 331,
+        AIMOFFSET_ROT2QUAT = 331,
         // Replaced ULightMap* with FLightMap*
-        VER_LIGHTMAP_NON_UOBJECT = 332,
+        LIGHTMAP_NON_UOBJECT = 332,
         // TResourceArray usage for mesh rendering data
-        VER_USE_UMA_RESOURCE_ARRAY_MESH_DATA = 333,
+        USE_UMA_RESOURCE_ARRAY_MESH_DATA = 333,
         // Added package compression
-        VER_ADDED_PACKAGE_COMPRESSION_SUPPORT = 334,
+        ADDED_PACKAGE_COMPRESSION_SUPPORT = 334,
         // Changed terrain shader to only be compiled for terrain materials
-        VER_SHADER_RECOMPILE_FOR_TERRAIN_MATERIALS = 335,
+        SHADER_RECOMPILE_FOR_TERRAIN_MATERIALS = 335,
         // Changed the permuted planes in FConvexVolume to include repeats so that pure SIMD tests can be done
-        VER_CONVEX_VOLUMES_PERMUTED_PLANES_CHANGE = 336,
+        CONVEX_VOLUMES_PERMUTED_PLANES_CHANGE = 336,
         // Removed redudant enums from UIComp_AutoAlign
-        VER_REMOVED_REDUNDANT_ENUMS = 337,
+        REMOVED_REDUNDANT_ENUMS = 337,
         // VelocityShader/MotionBlurShader recompile
-        VER_MOTIONBLURSHADER_RECOMPILE = 338,
+        MOTIONBLURSHADER_RECOMPILE = 338,
         // Added color exp bias term to simple elemnt pixel shader
-        VER_SIMPLE_ELEMENT_SHADER_RECOMPILE = 339,
+        SIMPLE_ELEMENT_SHADER_RECOMPILE = 339,
         // Added CompositeDynamic lighting channel
-        VER_COMPOSITEDYNAMIC_LIGHTINGCHANNEL = 340,
+        COMPOSITEDYNAMIC_LIGHTINGCHANNEL = 340,
         // Recompile modulated shadow pixel shader
-        VER_MODULATESHADOWPROJECTION_SHADER_RECOMPILE = 341,
+        MODULATESHADOWPROJECTION_SHADER_RECOMPILE = 341,
         // Upgrading to July XDK requires recompiling shaders
-        VER_JULY_XDK_UPGRADE = 342,
+        JULY_XDK_UPGRADE = 342,
         // FName change (splits an FName to name and number pair)
-        VER_FNAME_CHANGE_NAME_SPLIT = 343,
+        FNAME_CHANGE_NAME_SPLIT = 343,
         // Recompile translucency pixel shader.
-        VER_TRANSLUCENCY_SHADER_RECOMPILE = 344,
+        TRANSLUCENCY_SHADER_RECOMPILE = 344,
         // Added code to fix PointLightComponents that have an invalid PreviewLightRadius [presumably] resulting from old T3D text being pasted into levels
-        VER_FIXED_POINTLIGHTCOMPONENT_LIGHTRADIUS_AGAIN = 345,
+        FIXED_POINTLIGHTCOMPONENT_LIGHTRADIUS_AGAIN = 345,
         // VSM Shadow projection. Recompile shadow projection shaders
-        VER_SHADER_VSM_SHADOW_PROJECTION = 346,
+        SHADER_VSM_SHADOW_PROJECTION = 346,
         // Changed how old name tables are loaded to split the name earlier to reduce extra FNames in memory from old packages
-        VER_NAME_TABLE_LOADING_CHANGE = 347,
+        NAME_TABLE_LOADING_CHANGE = 347,
         // Added code to fix PointLightComponents that have an invalid PreviewLightRadius component (isn't the same component as the one contained in the owning actor's components array)
-        VER_FIXED_PLC_LIGHTRADIUS_POST_COMPONENTFIX = 348,
+        FIXED_PLC_LIGHTRADIUS_POST_COMPONENTFIX = 348,
         // Fix for permuting vertex data for FConvexElem and FConvexVolume
-        VER_FIX_CONVEX_VERTEX_PERMUTE = 349,
+        FIX_CONVEX_VERTEX_PERMUTE = 349,
         // Terrain serialize material resource guids
-        VER_TERRAIN_SERIALIZE_MATRES_GUIDS = 350,
+        TERRAIN_SERIALIZE_MATRES_GUIDS = 350,
         // USeqAct_Interp now saves the transformations of actors it affects.
-        VER_ADDED_SEQACT_INTERP_SAVEACTORTRANSFORMS = 351,
+        ADDED_SEQACT_INTERP_SAVEACTORTRANSFORMS = 351,
         // Emissive shader optimizations require recompiling shaders
-        VER_EMISSIVE_OPTIMIZATIONS_SHADER_RECOMPILE = 352,
+        EMISSIVE_OPTIMIZATIONS_SHADER_RECOMPILE = 352,
         // Only bloom positive scene color values on PC to mimic XBOX
-        VER_DOFBLOOMGATHER_SHADER_RECOMPILE = 353,
+        DOFBLOOMGATHER_SHADER_RECOMPILE = 353,
 
         //	354,355
         // Recompile fog shader
-        VER_HEIGHTFOG_SHADER_RECOMPILE = 355,
+        HEIGHTFOG_SHADER_RECOMPILE = 355,
         // Recompile VSM filter depth gather shader
-        VER_VSMFILTERGATHER_SHADER_RECOMPILE = 356,
+        VSMFILTERGATHER_SHADER_RECOMPILE = 356,
         // Added a bUsesSceneColor flag to UMaterial
-        VER_MATERIAL_USES_SCENECOLOR_FLAG = 357,
+        MATERIAL_USES_SCENECOLOR_FLAG = 357,
         // StaticMeshes now have physics cooked data saved in them at defined scales.
-        VER_PRECACHE_STATICMESH_COLLISION = 358,
+        PRECACHE_STATICMESH_COLLISION = 358,
         // Terrain packed weight maps
-        VER_TERRAIN_PACKED_WEIGHT_MAPS = 359,
+        TERRAIN_PACKED_WEIGHT_MAPS = 359,
         // Upgrade to August XDK
-        VER_AUGUST_XDK_UPGRADE = 360,
+        AUGUST_XDK_UPGRADE = 360,
         // Force recalculation of the peak active particles
-        VER_RECALC_PEAK_ACTIVE_PARTICLES = 361,
+        RECALC_PEAK_ACTIVE_PARTICLES = 361,
         // Added setable max bone influences to GPU skin vertex factory and max influences to skel mesh chunks
-        VER_GPUSKIN_MAX_INFLUENCES_OPTIMIZATION = 362,
+        GPUSKIN_MAX_INFLUENCES_OPTIMIZATION = 362,
         // Added an option to control the depth bias when rendering shadow depths
-        VER_SHADOW_DEPTH_SHADER_RECOMPILE = 363,
+        SHADOW_DEPTH_SHADER_RECOMPILE = 363,
         // Merge all static mesh vertex data into a single vertex buffer
-        VER_STATICMESH_VERTEXBUFFER_MERGE = 364,
+        STATICMESH_VERTEXBUFFER_MERGE = 364,
         // Precomputed 'force stream mips' array in ULevel
-        VER_LEVEL_FORCE_STREAM_TEXTURES = 365,
+        LEVEL_FORCE_STREAM_TEXTURES = 365,
         // Recompile FUberPostProcessBlendPixelShader to fix shadow color clamping
-        VER_UBERPOSTPROCESSBLEND_PS_RECOMPILE = 366,
+        UBERPOSTPROCESSBLEND_PS_RECOMPILE = 366,
         // VelocityShader recompile
-        VER_VELOCITYSHADER_RECOMPILE = 367,
+        VELOCITYSHADER_RECOMPILE = 367,
         // Level streaming volume changes
-        VER_ADDED_LEVELSTREAMINGVOLUME_USAGE = 368,
+        ADDED_LEVELSTREAMINGVOLUME_USAGE = 368,
         // Changed LOADING_COMPRESSION_CHUNK_SIZE from 32K to 128K
-        VER_CHANGED_COMPRESSION_CHUNK_SIZE_TO_128 = 369,
+        CHANGED_COMPRESSION_CHUNK_SIZE_TO_128 = 369,
         // Terrain vertex factory shader has been changed to use MulMatrix
-        VER_RECOMPILE_TERRAIN_SHADERS = 370,
+        RECOMPILE_TERRAIN_SHADERS = 370,
         // RateScale has been added to AnimNodeSynch groups.
-        VER_ANIMNODESYNCH_RATESCALE = 371,
+        ANIMNODESYNCH_RATESCALE = 371,
         // Serialization of the animation compression bytestream now accounts for padding.
-        VER_ANIMATION_COMPRESSION_PADDING_SERIALIZATION = 372,
+        ANIMATION_COMPRESSION_PADDING_SERIALIZATION = 372,
         // RateScale has been added to AnimNodeSynch groups.
-        VER_DOFBLOOMGATHER_DISTORTION_SHADER_RECOMPILE = 373,
+        DOFBLOOMGATHER_DISTORTION_SHADER_RECOMPILE = 373,
         // Added code to fix SpotLightComponents that have an invalid PreviewInnerCone and PreviewOuterCone component (isn't the same component as the one contained in the owning actor's components array)
-        VER_FIXED_SPOTLIGHTCOMPONENTS = 374,
+        FIXED_SPOTLIGHTCOMPONENTS = 374,
         // Added UExporter::PreferredFormatIndex.
-        VER_ADDED_UExPORTER_PREFFERED_FORMAT = 375,
+        ADDED_UExPORTER_PREFFERED_FORMAT = 375,
         // Added cached cooked audio data for PS3
-        VER_ADDED_CACHED_COOKED_PS3_DATA = 376,
+        ADDED_CACHED_COOKED_PS3_DATA = 376,
         // Added property metadat to UClass
-        VER_ADDED_PROPERTY_METADATA = 377,
+        ADDED_PROPERTY_METADATA = 377,
         // Added property metadat to UClass
-        VER_DECAL_STATIC_DECALS_SERIALIZED = 378,
+        DECAL_STATIC_DECALS_SERIALIZED = 378,
         // Added Hardware PCF support, requires shadow filter shaders recompile
-        VER_HARDWARE_PCF = 379,
+        HARDWARE_PCF = 379,
         // Added cached cooked ogg vorbis data for the PC
-        VER_ADDED_CACHED_COOKED_PC_DATA = 380,
+        ADDED_CACHED_COOKED_PC_DATA = 380,
         // Changed the filter buffer to be fixed point, which allows filtering on all hardware
-        VER_FIXEDPOINT_FILTERBUFFER = 381,
+        FIXEDPOINT_FILTERBUFFER = 381,
         // Upgrade to XMA2
-        VER_XMA2_UPGRADE = 382,
+        XMA2_UPGRADE = 382,
         // Upgrade to XMA2
-        VER_ADDED_RAW_SURROUND_DATA = 383,
+        ADDED_RAW_SURROUND_DATA = 383,
         // Fixed a problem that was causing curves to have incorrect tangents at end points.
-        VER_FIXED_CURVE_INTERP_TANGENTS = 384,
+        FIXED_CURVE_INTERP_TANGENTS = 384,
         // Fixed versioning problem for SoundNodeWave
-        VER_UPDATED_SOUND_NODE_WAVE = 385,
+        UPDATED_SOUND_NODE_WAVE = 385,
         // Remove RigidBodyIgnorePawns flag.
-        VER_REMOVE_RB_IGNORE_PAWNS = 386,
+        REMOVE_RB_IGNORE_PAWNS = 386,
         // Fixed a bug with CollisionType handling that caused some actors to have collision incorrectly turned off after being edited
-        VER_COLLISIONTYPE_FIX = 387,
+        COLLISIONTYPE_FIX = 387,
         // Fix for using wrong values when indexing into the VertexData array and on the duplicated verts at the end
-        VER_FIX_BAD_INDEX_CONVEX_VERTEX_PERMUTE = 388,
+        FIX_BAD_INDEX_CONVEX_VERTEX_PERMUTE = 388,
         // Added lightmap texture coordinates to FDecalVertex.
-        VER_DECAL_ADDED_DECAL_VERTEX_LIGHTMAP_COORD = 389,
+        DECAL_ADDED_DECAL_VERTEX_LIGHTMAP_COORD = 389,
         // Added NumChannels to SoundNodeWave
-        VER_ADDED_NUM_CHANNELS = 390,
+        ADDED_NUM_CHANNELS = 390,
         // Changed terrain to be high-res edit
-        VER_TERRAIN_HIRES_EDIT = 391,
+        TERRAIN_HIRES_EDIT = 391,
         // Reversed order of gamma correction and rescaling of vertex light-maps to match texture light-maps.
-        VER_VERTEX_LIGHTMAP_GAMMACORRECTION_FIX = 392,
+        VERTEX_LIGHTMAP_GAMMACORRECTION_FIX = 392,
         // Reversed order of gamma correction and rescaling of vertex light-maps to match texture light-maps.
-        VER_ADDED_LOOP_INDEFINITELY = 393,
+        ADDED_LOOP_INDEFINITELY = 393,
         // Added texture density material shaders
-        VER_TEXTUREDENSITY = 394,
+        TEXTUREDENSITY = 394,
         // Added fallbacks for lack of floating point blending support.
-        VER_FP_BLENDING_FALLBACK = 395,
+        FP_BLENDING_FALLBACK = 395,
         // Added CollisionType to ActorFactoryDynamicSM and deprecated collision flags in that class and subclasses
-        VER_ADD_COLLISIONTYPE_TO_ACTORFACTORYDYNAMICSM = 396,
+        ADD_COLLISIONTYPE_TO_ACTORFACTORYDYNAMICSM = 396,
         // Forcing all FRawSistributions to be rebuilt (fixes very short in time curves, and optimizes 2 keyframe linear 'curves')
-        VER_FDISTRIBUTION_FORCE_DIRTY2 = 397,
+        FDISTRIBUTION_FORCE_DIRTY2 = 397,
         // Added support for decals on GPU-skinned skeletal meshes.
-        VER_DECAL_SKELETAL_MESHES = 398,
+        DECAL_SKELETAL_MESHES = 398,
         // Added SP_PCD3D_SM2 shader platform
-        VER_SM2_PLATFORM = 399,
+        SM2_PLATFORM = 399,
         // Added support for decals on CPU-skinned skeletal meshes.
-        VER_DECAL_CPU_SKELETAL_MESHES = 400,
+        DECAL_CPU_SKELETAL_MESHES = 400,
         // Temporarily disabled support for unlit skinned decal materials for want of shader constants.
-        VER_DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES = 401,
+        DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES = 401,
         // Removed registers from skiined decal vertex factory; reenabled unlit skinned decal materials.
-        VER_DECAL_REMOVED_VELOCITY_REGISTERS = 402,
+        DECAL_REMOVED_VELOCITY_REGISTERS = 402,
         // Added Fetch4 shadow shaders which are automatically used on supporting ATI cards.
-        VER_IMPLEMENTED_FETCH4 = 403,
+        IMPLEMENTED_FETCH4 = 403,
         // Moved GPU skinned decal and non-decal vertex factory shader code into the same file.
-        VER_DECAL_MERGED_W_GPUSKIN_SHADER_CODE = 404,
+        DECAL_MERGED_W_GPUSKIN_SHADER_CODE = 404,
         // TEXCOORD6,TEXCOORD7 used instead of POSITION1,NORMAL1 since those semantics are not supported by Cg.
-        VER_REMOVED_POS1_NORM1_SHADER_CODE = 405,
+        REMOVED_POS1_NORM1_SHADER_CODE = 405,
         // Added support for static parameters
-        VER_STATIC_MATERIAL_PARAMETERS = 406,
+        STATIC_MATERIAL_PARAMETERS = 406,
         // PS3 shader recompile for         pow()
-        VER_PS3SHADER_RECOMPILE = 407,
+        PS3SHADER_RECOMPILE = 407,
         // Shader recompile for Full/Partial Motion Blur
-        VER_FULLMOTIONBLUR_RECOMPILE = 408,
+        FULLMOTIONBLUR_RECOMPILE = 408,
         // Added support for being able to rename material instance parameters.
-        VER_IMPLEMENTED_MIC_PARAM_RENAMING = 409,
+        IMPLEMENTED_MIC_PARAM_RENAMING = 409,
         // Added material fallbacks
-        VER_MATERIAL_FALLBACKS = 410,
+        MATERIAL_FALLBACKS = 410,
         // Added support for terrain morphing between tessellation levels.
-        VER_TERRAIN_MORPHING_OPTION = 411,
+        TERRAIN_MORPHING_OPTION = 411,
         // PS3 now stores depth in the alpha channel.
-        VER_PS3SHADER_RECOMPILE_ALPHADEPTH = 412,
+        PS3SHADER_RECOMPILE_ALPHADEPTH = 412,
         // Optimized motionblur shader
-        VER_MOTIONBLUROPTIMZED = 413,
+        MOTIONBLUROPTIMZED = 413,
         // Have to force terrain shaders to recompile for PC...
-        VER_TERRAIN_MORPHING_OPTION_RECOMPILE = 414,
+        TERRAIN_MORPHING_OPTION_RECOMPILE = 414,
         // Added DependsMap to ULinkerLoad
-        VER_ADDED_LINKER_DEPENDENCIES = 415,
+        ADDED_LINKER_DEPENDENCIES = 415,
         // Auto-add keys for the lookup track for a movement track in matinee.
-        VER_MATINEE_MOVEMENT_LOOKUP_TRACK_IMPLEMENTED = 416,
+        MATINEE_MOVEMENT_LOOKUP_TRACK_IMPLEMENTED = 416,
         // Added lighting channel support to BSP surfaces.
-        VER_BSP_LIGHTING_CHANNEL_SUPPORT = 417,
+        BSP_LIGHTING_CHANNEL_SUPPORT = 417,
         // Added shader change detection and other debug functions
-        VER_SHADER_CRC_CHECKING = 418,
+        SHADER_CRC_CHECKING = 418,
         // Changed emissive vertex light-map shader to swizzle VET_Color inputs on PS3 to make it compatible with FColor.
-        VER_LIGHTMAP_PS3_BYTEORDER_FIX = 419,
+        LIGHTMAP_PS3_BYTEORDER_FIX = 419,
         // Changed emissive vertex light-map shader to swizzle VET_Color inputs on PS3 to make it compatible with FColor.
-        VER_CLEANUP_SOUNDNODEWAVE = 420,
+        CLEANUP_SOUNDNODEWAVE = 420,
         // Added a shared shader parameter for rendertarget color bias factor
-        VER_SHADER_RENDERTARGETBIAS = 421,
+        SHADER_RENDERTARGETBIAS = 421,
         // Added tracking information about what components were dropped in order to get a fallback material to compile.
-        VER_FALLBACK_DROPPED_COMPONENTS_TRACKING = 422,
+        FALLBACK_DROPPED_COMPONENTS_TRACKING = 422,
         // Fixed a bug where Actors with bBlockActors and !CollisionComponent->bBlockActors would get set to COLLIDE_Touch instead of COLLIDE_CustomDefault,
         //		potentially causing the Actor's bBlockActors to be set to false incorrectly
-        VER_FIXED_INCORRECT_COLLISIONTYPE = 423,
+        FIXED_INCORRECT_COLLISIONTYPE = 423,
         // Fixed UIScrollbars but they all need to be recreated
-        VER_FIXED_UISCROLLBARS = 424,
+        FIXED_UISCROLLBARS = 424,
         // Fixed UIScrollbars but they all need to be recreated
-        VER_DEPRECATED_FONIX_417 = 425,
+        DEPRECATED_FONIX_417 = 425,
         // Handle missing vertex factories during serialization
-        VER_HANDLE_NOT_EXISTING_VERTEX_FACTORIES = 426,
+        HANDLE_NOT_EXISTING_VERTEX_FACTORIES = 426,
         // Implemented fog volumes for all platforms
-        VER_FOGVOLUMES_ALLPLATFORMS = 427,
+        FOGVOLUMES_ALLPLATFORMS = 427,
         // Serialize enums by name	(bad change)
-        VER_ENUM_VALUE_SERIALIZED_BY_NAME = 428,
+        ENUM_VALUE_SERIALIZED_BY_NAME = 428,
         // Removed redundant UI behavior flag
-        VER_REMOVED_DISALLOW_REPARENTING_FLAG = 429,
+        REMOVED_DISALLOW_REPARENTING_FLAG = 429,
         // Added UWorld::ExtraReferencedObjects
-        VER_ADDED_WORLD_EXTRA_REFERENCED_OBJECTS = 430,
+        ADDED_WORLD_EXTRA_REFERENCED_OBJECTS = 430,
         // Added support for translucency in fog volumes
-        VER_TRANSLUCENCY_IN_FOG_VOLUMES = 431,
+        TRANSLUCENCY_IN_FOG_VOLUMES = 431,
         // Changed the class of the Increment/Decrement buttons in UIScrollbar; need to be recreated
-        VER_FIXED_UISCROLLBAR_BUTTONS = 432,
+        FIXED_UISCROLLBAR_BUTTONS = 432,
         // Updated foliage vertex factory shader
-        VER_FOLIAGE_VERTEX_FACTORY_INSTANCING_SHADER = 433,
+        FOLIAGE_VERTEX_FACTORY_INSTANCING_SHADER = 433,
         // Added support for static mesh vertex colors
-        VER_STATICMESH_VERTEXCOLOR = 434,
+        STATICMESH_VERTEXCOLOR = 434,
         // Add support for per-poly collision checks against specified rigid sections of skel meshes
-        VER_SKELMESH_BONE_KDOP = 435,
+        SKELMESH_BONE_KDOP = 435,
         // Shared vertex shader parameters
-        VER_SHARED_SHADER_PARAMS = 436,
+        SHARED_SHADER_PARAMS = 436,
         // April 2007 XDK upgrade requires tossing cooked audio data
-        VER_APRIL_2007_XDK_UPGRADE = 437,
+        APRIL_2007_XDK_UPGRADE = 437,
         // Recompile the uberpostprocess blend pixel shader
-        VER_UBERPOSTPROCESSBLEND_PS_RECOMPILE_2 = 438,
+        UBERPOSTPROCESSBLEND_PS_RECOMPILE_2 = 438,
         // Added support for translucency lit by light-map
-        VER_TRANSLUCENCY_LIT_BY_LIGHTMAP = 439,
+        TRANSLUCENCY_LIT_BY_LIGHTMAP = 439,
         // Added support for lit decals on terrain.
-        VER_ADDED_LIT_TERRAIN_DECALS = 440,
+        ADDED_LIT_TERRAIN_DECALS = 440,
         // Merge sprite and subUV particles into a single shader
-        VER_PARTICLE_SPRITE_SUBUV_MERGE = 441,
+        PARTICLE_SPRITE_SUBUV_MERGE = 441,
         // Added SpeedTree static lighting support
-        VER_SPEEDTREE_STATICLIGHTING = 442,
+        SPEEDTREE_STATICLIGHTING = 442,
         // Rescale and compress particle thumbnails
-        VER_RESCALE_AND_COMPRESS_PARTICLE_THUMBNAILS = 443,
+        RESCALE_AND_COMPRESS_PARTICLE_THUMBNAILS = 443,
         // Changed UIRoot.DockingSet.DockPadding to a UIScreenValue
-        VER_CHANGED_DOCKPADDING_VARTYPE = 444,
+        CHANGED_DOCKPADDING_VARTYPE = 444,
         // Added shaders and lightmaps for simple lighting.
-        VER_ADDED_SIMPLE_LIGHTING = 445,
+        ADDED_SIMPLE_LIGHTING = 445,
         // Recompile GPU skin morph blending vertex factories
-        VER_GPU_SKIN_MORPH_VF_RECOMPILE = 446,
+        GPU_SKIN_MORPH_VF_RECOMPILE = 446,
         // Move particle materials to RequiredModule (to allow LODing)
-        VER_PARTICLE_MATERIALS_TO_REQUIRED_MODULE = 447,
+        PARTICLE_MATERIALS_TO_REQUIRED_MODULE = 447,
         // Integrated SpeedTree vertex shader rendering
-        VER_SPEEDTREE_VERTEXSHADER_RENDERING = 448,
+        SPEEDTREE_VERTEXSHADER_RENDERING = 448,
         // Changed enum serialization to be by name
-        VER_ENUM_VALUE_SERIALIZED_BY_NAMEV2 = 449, // I added v2 as the name were exact same, krowe moh
+        ENUM_VALUE_SERIALIZED_BY_NAMEV2 = 449, // I added v2 as the name were exact same, krowe moh
         // Force distributions to be rebuilt.
-        VER_FDISTRIBUTION_FORCE_DIRTY3 = 450,
+        FDISTRIBUTION_FORCE_DIRTY3 = 450,
         // Recompile DistortionApply and DepthOnly shaders to apply optimizations.
-        VER_DISTORTION_AND_DEPTHONLY_RECOMPILE = 451,
+        DISTORTION_AND_DEPTHONLY_RECOMPILE = 451,
         // Terrain-related vertex factories now control lightmap specular via ModifyCompilationEnvironment.
-        VER_TERRAIN_VERTEX_FACTORIES_LIGHTMAP_SPECULAR = 452,
+        TERRAIN_VERTEX_FACTORIES_LIGHTMAP_SPECULAR = 452,
         // Sanity checking information for BulkSerialize
-        VER_ADDED_BULKSERIALIZE_SANITY_CHECKING = 453,
+        ADDED_BULKSERIALIZE_SANITY_CHECKING = 453,
         // Removed zone mask
-        VER_REMOVED_ZONEMASK = 454,
+        REMOVED_ZONEMASK = 454,
         // Recompile PS3 shaders for trimming and optimizations.
-        VER_PS3_SHADER_RECOMPILE = 455,
+        PS3_SHADER_RECOMPILE = 455,
         // Resave material compile errors to remove expression references.
-        VER_MATERIAL_ERROR_RESAVE = 456,
+        MATERIAL_ERROR_RESAVE = 456,
         // Changed all UIScreenValue members into UIScreenValue_Extent members
-        VER_CHANGED_SCREENVALUE_VARTYPE = 457,
+        CHANGED_SCREENVALUE_VARTYPE = 457,
         // Fixed morphing terrain on PS3
-        VER_PS3_MORPH_TERRAIN = 458,
+        PS3_MORPH_TERRAIN = 458,
         // Upgraded to the April 07 DirectX SDK
-        VER_APRIL07_DXSDK_UPGRADE = 459,
+        APRIL07_DXSDK_UPGRADE = 459,
         // Downgraded to Oct 06 DirectX SDK
-        VER_OCT06_DXSDK_DOWNGRADE = 460,
+        OCT06_DXSDK_DOWNGRADE = 460,
         // Changed native serialization in UIDynamicDataProvidder
-        VER_ADDED_COLLECTION_DATA = 461,
+        ADDED_COLLECTION_DATA = 461,
         // Fog Volumes affect particles again
-        VER_REENABLED_PARTICLE_FOGGING = 462,
+        REENABLED_PARTICLE_FOGGING = 462,
         // Remove cooked terrain data (using heightfield now)
-        VER_REMOVE_COOKED_PHYS_TERRAIN = 463,
+        REMOVE_COOKED_PHYS_TERRAIN = 463,
         // Added ComponentElementIndex to FBSPNode
-        VER_ADDED_COMPONENT_ELEMENT_INDEX = 464,
+        ADDED_COMPONENT_ELEMENT_INDEX = 464,
         // Terrain decal tangents now correctly oriented.
-        VER_TERRAIN_DECAL_TANGENTS = 465,
+        TERRAIN_DECAL_TANGENTS = 465,
         // Separated static mesh positions into a separate buffer
-        VER_SEPARATED_STATIC_MESH_POSITIONS = 466,
+        SEPARATED_STATIC_MESH_POSITIONS = 466,
         // Removed PrimitiveComponent's transient WorldToLocal Matrix to save memory since the FPrimitiveSceneInfo's cached copy is what will be used most
-        VER_REMOVED_PRIMITIVE_COMPONENT_WORLD_TO_LOCAL = 467,
+        REMOVED_PRIMITIVE_COMPONENT_WORLD_TO_LOCAL = 467,
         // Changed k-dop indices back to WORD
-        VER_KDOP_DWORD_TO_WORD = 468,
+        KDOP_DWORD_TO_WORD = 468,
         // Added material position transform
-        VER_MATERIAL_POSITION_TRANSFORM = 469,
+        MATERIAL_POSITION_TRANSFORM = 469,
         // Add new BVTree structure for terrain collision
-        VER_ADD_TERRAIN_BVTREE = 470,
+        ADD_TERRAIN_BVTREE = 470,
         // Terrain patch bounds get generated 'on-demand'
-        VER_TERRAIN_PATCHBOUNDS_ONDEMAND = 471,
+        TERRAIN_PATCHBOUNDS_ONDEMAND = 471,
         // ===
 
         MovedColorFromUVItem = 472,
@@ -1528,625 +1529,625 @@ namespace CUE4Parse.UE4.Versions
         // === versions missing (LMK if you find it)
 
         // Min version for content resave
-        VER_CONTENT_RESAVE_AUGUST_2007_QA_BUILD = 491,
+        CONTENT_RESAVE_AUGUST_2007_QA_BUILD = 491,
         // Static mesh version bump, package version bumped to ease resaving
-        VER_STATICMESH_VERSION_16 = 492,
+        STATICMESH_VERSION_16 = 492,
         // Used 16 bit float UVs for skeletal meshes
-        VER_USE_FLOAT16_SKELETAL_MESH_UVS = 493,
+        USE_FLOAT16_SKELETAL_MESH_UVS = 493,
         // Store two tangent basis vectors instead of three to save memory (skeletal mesh vertex buffers)
-        VER_SKELETAL_MESH_REMOVE_BINORMAL_TANGENT_VECTOR = 494,
+        SKELETAL_MESH_REMOVE_BINORMAL_TANGENT_VECTOR = 494,
         // Terrain collision data stored in world space.
-        VER_TERRAIN_COLLISION_WORLD_SPACE = 495,
+        TERRAIN_COLLISION_WORLD_SPACE = 495,
         // Removed DecalManager ref from UWorld
-        VER_REMOVED_DECAL_MANAGER_FROM_UWORLD = 496,
+        REMOVED_DECAL_MANAGER_FROM_UWORLD = 496,
         // Modified SpeedTree vertex factory shader parameters.
-        VER_SPEEDTREE_SHADER_CHANGE	= 497,
+        SPEEDTREE_SHADER_CHANGE	= 497,
         // Fix height-fog pixel shader 4-layer
-        VER_HEIGHTFOG_PIXELSHADER_START_DIST_FIX = 498,
+        HEIGHTFOG_PIXELSHADER_START_DIST_FIX = 498,
         // MotionBlurShader recompile (added clamping to render target extents)
-        VER_MOTIONBLURSHADER_RECOMPILE_VER2 = 499,
+        MOTIONBLURSHADER_RECOMPILE_VER2 = 499,
         // Separate pass for LDR BLEND_Modulate transparency mode
         // Modulate preserves dest alpha (depth)
-        VER_SM2_BLENDING_SHADER_FIXES = 500,
+        SM2_BLENDING_SHADER_FIXES = 500,
         // Terrain material fallback support
-        VER_ADDED_TERRAIN_MATERIAL_FALLBACK = 501,
+        ADDED_TERRAIN_MATERIAL_FALLBACK = 501,
         // Added support for multi-column collections to UIDynamicFieldProvider
-        VER_ADDED_MULTICOLUMN_SUPPORT = 503,
+        ADDED_MULTICOLUMN_SUPPORT = 503,
         // Serialize cached displacement values for terrain
-        VER_TERRAIN_SERIALIZE_DISPLACEMENTS = 504,
+        TERRAIN_SERIALIZE_DISPLACEMENTS = 504,
         // Fixed bug which allowed multiple instances of a UIState class get added to style data maps
-        VER_REMOVED_PREFAB_STYLE_DATA = 505,
+        REMOVED_PREFAB_STYLE_DATA = 505,
         // Exposed separate horizontal and vertical texture scale for material texture lookups
         //  Various font changes that affected serialization
-        VER_FONT_FORMAT_AND_UV_TILING_CHANGES = 506,
+        FONT_FORMAT_AND_UV_TILING_CHANGES = 506,
         // Changed UTVehicleFactory to use a string for class reference in its defaults
-        VER_UTVEHICLEFACTORY_USE_STRING_CLASS = 507,
+        UTVEHICLEFACTORY_USE_STRING_CLASS = 507,
         // Fixed the special 0.0f value in the velocity buffer that is used to select between background velocity or dynamic velocity
-        VER_BACKGROUNDVELOCITYVALUE = 508,
+        BACKGROUNDVELOCITYVALUE = 508,
         // Reset vehicle usage flags on some NavigationPoints that had been incorrectly set
-        VER_FIXED_NAV_VEHICLE_USAGE_FLAGS = 509,
+        FIXED_NAV_VEHICLE_USAGE_FLAGS = 509,
         // Changed Texture2DComposite to inherit from Texture instead of Texture2D.
-        VER_TEXTURE2DCOMPOSITE_BASE_CHANGE = 510,
+        TEXTURE2DCOMPOSITE_BASE_CHANGE = 510,
         // Fixed fonts serializing all members twice.
-        VER_FIXED_FONTS_SERIALIZATION = 511,
+        FIXED_FONTS_SERIALIZATION = 511,
         // -
-        VER_STATICMESH_FRAGMENTINDEX = 514,
+        STATICMESH_FRAGMENTINDEX = 514,
         // Added Draw SkelTree Manager. Added FColor to FMeshBone serialization.
-        VER_SKELMESH_DRAWSKELTREEMANAGER = 515,
+        SKELMESH_DRAWSKELTREEMANAGER = 515,
         // Added AdditionalPackagesToCook to FPackageFileSummary
-        VER_ADDITIONAL_COOK_PACKAGE_SUMMARY = 516,
+        ADDITIONAL_COOK_PACKAGE_SUMMARY = 516,
         // Add neighbor info to FFragmentInfo
-        VER_FRAGMENT_NEIGHBOUR_INFO = 517,
+        FRAGMENT_NEIGHBOUR_INFO = 517,
         // Added interior fragment index
-        VER_FRAGMENT_INTERIOR_INDEX = 518,
+        FRAGMENT_INTERIOR_INDEX = 518,
         // Added bCanBeDestroyed and bRootFragment
-        VER_FRAGMENT_DESTROY_FLAGS = 519,
+        FRAGMENT_DESTROY_FLAGS = 519,
         // Add exterior surface normal and neighbor area info to FFragmentInfo
-        VER_FRAGMENT_EXT_NORMAL_NEIGH_DIM = 520,
+        FRAGMENT_EXT_NORMAL_NEIGH_DIM = 520,
         // Add core mesh 3d offset and scale
-        VER_FRACTURE_CORE_SCALE_OFFSET = 521,
+        FRACTURE_CORE_SCALE_OFFSET = 521,
         // Moved particle SpawnRate and Burst info into their own module.
-        VER_PARTICLE_SPAWN_AND_BURST_MOVE = 523,
+        PARTICLE_SPAWN_AND_BURST_MOVE = 523,
         // Share modules across particle LOD levels where possible.
-        VER_PARTICLE_LOD_MODULE_SHARE = 524,
+        PARTICLE_LOD_MODULE_SHARE = 524,
         // Fixing up TypeData modules not getting pushed into lower LODs
-        VER_PARTICLE_LOD_MODULE_TYPEDATA_FIXUP = 525,
+        PARTICLE_LOD_MODULE_TYPEDATA_FIXUP = 525,
         // Save off PlaneBias with FSM
-        VER_FRACTURE_SAVE_PLANEBIAS = 526,
+        FRACTURE_SAVE_PLANEBIAS = 526,
         // Fixing up LOD distributions... (incorrect archetypes caused during Spawn conversion)
-        VER_PARTICLE_LOD_DIST_FIXUP = 527,
+        PARTICLE_LOD_DIST_FIXUP = 527,
         // Changed default DiffusePower value
-        VER_DIFFUSEPOWER_DEFAULT = 529,
+        DIFFUSEPOWER_DEFAULT = 529,
         // Allow for '0' in the particle burst list CountLow slot...
-        VER_PARTICLE_BURST_LIST_ZERO = 530,
+        PARTICLE_BURST_LIST_ZERO = 530,
         // Added AttenAllowedParameter to FModShadowMeshPixelShader
-        VER_MODSHADOWMESHPIXELSHADER_ATTENALLOWED = 531,
+        MODSHADOWMESHPIXELSHADER_ATTENALLOWED = 531,
         // Support for mesh simplification tool.  Static mesh version bump (added named reference to high res source mesh.)
-        VER_STATICMESH_VERSION_18 = 532,
+        STATICMESH_VERSION_18 = 532,
         // Added automatic fog volume components to simplify workflow
-        VER_AUTOMATIC_FOGVOLUME_COMPONENT = 533,
+        AUTOMATIC_FOGVOLUME_COMPONENT = 533,
         // Added an optional array of skeletal mesh weights/bones for instancing
-        VER_ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCES = 534,
+        ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCES = 534,
         // Added an optional array of skeletal mesh weights/bones for instancing
-        VER_UNIFORM_DISTRIBUTION_BAKING_UPDATE = 535,
+        UNIFORM_DISTRIBUTION_BAKING_UPDATE = 535,
         // Replaced classes for sequences associated with PrefabInstances
-        VER_FIXED_PREFAB_SEQUENCES = 536,
+        FIXED_PREFAB_SEQUENCES = 536,
         // Changed FInputKeyAction's list of sequence actions to a list of sequence output links
-        VER_MADE_INPUTKEYACTION_OUTPUT_LINKS = 537,
+        MADE_INPUTKEYACTION_OUTPUT_LINKS = 537,
         // Moved global shaders from UShaderCache to a single global shader cache file.
-        VER_GLOBAL_SHADER_FILE = 538,
+        GLOBAL_SHADER_FILE = 538,
         // Using MSEnc to encode mp3s rather than MP3Enc
-        VER_MP3ENC_TO_MSENC = 539,
+        MP3ENC_TO_MSENC = 539,
         // Added optional external specification of static vertex normals.
-        VER_STATICMESH_EXTERNAL_VERTEX_NORMALS = 541,
+        STATICMESH_EXTERNAL_VERTEX_NORMALS = 541,
         // Removed 2x2 normal transform for decal materials
-        VER_DECAL_MATERIAL_IDENDITY_NORMAL_XFORM = 542,
+        DECAL_MATERIAL_IDENDITY_NORMAL_XFORM = 542,
         // Removed FObjectExport::ComponentMap
-        VER_REMOVED_COMPONENT_MAP = 543,
+        REMOVED_COMPONENT_MAP = 543,
         // Fixed back uniform distributions with lock flags set to something other than NONE
-        VER_LOCKED_UNIFORM_DISTRIBUTION_BAKING = 544,
+        LOCKED_UNIFORM_DISTRIBUTION_BAKING = 544,
         // Fixed Kismet sequences with illegal names
-        VER_FIXED_KISMET_SEQUENCE_NAMES = 545,
+        FIXED_KISMET_SEQUENCE_NAMES = 545,
         // Added fluid lightmap support
-        VER_ADDED_FLUID_LIGHTMAPS = 546,
+        ADDED_FLUID_LIGHTMAPS = 546,
         // Fixing up LODValidity and spawn module outers...
-        VER_EMITTER_LODVALIDITY_FIX2 = 547,
+        EMITTER_LODVALIDITY_FIX2 = 547,
         // Add FSM core rotation and 'no physics' flag on chunks
-        VER_FRACTURE_CORE_ROTATION_PERCHUNKPHYS = 549,
+        FRACTURE_CORE_ROTATION_PERCHUNKPHYS = 549,
         // New curve auto-tangent calculations; Clamped auto tangent support
-        VER_NEW_CURVE_AUTO_TANGENTS = 550,
+        NEW_CURVE_AUTO_TANGENTS = 550,
         // Removed 2x2 normal transform from decal vertices
-        VER_DECAL_REMOVED_2X2_NORMAL_TRANSFORM = 551,
+        DECAL_REMOVED_2X2_NORMAL_TRANSFORM = 551,
         // Updated decal vertex factories
-        VER_DECAL_VERTEX_FACTORY_VER1 = 552,
+        DECAL_VERTEX_FACTORY_VER1 = 552,
         // Updated decal vertex factories
-        VER_DECAL_VERTEX_FACTORY_VER2 = 554,
+        DECAL_VERTEX_FACTORY_VER2 = 554,
         // Updated the fluid detail normalmap
-        VER_FLUID_DETAIL_UPDATE = 555,
+        FLUID_DETAIL_UPDATE = 555,
         // Fixup particle systems with incorrect distance arrays...
-        VER_PARTICLE_LOD_DISTANCE_FIXUP = 556,
+        PARTICLE_LOD_DISTANCE_FIXUP = 556,
         // Added FSM build version
-        VER_FRACTURE_NONCRITICAL_BUILD_VERSION = 557,
+        FRACTURE_NONCRITICAL_BUILD_VERSION = 557,
         // Added DynamicParameter support for particles
-        VER_DYNAMICPARAMETERS_ADDED = 558,
+        DYNAMICPARAMETERS_ADDED = 558,
         // Added travelspeed parameter to the fluid detail normalmap
-        VER_FLUID_DETAIL_UPDATE2 = 559,
+        FLUID_DETAIL_UPDATE2 = 559,
         // /** replaced bAcceptsDecals,bAcceptsDecalsDuringGameplay with bAcceptsStaticDecals,bAcceptsDynamicDecals */
-        VER_UPDATED_DECAL_USAGE_FLAGS = 560,
+        UPDATED_DECAL_USAGE_FLAGS = 560,
         // Made bOverrideNormal override the full tangent basis.
-        VER_OVERRIDETANGENTBASIS = 563,
+        OVERRIDETANGENTBASIS = 563,
         // Made LightComponent bounced lighting settings multiplicative with direct lighting.
-        VER_BOUNCEDLIGHTING_DIRECTMODULATION = 564,
+        BOUNCEDLIGHTING_DIRECTMODULATION = 564,
         // Reduced FStateFrame::LatentAction to WORD
-        VER_REDUCED_STATEFRAME_LATENTACTION_SIZE = 566,
+        REDUCED_STATEFRAME_LATENTACTION_SIZE = 566,
         // Added GUIDs for updating texture file cache
-        VER_ADDED_TEXTURE_FILECACHE_GUIDS = 567,
+        ADDED_TEXTURE_FILECACHE_GUIDS = 567,
         // Fixed scene color and scene depth usage
-        VER_FIXED_SCENECOLOR_USAGE = 568,
+        FIXED_SCENECOLOR_USAGE = 568,
         // Renamed UPrimitiveComponent::CullDistance to MaxDrawDistance
-        VER_RENAMED_CULLDISTANCE = 569,
+        RENAMED_CULLDISTANCE = 569,
         // Fixing up InterpolationMethod mismatches in emitter LOD levels...
-        VER_EMITTER_INTERPOLATIONMETHOD_FIXUP = 570,
+        EMITTER_INTERPOLATIONMETHOD_FIXUP = 570,
         // Fixing up LensFlare ScreenPercentageMaps
-        VER_LENSFLARE_SCREENPERCENTAGEMAP_FIXUP = 571,
+        LENSFLARE_SCREENPERCENTAGEMAP_FIXUP = 571,
         // Reimplemented particle LOD check distance time
-        VER_PARTICLE_LOD_CHECK_DISTANCE_TIME_FIX = 573,
+        PARTICLE_LOD_CHECK_DISTANCE_TIME_FIX = 573,
         // Decal physical material entry fixups
-        VER_DECAL_PHYS_MATERIAL_ENTRY_FIXUP = 574,
+        DECAL_PHYS_MATERIAL_ENTRY_FIXUP = 574,
         // Added persisitent FaceFXAnimSet to the world...
-        VER_WORLD_PERSISTENT_FACEFXANIMSET = 575,
+        WORLD_PERSISTENT_FACEFXANIMSET = 575,
         // depcreated redundant editor window position
         // Delete var - SkelControlBase: ControlPosX, ControlPosY, MaterialExpression: EditorX, EditorY
-        VER_DEPRECATED_EDITOR_POSITION = 576,
+        DEPRECATED_EDITOR_POSITION = 576,
         // moved RawAnimData serialization to native
-        VER_NATIVE_RAWANIMDATA_SERIALIZATION = 577,
+        NATIVE_RAWANIMDATA_SERIALIZATION = 577,
         // deprecated sound attenuation ranges
-        VER_DEPRECATE_SOUND_RANGES = 578,
+        DEPRECATE_SOUND_RANGES = 578,
         // new format stored in the XMA2 file to avoid runtime calcs
-        VER_XAUDIO2_FORMAT_UPDATE = 581,
+        XAUDIO2_FORMAT_UPDATE = 581,
         // flip the normal for meshes with negative non-uniform scaling
-        VER_VERTEX_FACTORY_LOCALTOWORLD_FLIP = 582,
+        VERTEX_FACTORY_LOCALTOWORLD_FLIP = 582,
         // add additional sort flags to sprite/subuv particle emitters
-        VER_NEW_PARTICLE_SORT_MODES = 583,
+        NEW_PARTICLE_SORT_MODES = 583,
         // added asset thumbnails to packages
-        VER_ASSET_THUMBNAILS_IN_PACKAGES = 584,
+        ASSET_THUMBNAILS_IN_PACKAGES = 584,
         // Added Pylon list to Ulevel
-        VER_PYLONLIST_IN_ULEVEL = 585,
+        PYLONLIST_IN_ULEVEL = 585,
         // Added local object version number to ULevel and NavMesh
-        VER_NAVMESH_COVERREF = 586,
+        NAVMESH_COVERREF = 586,
         // Updates and replaces several kismet objects
-        VER_CONVERT_KISMET_OBJECTS = 587,
+        CONVERT_KISMET_OBJECTS = 587,
         // poly height var added to polygons in navmesh
-        VER_NAVMESH_POLYHEIGHT = 588,
+        NAVMESH_POLYHEIGHT = 588,
         // simple element shader recompile
-        VER_SIMPLE_ELEMENT_SHADER_VER0 = 589,
+        SIMPLE_ELEMENT_SHADER_VER0 = 589,
         // added rectangular thumbnail support
-        VER_RECTANGULAR_THUMBNAILS_IN_PACKAGES = 590,
+        RECTANGULAR_THUMBNAILS_IN_PACKAGES = 590,
         // changed default for SkeletalMeshActor.bCollideActors to FALSE
-        VER_REMOVED_DEFAULT_SKELETALMESHACTOR_COLLISION = 591,
+        REMOVED_DEFAULT_SKELETALMESHACTOR_COLLISION = 591,
         // added skeletalmesh position compression saving 8 bytes
-        VER_SKELETAL_MESH_SUPPORT_PACKED_POSITION = 592,
+        SKELETAL_MESH_SUPPORT_PACKED_POSITION = 592,
         // removed content tags from objects (obsolete by new asset database system)
-        VER_REMOVED_LEGACY_CONTENT_TAGS = 593,
+        REMOVED_LEGACY_CONTENT_TAGS = 593,
         // added back refs for SplineActors
-        VER_ADDED_SPLINEACTOR_BACK_REFS = 594,
+        ADDED_SPLINEACTOR_BACK_REFS = 594,
         // Changed the format of the base pose for additive animations.
-        VER_NEW_BASE_POSE_ADDITIVE_ANIM_FORMAT = 595,
+        NEW_BASE_POSE_ADDITIVE_ANIM_FORMAT = 595,
         // Fix up 'Bake and Prune' animations where their num frames doesn't match NumKeys.
-        VER_FIX_BAKEANDPRUNE_NUMFRAMES = 596,
+        FIX_BAKEANDPRUNE_NUMFRAMES = 596,
         // added full names to package thumbnails
-        VER_CONTENT_BROWSER_FULL_NAMES = 597,
+        CONTENT_BROWSER_FULL_NAMES = 597,
         // added profiling system to AnimTree previewing
-        VER_ANIMTREE_PREVIEW_PROFILES = 598,
+        ANIMTREE_PREVIEW_PROFILES = 598,
         // added triangle sorting options to skeletal meshes
-        VER_SKELETAL_MESH_SORTING_OPTIONS = 599,
+        SKELETAL_MESH_SORTING_OPTIONS = 599,
         // Lightmass serialization changes
-        VER_INTEGRATED_LIGHTMASS = 600,
+        INTEGRATED_LIGHTMASS = 600,
         // added BoneAtom quaternion math support and convert vars from Matrix
-        VER_FBONEATOM_QUATERNION_TRANSFORM_SUPPORT = 601,
+        FBONEATOM_QUATERNION_TRANSFORM_SUPPORT = 601,
         // deprecate distributions from sound nodes
-        VER_DEPRECATE_SOUND_DISTRIBUTIONS = 602,
+        DEPRECATE_SOUND_DISTRIBUTIONS = 602,
         // added DontSortCategories option to classes
-        VER_DONTSORTCATEGORIES_ADDED = 603,
+        DONTSORTCATEGORIES_ADDED = 603,
         // Reintroduced lossless compression of Raw Data, and removed redundant KeyTimes array.
-        VER_RAW_ANIMDATA_REDUX = 604,
+        RAW_ANIMDATA_REDUX = 604,
         // Fixed bad additive animation base pose data
-        VER_FIXED_BAD_ADDITIVE_DATA = 605,
+        FIXED_BAD_ADDITIVE_DATA = 605,
         // Add per-poly procbuilding ruleset pointer
-        VER_ADD_FPOLY_PBRULESET_POINTER = 606,
+        ADD_FPOLY_PBRULESET_POINTER = 606,
         // Added precomputed lighting volume to each level
-        VER_GI_CHARACTER_LIGHTING = 607,
+        GI_CHARACTER_LIGHTING = 607,
         // SkeletalMesh Compose now done in 3 passes as opposed to 2.
-        VER_THREE_PASS_SKELMESH_COMPOSE = 608,
+        THREE_PASS_SKELMESH_COMPOSE = 608,
         // Added bone influence mapping data per bone break
-        VER_ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_MAPPING = 609,
+        ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_MAPPING = 609,
         // Fix bad AnimSequences.
-        VER_REMOVE_BAD_ANIMSEQ = 610,
+        REMOVE_BAD_ANIMSEQ = 610,
         // added editor data to sound classes
-        VER_SOUND_CLASS_SERIALISATION_UPDATE = 613,
+        SOUND_CLASS_SERIALISATION_UPDATE = 613,
         // older maps may have improper ProcBuilding textures
-        VER_NEED_TO_CLEANUP_OLD_BUILDING_TEXTURES = 614,
+        NEED_TO_CLEANUP_OLD_BUILDING_TEXTURES = 614,
         // Mesh paint system
-        VER_MESH_PAINT_SYSTEM = 615,
-        VER_MESH_PAINT_SYSTEM_ENUM = VER_MESH_PAINT_SYSTEM,
+        MESH_PAINT_SYSTEM = 615,
+        MESH_PAINT_SYSTEM_ENUM = MESH_PAINT_SYSTEM,
         // Added ULightMapTexture2D::bSimpleLightmap
-        VER_LIGHTMAPTEXTURE_VARIABLE = 616,
+        LIGHTMAPTEXTURE_VARIABLE = 616,
         // Normal shadows on the dominant light
-        VER_DOMINANTLIGHT_NORMALSHADOWS = 617,
+        DOMINANTLIGHT_NORMALSHADOWS = 617,
         // Added PlatformMeshData to mesh elements (for PS3 Edge Geometry support)
-        VER_ADDED_PLATFORMMESHDATA = 618,
+        ADDED_PLATFORMMESHDATA = 618,
         // changed makeup of FPolyReference
-        VER_FPOLYREF_CHANGE = 620,
+        FPOLYREF_CHANGE = 620,
         // Added bsp element index to the serialized static receiver data for decals
-        VER_DECAL_SERIALIZE_BSP_ELEMENT = 621,
+        DECAL_SERIALIZE_BSP_ELEMENT = 621,
         // Added support for automatic, safe cross-level references
-        VER_ADDED_CROSSLEVEL_REFERENCES = 623,
+        ADDED_CROSSLEVEL_REFERENCES = 623,
         // Changed lightmap encoding to only use two DXT1 textures for directional lightmaps
-        VER_MAXCOMPONENT_LIGHTMAP_ENCODING = 624,
+        MAXCOMPONENT_LIGHTMAP_ENCODING = 624,
         // Added instanced rendering to localvertexfactory
-        VER_XBOXINSTANCING = 625,
+        XBOXINSTANCING = 625,
         // Fixing up emitter editor color issue.
-        VER_FIXING_PARTICLE_EMITTEREDITORCOLOR = 626,
+        FIXING_PARTICLE_EMITTEREDITORCOLOR = 626,
         // Added OriginalSizeX/Y to Texture2D
-        VER_ADDED_TEXTURE_ORIGINAL_SIZE = 627,
+        ADDED_TEXTURE_ORIGINAL_SIZE = 627,
         // Added options to generate particle normals from simple shapes
-        VER_ANALYTICAL_PARTICLE_NORMALS = 628,
+        ANALYTICAL_PARTICLE_NORMALS = 628,
         // Fixup references to removed deprecated ParticleEmitter.SpawnRate
-        VER_REMOVED_EMITTER_SPAWNRATE = 630,
+        REMOVED_EMITTER_SPAWNRATE = 630,
         // Add support for static normal parameters
-        VER_ADD_NORMAL_PARAMETERS = 631,
+        ADD_NORMAL_PARAMETERS = 631,
         // Changed UParticleSystem::bLit to be per-LOD
-        VER_PARTICLE_LIT_PERLOD = 632,
+        PARTICLE_LIT_PERLOD = 632,
         // Changed byte property serialization to include the enum the property uses (if any)
-        VER_BYTEPROP_SERIALIZE_ENUM = 633,
+        BYTEPROP_SERIALIZE_ENUM = 633,
         // Added InternalFormatLODBias
-        VER_ADDED_TEXTURE_INTERNALFORMATLODBIAS = 634,
+        ADDED_TEXTURE_INTERNALFORMATLODBIAS = 634,
         // Added an explicit emissive light radius
-        VER_ADDDED_EXPLICIT_EMISSIVE_LIGHT_RADIUS = 636,
+        ADDDED_EXPLICIT_EMISSIVE_LIGHT_RADIUS = 636,
         // Enabled Custom Thumbnails for shared thumbnail asset types
-        VER_ENABLED_CUSTOM_THUMBNAILS_FOR_SHARED_TYPES = 637,
+        ENABLED_CUSTOM_THUMBNAILS_FOR_SHARED_TYPES = 637,
         // Added AnimMetaData system to AnimSequence, auto conversion of BoneControlModifiers to that new system.
         // Fixed FQuatError, automatic animation recompression when needed.
-        VER_ADDED_ANIM_METADATA_FIXED_QUATERROR = 638,
+        ADDED_ANIM_METADATA_FIXED_QUATERROR = 638,
         // Changed UStruct serialization to include both on-disk and in-memory bytecode size
-        VER_USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE = 639,
+        USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE = 639,
         // Added support for spline mesh offsetting
-        VER_ADDED_SPLINE_MESH_OFFSET = 642,
+        ADDED_SPLINE_MESH_OFFSET = 642,
         // Speedtree 5.0 integration
-        VER_SPEEDTREE_5_INTEGRATION = 643,
+        SPEEDTREE_5_INTEGRATION = 643,
         // Added selected object coloring to Lightmap Density rendering mode
-        VER_LIGHTMAP_DENSITY_SELECTED_OBJECT = 644,
+        LIGHTMAP_DENSITY_SELECTED_OBJECT = 644,
         // Added LightmapUVs expression
-        VER_MATEXP_LIGHTMAPUVS_ADDED = 645,
+        MATEXP_LIGHTMAPUVS_ADDED = 645,
         // Switched AnimMetadata_SkelControl to using a list.
-        VER_SKELCONTROL_ANIMMETADATA_LIST = 646,
+        SKELCONTROL_ANIMMETADATA_LIST = 646,
         // Added material vertex shader parameters
-        VER_MATERIAL_EDITOR_VERTEX_SHADER = 647,
+        MATERIAL_EDITOR_VERTEX_SHADER = 647,
         // Fixed hit proxy material parameters not getting serialized
-        VER_FIXED_HIT_PROXY_VERTEX_OFFSET = 650,
+        FIXED_HIT_PROXY_VERTEX_OFFSET = 650,
         // Added general OcclusionPercentage material expression
-        VER_ADDDED_OCCLUSION_PERCENTAGE_EXPRESSION = 651,
+        ADDDED_OCCLUSION_PERCENTAGE_EXPRESSION = 651,
         // Added the ability to shadow indirect only in Lightmass
-        VER_SHADOW_INDIRECT_ONLY_OPTION = 652,
+        SHADOW_INDIRECT_ONLY_OPTION = 652,
         // Changed mesh emitter camera facing options...
-        VER_MESH_EMITTER_CAMERA_FACING_OPTIONS = 653,
+        MESH_EMITTER_CAMERA_FACING_OPTIONS = 653,
         // Replaced bSimpleLightmap with LightmapFlags in ULightMapTexture2D
-        VER_LIGHTMAPFLAGS = 654,
+        LIGHTMAPFLAGS = 654,
         // Added the ability for script to bind DLL functions
-        VER_SCRIPT_BIND_DLL_FUNCTIONS = 655,
+        SCRIPT_BIND_DLL_FUNCTIONS = 655,
         // Moved uniform expressions from being stored in the UMaterial package to the shader cache
-        VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE = 656,
+        UNIFORM_EXPRESSIONS_IN_SHADER_CACHE = 656,
         // Added dynamic parameter support and second uv set to beams and trails
-        VER_BEAM_TRAIL_DYNAMIC_PARAMETER = 657,
+        BEAM_TRAIL_DYNAMIC_PARAMETER = 657,
         // Allow random overrides per-section in ProcBuilding meshes
-        VER_PROCBUILDING_MATERIAL_OPTIONS = 659,
+        PROCBUILDING_MATERIAL_OPTIONS = 659,
         // Changed uniform expressions to reference textures by index instead of name
-        VER_UNIFORMEXPRESSION_TEXTUREINDEX = 660,
+        UNIFORMEXPRESSION_TEXTUREINDEX = 660,
         // Regenerate texture array for old materials, so they match the shadercache.
-        VER_UNIFORMEXPRESSION_POSTLOADFIXUP = 661,
+        UNIFORMEXPRESSION_POSTLOADFIXUP = 661,
         // Separated DOF and Bloom, invalidate shadercache.
-        VER_SEPARATE_DOF_BLOOM = 662,
+        SEPARATE_DOF_BLOOM = 662,
         // Change AnimNotify_Trails to use SamplesPerSecond
-        VER_ANIMNOTIFY_TRAIL_SAMPLEFRAMERATE = 664,
+        ANIMNOTIFY_TRAIL_SAMPLEFRAMERATE = 664,
         // Support for attaching static decals to instanced static meshes
-        VER_STATIC_DECAL_INSTANCE_INDEX = 665,
+        STATIC_DECAL_INSTANCE_INDEX = 665,
         // Added support for precomputed shadowmaps to lit decals
         // Teh Forbidden= ?,
-        VER_DECAL_SHADOWMAPS = 666,
+        DECAL_SHADOWMAPS = 666,
         // Fixed malformed raw anim data
-        VER_FIXED_MALFORMED_RAW_ANIM_DATA = 667,
+        FIXED_MALFORMED_RAW_ANIM_DATA = 667,
         // Removed unused velocity values from AnimNotify_Trail sampled data
-        VER_ANIMNOTIFY_TRAILS_REMOVED_VELOCITY = 668,
+        ANIMNOTIFY_TRAILS_REMOVED_VELOCITY = 668,
         // Added SpawnRate support to Ribbon emitters
-        VER_RIBBON_EMITTERS_SPAWNRATE = 669,
+        RIBBON_EMITTERS_SPAWNRATE = 669,
         // Remove ruleset from FPoly and add 'variation name' instead
-        VER_FPOLY_RULESET_VARIATIONNAME = 670,
+        FPOLY_RULESET_VARIATIONNAME = 670,
         // Added PreViewTranslationParameter in FParticleInstancedMeshVertexFactoryShaderParameters
-        VER_ADDED_PRE_VIEW_TRANSLATION_PARAMETER = 671,
+        ADDED_PRE_VIEW_TRANSLATION_PARAMETER = 671,
         // Added shader compression functionality
-        VER_SHADER_COMPRESSION = 672,
+        SHADER_COMPRESSION = 672,
         // Optimized FPropertyTag to store bool properties with 1 byte on disk instead of 4
-        VER_PROPERTYTAG_BOOL_OPTIMIZATION = 673,
+        PROPERTYTAG_BOOL_OPTIMIZATION = 673,
         // Added iPhone cached data (PVRTC textures)
-        VER_ADDED_CACHED_IPHONE_DATA = 674,
+        ADDED_CACHED_IPHONE_DATA = 674,
         // Fixup for ForceFeedbackSerialization
-        VER_FORCEFEEDBACKWAVERFORM_NOEXPORT_CHANGE = 677,
+        FORCEFEEDBACKWAVERFORM_NOEXPORT_CHANGE = 677,
         // Changed type OverrideVertexColors from TArray<FColor> to FColorVertexBuffer *
-        VER_OVERWRITE_VERTEX_COLORS_MEM_OPTIMIZED = 678,
+        OVERWRITE_VERTEX_COLORS_MEM_OPTIMIZED = 678,
         // Changed the default usage to be SVB_LoadingAndVisibility for level streaming volumes.
-        VER_STREAMINGVOLUME_USAGE_DEFAULT = 679,
+        STREAMINGVOLUME_USAGE_DEFAULT = 679,
         // Added support to serialize clothing asset properties.
-        VER_APEX_CLOTHING = 680,
+        APEX_CLOTHING = 680,
         // Added support to serialize destruction cached data
-        VER_APEX_DESTRUCTION = 681,
+        APEX_DESTRUCTION = 681,
         // Added spotlight dominant shadow transition handling
-        VER_SPOTLIGHT_DOMINANTSHADOW_TRANSITION = 682,
+        SPOTLIGHT_DOMINANTSHADOW_TRANSITION = 682,
         // Added common game type package object lists to GPCD
-        VER_PREFIX_GAMETYPE_OBJECTS_IN_GPCD = 683,
+        PREFIX_GAMETYPE_OBJECTS_IN_GPCD = 683,
         // Added PMap forced object lists to GPCD
-        VER_PMAP_FORCED_OBJECTS_IN_GPCD = 684,
+        PMAP_FORCED_OBJECTS_IN_GPCD = 684,
         // Added support for preshadows on translucency
-        VER_TRANSLUCENT_PRESHADOWS = 685,
+        TRANSLUCENT_PRESHADOWS = 685,
         // Removed shadow volume support
-        VER_REMOVED_SHADOW_VOLUMES = 686,
+        REMOVED_SHADOW_VOLUMES = 686,
         // Bulk serialize instance data
-        VER_BULKSERIALIZE_INSTANCE_DATA = 688,
+        BULKSERIALIZE_INSTANCE_DATA = 688,
         // Added TerrainVertexFactory TerrainLayerCoordinateOffset Parameter
-        VER_ADDED_TERRAINLAYERCOORDINATEOFFSET_PARAM = 689,
+        ADDED_TERRAINLAYERCOORDINATEOFFSET_PARAM = 689,
         // Added CachedPhysConvexBSPData in ULevel for Convex BSP
-        VER_CONVEX_BSP = 690,
+        CONVEX_BSP = 690,
         // Reduced ProbeMask in UState/FStateFrame to DWORD and removed IgnoreMask
-        VER_REDUCED_PROBEMASK_REMOVED_IGNOREMASK = 691,
+        REDUCED_PROBEMASK_REMOVED_IGNOREMASK = 691,
         // Changed way material references are stored/handled for Matinee material parameter tracks
-        VER_CHANGED_MATPARAMTRACK_MATERIAL_REFERENCES = 693,
+        CHANGED_MATPARAMTRACK_MATERIAL_REFERENCES = 693,
         // Added bone influence mapping option per bone break
-        VER_ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_CUSTOM_MAPPING = 694,
+        ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_CUSTOM_MAPPING = 694,
         // Changed GDO lighting defaults to be cheap
-        VER_CHANGED_GDO_LIGHTING_DEFAULTS2 = 696,
+        CHANGED_GDO_LIGHTING_DEFAULTS2 = 696,
         // Added chunks/sections when swapping to a vertex influence using IWU_FullSwap
-        VER_ADDED_CHUNKS_SECTIONS_VERTEX_INFLUENCE = 700,
+        ADDED_CHUNKS_SECTIONS_VERTEX_INFLUENCE = 700,
         // Half scene depth parameter got serialized
-        VER_HALFSCENE_DEPTH_PARAM = 705,
+        HALFSCENE_DEPTH_PARAM = 705,
         // introduced VisualizeTexture shader
-        VER_VISUALIZETEXTURE = 706,
+        VISUALIZETEXTURE = 706,
         // updated bink shader serialization
-        VER_BINK_SHADER_SERIALIZATION_CHANGE = 707,
+        BINK_SHADER_SERIALIZATION_CHANGE = 707,
         // Added RequiredBones array to extra vertex influence structure
-        VER_ADDED_REQUIRED_BONES_VERTEX_INFLUENCE = 708,
+        ADDED_REQUIRED_BONES_VERTEX_INFLUENCE = 708,
         // Added multiple UV channels to skeletal meshes
-        VER_ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH = 709,
+        ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH = 709,
         // Added ability to render and import skeletal meshes with vertex colors
-        VER_ADDED_SKELETAL_MESH_VERTEX_COLORS = 710,
+        ADDED_SKELETAL_MESH_VERTEX_COLORS = 710,
         // Removed SM2 support
-        VER_REMOVED_SHADER_MODEL_2 = 711,
+        REMOVED_SHADER_MODEL_2 = 711,
         // Removed terrain displacement mapping
-        VER_TERRAIN_REMOVED_DISPLACEMENTS = 713,
+        TERRAIN_REMOVED_DISPLACEMENTS = 713,
         // Added FStaticTerrainLayerWeightParameter
-        VER_ADD_TERRAINLAYERWEIGHT_PARAMETERS = 714,
+        ADD_TERRAINLAYERWEIGHT_PARAMETERS = 714,
         // Added usage specification to vertex influences
-        VER_ADDED_USAGE_VERTEX_INFLUENCE = 715,
+        ADDED_USAGE_VERTEX_INFLUENCE = 715,
         // Added support for camera offset particles
-        VER_PARTICLE_ADDED_CAMERA_OFFSET = 716,
+        PARTICLE_ADDED_CAMERA_OFFSET = 716,
         // Resolution independent light shafts
-        VER_RES_INDEPENDENT_LIGHTSHAFTS = 720,
+        RES_INDEPENDENT_LIGHTSHAFTS = 720,
         // Lightmaps on GDOs
-        VER_GDO_LIGHTMAPS = 721,
+        GDO_LIGHTMAPS = 721,
         // Explicit normal support for static meshes
-        VER_STATIC_MESH_EXPLICIT_NORMALS = 723,
+        STATIC_MESH_EXPLICIT_NORMALS = 723,
         // Reverted HalfRes MotionBlur&DOF for now
-        VER_HALFRES_MOTIONBLURDOF4 = 727,
+        HALFRES_MOTIONBLURDOF4 = 727,
         // MotionBlurSeperatePass back in again
-        VER_HALFRES_MOTIONBLURDOF5 = 729,
+        HALFRES_MOTIONBLURDOF5 = 729,
         // bump the version to prevent error message
-        VER_REMOVED_SEPARATEBLOOM2 = 731,
+        REMOVED_SEPARATEBLOOM2 = 731,
         // Fixed GDO FLightmapRef handling
-        VER_FIXED_GDO_LIGHTMAP_REFCOUNTING = 732,
+        FIXED_GDO_LIGHTMAP_REFCOUNTING = 732,
         // Precomputed Visibility
-        VER_PRECOMPUTED_VISIBILITY = 734,
+        PRECOMPUTED_VISIBILITY = 734,
         // sets the StartTime on MITVs to -1 when they were created with that var being transient
-        VER_MITV_START_TIME_FIX_UP = 735,
+        MITV_START_TIME_FIX_UP = 735,
         // Add lightmap to LandscapeComponent
-        VER_LANDSCAPECOMPONENT_LIGHTMAPS = 737,
+        LANDSCAPECOMPONENT_LIGHTMAPS = 737,
         // Non uniform precomputed visibility
-        VER_NONUNIFORM_PRECOMPUTED_VISIBILITY = 739,
+        NONUNIFORM_PRECOMPUTED_VISIBILITY = 739,
         // Object based Motion Blur scale fix
-        VER_IMPROVED_MOTIONBLUR2 = 740,
+        IMPROVED_MOTIONBLUR2 = 740,
         // Object based Motion Blur scale fix
-        VER_HITMASK_MIRRORING_SUPPORT = 741,
+        HITMASK_MIRRORING_SUPPORT = 741,
         // Fixed RadialBlur look
-        VER_RADIALBLUR_FIX = 743,
+        RADIALBLUR_FIX = 743,
         // Add Landscape vertex factory LodBias Parameter
-        VER_LANDSCAPEVERTEXFACTORY_ADD_LODBIAS_PARAM = 744,
+        LANDSCAPEVERTEXFACTORY_ADD_LODBIAS_PARAM = 744,
         // Optimized AngleBasedSSAO, better quality
-        VER_IMPROVED_ANGLEBASEDSSAO = 746,
+        IMPROVED_ANGLEBASEDSSAO = 746,
         // Optimized AngleBasedSSAO
-        VER_IMPROVED_ANGLEBASEDSSAO2 = 747,
+        IMPROVED_ANGLEBASEDSSAO2 = 747,
         // New character indirect lighting controls
-        VER_CHARACTER_INDIRECT_CONTROLS = 748,
+        CHARACTER_INDIRECT_CONTROLS = 748,
         // Add force script defined ordering per class
-        VER_FORCE_SCRIPT_DEFINED_ORDER_PER_CLASS = 749,
+        FORCE_SCRIPT_DEFINED_ORDER_PER_CLASS = 749,
         // Optimized SSAO SmartBlur making 2 pass
-        VER_OPTIMIZEDSSAO = 750,
+        OPTIMIZEDSSAO = 750,
         // One pass approximate lighting for translucency
-        VER_ONEPASS_TRANSLUCENCY_LIGHTING = 754,
+        ONEPASS_TRANSLUCENCY_LIGHTING = 754,
         // Moved UField::SuperField to UStruct
-        VER_MOVED_SUPERFIELD_TO_USTRUCT = 756,
+        MOVED_SUPERFIELD_TO_USTRUCT = 756,
         // Support AnimNodeSlot dynamic sequence node allocation on demand
-        VER_ADDED_ANIMNODESLOTPOOL = 760,
+        ADDED_ANIMNODESLOTPOOL = 760,
         // Optimized UAnimSequence storage
-        VER_OPTIMIZED_ANIMSEQ = 761,
+        OPTIMIZED_ANIMSEQ = 761,
         // removed Direction from cover reference
-        VER_REMOVED_DIR_COVERREF = 763,
+        REMOVED_DIR_COVERREF = 763,
         // Fixed GDO's getting lighting unbuilt when Undestroyed
-        VER_GDO_LIGHTING_HANDLE_UNDESTROY = 764,
+        GDO_LIGHTING_HANDLE_UNDESTROY = 764,
         // Added option for per bone motion blur, made pow() for non PS3 platforms unclamped
-        VER_PERBONEMOTIONBLUR = 766,
+        PERBONEMOTIONBLUR = 766,
         // Added async texture pre-allocation to level streaming
-        VER_TEXTURE_PREALLOCATION = 767,
+        TEXTURE_PREALLOCATION = 767,
         // Added property to specify bone to use for TRISORT_CustomLeftRight
-        VER_ADDED_SKELETAL_MESH_SORTING_LEFTRIGHT_BONE = 768,
+        ADDED_SKELETAL_MESH_SORTING_LEFTRIGHT_BONE = 768,
         // Added new feature: SoftEdge MotionBlur
-        VER_SOFTEDGEMOTIONBLUR = 769,
+        SOFTEDGEMOTIONBLUR = 769,
         // Compact kDop trees for static meshes
-        VER_COMPACTKDOPSTATICMESH = 770,
+        COMPACTKDOPSTATICMESH = 770,
         // Refactoring UberPostProcess, removed unused parameters
-        VER_UBERPOST_REFACTOR2 = 773,
+        UBERPOST_REFACTOR2 = 773,
         // Added XY offset parameters to Landscape vertex factory
-        VER_LANDSCAPEVERTEXFACTORY_ADD_XYOFFSET_PARAMS = 774,
+        LANDSCAPEVERTEXFACTORY_ADD_XYOFFSET_PARAMS = 774,
         // Replaced tonemapper checkbox by combobox
-        VER_TONEMAPPER_ENUM = 779,
+        TONEMAPPER_ENUM = 779,
         // Fix distortion effect wrong color leaking in
-        VER_DISTORTIONEFFECT2 = 780,
+        DISTORTIONEFFECT2 = 780,
         // Fixed translucent preshadow filtering
-        VER_FIXED_TRANSLUCENT_SHADOW_FILTERING = 783,
+        FIXED_TRANSLUCENT_SHADOW_FILTERING = 783,
         // Added vfetch sprite and subuv particle support on 360
-        VER_SPRITE_SUBUV_VFETCH_SUPPORT = 784,
+        SPRITE_SUBUV_VFETCH_SUPPORT = 784,
         // fixed warning with MotionBlurSkinning
-        VER_MOTIONBLURSKINNING = 787,
+        MOTIONBLURSKINNING = 787,
         // adjustable kernel for ReferenceDOF
-        VER_POSTPROCESSUPDATE = 788,
+        POSTPROCESSUPDATE = 788,
         // Added class group names for grouping in the editor
-        VER_ADDED_CLASS_GROUPS = 789,
+        ADDED_CLASS_GROUPS = 789,
         // Bloom after motionblur for better quality
-        VER_BLOOM_AFTER_MOTIONBLUR = 790,
+        BLOOM_AFTER_MOTIONBLUR = 790,
         // MotionBlurSoftEdge fix bias on NV 7800 cards
-        VER_IMPROVED_MOTIONBLUR6 = 792,
+        IMPROVED_MOTIONBLUR6 = 792,
         // MotionBlur optimizations
-        VER_IMPROVED_MOTIONBLUR7 = 793,
+        IMPROVED_MOTIONBLUR7 = 793,
         // Removed unused parameter
-        VER_REMOVE_MAXBONEINFLUENCE = 794,
+        REMOVE_MAXBONEINFLUENCE = 794,
         // Fixed automatic shader versioning
-        VER_FIXED_AUTO_SHADER_VERSIONING = 796,
+        FIXED_AUTO_SHADER_VERSIONING = 796,
         // Added texture instances for non-static actors in ULevel::BuildStreamingData().
-        VER_DYNAMICTEXTUREINSTANCES = 797,
+        DYNAMICTEXTUREINSTANCES = 797,
         // Moved Guids previously stored in CoverLink (with many dups) into ULevel
-        VER_COVERGUIDREFS_IN_ULEVEL = 798,
+        COVERGUIDREFS_IN_ULEVEL = 798,
         // Fix content that lost the flag because of wrong serialization
-        VER_COLORGRADING2 = 800,
+        COLORGRADING2 = 800,
         // Added code to preserve static mesh component override vertex colors when source verts change
-        VER_PRESERVE_SMC_VERT_COLORS = 801,
+        PRESERVE_SMC_VERT_COLORS = 801,
         // Added shadowing for image based reflections
-        VER_IMAGE_REFLECTION_SHADOWING = 802,
+        IMAGE_REFLECTION_SHADOWING = 802,
         // Added ability to keep degenerate triangles when building static mesh
-        VER_KEEP_STATIC_MESH_DEGENERATES = 804,
+        KEEP_STATIC_MESH_DEGENERATES = 804,
         // Added shader cache priority
-        VER_SHADER_CACHE_PRIORITY = 805,
+        SHADER_CACHE_PRIORITY = 805,
         // Added support for 32 bit vertex indices on skeletal meshes
-        VER_DWORD_SKELETAL_MESH_INDICES = 806,
+        DWORD_SKELETAL_MESH_INDICES = 806,
         // Introduced DepthOfFieldType
-        VER_DEPTHOFFIELD_TYPE = 807,
+        DEPTHOFFIELD_TYPE = 807,
         // Fixed some serialization issues with 32 bit indices
-        VER_DWORD_SKELETAL_MESH_INDICES_FIXUP = 808,
+        DWORD_SKELETAL_MESH_INDICES_FIXUP = 808,
         // Changed material parameter allocation for landscape
-        VER_CHANGED_LANDSCAPE_MATERIAL_PARAMS = 810,
+        CHANGED_LANDSCAPE_MATERIAL_PARAMS = 810,
         // fix blue rendering
-        VER_INVALIDATE_SHADERCACHE1 = 812,
+        INVALIDATE_SHADERCACHE1 = 812,
         // fixup estimate max particle counts
-        VER_RECALCULATE_MAXACTIVEPARTICLE = 813,
+        RECALCULATE_MAXACTIVEPARTICLE = 813,
         // serialize raw data info for morph target
-        VER_SERIALIZE_MORPHTARGETRAWVERTSINDICES = 814,
+        SERIALIZE_MORPHTARGETRAWVERTSINDICES = 814,
         // fix specular on old terrain on consoles
-        VER_TERRAIN_SPECULAR_FIX = 815,
+        TERRAIN_SPECULAR_FIX = 815,
         // Changed ScenColor texture format
-        VER_INVALIDATE_SHADERCACHE2 = 816,
+        INVALIDATE_SHADERCACHE2 = 816,
         // Added support for VertexFactoryParameters in pixel shader
-        VER_INVALIDATE_SHADERCACHE3 = 817,
+        INVALIDATE_SHADERCACHE3 = 817,
         // Fixup empty emitter particle systems
-        VER_PARTICLE_EMPTY_EMITTERS_FIXUP = 818,
+        PARTICLE_EMPTY_EMITTERS_FIXUP = 818,
         // Renamed old actor groups to layers
-        VER_RENAMED_GROUPS_TO_LAYERS = 819,
+        RENAMED_GROUPS_TO_LAYERS = 819,
         // Deprecated some doubly serialised data
-        VER_DEPRECATE_DOUBLY_SERIALISED_SMC = 820,
+        DEPRECATE_DOUBLY_SERIALISED_SMC = 820,
         // changed screendoor texture to be pixel perfect and 64x64
-        VER_INVALIDATE_SHADERCACHE4 = 821,
+        INVALIDATE_SHADERCACHE4 = 821,
         // Fixup the references to MobileGame package which no longer exists after the UDK/Mobile merge
-        VER_FIXUP_MOBILEGAME_REFS = 822,
+        FIXUP_MOBILEGAME_REFS = 822,
         // Source mesh data is saved before modification.
-        VER_STATIC_MESH_SOURCE_DATA_COPY = 823,
+        STATIC_MESH_SOURCE_DATA_COPY = 823,
         // Landscape Decal Factory
-        VER_LANDSCAPEDECALVERTEXFACTORY = 824,
+        LANDSCAPEDECALVERTEXFACTORY = 824,
         // Remove generic ActorFactory support from GDO, only support spawning rigid body
-        VER_GDO_REMOVE_ACTORFACTORY = 825,
+        GDO_REMOVE_ACTORFACTORY = 825,
         // Fix for static mesh components affected by a copy/paste bug with override vertex colors.
-        VER_FIX_OVERRIDEVERTEXCOLORS_COPYPASTE = 826,
+        FIX_OVERRIDEVERTEXCOLORS_COPYPASTE = 826,
         // Renamed MobileGame to SimpleGame
-        VER_RENAME_MOBILEGAME_TO_SIMPLEGAME = 827,
+        RENAME_MOBILEGAME_TO_SIMPLEGAME = 827,
         // Fixup archetypes of distributions in auto-coverted seeded modules
-        VER_FIXUP_SEEDED_MODULE_DISTRIBUTIONS = 828,
+        FIXUP_SEEDED_MODULE_DISTRIBUTIONS = 828,
         // Expose and store more mesh optimization settings via the editor.
-        VER_STORE_MESH_OPTIMIZATION_SETTINGS = 829,
+        STORE_MESH_OPTIMIZATION_SETTINGS = 829,
         // Added extra editor data saved per foliage instance
-        VER_FOLIAGE_INSTANCE_SAVE_EDITOR_DATA = 830,
+        FOLIAGE_INSTANCE_SAVE_EDITOR_DATA = 830,
         // Removed unused lighting properties
-        VER_REMOVE_UNUSED_LIGHTING_PROPERTIES = 829,
+        REMOVE_UNUSED_LIGHTING_PROPERTIES = 829,
         // Fixing up version as VER_REMOVE_UNUSED_LIGHTING_PROPERTIES is less than VER_FOLIAGE_INSTANCE_SAVE_EDITOR_DATA and not unique.
-        VER_FIXED_UP_VERSION = 831,
+        FIXED_UP_VERSION = 831,
         // SphereMask material expression hardness was defined wrong
-        VER_SPHEREMASK_HARDNESS = 832,
+        SPHEREMASK_HARDNESS = 832,
         // Added UI data saved with InstancedFoliageActor
-        VER_FOLIAGE_SAVE_UI_DATA = 833,
+        FOLIAGE_SAVE_UI_DATA = 833,
         // Support simplification of skeletal meshes.
-        VER_SKELETAL_MESH_SIMPLIFICATION = 834,
+        SKELETAL_MESH_SIMPLIFICATION = 834,
         // Support physical materials on landscape.
-        VER_LANDSCAPE_PHYS_MATERIALS = 835,
+        LANDSCAPE_PHYS_MATERIALS = 835,
         // Added support for compressed pixel shaders on Playstation 3
-        VER_INVALIDATE_SHADERCACHE5 = 836,
+        INVALIDATE_SHADERCACHE5 = 836,
         // SphereMask serialization fix
-        VER_SPHEREMASK_HARDNESS1 = 837,
+        SPHEREMASK_HARDNESS1 = 837,
         // kdop edge case fix
-        VER_KDOP_ONE_NODE_FIX = 838,
+        KDOP_ONE_NODE_FIX = 838,
         // Whether, or not, translation is included in animation sequences is now tracked
-        VER_ANIM_SEQ_TRANSLATION_STATE = 839,
+        ANIM_SEQ_TRANSLATION_STATE = 839,
         // SphereMask serialization fix
-        VER_SPHEREMASK_HARDNESS2 = 840,
+        SPHEREMASK_HARDNESS2 = 840,
         // Crack-free displacement support for static and skeletal meshes.
-        VER_CRACK_FREE_DISPLACEMENT_SUPPORT = 841,
+        CRACK_FREE_DISPLACEMENT_SUPPORT = 841,
         // Fix crash when serializing bogus static mesh color vertex buffers.
-        VER_FIX_BROKEN_COLOR_VERTEX_BUFFERS = 842,
+        FIX_BROKEN_COLOR_VERTEX_BUFFERS = 842,
         // Cleaning up APEX destruction variables
-        VER_CLEANUP_APEX_DESTRUCTION_VARIABLES = 843,
+        CLEANUP_APEX_DESTRUCTION_VARIABLES = 843,
         // Per-instance foliage selection and editing
-        VER_FOLIAGE_INSTANCE_SELECTION = 844,
+        FOLIAGE_INSTANCE_SELECTION = 844,
         // WiiU support for compressed sounds
-        VER_WIIU_COMPRESSED_SOUNDS = 845,
+        WIIU_COMPRESSED_SOUNDS = 845,
         // Flash support for compressed sounds
-        VER_FLASH_COMPRESSED_SOUNDS_DEPRECATED = 846,
+        FLASH_COMPRESSED_SOUNDS_DEPRECATED = 846,
         // Fixups for foliage LOD
-        VER_FOLIAGE_LOD = 847,
+        FOLIAGE_LOD = 847,
         // Support for per-LOD lightmaps in InstancedStaticMeshComponents
-        VER_INSTANCED_STATIC_MESH_PER_LOD_STATIC_LIGHTING = 848,
+        INSTANCED_STATIC_MESH_PER_LOD_STATIC_LIGHTING = 848,
         // Flash branch integration
-        VER_FLASH_MOBILE_FEATURES_INTEGRATION = 849,
+        FLASH_MOBILE_FEATURES_INTEGRATION = 849,
         // Added Z offset to foliage
-        VER_FOLIAGE_ADDED_Z_OFFSET = 850,
+        FOLIAGE_ADDED_Z_OFFSET = 850,
         // Added cached compressed IPhone audio
-        VER_IPHONE_COMPRESSED_SOUNDS = 851,
+        IPHONE_COMPRESSED_SOUNDS = 851,
         // Switched IPhone compressed sounds to MS-ADPCM, need to reconvert any converted sounds
-        VER_IPHONE_COMPRESSED_SOUNDS_MS_ADPCM = 852,
+        IPHONE_COMPRESSED_SOUNDS_MS_ADPCM = 852,
         // Fix for Material Blend Mode override
-        VER_MATERIAL_BLEND_OVERRIDE = 853,
+        MATERIAL_BLEND_OVERRIDE = 853,
         // THe proper version for flash audio after merge to main
-        VER_FLASH_MERGE_TO_MAIN = 854,
+        FLASH_MERGE_TO_MAIN = 854,
         // Renamed all mobile material parameters so the start with 'Mobile'
-        VER_MOBILE_MATERIAL_PARAMETER_RENAME = 855,
+        MOBILE_MATERIAL_PARAMETER_RENAME = 855,
         // Allow decoupling particle image flipping from ScreenAlignment square
-        VER_PARTICLE_SQUARE_IMAGE_FLIPPING = 856,
+        PARTICLE_SQUARE_IMAGE_FLIPPING = 856,
         // A missed code fix in the flash merge was making flash textures not get saved
-        VER_VERSION_NUMBER_FIX_FOR_FLASH_TEXTURES = 857,
+        VERSION_NUMBER_FIX_FOR_FLASH_TEXTURES = 857,
         // Replacing the SM2/SM3 material resource array with high/low quality level
-        VER_ADDED_MATERIAL_QUALITY_LEVEL = 858,
+        ADDED_MATERIAL_QUALITY_LEVEL = 858,
         // Tag mesh proxies as such.
-        VER_TAG_MESH_PROXIES = 859,
+        TAG_MESH_PROXIES = 859,
         // Put DBAVars to global vertex/pixel shader registers
-        VER_REALD_DBAVARS_TO_SHADER_REGISTERS = 860,
+        REALD_DBAVARS_TO_SHADER_REGISTERS = 860,
         // Changed Flash texture caching
-        VER_FLASH_DXT5_TEXTURE_SUPPORT = 861,
+        FLASH_DXT5_TEXTURE_SUPPORT = 861,
         // IPhone - stereo sounds decompress blocks as they are played
-        VER_IPHONE_STEREO_STAYS_ADPCM_COMPRESSED = 862,
+        IPHONE_STEREO_STAYS_ADPCM_COMPRESSED = 862,
         // Added additional settings to static and skeletal optimization structures (FStaticMeshOptimizationSettings & FSkeletalMeshOptimizationSettings )
-        VER_ADDED_EXTRA_MESH_OPTIMIZATION_SETTINGS = 863,
+        ADDED_EXTRA_MESH_OPTIMIZATION_SETTINGS = 863,
         // separate out ETC cooking from PVRTC cooking
-        VER_ANDROID_ETC_SEPARATED = 864,
+        ANDROID_ETC_SEPARATED = 864,
         // Bug in compression where left channel was being overwritten by right channel
-        VER_IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX = 865,
+        IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX = 865,
         // Added undo support to Substance
-        VER_ALG_SBS_INPUT_INDEX = 866,
+        ALG_SBS_INPUT_INDEX = 866,
 
         //-IPhone adpcm compression now has a variable block size based on the quality setting in SoundNodeWave
-        VER_IPHONE_AUDIO_VARIABLE_BLOCK_SIZE_COMPRESSION = 867,
+        IPHONE_AUDIO_VARIABLE_BLOCK_SIZE_COMPRESSION = 867,
         // -----<new versions can be added before this line>-------------------------------------------------
 
         // this needs to be the last line (see note below)
-        VER_AUTOMATIC_VERSION_PLUS_ONE,
-        VER_AUTOMATIC_VERSION = VER_AUTOMATIC_VERSION_PLUS_ONE - 1
+        AUTOMATIC_VERSION_PLUS_ONE,
+        AUTOMATIC_VERSION = AUTOMATIC_VERSION_PLUS_ONE - 1
     }
 
     public enum EUnrealEngineObjectLicenseeUEVersion
     {
-        VER_LIC_NONE = 0,
+        LIC_NONE = 0,
         // this needs to be the last line (see note below)
-        VER_LIC_AUTOMATIC_VERSION_PLUS_ONE,
-        VER_LIC_AUTOMATIC_VERSION = VER_LIC_AUTOMATIC_VERSION_PLUS_ONE - 1
+        LIC_AUTOMATIC_VERSION_PLUS_ONE,
+        LIC_AUTOMATIC_VERSION = LIC_AUTOMATIC_VERSION_PLUS_ONE - 1
     }
 
     /// <summary>
@@ -2179,7 +2180,7 @@ namespace CUE4Parse.UE4.Versions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FPackageFileVersion(int ue3Version, int ue4Version, int ue5Version)
         {
-            FileVersionUE3 = ue3Version;
+            FileVersionUE3 = 0;
             FileVersionUE4 = ue4Version;
             FileVersionUE5 = ue5Version;
         }
@@ -2303,10 +2304,10 @@ namespace CUE4Parse.UE4.Versions
         public override int GetHashCode() => HashCode.Combine(FileVersionUE3, FileVersionUE4, FileVersionUE5);
 
         public override string ToString()
-            => FileVersionUE5 >= (int)EUnrealEngineObjectUE5Version.INITIAL_VERSION
-                ? ((EUnrealEngineObjectUE5Version)FileVersionUE5).ToString()
-                : FileVersionUE4 > (int)EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME
-                    ? ((EUnrealEngineObjectUE4Version)FileVersionUE4).ToString()
-                    : ((EUnrealEngineObjectUE3Version)FileVersionUE3).ToString();
+            => FileVersionUE3 > (int)EUnrealEngineObjectUE3Version.DETERMINE_BY_GAME
+                ? ((EUnrealEngineObjectUE3Version)FileVersionUE3).ToString()
+                : FileVersionUE5 >= (int)EUnrealEngineObjectUE5Version.INITIAL_VERSION
+                    ? ((EUnrealEngineObjectUE5Version)FileVersionUE5).ToString()
+                    : ((EUnrealEngineObjectUE4Version)FileVersionUE4).ToString();
     }
 }

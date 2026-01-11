@@ -411,7 +411,19 @@ public class AVolume : ABrush;
 public class AVolumetricCloud : AInfo;
 public class AVolumetricLightmapDensityVolume : AVolume;
 public class AWindDirectionalSource : AInfo;
-public class AWorldDataLayers : AInfo;
+
+public class AWorldDataLayers : AInfo
+{
+    public FPackageIndex[] DataLayerInstances;
+
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+
+        DataLayerInstances = GetOrDefault<FPackageIndex[]>(nameof(DataLayerInstances), []);
+    }
+}
+
 public class AWorldInfo : AWorldSettings;
 public class AWorldPartitionHLOD : AActor;
 public class AWorldPartitionMiniMap : AInfo;

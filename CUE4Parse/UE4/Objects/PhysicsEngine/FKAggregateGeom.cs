@@ -13,7 +13,7 @@ public class FKAggregateGeom
     public FKConvexElem[] ConvexElems;
     public FKTaperedCapsuleElem[] TaperedCapsuleElems;
     // level set elems go here but idk what they are for
-    
+
     public FKAggregateGeom(FStructFallback fallback)
     {
         SphereElems = fallback.GetOrDefault(nameof(SphereElems), Array.Empty<FKSphereElem>());

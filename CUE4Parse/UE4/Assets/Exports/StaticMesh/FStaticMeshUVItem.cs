@@ -27,7 +27,7 @@ namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
             {
                 goto SkipColor;
             }
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_VERTEXCOLOR && Ar.Ver < EUnrealEngineObjectUE3Version.VER_MESH_PAINT_SYSTEM)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERTEXCOLOR && Ar.Ver < EUnrealEngineObjectUE3Version.MESH_PAINT_SYSTEM)
             {
                 Color = Ar.Read<FColor>();
             }

@@ -9,6 +9,8 @@ using CUE4Parse.UE4.Assets.Exports.Sound;
 using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Misc;
+using CUE4Parse.UE4.Objects.Engine;
+using CUE4Parse.UE4.Objects.PhysicsEngine;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
@@ -101,18 +103,29 @@ public class UBoxComponent : UShapeComponent;
 public class UBoxFalloff : UFieldNodeFloat;
 public class UBoxReflectionCaptureComponent : UReflectionCaptureComponent;
 public class UBrainComponent : UActorComponent;
+
 public class UBrushComponent : UPrimitiveComponent
 {
+    public FPackageIndex? Brush { get; protected set; }
+    public FPackageIndex? BrushBodySetup { get; protected set; }
+
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
+
+        Brush = GetOrDefault(nameof(Brush), new FPackageIndex());
+        BrushBodySetup = GetOrDefault(nameof(BrushBodySetup), new FPackageIndex());
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {
             Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>())); // CachedPhysBrushData
         }
     }
-};
+
+    public UModel? GetBrush() => Brush?.Load<UModel>();
+    public override UBodySetup? GetBodySetup() => BrushBodySetup?.Load<UBodySetup>();
+}
+
 public class UAudioOverlapComponent : UActorComponent;
 public class UCableComponent : UMeshComponent;
 public class UCameraComponent : USceneComponent;
@@ -268,7 +281,7 @@ public class UParticleSystemComponent : UFXSystemComponent
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if(Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 16;
+        if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 16;
         base.Deserialize(Ar, validPos);
     }
 }
@@ -338,7 +351,7 @@ public class USpeedTreeComponent : UPrimitiveComponent
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SPEEDTREE_STATICLIGHTING && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SPEEDTREE_STATICLIGHTING && Ar.Game < EGame.GAME_UE4_0)
         {
             FLightMap? BranchAndFrondLightMap = Ar.Read<ELightMapType>() switch
             {
@@ -360,7 +373,7 @@ public class USpeedTreeComponent : UPrimitiveComponent
                 ELightMapType.LMT_2D => new FLightMap2D(Ar),
                 _ => null
             };
-            if(Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SPEEDTREE_VERTEXSHADER_RENDERING)
+            if(Ar.Ver >= EUnrealEngineObjectUE3Version.SPEEDTREE_VERTEXSHADER_RENDERING)
             {
 
                 FLightMap? LeafMeshLightMap = Ar.Read<ELightMapType>() switch
