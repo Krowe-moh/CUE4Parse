@@ -32,7 +32,6 @@ namespace CUE4Parse.UE4.Assets
     {
         public override FPackageFileSummary Summary { get; }
         public override FNameEntrySerialized[] NameMap { get; }
-        public override List<byte[]> EditorThumbnails { get; }
         public override int ImportMapLength => ImportMap.Length;
         public override int ExportMapLength => ExportMap.Length;
 
@@ -190,7 +189,7 @@ namespace CUE4Parse.UE4.Assets
 
             if (Summary.ThumbnailTableOffset > 0)
             {
-                EditorThumbnails = new List<byte[]>();
+                //EditorThumbnails = new List<byte[]>();
                 uassetAr.SeekAbsolute(Summary.ThumbnailTableOffset, SeekOrigin.Begin);
                 var count = uassetAr.Read<int>();
 
@@ -210,7 +209,7 @@ namespace CUE4Parse.UE4.Assets
                     var totalBytes = uassetAr.Read<int>();
                     if (totalBytes == 0) continue;
                     var rawImage = uassetAr.ReadBytes(totalBytes);
-                    EditorThumbnails.Add(rawImage);
+                    //EditorThumbnails.Add(rawImage);
                 }
             }
 

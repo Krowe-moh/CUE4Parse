@@ -9,7 +9,7 @@ public class FMultisizeIndexContainer() : FRawIndexBuffer
     public FMultisizeIndexContainer(FArchive Ar) : this()
     {
         var dataSize = 0x02;
-        if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_DWORD_SKELETAL_MESH_INDICES)
+        if (Ar.Ver > EUnrealEngineObjectUE3Version.DWORD_SKELETAL_MESH_INDICES)
         {
             if (Ar.Ver < EUnrealEngineObjectUE4Version.KEEP_SKEL_MESH_INDEX_DATA)
             {

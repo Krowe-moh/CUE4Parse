@@ -139,7 +139,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Material
 
         public FMaterialExpressionTextureBase(FAssetArchive Ar)
         {
-            // if less than EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE it's a "TextureIndex"
+            // if less than EUnrealEngineObjectUE3Version.UNIFORM_EXPRESSIONS_IN_SHADER_CACHE it's a "TextureIndex"
             Texture = new FPackageIndex(Ar);
         }
     }

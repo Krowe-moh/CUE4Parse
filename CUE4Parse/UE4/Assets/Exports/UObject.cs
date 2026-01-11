@@ -177,7 +177,7 @@ public class UObject : AbstractPropertyHolder
 
                 if (Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
                 {
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX) // ue4 part does nothing currently
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX) // ue4 part does nothing currently
                     {
                         Ar.Read<int>(); // NetIndex
                     }
@@ -208,7 +208,7 @@ public class UObject : AbstractPropertyHolder
                         new FPackageIndex(Ar); // Tmp
                     }
 
-                    if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
+                    if (Ar.Ver < EUnrealEngineObjectUE3Version.REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
                     {
                         Ar.Read<long>(); // ProbeMask
                     }
@@ -217,7 +217,7 @@ public class UObject : AbstractPropertyHolder
                         Ar.Read<int>(); // ProbeMask
                     }
 
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_REDUCED_STATEFRAME_LATENTACTION_SIZE)
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.REDUCED_STATEFRAME_LATENTACTION_SIZE)
                     {
                         Ar.Read<short>(); // LatentAction
                     }
@@ -237,7 +237,7 @@ public class UObject : AbstractPropertyHolder
                     }
                 }
 
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_REMOVE_SIZE_VJOINTPOS)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.REMOVE_SIZE_VJOINTPOS)
                 {
                     if (this is UComponent)
                     {
@@ -245,7 +245,7 @@ public class UObject : AbstractPropertyHolder
                     }
                 }
 
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX) // ue4 part does nothing currently
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX) // ue4 part does nothing currently
                 {
                     Ar.Read<int>(); // NetIndex
                 }

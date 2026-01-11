@@ -11,7 +11,7 @@ namespace CUE4Parse.UE4.Objects.Engine
 
         public ThumbnailTableItem(FArchive Ar)
         {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_CONTENT_BROWSER_FULL_NAMES)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.CONTENT_BROWSER_FULL_NAMES)
             {
                 ObjectClassName = Ar.ReadFString();
             }

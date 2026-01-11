@@ -14,11 +14,11 @@ public class ULightMapTexture2D : UTexture2D
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LIGHTMAPFLAGS)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.LIGHTMAPFLAGS)
         {
             LightmapFlags = Ar.Read<ELightMapFlags>();
         }
-        else if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LIGHTMAPTEXTURE_VARIABLE)
+        else if (Ar.Ver >= EUnrealEngineObjectUE3Version.LIGHTMAPTEXTURE_VARIABLE)
         {
             var bSimpleLightmap = Ar.ReadBoolean();
             LightmapFlags = bSimpleLightmap ? ELightMapFlags.LMF_LQLightmap : ELightMapFlags.LMF_None;

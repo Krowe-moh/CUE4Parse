@@ -18,7 +18,7 @@ public class UInstancedStaticMeshComponent : UStaticMeshComponent
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_BULKSERIALIZE_INSTANCE_DATA && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.BULKSERIALIZE_INSTANCE_DATA && Ar.Game < EGame.GAME_UE4_0)
         {
             Ar.SkipBulkArrayData(); // PerInstanceSMData
             return;

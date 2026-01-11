@@ -28,7 +28,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 if (!Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform != ETexturePlatform.XboxAndPlaystation) // ignore for now
                 {
                     Ar.ReadFName(); // CategoryName
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES) new FPackageIndex(Ar); // ArrayEnum
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES) new FPackageIndex(Ar); // ArrayEnum
                 }
 
                 if (PropertyFlags.HasFlag(EPropertyFlags.Net)) // edit?

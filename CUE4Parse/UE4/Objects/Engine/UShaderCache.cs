@@ -12,10 +12,10 @@ namespace CUE4Parse.UE4.Objects.Engine
         {
             base.Deserialize(Ar, validPos);
             var Platform = 0;
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_GLOBAL_SHADER_FILE)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.GLOBAL_SHADER_FILE)
             {
                 Platform = Ar.Read<byte>();
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_FIXED_AUTO_SHADER_VERSIONING)
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_AUTO_SHADER_VERSIONING)
                 {
                     var dummy = Ar.ReadMap(
                         () => new FPackageIndex(Ar),

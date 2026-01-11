@@ -23,11 +23,11 @@ public class UUISkin : Assets.Exports.UObject
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REFACTORED_UISKIN)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.REFACTORED_UISKIN)
         {
             Ar.ReadMap(() => Ar.Read<FGuid>(), () => Ar.Read<FGuid>()); // WidgetStyleMap
         }
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CURSOR_MAP)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_CURSOR_MAP)
         {
             Ar.ReadMap(Ar.ReadFName, () => new FUIMouseCursor(Ar)); // CursorMap
         }

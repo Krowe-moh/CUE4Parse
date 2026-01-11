@@ -21,7 +21,7 @@ public class FRawStaticIndexBuffer() : FRawIndexBuffer
             {
                 //Indices16 =
                     Ar.ReadBulkArray<ushort>();
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR) Ar.Read<int>();
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.RENDERING_REFACTOR) Ar.Read<int>();
             }
             else
             {

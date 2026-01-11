@@ -64,9 +64,9 @@ public class UClass : UStruct
         {
             FuncMap = Ar.ReadMap(Ar.ReadFName, () => new FPackageIndex(Ar));
             ClassFlags = Ar.Read<EClassFlags>();
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_PLATFORM_FLAGS)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_PLATFORM_FLAGS)
             {
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_EMITTER_LODVALIDITY_FIX2)
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.EMITTER_LODVALIDITY_FIX2)
                 {
                     // temp
                     Ar.Read<byte>(); // classPlatformFlags
@@ -94,12 +94,12 @@ public class UClass : UStruct
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedHideCategoriesToUClass && Ar.Game < EGame.GAME_UE4_0)
         {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DisplacedHideCategories && Ar.Ver < EUnrealEngineObjectUE3Version.VER_MP3ENC_TO_MSENC) // && Ar.UE4Version < 117
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DisplacedHideCategories && Ar.Ver < EUnrealEngineObjectUE3Version.MP3ENC_TO_MSENC) // && Ar.UE4Version < 117
             {
                 Ar.ReadArray(() => Ar.ReadFName());
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex && Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_COMPONENT_CLASS_BRIDGE)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_COMPONENT_CLASS_BRIDGE)
             {
                 var ComponentClassBridgeMap = Ar.ReadMap(
                     () => new FPackageIndex(Ar),
@@ -107,7 +107,7 @@ public class UClass : UStruct
                 );
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedComponentTemplatesToUClass && Ar.Ver < EUnrealEngineObjectUE3Version.VER_FIXED_COMPONENT_TEMPLATES)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedComponentTemplatesToUClass && Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_COMPONENT_TEMPLATES)
             {
                 Ar.ReadArray(() => new FPackageIndex(Ar));
             }
@@ -120,12 +120,12 @@ public class UClass : UStruct
                 );
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedInterfacesFeature && Ar.Ver < EUnrealEngineObjectUE3Version.VER_CHANGED_INTERFACES_TO_MAP)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedInterfacesFeature && Ar.Ver < EUnrealEngineObjectUE3Version.CHANGED_INTERFACES_TO_MAP)
             {
                 Ar.ReadArray(() => new FPackageIndex(Ar));
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_CHANGED_INTERFACES_TO_MAP)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.CHANGED_INTERFACES_TO_MAP)
             {
                 var interfacesCount = Ar.Read<int>();
 
@@ -175,7 +175,7 @@ public class UClass : UStruct
             Ar.ReadArray(() => Ar.ReadFName());
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SCRIPT_BIND_DLL_FUNCTIONS && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SCRIPT_BIND_DLL_FUNCTIONS && Ar.Game < EGame.GAME_UE4_0)
         {
             Ar.ReadFName(); // DLLBindName
         }

@@ -13,7 +13,7 @@ public class FRawAnimSequenceTrack : IUStruct
 
     public FRawAnimSequenceTrack(FArchive Ar)
     {
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_NATIVE_RAWANIMDATA_SERIALIZATION)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.NATIVE_RAWANIMDATA_SERIALIZATION)
         {
            // PosKeys = Ar.ReadArray<FVector>();
            // RotKeys = Ar.ReadArray<FQuat>();
@@ -24,6 +24,6 @@ public class FRawAnimSequenceTrack : IUStruct
         PosKeys = Ar.ReadBulkArray<FVector>();
         RotKeys = Ar.ReadBulkArray<FQuat>();
         ScaleKeys = Ar.Ver >= EUnrealEngineObjectUE4Version.ANIM_SUPPORT_NONUNIFORM_SCALE_ANIMATION ? Ar.ReadBulkArray<FVector>() : [];
-        KeyTimes = Ar.Ver < EUnrealEngineObjectUE3Version.VER_RAW_ANIMDATA_REDUX ? Ar.ReadBulkArray<float>() : [];
+        KeyTimes = Ar.Ver < EUnrealEngineObjectUE3Version.RAW_ANIMDATA_REDUX ? Ar.ReadBulkArray<float>() : [];
     }
 }

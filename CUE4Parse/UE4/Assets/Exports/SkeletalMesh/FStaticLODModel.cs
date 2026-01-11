@@ -58,15 +58,15 @@ public class FSkeletalMeshVertexInfluences
     {
         Influences = Ar.ReadArray(() => new FVertexInfluence(Ar));
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_MAPPING)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_MAPPING)
         {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DWORD_SKELETAL_MESH_INDICES_FIXUP)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DWORD_SKELETAL_MESH_INDICES_FIXUP)
             {
                 VertexInfluenceMapping = Ar.ReadMap(() => new FBoneIndexPair(Ar), () => Ar.ReadArray<int>());
             }
             else
             {
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DWORD_SKELETAL_MESH_INDICES)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.DWORD_SKELETAL_MESH_INDICES)
                 {
                     Ar.Read<byte>(); // IndexSize
                 }
@@ -82,18 +82,18 @@ public class FSkeletalMeshVertexInfluences
             }
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CHUNKS_SECTIONS_VERTEX_INFLUENCE)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_CHUNKS_SECTIONS_VERTEX_INFLUENCE)
         {
             Sections = Ar.ReadArray(() => new FSkelMeshSection(Ar));
             Chunks = Ar.ReadArray(() => new FSkelMeshChunk(Ar));
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_REQUIRED_BONES_VERTEX_INFLUENCE)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_REQUIRED_BONES_VERTEX_INFLUENCE)
         {
             RequiredBones = Ar.ReadArray<byte>();
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_USAGE_VERTEX_INFLUENCE)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_USAGE_VERTEX_INFLUENCE)
         {
             Usage = Ar.Read<byte>();
         }
@@ -252,14 +252,14 @@ public class FStaticLODModel
             var SoftVertices = Ar.ReadArray(() => new FSoftVertex(Ar));
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_SHADOW_VOLUMES)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADOW_VOLUMES)
         {
             Ar.ReadArray<short>(); // indices
         }
 
         ActiveBoneIndices = Ar.ReadArray<short>();
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_SHADOW_VOLUMES)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADOW_VOLUMES)
         {
             Ar.ReadArray<byte>(); // NumTriangles
         }
@@ -276,7 +276,7 @@ public class FStaticLODModel
                 NumVertices = Ar.Read<int>();
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_SHADOW_VOLUMES)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADOW_VOLUMES)
         {
             Ar.ReadArray(() => Ar.ReadBytes(16));
         }
@@ -310,13 +310,13 @@ public class FStaticLODModel
 
         if (!stripDataFlags.IsAudioVisualDataStripped())
         {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH)
             {
                 NumTexCoords = Ar.Read<int>();
             }
             if (skelMeshVer < FSkeletalMeshCustomVersion.Type.SplitModelAndRenderData)
             {
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USE_UMA_RESOURCE_ARRAY_MESH_DATA)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.USE_UMA_RESOURCE_ARRAY_MESH_DATA)
                 {
                     VertexBufferGPUSkin = new FSkeletalMeshVertexBuffer(Ar, NumTexCoords);
                 }
@@ -348,7 +348,7 @@ public class FStaticLODModel
                 {
                     if (skelMeshVer < FSkeletalMeshCustomVersion.Type.UseSharedColorBufferFormat)
                     {
-                        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_SKELETAL_MESH_VERTEX_COLORS)
+                        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_SKELETAL_MESH_VERTEX_COLORS)
                         {
                             ColorVertexBuffer = new FSkeletalMeshVertexColorBuffer(Ar);
                         }
@@ -360,7 +360,7 @@ public class FStaticLODModel
                     }
                 }
 
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCES)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCES)
                 {
                     Ar.ReadArray(() => new FSkeletalMeshVertexInfluences(Ar));
                 }
@@ -418,7 +418,7 @@ public class FStaticLODModel
                     return;
                 }
 
-                if (!stripDataFlags.IsClassDataStripped((byte) EClassDataStripFlag.CDSF_AdjacencyData) && Ar.Ver >= EUnrealEngineObjectUE3Version.VER_CRACK_FREE_DISPLACEMENT_SUPPORT)
+                if (!stripDataFlags.IsClassDataStripped((byte) EClassDataStripFlag.CDSF_AdjacencyData) && Ar.Ver >= EUnrealEngineObjectUE3Version.CRACK_FREE_DISPLACEMENT_SUPPORT)
                     AdjacencyIndexBuffer = new FMultisizeIndexContainer(Ar);
 
                 if (Ar.Ver >= EUnrealEngineObjectUE4Version.APEX_CLOTH && HasClothData())

@@ -106,7 +106,7 @@ namespace CUE4Parse.UE4.Objects.Engine
         public FBspNode(FAssetArchive Ar)
         {
             Plane = new FPlane(Ar);
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_ZONEMASK)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_ZONEMASK)
             {
                 Ar.Read<FZoneSet>(); // zonemask
             }
@@ -117,7 +117,7 @@ namespace CUE4Parse.UE4.Objects.Engine
             ComponentIndex = Ar.Read<ushort>();
             ComponentNodeIndex = Ar.Read<ushort>();
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_COMPONENT_ELEMENT_INDEX)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_COMPONENT_ELEMENT_INDEX)
             {
                 ComponentElementIndex = Ar.Read<int>();
             }
@@ -193,7 +193,7 @@ namespace CUE4Parse.UE4.Objects.Engine
                 Ar.Read<int>(); // LightingChannels
             }
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_INTEGRATED_LIGHTMASS)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.INTEGRATED_LIGHTMASS)
             {
                 iLightmassIndex = Ar.Read<int>();
             }
@@ -345,12 +345,12 @@ namespace CUE4Parse.UE4.Objects.Engine
                 var dummyPortalNodes = Ar.ReadBulkArray<int>();
             }
 
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_SHADOW_VOLUMES)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADOW_VOLUMES)
             {
                 var dummyEdges = Ar.ReadBulkArray(() => Ar.ReadBytes(16));
             }
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_USE_UMA_RESOURCE_ARRAY_MESH_DATA)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.USE_UMA_RESOURCE_ARRAY_MESH_DATA)
             {
                 NumUniqueVertices = Ar.Read<uint>();
 
@@ -360,7 +360,7 @@ namespace CUE4Parse.UE4.Objects.Engine
                 }
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_INTEGRATED_LIGHTMASS)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.INTEGRATED_LIGHTMASS)
             {
                 LightingGuid = Ar.Read<FGuid>();
                 LightmassSettings = Ar.ReadArray(() => new FLightmassPrimitiveSettings(Ar));

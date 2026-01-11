@@ -24,7 +24,7 @@ public class UTextureCube : UTexture
         FacePosZ = GetOrDefault<FPackageIndex>(nameof(FacePosZ));
         FaceNegZ = GetOrDefault<FPackageIndex>(nameof(FaceNegZ));
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
         {
             var SizeX = Ar.Read<int>();
             var SizeY = Ar.Read<int>();

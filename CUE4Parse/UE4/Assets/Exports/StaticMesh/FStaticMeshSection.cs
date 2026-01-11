@@ -58,9 +58,9 @@ public class FStaticMeshSection
             NumTriangles = Ar.Read<int>();
             MinVertexIndex = Ar.Read<int>();
             MaxVertexIndex = Ar.Read<int>();
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_VERSION_16) MaterialIndex = Ar.Read<int>();
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATICMESH_FRAGMENTINDEX) Ar.SkipFixedArray(8);
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_PLATFORMMESHDATA)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERSION_16) MaterialIndex = Ar.Read<int>();
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_FRAGMENTINDEX) Ar.SkipFixedArray(8);
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_PLATFORMMESHDATA)
             {
                 var bLoadPlatformData = Ar.ReadFlag();
                 if (bLoadPlatformData)

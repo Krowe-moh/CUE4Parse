@@ -35,7 +35,7 @@ public class UTexture2D : UTexture
         var stripDataFlags = new FStripDataFlags(Ar);
         var bCooked = Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_COOKED_TO_TEXTURE2D && Ar.ReadBoolean();
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
         {
             var SizeX = Ar.Read<int>();
             var SizeY = Ar.Read<int>();
@@ -55,24 +55,24 @@ public class UTexture2D : UTexture
 
             if (Ar.Game == EGame.GAME_DCUniverseOnline) return;
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_TEXTURE_FILECACHE_GUIDS)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_TEXTURE_FILECACHE_GUIDS)
             {
                 var textureFileCacheGuidDeprecated = Ar.Read<FGuid>();
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_CACHED_IPHONE_DATA)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_CACHED_IPHONE_DATA)
             {
                 Ar.ReadArray(() => new FTexture2DMipMap(Ar));
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_VERSION_NUMBER_FIX_FOR_FLASH_TEXTURES)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VERSION_NUMBER_FIX_FOR_FLASH_TEXTURES)
             {
                 Ar.Read<int>();
                 Ar.ReadArray(() => new FTexture2DMipMap(Ar));
                 new FByteBulkData(Ar);
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ANDROID_ETC_SEPARATED)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ANDROID_ETC_SEPARATED)
             {
                 Ar.ReadArray(() => new FTexture2DMipMap(Ar));
             }

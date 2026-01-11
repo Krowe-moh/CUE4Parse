@@ -23,7 +23,7 @@ public class FMorphTargetDelta
             TangentZDelta = Ar.Read<FVector>();
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_DWORD_SKELETAL_MESH_INDICES)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.DWORD_SKELETAL_MESH_INDICES)
         {
             SourceIdx = Ar.Read<ushort>();
         }

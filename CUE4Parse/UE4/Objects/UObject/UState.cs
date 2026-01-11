@@ -26,7 +26,7 @@ public class UState : UStruct
         base.Deserialize(Ar, validPos);
 
         ProbeMask = Ar.Read<long>();
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
         {
             IgnoreMask = Ar.Read<long>();
         }

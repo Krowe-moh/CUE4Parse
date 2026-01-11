@@ -80,7 +80,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
             var stripFlags = new FStripDataFlags(Ar);
             if (!stripFlags.IsEditorDataStripped())
             {
-                if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_NATIVE_RAWANIMDATA_SERIALIZATION)
+                if (Ar.Ver > EUnrealEngineObjectUE3Version.NATIVE_RAWANIMDATA_SERIALIZATION)
                 {
                     RawAnimationData = Ar.ReadArray(() => new FRawAnimSequenceTrack(Ar));
                 }

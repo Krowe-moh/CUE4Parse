@@ -24,7 +24,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Engine.Font
             {
                 TextureIndex = Ar.Read<byte>();
             }
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FONT_FORMAT_AND_UV_TILING_CHANGES)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.FONT_FORMAT_AND_UV_TILING_CHANGES)
             {
                 VerticalOffset = Ar.Read<int>();
             }

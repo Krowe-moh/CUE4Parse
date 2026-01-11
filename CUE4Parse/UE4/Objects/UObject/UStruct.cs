@@ -21,7 +21,7 @@ public class UStruct : UField
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MOVED_SUPERFIELD_TO_USTRUCT)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MOVED_SUPERFIELD_TO_USTRUCT)
         {
             SuperStruct = new FPackageIndex(Ar);
         }
@@ -64,7 +64,7 @@ public class UStruct : UField
 
         var bytecodeBufferSize = Ar.Read<int>();
         var serializedScriptSize = 0;
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE)
         {
             serializedScriptSize = Ar.Read<int>();
         }
@@ -75,7 +75,7 @@ public class UStruct : UField
         serializedScriptSize = bytecodeBufferSize;
         if (Ar.Owner!.Provider?.ReadScriptData == true && serializedScriptSize > 0)
         {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE)
             {
                 using var kismetAr = new FKismetArchive(Name, Ar.ReadBytes(serializedScriptSize), Ar.Owner, Ar.Versions);
                 var tempCode = new List<KismetExpression>();

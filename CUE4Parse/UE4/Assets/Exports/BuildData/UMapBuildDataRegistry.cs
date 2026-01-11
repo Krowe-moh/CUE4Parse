@@ -407,13 +407,13 @@ public class FLegacyLightMap1D : FLightMap
         new FIntBulkData(Ar);
         for (int elementIndex = 0; elementIndex < NUM_GATHERED_LIGHTMAP_COEF; elementIndex++)
         {
-            if (elementIndex < NUM_DIRECTIONAL_LIGHTMAP_COEF || Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_SIMPLE_LIGHTING)
+            if (elementIndex < NUM_DIRECTIONAL_LIGHTMAP_COEF || Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_SIMPLE_LIGHTING)
             {
                 Ar.Read<FVector>();
             }
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_SIMPLE_LIGHTING)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_SIMPLE_LIGHTING)
         {
             new FIntBulkData(Ar); // SimpleSamples
         }

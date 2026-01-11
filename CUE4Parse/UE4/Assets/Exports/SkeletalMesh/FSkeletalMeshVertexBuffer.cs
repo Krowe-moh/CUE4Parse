@@ -32,13 +32,13 @@ public class FSkeletalMeshVertexBuffer
     {
         var stripDataFlags = new FStripDataFlags(Ar, FPackageFileVersion.CreateUE4Version(EUnrealEngineObjectUE4Version.STATIC_SKELETAL_MESH_SERIALIZATION_FIX));
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_USE_FLOAT16_SKELETAL_MESH_UVS)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.USE_FLOAT16_SKELETAL_MESH_UVS)
         {
             Ar.ReadBulkArray(() => new FSoftVertex(Ar));
             return;
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH)
         {
             NumTexCoords = Ar.Read<int>();
         }
@@ -51,7 +51,7 @@ public class FSkeletalMeshVertexBuffer
         }
 
         if (Ar.Game >= EGame.GAME_UE4_0) bUsePackedPosition = true;
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SKELETAL_MESH_SUPPORT_PACKED_POSITION && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELETAL_MESH_SUPPORT_PACKED_POSITION && Ar.Game < EGame.GAME_UE4_0)
         {
             bUsePackedPosition = Ar.ReadBoolean();
             MeshExtension = new FVector(Ar);

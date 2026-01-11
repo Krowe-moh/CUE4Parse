@@ -46,7 +46,7 @@ namespace CUE4Parse.UE4.Assets.Readers
         {
             var nameIndex = Read<int>();
             var extraIndex = -1;
-            if (Ver >= EUnrealEngineObjectUE3Version.VER_FNAME_CHANGE_NAME_SPLIT || Game >= EGame.GAME_UE4_0)
+            if (Ver >= EUnrealEngineObjectUE3Version.FNAME_CHANGE_NAME_SPLIT || Game >= EGame.GAME_UE4_0)
             {
                 extraIndex = Read<int>();
             }

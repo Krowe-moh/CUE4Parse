@@ -285,7 +285,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                     goto exportflag;
                 }
 
-                if (SerialSize > 0 && Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE)
+                if (SerialSize > 0 && Ar.Ver >= EUnrealEngineObjectUE3Version.MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE)
                 {
                     SerialOffset = Ar.Read<int>();
                 }
@@ -315,18 +315,18 @@ namespace CUE4Parse.UE4.Objects.UObject
                 GeneratePublicHash = Ar.Ver >= EUnrealEngineObjectUE5Version.OPTIONAL_RESOURCES && Ar.ReadBoolean();
             }
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedComponentMapToExports && Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_COMPONENT_MAP)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedComponentMapToExports && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_COMPONENT_MAP)
             {
                 var LegacyComponentMap = Ar.ReadMap(() => Ar.ReadFName(), () => new FPackageIndex(Ar));
             }
 
             exportflag:
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FOBJECTEXPORT_EXPORTFLAGS && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.FOBJECTEXPORT_EXPORTFLAGS && Ar.Game < EGame.GAME_UE4_0)
             {
                 Ar.Read<int>(); // ExportFlags
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX)
             {
                 Ar.ReadArray<int>(); // NetObjectCount
                 var test = Ar.Read<FGuid>(); // PackageGuid

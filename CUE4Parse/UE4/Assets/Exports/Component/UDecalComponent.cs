@@ -31,7 +31,7 @@ public class FStaticReceiverData
     public FStaticReceiverData(FAssetArchive Ar)
     {
         Component = new FPackageIndex(Ar);
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_DECAL_ADDED_DECAL_VERTEX_LIGHTMAP_COORD)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.DECAL_ADDED_DECAL_VERTEX_LIGHTMAP_COORD)
         {
             Vertices = Ar.ReadBulkArray(() => new FOldDecalVertex(Ar));
         }
@@ -41,7 +41,7 @@ public class FStaticReceiverData
         }
         Indices = Ar.ReadBulkArray<short>();
         Ar.Read<int>(); // NumTriangles
-        if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_DECAL_STATIC_DECALS_SERIALIZED) return;
+        if (Ar.Ver > EUnrealEngineObjectUE3Version.DECAL_STATIC_DECALS_SERIALIZED) return;
         FLightMap? lightMap = Ar.Read<ELightMapType>() switch
         {
             ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
@@ -49,17 +49,17 @@ public class FStaticReceiverData
             _ => null
         };
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DECAL_SHADOWMAPS)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_SHADOWMAPS)
         {
             Ar.ReadArray(() => new FPackageIndex(Ar)); // ShadowMap1D;
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DECAL_SERIALIZE_BSP_ELEMENT)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_SERIALIZE_BSP_ELEMENT)
         {
             Ar.Read<int>(); // Data
         }
 
-        if( Ar.Ver >= EUnrealEngineObjectUE3Version.VER_STATIC_DECAL_INSTANCE_INDEX)
+        if( Ar.Ver >= EUnrealEngineObjectUE3Version.STATIC_DECAL_INSTANCE_INDEX)
         {
             Ar.Read<int>(); // InstanceIndex
         }
@@ -113,7 +113,7 @@ public class FDecalVertex : IUStruct
     {
         Position = Ar.Read<FVector>();
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DECAL_VERTEX_FACTORY_VER1 && Ar.Ver < EUnrealEngineObjectUE3Version.VER_DECAL_VERTEX_FACTORY_VER2)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_VERTEX_FACTORY_VER1 && Ar.Ver < EUnrealEngineObjectUE3Version.DECAL_VERTEX_FACTORY_VER2)
         {
         }
         else
@@ -121,22 +121,22 @@ public class FDecalVertex : IUStruct
             TangentX = new FPackedNormal(Ar);
         }
 
-        if (false) // Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVE_BINORMAL_TANGENT_VECTOR
+        if (false) // Ar.Ver < EUnrealEngineObjectUE3Version.REMOVE_BINORMAL_TANGENT_VECTOR
         {
             TangentY = new FPackedNormal(Ar);
         }
         TangentZ = new FPackedNormal(Ar);
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_DECAL_VERTEX_FACTORY_VER1)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.DECAL_VERTEX_FACTORY_VER1)
         {
             UV = new FVector2D(Ar);
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DECAL_ADDED_DECAL_VERTEX_LIGHTMAP_COORD)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_ADDED_DECAL_VERTEX_LIGHTMAP_COORD)
         {
             LightMapCoordinate = new FVector2D(Ar);
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_DECAL_REMOVED_2X2_NORMAL_TRANSFORM)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.DECAL_REMOVED_2X2_NORMAL_TRANSFORM)
         {
             NormalTransform0 = new FVector2D(Ar);
             NormalTransform1 = new FVector2D(Ar);
@@ -148,19 +148,19 @@ public class FDecalRenderData
 {
     public FDecalRenderData(FAssetArchive Ar)
     {
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_DECAL_STATIC_DECALS_SERIALIZED)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.DECAL_STATIC_DECALS_SERIALIZED)
         {
             Ar.ReadBulkArray(() => new FOldDecalVertex(Ar));
 
             Ar.ReadBulkArray<short>();
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
             {
                 Ar.Read<int>(); // LegacySize
                 new FRawStaticIndexBuffer(Ar);
                 Ar.Read<int>(); // NumTriangles
             }
 
-            if (Ar.Ver == EUnrealEngineObjectUE3Version.VER_DECAL_RENDERDATA)
+            if (Ar.Ver == EUnrealEngineObjectUE3Version.DECAL_RENDERDATA)
             {
                 new FPackageIndex(Ar); // LightMap
             }
@@ -185,20 +185,20 @@ public class UDecalComponent : USceneComponent
         DecalMaterial = GetOrDefault<FPackageIndex>(nameof(DecalMaterial), new FPackageIndex());
         DecalSize = GetOrDefault<FVector>(nameof(DecalSize));
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DECAL_STATIC_DECALS_SERIALIZED && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_STATIC_DECALS_SERIALIZED && Ar.Game < EGame.GAME_UE4_0)
         {
             Ar.ReadArray(() => new FStaticReceiverData(Ar));
         }
         else if (Ar.Game < EGame.GAME_UE4_0)
         {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DECAL_REFACTOR)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_REFACTOR)
             {
             }
-            else if (Ar.Ver == EUnrealEngineObjectUE3Version.VER_DECAL_RENDERDATA)
+            else if (Ar.Ver == EUnrealEngineObjectUE3Version.DECAL_RENDERDATA)
             {
                 Ar.ReadArray(() => new FDecalRenderData(Ar));
             }
-            else if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DECAL_RENDERDATA_POINTER)
+            else if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_RENDERDATA_POINTER)
             {
                 Ar.ReadArray(() => new FDecalRenderData(Ar));
             }

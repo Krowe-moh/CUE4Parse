@@ -23,7 +23,7 @@ public class FSkinWeightInfo
     {
         this.bUse16BitBoneWeight = bUse16BitBoneWeight;
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH)
             NUM_INFLUENCES_UE3 = 4;
 
         if (Ar.Game < EGame.GAME_UE4_0)
@@ -31,7 +31,7 @@ public class FSkinWeightInfo
             BoneIndex = new ushort[NUM_INFLUENCES_UE3];
             BoneWeight = new ushort[NUM_INFLUENCES_UE3];
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_USE_UMA_RESOURCE_ARRAY_MESH_DATA)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.USE_UMA_RESOURCE_ARRAY_MESH_DATA)
             {
                 var idx = Ar.ReadArray<byte>(NUM_INFLUENCES_UE3);
                 var wt = Ar.ReadArray<byte>(NUM_INFLUENCES_UE3);

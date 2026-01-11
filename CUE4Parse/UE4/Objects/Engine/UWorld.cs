@@ -3,7 +3,7 @@ using CUE4Parse.UE4.Assets.Exports.Actor;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
-    
+
 namespace CUE4Parse.UE4.Objects.Engine
 {
     public class UWorld : Assets.Exports.UObject
@@ -17,7 +17,7 @@ namespace CUE4Parse.UE4.Objects.Engine
             if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 8;
             base.Deserialize(Ar, validPos);
             PersistentLevel = new FPackageIndex(Ar);
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_WORLD_PERSISTENT_FACEFXANIMSET)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.WORLD_PERSISTENT_FACEFXANIMSET)
             {
                 new FPackageIndex(Ar); // PersistentFaceFXAnimSet
             }
@@ -29,11 +29,11 @@ namespace CUE4Parse.UE4.Objects.Engine
                     new FLevelViewportInfo(Ar);
                 }
                 new FPackageIndex(Ar);
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_REMOVED_DECAL_MANAGER_FROM_UWORLD)
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_DECAL_MANAGER_FROM_UWORLD)
                 {
                     new FPackageIndex(Ar);
                 }
-              
+
             }
             ExtraReferencedObjects = Ar.ReadArray(() => new FPackageIndex(Ar));
             if (Ar.Game >= EGame.GAME_UE4_0)

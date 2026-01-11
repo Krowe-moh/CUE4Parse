@@ -41,7 +41,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             ExportCount = Ar.Read<int>();
             NameCount = Ar.Read<int>();
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.VER_LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX)
             {
                 NetObjectCount = Ar.Read<int>();
             }
@@ -254,7 +254,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                     // this file is unversioned, remember that, then use current versions
                     bUnversioned = true;
                     FileVersionUE = Ar.Ver;
-                    FileVersionLicenseeUE = EUnrealEngineObjectLicenseeUEVersion.VER_LIC_AUTOMATIC_VERSION;
+                    FileVersionLicenseeUE = EUnrealEngineObjectLicenseeUEVersion.LIC_AUTOMATIC_VERSION;
                 }
                 else
                 {
@@ -287,12 +287,12 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.Ver = FileVersionUE;
             }
 
-            if (FileVersionUE > EUnrealEngineObjectUE3Version.VER_MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE && FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
+            if (FileVersionUE > EUnrealEngineObjectUE3Version.MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE && FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
             {
                 TotalHeaderSize = Ar.Read<int>();
             }
 
-            if (FileVersionUE > EUnrealEngineObjectUE3Version.VER_FOLDER_ADDED)
+            if (FileVersionUE > EUnrealEngineObjectUE3Version.FOLDER_ADDED)
             {
                 PackageName = Ar.ReadFString();
             }
@@ -362,12 +362,12 @@ namespace CUE4Parse.UE4.Objects.UObject
                 MetaDataOffset = Ar.Read<int>();
             }
 
-            if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_LINKER_DEPENDENCIES)
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.ADDED_LINKER_DEPENDENCIES)
             {
                 DependsOffset = Ar.Read<int>();
             }
 
-            if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ADDED_CROSSLEVEL_REFERENCES)
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.ADDED_CROSSLEVEL_REFERENCES)
             {
                 ImportExportGuidsOffset = Ar.Read<int>();
                 ImportGuidsCount = Ar.Read<int>();
@@ -385,7 +385,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 SearchableNamesOffset = Ar.Read<int>();
             }
 
-            if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_ASSET_THUMBNAILS_IN_PACKAGES)
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.ASSET_THUMBNAILS_IN_PACKAGES)
             {
                 ThumbnailTableOffset = Ar.Read<int>();
             }
@@ -454,12 +454,12 @@ namespace CUE4Parse.UE4.Objects.UObject
             }
             else
             {
-                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_PACKAGEFILESUMMARY_CHANGE)
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.PACKAGEFILESUMMARY_CHANGE)
                 {
                     var EngineVersion = Ar.Read<int>();
                 }
 
-                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_PACKAGEFILESUMMARY_CHANGE_COOK_VER_ADDED)
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.PACKAGEFILESUMMARY_CHANGE_COOK_VER_ADDED)
                 {
                     var CookerVersion = Ar.Read<int>();
                 }
@@ -481,7 +481,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 return (compressionFlags & ~CompressionFlagsMask) == 0;
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_PACKAGE_COMPRESSION_SUPPORT)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_PACKAGE_COMPRESSION_SUPPORT)
             {
                 CompressionFlags = Ar.Read<ECompressionFlags>();
 
@@ -506,14 +506,14 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             // No longer used: List of additional packages that are needed to be cooked for this package (ie streaming levels)
             // Keeping the serialization code for backwards compatibility without bumping the package version
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDITIONAL_COOK_PACKAGE_SUMMARY)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDITIONAL_COOK_PACKAGE_SUMMARY)
             {
                 var additionalPackagesToCook = Ar.ReadArray(Ar.ReadFString);
             }
 
             if (legacyFileVersion > -7)
             {
-                if (FileVersionUE >= EUnrealEngineObjectUE3Version.VER_TEXTURE_PREALLOCATION)
+                if (FileVersionUE >= EUnrealEngineObjectUE3Version.TEXTURE_PREALLOCATION)
                 {
                     TextureAllocations = Ar.ReadArray(() => new FTextureAllocations(Ar));
                 }

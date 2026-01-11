@@ -29,7 +29,7 @@ public class FTextureLookup
         TexCoordIndex = Ar.Read<int>();
         TextureIndex = Ar.Read<int>();
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_FONT_FORMAT_AND_UV_TILING_CHANGES)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.FONT_FORMAT_AND_UV_TILING_CHANGES)
         {
             var uAndVScale = Ar.Read<int>();
             UScale = uAndVScale;
@@ -154,12 +154,12 @@ public class UMaterial : UMaterialInterface
             return;
 
         var QualityMask = 0;
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_MATERIAL_QUALITY_LEVEL)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MATERIAL_QUALITY_LEVEL)
         {
             QualityMask = Ar.Read<int>();
         }
 
-        for (int QualityIndex = 0; QualityIndex < (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_FALLBACKS && Ar.Game != EGame.GAME_RocketLeague ? 2 : (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR ? 1 : 0)); QualityIndex++)
+        for (int QualityIndex = 0; QualityIndex < (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_FALLBACKS && Ar.Game != EGame.GAME_RocketLeague ? 2 : (Ar.Ver >= EUnrealEngineObjectUE3Version.RENDERING_REFACTOR ? 1 : 0)); QualityIndex++)
         {
             if ((QualityMask & (1<<QualityIndex)) == 0)
             {
@@ -168,9 +168,9 @@ public class UMaterial : UMaterialInterface
 
             if (Ar.Ver < EUnrealEngineObjectUE4Version.PURGED_FMATERIAL_COMPILE_OUTPUTS)
             {
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FMATERIAL_COMPILATION_ERRORS)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.FMATERIAL_COMPILATION_ERRORS)
                 {
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_ERROR_RESAVE)
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_ERROR_RESAVE)
                     {
                         Ar.ReadArray(Ar.ReadFString); // CompileErrors
                     }
@@ -180,7 +180,7 @@ public class UMaterial : UMaterialInterface
                     }
                 }
 
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_TEXTUREDEPENDENCYLENGTH)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_TEXTUREDEPENDENCYLENGTH)
                 {
                     Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>()); // TextureDependencyLengthMap
                     Ar.Read<int>(); // MaxTextureDependencyLength
@@ -193,7 +193,7 @@ public class UMaterial : UMaterialInterface
                     Ar.Read<int>(); // NumUserTexCoords;
                 }
 
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.VER_UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
                 {
                     Ar.ReadArray(() => new UniformExpression(Ar)); // UniformVectorExpressions
                     Ar.ReadArray(() => new UniformExpression(Ar)); // UniformScalarExpressions
@@ -210,7 +210,7 @@ public class UMaterial : UMaterialInterface
                             .Where(t => t != null)!);
 
                     Ar.ReadArray(() => new UniformExpression(Ar)); // UniformCubeTextureExpressions
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_EDITOR_VERTEX_SHADER)
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_EDITOR_VERTEX_SHADER)
                     {
                         Ar.ReadArray(() => new UniformExpression(Ar));
                         Ar.ReadArray(() => new UniformExpression(Ar));
@@ -225,21 +225,21 @@ public class UMaterial : UMaterialInterface
                     ); // UniformExpressionTextures
                 }
 
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_RENDERING_REFACTOR)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
                 {
                     Ar.ReadBoolean(); // bUsesSceneColor
                     Ar.ReadBoolean(); // bUsesSceneDepth
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICPARAMETERS_ADDED)
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICPARAMETERS_ADDED)
                     {
                         Ar.ReadBoolean(); // bUsesDynamicParameter
                     }
 
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATEXP_LIGHTMAPUVS_ADDED)
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATEXP_LIGHTMAPUVS_ADDED)
                     {
                         Ar.ReadBoolean(); // bUsesLightmapUVs
                     }
 
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_EDITOR_VERTEX_SHADER)
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_EDITOR_VERTEX_SHADER)
                     {
                         Ar.ReadBoolean(); // bUsesMaterialVertexPositionOffset
                     }
@@ -247,12 +247,12 @@ public class UMaterial : UMaterialInterface
                     Ar.Read<int>(); // UsingTransforms
                 }
 
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_TEXTUREDENSITY)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.TEXTUREDENSITY)
                 {
                     Ar.ReadArray(() => new FTextureLookup(Ar));
                 }
 
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_FALLBACK_DROPPED_COMPONENTS_TRACKING)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.FALLBACK_DROPPED_COMPONENTS_TRACKING)
                 {
                     Ar.Read<int>(); // DummyDroppedFallbackComponents
                 }
@@ -260,7 +260,7 @@ public class UMaterial : UMaterialInterface
         }
 
         //FMaterialResource::Serialize
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MATERIAL_BLEND_OVERRIDE)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_BLEND_OVERRIDE)
         {
             Ar.Read<int>();
             Ar.ReadBoolean();

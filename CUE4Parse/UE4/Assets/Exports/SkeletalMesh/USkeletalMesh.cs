@@ -149,25 +149,25 @@ public partial class USkeletalMesh : UObject
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADD_SKELMESH_NAMEINDEXMAP)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADD_SKELMESH_NAMEINDEXMAP)
             {
                 Ar.ReadMap(() => Ar.ReadFName(), () => Ar.Read<int>()); // NameIndexMap
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SKELMESH_BONE_KDOP)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELMESH_BONE_KDOP)
             {
                 Ar.ReadArray<int>(); // PerPolyBoneKDOPs
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_MAPPING)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_MAPPING)
             {
                 Ar.ReadArray(Ar.ReadFString); // BoneBreakNames
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_CUSTOM_MAPPING)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_CUSTOM_MAPPING)
                 {
                     Ar.ReadArray(Ar.Read<int>); // BoneBreakOptions
                 }
             }
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_APEX_CLOTHING)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.APEX_CLOTHING)
             {
                 // ApexClothingAsset doesn't have a serilize func??? help.
                 var ApexClothingAssetcount = Ar.Read<int>();
@@ -176,11 +176,11 @@ public partial class USkeletalMesh : UObject
                     Ar.Position = validPos;
                     return;
                 }
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_DYNAMICTEXTUREINSTANCES)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICTEXTUREINSTANCES)
                 {
                     Ar.ReadArray(Ar.Read<float>); // CachedStreamingTextureFactors
                 }
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_SKELETAL_MESH_SIMPLIFICATION)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELETAL_MESH_SIMPLIFICATION)
                 {
                     var bHaveSourceData = Ar.ReadBoolean();
                     if (bHaveSourceData)

@@ -74,9 +74,9 @@ public class FStaticMeshComponentLODInfo
             }
         }
 
-        if (!stripFlags.IsClassDataStripped(OverrideColorsStripFlag) && Ar.Ver >= EUnrealEngineObjectUE3Version.VER_MESH_PAINT_SYSTEM_ENUM)
+        if (!stripFlags.IsClassDataStripped(OverrideColorsStripFlag) && Ar.Ver >= EUnrealEngineObjectUE3Version.MESH_PAINT_SYSTEM_ENUM)
         {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VER_OVERWRITE_VERTEX_COLORS_MEM_OPTIMIZED)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.OVERWRITE_VERTEX_COLORS_MEM_OPTIMIZED)
             {
                 var bLoadVertexColorData = Ar.Read<byte>();
                 if (bLoadVertexColorData == 1)
@@ -91,7 +91,7 @@ public class FStaticMeshComponentLODInfo
             }
         }
 
-        if (!stripFlags.IsEditorDataStripped() && !Ar.IsFilterEditorOnly && Ar.Ver >= EUnrealEngineObjectUE3Version.VER_PRESERVE_SMC_VERT_COLORS)
+        if (!stripFlags.IsEditorDataStripped() && !Ar.IsFilterEditorOnly && Ar.Ver >= EUnrealEngineObjectUE3Version.PRESERVE_SMC_VERT_COLORS)
         {
             PaintedVertices = Ar.ReadArray(() => new FPaintedVertex(Ar));
         }
