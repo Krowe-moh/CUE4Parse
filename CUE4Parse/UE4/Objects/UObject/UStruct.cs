@@ -50,9 +50,13 @@ public class UStruct : UField
             Ar.ReadFName();
         }
 
-        if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedCppTextToUStruct && Ar.Ver < EUnrealEngineObjectUE4Version.CONSOLIDATE_HEADER_PARSER_ONLY_PROPERTIES)
+        if (Ar.Ver < EUnrealEngineObjectUE4Version.CONSOLIDATE_HEADER_PARSER_ONLY_PROPERTIES)
         {
-            new FPackageIndex(Ar); // CppText
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedCppTextToUStruct)
+            {
+                new FPackageIndex(Ar); // CppText
+            }
+
             Ar.Read<int>(); // Line
             Ar.Read<int>(); // TextPos
         }

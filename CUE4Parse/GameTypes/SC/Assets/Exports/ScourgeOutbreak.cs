@@ -4,3 +4,4 @@ namespace CUE4Parse.GameTypes.ScourgeOutbreak.Assets.Exports;
 
 public class UScParticleSystemComponent : UComponent;
 public class UScSkeletalMeshComponent : UComponent;
+public class UScAudioComponent : UComponent;

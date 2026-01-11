@@ -12,8 +12,8 @@ namespace CUE4Parse.UE4.Objects.UObject
 	    FUNC_RequiredAPI		= 0x00000002,	// Indicates this function is DLL exported/imported.
 	    FUNC_BlueprintAuthorityOnly= 0x00000004,   // Function will only run if the object has network authority
 	    FUNC_BlueprintCosmetic	= 0x00000008,   // Function is cosmetic in nature and should not be invoked on dedicated servers
-	    // FUNC_				= 0x00000010,   // unused.
-	    // FUNC_				= 0x00000020,   // unused.
+	    FUNC_PreOperator		= 0x00000010,   // Unary operator is a prefix operator.
+	    FUNC_Singular			= 0x00000020,   // Function cannot be reentered.
 	    FUNC_Net				= 0x00000040,   // Function is network-replicated.
 	    FUNC_NetReliable		= 0x00000080,   // Function should be sent reliably on the network.
 	    FUNC_NetRequest			= 0x00000100,	// Function is sent to a net service

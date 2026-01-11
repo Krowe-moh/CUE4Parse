@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace CUE4Parse.UE4.Assets.Exports.Sound
 {
-    public struct NodeEditorData
+    public struct FSoundCueEditorData
     {
         public int X;
         public int Y;
@@ -16,26 +16,22 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
     public class USoundCue : USoundBase
     {
         public FPackageIndex? FirstNode;
-        public Dictionary<FPackageIndex?, NodeEditorData>? EditorData;
+        public Dictionary<FPackageIndex, FSoundCueEditorData>? EditorData;
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
             FirstNode = GetOrDefault<FPackageIndex>(nameof(FirstNode));
 
-            // ver is temp.
+            if (Ar.Game == EGame.GAME_ScourgeOutbreak) return; // Editor Data Removed
+
+            // Todo: Find actual starting ver
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.CONVERT_KISMET_OBJECTS && Ar.Ver < EUnrealEngineObjectUE4Version.SOUND_NODE_INHERIT_FROM_ED_GRAPH_NODE)
             {
-                EditorData = new Dictionary<FPackageIndex, NodeEditorData>();
-                int Count = Ar.Read<int>();
-                for (int i = 0; i < Count; i++)
-                {
-                    var key = new FPackageIndex(Ar); // Sometimes can be null, ReadMap can't be used.
-                    var value = Ar.Read<NodeEditorData>();
-
-                    if (key != null)
-                        EditorData[key] = value;
-                }
+                EditorData = Ar.ReadMap(
+                    () => new FPackageIndex(Ar),
+                    () => Ar.Read<FSoundCueEditorData>()
+                );
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.COOKED_ASSETS_IN_EDITOR_SUPPORT)
@@ -48,19 +44,10 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
         {
             base.WriteJson(writer, serializer);
 
-            if (EditorData != null && EditorData.Count > 0)
+            if (EditorData.Count > 0)
             {
                 writer.WritePropertyName("EditorData");
-                writer.WriteStartObject();
-
-                foreach (var kvp in EditorData)
-                {
-                    string keyStr = kvp.Key?.ToString() ?? "null";
-                    writer.WritePropertyName(keyStr);
-                    serializer.Serialize(writer, kvp.Value);
-                }
-
-                writer.WriteEndObject();
+                serializer.Serialize(writer, EditorData);
             }
         }
     }

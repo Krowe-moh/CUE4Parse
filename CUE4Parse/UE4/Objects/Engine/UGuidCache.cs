@@ -16,7 +16,7 @@ namespace CUE4Parse.UE4.Objects.Engine
             PackageGuidMap = Ar.ReadMap(Ar.ReadFName, () => Ar.Read<FGuid>());
         }
 
-        /*protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
+        protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
         {
             base.WriteJson(writer, serializer);
 
@@ -25,6 +25,6 @@ namespace CUE4Parse.UE4.Objects.Engine
                 writer.WritePropertyName("PackageGuidMap");
                 serializer.Serialize(writer, PackageGuidMap);
             }
-        }*/
+        }
     }
 }
