@@ -22,12 +22,9 @@ public class USoundClass : UObject
 
         if (Ar.Game == EGame.GAME_ScourgeOutbreak) return; // Editor Data Removed
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SOUND_CLASS_SERIALISATION_UPDATE)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SOUND_CLASS_SERIALISATION_UPDATE && Ar.Ver < EUnrealEngineObjectUE4Version.SOUND_CLASS_GRAPH_EDITOR)
         {
-            EditorData = Ar.ReadMap(
-                () => new FPackageIndex(Ar),
-                () => Ar.Read<FSoundCueEditorData>()
-            );
+            EditorData = Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<FSoundCueEditorData>());
         }
     }
 
@@ -35,7 +32,7 @@ public class USoundClass : UObject
     {
         base.WriteJson(writer, serializer);
 
-        if (EditorData.Count > 0)
+        if (EditorData?.Count > 0)
         {
             writer.WritePropertyName("EditorData");
             serializer.Serialize(writer, EditorData);

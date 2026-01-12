@@ -26,12 +26,9 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
             if (Ar.Game == EGame.GAME_ScourgeOutbreak) return; // Editor Data Removed
 
             // Todo: Find actual starting ver
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.CONVERT_KISMET_OBJECTS && Ar.Ver < EUnrealEngineObjectUE4Version.SOUND_NODE_INHERIT_FROM_ED_GRAPH_NODE)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128 && Ar.Ver < EUnrealEngineObjectUE4Version.SOUND_NODE_INHERIT_FROM_ED_GRAPH_NODE)
             {
-                EditorData = Ar.ReadMap(
-                    () => new FPackageIndex(Ar),
-                    () => Ar.Read<FSoundCueEditorData>()
-                );
+                EditorData = Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<FSoundCueEditorData>());
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.COOKED_ASSETS_IN_EDITOR_SUPPORT)
@@ -44,7 +41,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
         {
             base.WriteJson(writer, serializer);
 
-            if (EditorData.Count > 0)
+            if (EditorData?.Count > 0)
             {
                 writer.WritePropertyName("EditorData");
                 serializer.Serialize(writer, EditorData);

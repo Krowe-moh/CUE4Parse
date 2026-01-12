@@ -39,7 +39,7 @@ public class UFunction : UStruct
         }
 
         FunctionFlags = Ar.Read<EFunctionFlags>();
-        // rocket league, maybe use flag?
+        // for rocket league maybe use flag
         if (Ar.Game is EGame.GAME_AshesOfCreation or EGame.GAME_RocketLeague) Ar.Position += 4;
 
         // Replication info
@@ -49,7 +49,7 @@ public class UFunction : UStruct
             var RepOffset = Ar.Read<short>();
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction)// && !Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform != ETexturePlatform.XboxAndPlaystation
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && Ar.Game < EGame.GAME_UE4_0)// && !Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform != ETexturePlatform.XboxAndPlaystation
         {
             Ar.ReadFName(); // FriendlyName
         }

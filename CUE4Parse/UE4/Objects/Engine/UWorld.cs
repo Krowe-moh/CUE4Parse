@@ -17,13 +17,13 @@ namespace CUE4Parse.UE4.Objects.Engine
             if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 8;
             base.Deserialize(Ar, validPos);
             PersistentLevel = new FPackageIndex(Ar);
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.WORLD_PERSISTENT_FACEFXANIMSET)
-            {
-                new FPackageIndex(Ar); // PersistentFaceFXAnimSet
-            }
 
             if (Ar.Game < EGame.GAME_UE4_0)
             {
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.WORLD_PERSISTENT_FACEFXANIMSET)
+                {
+                    new FPackageIndex(Ar); // PersistentFaceFXAnimSet
+                }
                 for (int i = 0; i < 4; i++)
                 {
                     new FLevelViewportInfo(Ar);

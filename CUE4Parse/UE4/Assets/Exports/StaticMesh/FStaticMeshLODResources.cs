@@ -246,16 +246,16 @@ public class FStaticMeshLODResources
                 Ar.Position += 8;
                 goto SkipWireFrame;
             }
-            if (Ar.Game < EGame.GAME_UE4_0) WireframeIndexBuffer = new FRawStaticIndexBuffer(Ar);
+
+            if (!stripDataFlags.IsEditorDataStripped())
+                WireframeIndexBuffer = new FRawStaticIndexBuffer(Ar);
+
             SkipWireFrame:
             if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADOW_VOLUMES)
             {
                 Ar.ReadBulkArray(() => Ar.ReadBytes(16)); // LegacyEdges
                 Ar.ReadArray<byte>(); // LegacyShadowTriangleDoubleSided
             }
-
-            if (!stripDataFlags.IsEditorDataStripped() && Ar.Game >= EGame.GAME_UE4_0)
-                WireframeIndexBuffer = new FRawStaticIndexBuffer(Ar);
 
             if (!stripDataFlags.IsClassDataStripped((byte)EClassDataStripFlag.CDSF_AdjacencyData) && Ar.Ver > EUnrealEngineObjectUE3Version.CRACK_FREE_DISPLACEMENT_SUPPORT)
                 AdjacencyIndexBuffer = new FRawStaticIndexBuffer(Ar);
