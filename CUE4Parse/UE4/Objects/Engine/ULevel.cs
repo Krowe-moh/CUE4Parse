@@ -227,121 +227,126 @@ public class ULevel : Assets.Exports.UObject
         URL = new FURL(Ar);
         Model = new FPackageIndex(Ar);
         ModelComponents = Ar.ReadArray(() => new FPackageIndex(Ar));
-        // if ue3
+
         if (Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_USEQUENCE)
         {
             Ar.ReadArray(() => new FPackageIndex(Ar)); // GameSequences
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.SPLIT_SOUND_FROM_TEXTURE_STREAMING)
+        if (Ar.Game < EGame.GAME_UE4_0)
         {
-            Ar.ReadArray(() => new FStreamableTextureInfo(Ar)); // ResourceInfos (FStreamableResourceInstance but same struct as FStreamableTextureInfo)
-        }
-        else
-        {
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.SPLIT_SOUND_FROM_TEXTURE_STREAMING)
             {
-                Ar.ReadArray(() => new FStreamableTextureInfo(Ar)); // TextureInfos
+                Ar.ReadArray(() => new FStreamableTextureInfo(Ar)); // ResourceInfos (FStreamableResourceInstance but same struct as FStreamableTextureInfo)
             }
             else
             {
-                Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadArray(() => new FStreamableTextureInstance(Ar))); // TextureToInstancesMap
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
+                {
+                    Ar.ReadArray(() => new FStreamableTextureInfo(Ar)); // TextureInfos
+                }
+                else
+                {
+                    Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadArray(() => new FStreamableTextureInstance(Ar))); // TextureToInstancesMap
+                }
+
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
+                {
+                    Ar.ReadArray(() => new FStreamableSoundInfo(Ar)); // SoundInfos
+                }
             }
 
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICTEXTUREINSTANCES)
             {
-                Ar.ReadArray(() => new FStreamableSoundInfo(Ar)); // SoundInfos
-            }
-        }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICTEXTUREINSTANCES)
-        {
-            Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadArray(() => new FDynamicTextureInstance(Ar))); // DynamicTextureInstances
-        }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.APEX_DESTRUCTION)
-        {
-            var size = Ar.Read<int>();
-            Ar.Position += size;
-        }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOOK_PHYS_BSP_TERRAIN)
-        {
-            Ar.ReadBulkArray<byte>(); // CachedPhysBSPData
-        }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOOK_PHYS_STATICMESH_CACHE)
-        {
-            Ar.ReadMap(() => new FPackageIndex(Ar), () => new FCachedPhysSMData(Ar)); // CachedPhysSMDataMap
-            Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>())); // CachedPhysSMDataStore
-        }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOOK_PERTRI_PHYS_STATICMESH)
-        {
-            Ar.ReadMap(() => new FPackageIndex(Ar), () => new FCachedPhysSMData(Ar)); // CachedPhysSMDataMap
-            Ar.ReadArray(() => Ar.ReadBulkArray<byte>()); // CachedPhysPerTriSMDataStore
-        }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SAVE_PRECOOK_PHYS_VERSION)
-        {
-            Ar.Read<int>(); // CachedPhysBSPDataVersion
-            Ar.Read<int>(); // CachedPhysSMDataVersion
-        }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.LEVEL_FORCE_STREAM_TEXTURES)
-        {
-            Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadBoolean()); // ForceStreamTextures
-        }
-
-        if (Ar.Ver > EUnrealEngineObjectUE3Version.CONVEX_BSP)
-        {
-            Ar.ReadArray(() => Ar.ReadBulkArray<byte>());
-            Ar.Read<int>();
-        }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.PERLEVEL_NAVLIST)
-        {
-            NavListStart = new FPackageIndex(Ar);
-            NavListEnd = new FPackageIndex(Ar);
-            new FPackageIndex(Ar); // CoverListStart
-            new FPackageIndex(Ar); // CoverListEnd
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PYLONLIST_IN_ULEVEL && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVED_OLD_NAVMESH)
-            {
-                new FPackageIndex(Ar);
-                new FPackageIndex(Ar);
+                Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadArray(() => new FDynamicTextureInstance(Ar))); // DynamicTextureInstances
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.COVERGUIDREFS_IN_ULEVEL)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.APEX_DESTRUCTION)
             {
-                Ar.Read<int>();
-                Ar.Read<int>();
+                var size = Ar.Read<int>();
+                Ar.Position += size;
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOOK_PHYS_BSP_TERRAIN)
+            {
+                Ar.ReadBulkArray<byte>(); // CachedPhysBSPData
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOOK_PHYS_STATICMESH_CACHE)
+            {
+                Ar.ReadMap(() => new FPackageIndex(Ar), () => new FCachedPhysSMData(Ar)); // CachedPhysSMDataMap
+                Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>())); // CachedPhysSMDataStore
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOOK_PERTRI_PHYS_STATICMESH)
+            {
+                Ar.ReadMap(() => new FPackageIndex(Ar), () => new FCachedPhysSMData(Ar)); // CachedPhysSMDataMap
+                Ar.ReadArray(() => Ar.ReadBulkArray<byte>()); // CachedPhysPerTriSMDataStore
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.SAVE_PRECOOK_PHYS_VERSION)
+            {
+                Ar.Read<int>(); // CachedPhysBSPDataVersion
+                Ar.Read<int>(); // CachedPhysSMDataVersion
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.LEVEL_FORCE_STREAM_TEXTURES)
+            {
+                Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadBoolean()); // ForceStreamTextures
+            }
+
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.CONVEX_BSP)
+            {
+                Ar.ReadArray(() => Ar.ReadBulkArray<byte>());
                 Ar.Read<int>();
             }
 
-            Ar.ReadArray(() => new FPackageIndex(Ar));
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.GI_CHARACTER_LIGHTING)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PERLEVEL_NAVLIST)
             {
-                new FPackageIndex(Ar);
-            }
+                NavListStart = new FPackageIndex(Ar);
+                NavListEnd = new FPackageIndex(Ar);
+                new FPackageIndex(Ar); // CoverListStart
+                new FPackageIndex(Ar); // CoverListEnd
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.PYLONLIST_IN_ULEVEL && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVED_OLD_NAVMESH)
+                {
+                    new FPackageIndex(Ar);
+                    new FPackageIndex(Ar);
+                }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.NONUNIFORM_PRECOMPUTED_VISIBILITY)
-            {
-                new FPrecomputedVisibilityHandler(Ar);
-            }
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.COVERGUIDREFS_IN_ULEVEL)
+                {
+                    Ar.Read<int>();
+                    Ar.Read<int>();
+                    Ar.Read<int>();
+                }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOMPUTED_VISIBILITY)
-            {
-                new FBox(Ar); // LegacyPrecomputedVisibilityVolume
-                Ar.Read<float>(); // LegacyPrecomputedVisibilityCellSize
-                Ar.ReadArray(() => Ar.ReadArray(() => Ar.Read<char>())); // LegacyPrecomputedVisibilityData
-            }
+                Ar.ReadArray(() => new FPackageIndex(Ar));
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.GI_CHARACTER_LIGHTING)
+                {
+                    new FPackageIndex(Ar);
+                }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.IMAGE_REFLECTION_SHADOWING)
-            {
-                //new FPrecomputedVolumeDistanceField(Ar);
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.NONUNIFORM_PRECOMPUTED_VISIBILITY)
+                {
+                    new FPrecomputedVisibilityHandler(Ar);
+                }
+
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOMPUTED_VISIBILITY)
+                {
+                    new FBox(Ar); // LegacyPrecomputedVisibilityVolume
+                    Ar.Read<float>(); // LegacyPrecomputedVisibilityCellSize
+                    Ar.ReadArray(() => Ar.ReadArray(() => Ar.Read<char>())); // LegacyPrecomputedVisibilityData
+                }
+
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.IMAGE_REFLECTION_SHADOWING)
+                {
+                    //new FPrecomputedVolumeDistanceField(Ar);
+                }
+
             }
+            return;
         }
-        return;
+
         LevelScriptActor = new FPackageIndex(Ar);
         if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.RemovedTextureStreamingLevelData) return;
         NavListStart = new FPackageIndex(Ar);

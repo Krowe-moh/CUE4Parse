@@ -19,14 +19,26 @@ public class FRawStaticIndexBuffer() : FRawIndexBuffer
 
             if (Ar.Versions["RawIndexBuffer.HasShouldExpandTo32Bit"])
             {
-                //Indices16 =
-                    Ar.ReadBulkArray<ushort>();
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.RENDERING_REFACTOR) Ar.Read<int>();
+                var bShouldExpandTo32Bit = Ar.ReadBoolean();
+            }
+
+            if (tempAr.Length == 0)
+            {
+                tempAr.Dispose();
+                return;
+            }
+
+            if (is32bit)
+            {
+                var count = (int)tempAr.Length / 4;
+                SetIndices(tempAr.ReadArray<uint>(count));
             }
             else
             {
                 var count = (int)tempAr.Length / 2;
                 SetIndices(tempAr.ReadArray<ushort>(count));
+
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.RENDERING_REFACTOR) Ar.Read<int>();
             }
 
             if (Ar.Game == EGame.GAME_PlayerUnknownsBattlegrounds && Buffer is not null)
