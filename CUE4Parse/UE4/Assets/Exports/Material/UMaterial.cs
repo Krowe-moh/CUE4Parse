@@ -122,8 +122,7 @@ public class UMaterial : UMaterialInterface
                 ReferencedTextures.AddRange(referencedTextures);
         }
 
-        // UE4 has complex FMaterialResource format, so avoid reading anything here, but
-        // scan package's imports for UTexture objects instead
+        // scan package's imports for UTexture objects
         if (Ar is { Game: >= EGame.GAME_UE5_0, Owner.Provider.SkipReferencedTextures: false })
             ScanForTextures(Ar);
 
@@ -161,7 +160,7 @@ public class UMaterial : UMaterialInterface
 
         for (int QualityIndex = 0; QualityIndex < (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_FALLBACKS && Ar.Game != EGame.GAME_RocketLeague ? 2 : (Ar.Ver >= EUnrealEngineObjectUE3Version.RENDERING_REFACTOR ? 1 : 0)); QualityIndex++)
         {
-            if ((QualityMask & (1<<QualityIndex)) == 0)
+            if ((QualityMask & (1 << QualityIndex)) == 0)
             {
                 continue;
             }
@@ -198,6 +197,7 @@ public class UMaterial : UMaterialInterface
                     Ar.ReadArray(() => new UniformExpression(Ar)); // UniformVectorExpressions
                     Ar.ReadArray(() => new UniformExpression(Ar)); // UniformScalarExpressions
                     var textures = Ar.ReadArray(() => new UniformExpression(Ar)); // Uniform2DTextureExpressions
+                   /*
                     var texParams = textures
                         .Select(u => u.Expression)
                         .OfType<FMaterialUniformExpressionTextureParameter>()
@@ -208,7 +208,7 @@ public class UMaterial : UMaterialInterface
                         texParams
                             .Select(idx => idx.TryLoad(out UTexture tex) ? tex : null)
                             .Where(t => t != null)!);
-
+*/
                     Ar.ReadArray(() => new UniformExpression(Ar)); // UniformCubeTextureExpressions
                     if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_EDITOR_VERTEX_SHADER)
                     {
@@ -218,11 +218,12 @@ public class UMaterial : UMaterialInterface
                 }
                 else
                 {
-                    ReferencedTextures.AddRange(
-                        Ar.ReadArray(() => new FPackageIndex(Ar))
-                            .Select(idx => idx.TryLoad(out UTexture texture) ? texture : null)
-                            .Where(t => t != null)!
-                    ); // UniformExpressionTextures
+                    Ar.ReadArray(() => new FPackageIndex(Ar));
+                    //  ReferencedTextures.AddRange(
+                    //        Ar.ReadArray(() => new FPackageIndex(Ar))
+                    //           .Select(idx => idx.TryLoad(out UTexture texture) ? texture : null)
+                    //           .Where(t => t != null)!
+                    //   ); // UniformExpressionTextures
                 }
 
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
@@ -257,6 +258,28 @@ public class UMaterial : UMaterialInterface
                     Ar.Read<int>(); // DummyDroppedFallbackComponents
                 }
             }
+            else
+            {
+                if (Ar is { Game: >= EGame.GAME_UE4_25, Owner.Provider.ReadShaderMaps: true })
+                {
+                    try
+                    {
+                        DeserializeInlineShaderMaps(Ar, LoadedMaterialResources);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Warning(e, "Failed to deserialize inline shader maps.");
+                    }
+                    finally
+                    {
+                        Ar.Position = validPos;
+                    }
+                }
+                else
+                {
+                    Ar.Position = validPos;
+                }
+            }
         }
 
         //FMaterialResource::Serialize
@@ -266,9 +289,6 @@ public class UMaterial : UMaterialInterface
             Ar.ReadBoolean();
             Ar.ReadBoolean();
         }
-
-        // todo
-        Ar.Position = validPos;
     }
 
     public UTexture? GetFirstTexture() => ReferencedTextures.Count > 0 ? ReferencedTextures[0] : null;
