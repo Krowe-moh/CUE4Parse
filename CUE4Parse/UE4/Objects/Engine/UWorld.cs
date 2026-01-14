@@ -18,27 +18,38 @@ namespace CUE4Parse.UE4.Objects.Engine
             base.Deserialize(Ar, validPos);
             PersistentLevel = new FPackageIndex(Ar);
 
-            if (Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.WORLD_PERSISTENT_FACEFXANIMSET && Ar.Game < EGame.GAME_UE4_0)
             {
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.WORLD_PERSISTENT_FACEFXANIMSET)
-                {
-                    new FPackageIndex(Ar); // PersistentFaceFXAnimSet
-                }
+                new FPackageIndex(Ar); // PersistentFaceFXAnimSet
+            }
+
+            if (Ar.Ver < EUnrealEngineObjectUE4Version.ADD_EDITOR_VIEWS)
+            {
                 for (int i = 0; i < 4; i++)
                 {
-                    new FLevelViewportInfo(Ar);
+                    new FLevelViewportInfo(Ar); // EditorViews
                 }
-                new FPackageIndex(Ar);
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_DECAL_MANAGER_FROM_UWORLD)
-                {
-                    new FPackageIndex(Ar);
-                }
-
             }
+
+            if (Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_SAVEGAMESUMMARY)
+            {
+                new FPackageIndex(Ar); // SaveGameSummary
+            }
+
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_DECAL_MANAGER_FROM_UWORLD)
+            {
+                new FPackageIndex(Ar); // DecalManager
+            }
+
             ExtraReferencedObjects = Ar.ReadArray(() => new FPackageIndex(Ar));
             if (Ar.Game >= EGame.GAME_UE4_0)
             {
                 StreamingLevels = Ar.ReadArray(() => new FPackageIndex(Ar));
+            }
+
+            if (Ar.Game >= EGame.GAME_UE4_0 && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_CLIENTDESTROYEDACTORCONTENT)
+            {
+                Ar.ReadArray(() => new FPackageIndex(Ar)); // TempClientDestroyedActorContent
             }
         }
 

@@ -11,7 +11,6 @@ public class UScriptStruct : UStruct
     {
         base.Deserialize(Ar, validPos);
 
-        // temp working ver
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.LIGHTING_CHANNEL_SUPPORT)
         {
             StructFlags = Ar.Read<EStructFlags>();

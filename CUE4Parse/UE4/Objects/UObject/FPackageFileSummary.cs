@@ -205,6 +205,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 Tag = PACKAGE_FILE_TAG;
                 Ar.ReverseBytes = true; // is only used to identify if an archive is reversed. no reverse logic currently
+                throw new ParserException("Byte swapping for packages not supported");
             }
 
             legacyFileVersion = Ar.Read<int>();
@@ -287,12 +288,12 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.Ver = FileVersionUE;
             }
 
-            if (FileVersionUE > EUnrealEngineObjectUE3Version.MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE && FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE && FileVersionUE < EUnrealEngineObjectUE5Version.PACKAGE_SAVED_HASH)
             {
                 TotalHeaderSize = Ar.Read<int>();
             }
 
-            if (FileVersionUE > EUnrealEngineObjectUE3Version.FOLDER_ADDED)
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.FOLDER_ADDED)
             {
                 PackageName = Ar.ReadFString();
             }

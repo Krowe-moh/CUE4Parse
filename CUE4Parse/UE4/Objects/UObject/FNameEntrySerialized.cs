@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 using System.Text;
+using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
@@ -45,8 +46,8 @@ namespace CUE4Parse.UE4.Objects.UObject
             if (Ar.Game < EGame.GAME_UE4_0)
             {
                 _ = (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag)
-                    ? Ar.Read<long>()
-                    : Ar.Read<int>(); // flags
+                    ? (EObjectFlags)Ar.Read<long>()
+                    : Ar.Read<EObjectFlags>(); // flags
             }
             if (bHasNameHashes)
             {

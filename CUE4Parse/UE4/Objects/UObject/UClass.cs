@@ -50,11 +50,11 @@ public class UClass : UStruct
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
+
         if (Ar.Game == EGame.GAME_AWayOut) Ar.Position += 4;
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.Release62)
         {
-            // temp
             Ar.Read<int>(); // classRecordSize
         }
 
@@ -267,7 +267,6 @@ public class UClass : UStruct
             if (!distinct.Add(property.Name.Text)) continue;
             variables.TryAdd(property.GetCppVariable(), EAccessMode.Public); // should always be public
         }
-
         foreach (var childProperty in ChildProperties ?? [])
         {
             if (childProperty is not FProperty property || !distinct.Add(property.Name.Text))
@@ -372,12 +371,10 @@ public class UClass : UStruct
                 {
                     functionStringBuilder.AppendLine($"// Category: {category}");
                 }
-
                 if (editorData.Value.ObjectMetaData.ObjectMetaData.TryGetValue("ToolTip", out var tooltip) && tooltip != null)
                 {
                     functionStringBuilder.AppendLine(string.Join(Environment.NewLine, tooltip.Split(["\r\n", "\n", "\r"], StringSplitOptions.None).Select(line => $"// {line}")));
                 }
-
                 if (editorData.Value.ObjectMetaData.ObjectMetaData.TryGetValue("ModuleRelativePath", out var moduleRelativePath) && moduleRelativePath != null)
                 {
                     functionStringBuilder.AppendLine($"// ModuleRelativePath: {moduleRelativePath}");
@@ -396,7 +393,6 @@ public class UClass : UStruct
                 stringBuilder.CloseBlock("};");
                 return stringBuilder.ToString();
             }
-
             var jumpCodeOffsets = jumpCodeOffsetsMap.TryGetValue(function.Name, out var jumpList) ? jumpList : [];
             foreach (var kismetExpression in function.ScriptBytecode)
             {

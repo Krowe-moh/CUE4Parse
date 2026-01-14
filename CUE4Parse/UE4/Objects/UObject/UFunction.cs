@@ -39,7 +39,6 @@ public class UFunction : UStruct
         }
 
         FunctionFlags = Ar.Read<EFunctionFlags>();
-        // for rocket league maybe use flag
         if (Ar.Game is EGame.GAME_AshesOfCreation or EGame.GAME_RocketLeague) Ar.Position += 4;
 
         // Replication info
@@ -49,7 +48,8 @@ public class UFunction : UStruct
             var RepOffset = Ar.Read<short>();
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && Ar.Game < EGame.GAME_UE4_0)// && !Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform != ETexturePlatform.XboxAndPlaystation
+        // Todo: this doesn't exist in UE3 Console builds
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && Ar.Game < EGame.GAME_UE4_0 && Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
         {
             Ar.ReadFName(); // FriendlyName
         }

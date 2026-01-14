@@ -254,6 +254,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 OuterIndex = new FPackageIndex(Ar.Owner, Ar.Read<int>() ^ AA3Obfuscator);
                 goto aa3Skip;
             }
+
             ClassIndex = new FPackageIndex(Ar);
             SuperIndex = new FPackageIndex(Ar);
             TemplateIndex = Ar.Ver >= EUnrealEngineObjectUE4Version.TemplateIndex_IN_COOKED_EXPORTS ? new FPackageIndex(Ar) : new FPackageIndex();
@@ -304,15 +305,9 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Game >= EGame.GAME_UE4_0)
             {
-                ForcedExport = Ar.ReadBoolean();
+                ForcedExport = Ar.ReadBoolean(); // maybe make this do something
                 NotForClient = Ar.ReadBoolean();
                 NotForServer = Ar.ReadBoolean();
-                PackageGuid = Ar.Ver < EUnrealEngineObjectUE5Version.REMOVE_OBJECT_EXPORT_PACKAGE_GUID ? Ar.Read<FGuid>() : default;
-                IsInheritedInstance = Ar.Ver >= EUnrealEngineObjectUE5Version.TRACK_OBJECT_EXPORT_IS_INHERITED && Ar.ReadBoolean();
-                PackageFlags = Ar.Read<uint>();
-                NotAlwaysLoadedForEditorGame = Ar.Ver >= EUnrealEngineObjectUE4Version.LOAD_FOR_EDITOR_GAME && Ar.ReadBoolean();
-                IsAsset = Ar.Ver >= EUnrealEngineObjectUE4Version.COOKED_ASSETS_IN_EDITOR_SUPPORT && Ar.ReadBoolean();
-                GeneratePublicHash = Ar.Ver >= EUnrealEngineObjectUE5Version.OPTIONAL_RESOURCES && Ar.ReadBoolean();
             }
 
             if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedComponentMapToExports && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_COMPONENT_MAP)
@@ -326,16 +321,25 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.Read<int>(); // ExportFlags
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.LINKERFREE_PACKAGEMAP)
             {
-                Ar.ReadArray<int>(); // NetObjectCount
-                var test = Ar.Read<FGuid>(); // PackageGuid
+                if (Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX)
+                {
+                    Ar.ReadArray<int>(); // NetObjectCount
+                }
+
+                PackageGuid = Ar.Ver < EUnrealEngineObjectUE5Version.REMOVE_OBJECT_EXPORT_PACKAGE_GUID ? Ar.Read<FGuid>() : default;
+                IsInheritedInstance = Ar.Ver >= EUnrealEngineObjectUE5Version.TRACK_OBJECT_EXPORT_IS_INHERITED && Ar.ReadBoolean();
 
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedPackageFlags)
                 {
-                    Ar.Read<int>(); // PackageFlags
+                    PackageFlags = Ar.Read<uint>();
                 }
             }
+
+            NotAlwaysLoadedForEditorGame = Ar.Ver >= EUnrealEngineObjectUE4Version.LOAD_FOR_EDITOR_GAME && Ar.ReadBoolean();
+            IsAsset = Ar.Ver >= EUnrealEngineObjectUE4Version.COOKED_ASSETS_IN_EDITOR_SUPPORT && Ar.ReadBoolean();
+            GeneratePublicHash = Ar.Ver >= EUnrealEngineObjectUE5Version.OPTIONAL_RESOURCES && Ar.ReadBoolean();
 
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
             {

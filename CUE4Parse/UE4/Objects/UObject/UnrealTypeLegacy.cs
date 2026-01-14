@@ -348,6 +348,7 @@ namespace CUE4Parse.UE4.Objects.UObject
     public class UDelegateProperty : UProperty
     {
         public FPackageIndex SignatureFunction;
+        public FPackageIndex? SourceDelegate;
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
@@ -356,7 +357,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedDelegateSourceToUDelegateProperty && Ar.Game < EGame.GAME_UE4_0)
             {
-                new FPackageIndex(Ar); // SourceDelegate
+                SourceDelegate = new FPackageIndex(Ar);
             }
         }
 
@@ -366,12 +367,18 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             writer.WritePropertyName("SignatureFunction");
             serializer.Serialize(writer, SignatureFunction);
+
+            if (!SourceDelegate?.IsNull ?? false)
+            {
+                writer.WritePropertyName("SourceDelegate");
+                serializer.Serialize(writer, SourceDelegate);
+            }
         }
     }
 
     public class UMulticastDelegateProperty : UProperty
     {
-        public FPackageIndex SignatureFunction; // UFunction
+        public FPackageIndex SignatureFunction;
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
