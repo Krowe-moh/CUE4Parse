@@ -166,13 +166,7 @@ public class UObject : AbstractPropertyHolder
 
                 if (Flags.HasFlag(EObjectFlags.RF_Dynamic))
                 {
-                    // objects with dynamic seems to be an export but very odd
-                    Ar.ReadFName(); // Name
-                    new FPackageIndex(Ar); // Outer
-                    new FPackageIndex(Ar); // Class
-                    new FPackageIndex(Ar); // _Linker
-                    Ar.Read<int>(); // Archetype
-                    return;
+                    return; // there some missing data after this
                 }
 
                 if (Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject))

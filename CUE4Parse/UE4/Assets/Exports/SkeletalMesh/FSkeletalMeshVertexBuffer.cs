@@ -59,6 +59,8 @@ public class FSkeletalMeshVertexBuffer
         }
 
         if (Ar.Game < EGame.GAME_UE4_0 && Ar.Game != EGame.GAME_RocketLeague) bUsePackedPosition = false;
+        if (Ar.Versions.Options.TryGetValue("SkeletalMesh.UsePackedPosition", out var value)) bUsePackedPosition = value;
+
         if (!bUseFullPrecisionUVs)
         {
             if (!bUsePackedPosition)
