@@ -3,6 +3,7 @@ using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Engine;
+using CUE4Parse.UE4.Objects.PhysicsEngine;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
@@ -55,6 +56,7 @@ public class UFracturedStaticMesh : UStaticMesh;
 public class UStaticMesh : UObject
 {
     public bool bCooked { get; private set; }
+    public bool HasTangents { get; private set; }
     public FPackageIndex BodySetup { get; private set; }
     public FPackageIndex NavCollision { get; private set; }
     public FGuid LightingGuid { get; private set; }
@@ -73,6 +75,7 @@ public class UStaticMesh : UObject
 
         var stripDataFlags = new FStripDataFlags(Ar);
         bCooked = Ar.Ver >= EUnrealEngineObjectUE4Version.STATIC_MESH_REFACTOR && Ar.ReadBoolean();
+        HasTangents = Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERTEXBUFFER_MERGE;
         var Bounds = new FBoxSphereBounds();
         if (!stripDataFlags.IsEditorDataStripped() && Ar.Ver < EUnrealEngineObjectUE4Version.STATIC_MESH_REFACTOR)
         {

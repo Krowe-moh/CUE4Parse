@@ -107,7 +107,7 @@ public static class MeshConverter
                 NumTexCoords = numTexCoords,
                 ScreenSize = screenSize,
                 HasNormals = true,
-                HasTangents = true,
+                HasTangents = originalMesh.HasTangents,
                 IsTwoSided = srcLod.CardRepresentationData?.bMostlyTwoSided ?? false,
                 Indices = new Lazy<uint[]>(() =>
                 {

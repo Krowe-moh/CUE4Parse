@@ -118,7 +118,14 @@ public class UBrushComponent : UPrimitiveComponent
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>())); // CachedPhysBrushData
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.RECALCULATE_MAXACTIVEPARTICLE)
+            {
+                Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>())); // CachedPhysBrushData
+            }
+            else
+            {
+                Ar.ReadArray(() => Ar.ReadBulkArray<byte>()); // CachedPhysBrushData
+            }
         }
     }
 
@@ -325,6 +332,7 @@ public class URadialBlurComponent : UActorComponent;
 public class URB_ConstraintComponent : UPhysicsConstraintComponent;
 public class URB_Handle : UPhysicsHandleComponent;
 public class URB_RadialForceComponent : URadialForceComponent;
+public class URB_RadialImpulseComponent : UPrimitiveComponent;
 public class URB_ThrusterComponent : UPhysicsThrusterComponent;
 public class URadialFalloff : UFieldNodeFloat;
 public class URadialForceComponent : USceneComponent;
@@ -375,7 +383,6 @@ public class USpeedTreeComponent : UPrimitiveComponent
             };
             if(Ar.Ver >= EUnrealEngineObjectUE3Version.SPEEDTREE_VERTEXSHADER_RENDERING)
             {
-
                 FLightMap? LeafMeshLightMap = Ar.Read<ELightMapType>() switch
                 {
                     ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
