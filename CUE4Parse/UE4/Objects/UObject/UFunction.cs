@@ -49,7 +49,7 @@ public class UFunction : UStruct
         }
 
         // Todo: this doesn't exist in UE3 Console builds
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && Ar.Game < EGame.GAME_UE4_0)// && Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && !Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Game < EGame.GAME_UE4_0)
         {
             Ar.ReadFName(); // FriendlyName
         }

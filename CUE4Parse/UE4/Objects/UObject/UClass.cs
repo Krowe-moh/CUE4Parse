@@ -58,12 +58,13 @@ public class UClass : UStruct
             Ar.Read<int>(); // classRecordSize
         }
 
+        FuncMap = Ar.ReadMap(Ar.ReadFName, () => new FPackageIndex(Ar));
+        ClassFlags = Ar.Read<EClassFlags>();
+
         if (Ar.Game is EGame.GAME_StarWarsJediFallenOrder or EGame.GAME_StarWarsJediSurvivor or EGame.GAME_AshesOfCreation or EGame.GAME_RocketLeague) Ar.Position += 4;
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            FuncMap = Ar.ReadMap(Ar.ReadFName, () => new FPackageIndex(Ar));
-            ClassFlags = Ar.Read<EClassFlags>();
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_PLATFORM_FLAGS)
             {
                 if (Ar.Ver < EUnrealEngineObjectUE3Version.EMITTER_LODVALIDITY_FIX2)

@@ -25,7 +25,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Game < EGame.GAME_UE4_0)
             {
-                // consoles don't seem to have this, add a platform option for users. Maybe reuse TexturePlatform (Ar.Platform)
+                // Todo: this doesn't exist in UE3 Console builds
                 if (!Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
                 {
                     Ar.ReadFName(); // CategoryName
