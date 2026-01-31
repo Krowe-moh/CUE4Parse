@@ -18,7 +18,7 @@ public class UFont : UObject
             Ar.ReadArray(() => new FFontCharacter(Ar)); // Characters
             Ar.Read<int>(); // CharactersPerPage
         }
-        else if (Ar.Ver < EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128)
+        else if (Ar.Ver <= EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128)
         {
             Ar.ReadArray(() => new FFontCharacter(Ar)); // Characters
             Ar.ReadArray(() => new FPackageIndex(Ar)); // Textures
@@ -32,7 +32,7 @@ public class UFont : UObject
         {
             CharRemap = Ar.ReadMap(Ar.Read<ushort>, Ar.Read<ushort>);
 
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128)
+            if (Ar.Ver <= EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128)
             {
                 Ar.ReadBoolean(); // IsRemapped
             }

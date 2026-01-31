@@ -1334,7 +1334,7 @@ public class FMaterialShaderMapId
             QualityLevel = Ar.Game >= EGame.GAME_UE5_2 ? (EMaterialQualityLevel) Ar.Read<byte>() : (EMaterialQualityLevel) Ar.Read<int>();//changed to byte in FN 23.20
             FeatureLevel = (ERHIFeatureLevel) Ar.Read<int>();
         }
-        else
+        else if (Ar.Ver > EUnrealEngineObjectUE4Version.MATERIAL_QUALITY_LEVEL_SWITCH)
         {
             var legacyQualityLevel = (EMaterialQualityLevel) Ar.Read<byte>(); // Is it enum?
         }

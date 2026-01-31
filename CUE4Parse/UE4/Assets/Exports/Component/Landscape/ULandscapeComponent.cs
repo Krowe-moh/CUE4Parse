@@ -50,8 +50,14 @@ public class ULandscapeComponent : UPrimitiveComponent
         if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.MapBuildDataSeparatePackage)
         {
             LegacyMapBuildData = new FMeshMapBuildData();
-            LegacyMapBuildData.LightMap = new FLightMap(Ar);
-            LegacyMapBuildData.ShadowMap = new FShadowMap(Ar);
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.LANDSCAPECOMPONENT_LIGHTMAPS)
+            {
+                LegacyMapBuildData.LightMap = new FLightMap(Ar);
+            }
+            if (Ar.Ver >= EUnrealEngineObjectUE4Version.PRECOMPUTED_SHADOW_MAPS_BSP)
+            {
+                LegacyMapBuildData.ShadowMap = new FShadowMap(Ar);
+            }
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SERIALIZE_LANDSCAPE_GRASS_DATA)
@@ -79,7 +85,7 @@ public class ULandscapeComponent : UPrimitiveComponent
             return;
         }
 
-        if (Ar.Game < EGame.GAME_UE5_1 && Ar.Position + 4 <= validPos)
+        if (Ar.Game >= EGame.GAME_UE4_0 && Ar.Game < EGame.GAME_UE5_1 && Ar.Position + 4 <= validPos)
         {
             var bCookedMobileData = Ar.ReadBoolean();
             if (bCookedMobileData)

@@ -300,7 +300,4 @@ public class UDirectionalLightComponent : ULightComponent
     }
 }
 
-public class USkyLightComponent : ULightComponentBase
-{
-
-}
+public class USkyLightComponent : ULightComponentBase;

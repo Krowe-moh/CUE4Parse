@@ -18,7 +18,7 @@ public partial class USkeletalMesh : UObject
     public FBoxSphereBounds ImportedBounds { get; private set; }
     public FSkeletalMaterial[] SkeletalMaterials { get; private set; }
     public FReferenceSkeleton ReferenceSkeleton { get; private set; }
-    public FSkeletalMeshLODGroupSettings[] LODInfo { get; private set; }
+    public FSkeletalMeshLODGroupSettings[]? LODInfo { get; private set; }
     public FStaticLODModel[]? LODModels { get; private set; }
     public bool bHasVertexColors { get; private set; }
     public byte NumVertexColorChannels { get; private set; }

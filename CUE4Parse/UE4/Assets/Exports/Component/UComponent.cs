@@ -59,6 +59,4 @@ public class UUDKVehicleSimHoverboard : UComponent;
 public class UUDKVehicleSimChopper : UComponent;
 public class UUDKVehicleSimCar : UComponent;
 
-public class URFlashingLightComponent : UComponent;
 public class URRollComponent : UComponent;
-public class URBrushComponent : UComponent;

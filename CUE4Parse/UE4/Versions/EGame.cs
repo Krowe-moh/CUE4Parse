@@ -16,6 +16,7 @@ public enum EGame : uint
         GAME_AmericanArmy3 = GAME_UE3_0 + 5,
         GAME_APBReloaded = GAME_UE3_0 + 6,
         GAME_ScourgeOutbreak = GAME_UE3_0 + 7,
+        GAME_LineOfSight = GAME_UE3_0 + 8,
 
     GAME_UE4_0 = GameUtils.GameUe4Base + (0 << 16),
     GAME_UE4_1 = GameUtils.GameUe4Base + (1 << 16),

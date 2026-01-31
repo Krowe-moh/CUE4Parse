@@ -218,15 +218,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (legacyFileVersion < 0) // means we have modern version numbers
             {
-                if (legacyFileVersion < CurrentLegacyFileVersion)
-                {
-                    // we can't safely load more than this because the legacy version code differs in ways we can not predict.
-                    // Make sure that the linker will fail to load with it.
-                    FileVersionUE.Reset();
-                    FileVersionLicenseeUE = 0;
-                    throw new ParserException("Can't load legacy UE3 file"); // todo: findout what this is, no UE3 game gets this so i assume it's UE4 early
-                }
-
+                Log.Warning("hello krowe" + legacyFileVersion);
                 if (legacyFileVersion != -4)
                 {
                     FileVersionUE.FileVersionUE3 = Ar.Read<int>(); // legacyUE3Version
@@ -241,6 +233,12 @@ namespace CUE4Parse.UE4.Objects.UObject
                 }
 
                 FileVersionLicenseeUE = Ar.Read<EUnrealEngineObjectLicenseeUEVersion>();
+
+                if (FileVersionUE >= EUnrealEngineObjectUE4Version.READD_COOKER && FileVersionUE <= EUnrealEngineObjectUE4Version.COOKED_PACKAGE_VERSION_IS_PACKAGE_VERSION)
+                {
+                    Ar.Read<int>(); // PackageCookedVersion
+                    Ar.Read<int>(); // PackageCookedLicenseeVersion
+                }
 
                 if (FileVersionUE != EUnrealEngineObjectUE4Version.DETERMINE_BY_GAME &&
                     FileVersionUE < EUnrealEngineObjectUE4Version.OLDEST_LOADABLE_PACKAGE ||

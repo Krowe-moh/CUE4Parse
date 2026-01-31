@@ -17,28 +17,26 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             base.Deserialize(Ar, validPos);
             ArrayDim = Ar.Read<int>();
-            PropertyFlags = Ar.Ver >= EUnrealEngineObjectUE3Version.PropertyFlagsSizeExpandedTo64Bits ? Ar.Read<EPropertyFlags>() : (EPropertyFlags)Ar.Read<uint>();
+            PropertyFlags = Ar.Ver >= EUnrealEngineObjectUE3Version.PropertyFlagsSizeExpandedTo64Bits ? Ar.Read<EPropertyFlags>() : (EPropertyFlags) Ar.Read<uint>();
+
+            // Todo: needs Console check for UE3
+            if ((!Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) || Ar.Game >= EGame.GAME_UE4_0) && Ar.Ver < EUnrealEngineObjectUE4Version.CATEGORY_MOVED_TO_METADATA)
+            {
+                Ar.ReadFName(); // CategoryName
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES)
+                {
+                    new FPackageIndex(Ar); // ArrayEnum
+                }
+            }
+
+            if (PropertyFlags.HasFlag(EPropertyFlags.Net) && Ar.Game < EGame.GAME_UE4_0) // Todo: Should this be edit flag?
+            {
+                Ar.Read<ushort>();
+            }
+
             if (Ar.Game >= EGame.GAME_UE4_0)
             {
                 RepNotifyFunc = Ar.ReadFName();
-            }
-
-            if (Ar.Game < EGame.GAME_UE4_0)
-            {
-                // Todo: this doesn't exist in UE3 Console builds
-                if (!Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked))
-                {
-                    Ar.ReadFName(); // CategoryName
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES)
-                    {
-                        new FPackageIndex(Ar); // ArrayEnum
-                    }
-                }
-
-                if (PropertyFlags.HasFlag(EPropertyFlags.Net)) // Todo: Should this be edit flag?
-                {
-                    Ar.Read<ushort>();
-                }
             }
 
             if (FReleaseObjectVersion.Get(Ar) >= FReleaseObjectVersion.Type.PropertiesSerializeRepCondition)
