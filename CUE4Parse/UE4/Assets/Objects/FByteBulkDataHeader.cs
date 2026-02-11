@@ -60,7 +60,11 @@ namespace CUE4Parse.UE4.Assets.Objects
 
             ElementCount = BulkDataFlags.HasFlag(BULKDATA_Size64Bit) ? (int) Ar.Read<long>() : Ar.Read<int>();
             SizeOnDisk = BulkDataFlags.HasFlag(BULKDATA_Size64Bit) ? (uint) Ar.Read<long>() : Ar.Read<uint>();
-            if (Ar.Game == EGame.GAME_RocketLeague)
+            if (Ar.Game == EGame.GAME_BatmanArkhamKnight)
+            {
+                OffsetInFile = (uint) Ar.Read<long>();
+            }
+            else if (Ar.Game == EGame.GAME_RocketLeague)
             {
                 if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
                 {

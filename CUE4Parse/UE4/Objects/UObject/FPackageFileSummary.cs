@@ -214,11 +214,14 @@ namespace CUE4Parse.UE4.Objects.UObject
                 legacyFileVersion = (short)legacyFileVersion;
                 Ar.Position += 4;
             }
+            if (Ar.Game == EGame.GAME_BatmanArkhamKnight)
+            {
+                legacyFileVersion = (short)legacyFileVersion;
+            }
             if (Ar.Game == EGame.GAME_DeltaForceHawkOps) legacyFileVersion /= 659;
 
             if (legacyFileVersion < 0) // means we have modern version numbers
             {
-                Log.Warning("hello krowe" + legacyFileVersion);
                 if (legacyFileVersion != -4)
                 {
                     FileVersionUE.FileVersionUE3 = Ar.Read<int>(); // legacyUE3Version

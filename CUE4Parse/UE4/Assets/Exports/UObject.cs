@@ -171,7 +171,7 @@ public class UObject : AbstractPropertyHolder
 
                 if (Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
                 {
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX) // ue4 part does nothing currently
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX && Ar.Game != EGame.GAME_BatmanArkhamKnight) // ue4 part does nothing currently
                     {
                         Ar.Read<int>(); // NetIndex
                     }
@@ -239,7 +239,7 @@ public class UObject : AbstractPropertyHolder
                     }
                 }
 
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX) // ue4 part does nothing currently
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX && Ar.Game != EGame.GAME_BatmanArkhamKnight) // ue4 part does nothing currently
                 {
                     Ar.Read<int>(); // NetIndex
                 }

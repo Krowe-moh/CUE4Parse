@@ -39,6 +39,11 @@ public class EnumProperty : FPropertyTagType<FName>
         }
         else
         {
+            if (Ar.Game is EGame.GAME_BatmanArkhamKnight)
+            {
+                //Value = tagData?.EnumName;
+               // return;
+            }
             Value = Ar.ReadFName();
         }
     }

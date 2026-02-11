@@ -266,6 +266,11 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.Read<int>(); // Archetype
             }
 
+            if (Ar.Game == EGame.GAME_BatmanArkhamKnight)
+            {
+                Ar.Read<int>();
+            }
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag && Ar.Game < EGame.GAME_UE4_0)
             {
                 ObjectFlags = Ar.Read<long>();

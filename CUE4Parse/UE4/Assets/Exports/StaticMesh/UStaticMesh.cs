@@ -162,8 +162,14 @@ public class UStaticMesh : UObject
             }
             RenderData.Bounds = Bounds;
 
-            Ar.ReadArray(() => new FPackageIndex(Ar)); // LODInfo
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128)
+            {
+                Ar.ReadArray(() => new FPackageIndex(Ar)); // LODInfo
+            }
         }
+
+
+        if (Ar.Game < EGame.GAME_UE4_0) return;
 
         if (!stripDataFlags.IsEditorDataStripped())
         {
@@ -174,6 +180,11 @@ public class UStaticMesh : UObject
                  {
                      var dummyThumbnailDistance = Ar.Read<float>();
                  }
+            }
+
+            if (Ar.Ver <= EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128)
+            {
+                Ar.Read<int>();
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERSION_18 && FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.DeprecatedHighResSourceMesh)
