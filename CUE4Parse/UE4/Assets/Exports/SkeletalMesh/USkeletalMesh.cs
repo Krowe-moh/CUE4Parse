@@ -147,50 +147,6 @@ public partial class USkeletalMesh : UObject
             }
         }
 
-        if (Ar.Game < EGame.GAME_UE4_0)
-        {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADD_SKELMESH_NAMEINDEXMAP)
-            {
-                Ar.ReadMap(() => Ar.ReadFName(), () => Ar.Read<int>()); // NameIndexMap
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELMESH_BONE_KDOP)
-            {
-                Ar.ReadArray<int>(); // PerPolyBoneKDOPs
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_MAPPING)
-            {
-                Ar.ReadArray(Ar.ReadFString); // BoneBreakNames
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_CUSTOM_MAPPING)
-                {
-                    Ar.ReadArray(Ar.Read<int>); // BoneBreakOptions
-                }
-            }
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.APEX_CLOTHING)
-            {
-                // ApexClothingAsset doesn't have a serilize func??? help.
-                var ApexClothingAssetcount = Ar.Read<int>();
-                if (ApexClothingAssetcount > 0)
-                {
-                    Ar.Position = validPos;
-                    return;
-                }
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICTEXTUREINSTANCES)
-                {
-                    Ar.ReadArray(Ar.Read<float>); // CachedStreamingTextureFactors
-                }
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELETAL_MESH_SIMPLIFICATION)
-                {
-                    var bHaveSourceData = Ar.ReadBoolean();
-                    if (bHaveSourceData)
-                    {
-                        new FStaticLODModel(Ar, bHasVertexColors);
-                    }
-                }
-            }
-            return;
-        }
         if (Ar.Game == EGame.GAME_WorldofJadeDynasty)
         {
             _ = new FStripDataFlags(Ar);
@@ -200,17 +156,52 @@ public partial class USkeletalMesh : UObject
             }
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE4Version.REFERENCE_SKELETON_REFACTOR)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADD_SKELMESH_NAMEINDEXMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REFERENCE_SKELETON_REFACTOR)
         {
             var length = Ar.Read<int>();
             Ar.Position += 12 * length; // TMap<FName, int32> DummyNameIndexMap
         }
 
-        _ = Ar.ReadArray(() => new FPackageIndex(Ar)); // dummyObjs
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELMESH_BONE_KDOP && Ar.Game < EGame.GAME_UE4_0)
+        {
+            Ar.ReadArray<int>(); // PerPolyBoneKDOPs
+        }
 
-        if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.TextureStreamingMeshUVChannelData)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_MAPPING && Ar.Game < EGame.GAME_UE4_0)
+        {
+            Ar.ReadArray(Ar.ReadFString); // BoneBreakNames
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_CUSTOM_MAPPING)
+            {
+                Ar.ReadArray(Ar.Read<int>); // BoneBreakOptions
+            }
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.APEX_CLOTHING && Ar.Game < EGame.GAME_UE4_0)
+        {
+            // ApexClothingAsset doesn't have a serilize func??? help.
+            var ApexClothingAssetcount = Ar.Read<int>();
+            if (ApexClothingAssetcount > 0)
+            {
+                Ar.Position = validPos;
+                return;
+            }
+        }
+
+        // does UE3 have this?
+        if (Ar.Game >= EGame.GAME_UE4_0) _ = Ar.ReadArray(() => new FPackageIndex(Ar)); // dummyObjs
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICTEXTUREINSTANCES && FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.TextureStreamingMeshUVChannelData)
         {
             Ar.SkipFixedArray(sizeof(float));
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELETAL_MESH_SIMPLIFICATION && Ar.Game < EGame.GAME_UE4_0)
+        {
+            var bHaveSourceData = Ar.ReadBoolean();
+            if (bHaveSourceData)
+            {
+                new FStaticLODModel(Ar, bHasVertexColors);
+            }
         }
 
         // if (bEnablePerPolyCollision)

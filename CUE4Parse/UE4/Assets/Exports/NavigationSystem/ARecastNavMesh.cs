@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using CUE4Parse.UE4.Assets.Readers;
+using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 using Serilog;
 
@@ -9,11 +10,11 @@ public class ARecastNavMesh : ANavigationData
 {
     public float AgentHeight;
     public float AgentRadius;
-    public FNavMeshResolutionParam[] NavMeshResolutionParams; 
-    
+    public FNavMeshResolutionParam[] NavMeshResolutionParams;
+
     public ENavMeshVersion NavMeshVersion;
     public FPImplRecastNavMesh RecastNavMeshImpl;
-    
+
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
@@ -23,13 +24,13 @@ public class ARecastNavMesh : ANavigationData
 
         if (!TryGetAllValues(out NavMeshResolutionParams, nameof(NavMeshResolutionParams)))
             NavMeshResolutionParams = new FNavMeshResolutionParam[3];
-        
+
         NavMeshVersion = Ar.Read<ENavMeshVersion>();
 
         var recastNavMeshSizePos = Ar.Position;
         var recastNavMeshSizeBytes = Ar.Read<uint>();
 
-        if (NavMeshVersion < ENavMeshVersion.MinCompatible)
+        if (NavMeshVersion < ENavMeshVersion.MinCompatible || (Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_MODIFIERS_RUNTIME_GENERATION && Ar.Ver < EUnrealEngineObjectUE4Version.MERGED_ADD_MODIFIERS_RUNTIME_GENERATION_TO_4_7))
         {
             Log.Error("NavMeshVersion is too old and not supported: '{0}'", NavMeshVersion);
             CleanUpBadVersion();
@@ -55,18 +56,18 @@ public class ARecastNavMesh : ANavigationData
             Ar.Position = recastNavMeshSizePos + recastNavMeshSizeBytes;
         }
     }
-    
+
     protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
     {
         base.WriteJson(writer, serializer);
-        
+
         writer.WritePropertyName(nameof(NavMeshVersion));
         serializer.Serialize(writer, NavMeshVersion);
-        
+
         writer.WritePropertyName(nameof(RecastNavMeshImpl));
         serializer.Serialize(writer, RecastNavMeshImpl);
     }
-    
+
     public float GetCellSize(ENavigationDataResolution resolution) => NavMeshResolutionParams[(byte)resolution].CellSize;
     public float GetAgentMaxStepHeight(ENavigationDataResolution resolution) => NavMeshResolutionParams[(byte)resolution].AgentMaxStepHeight;
 }
@@ -75,10 +76,10 @@ public class ARecastNavMesh : ANavigationData
 public enum ENavMeshVersion
 {
     OffMeshHeightBug = 11,
-    
+
     MinCompatible = 20,
     LwCoordsOptimization = MinCompatible,
-    
+
     OptimFixSerializeParams, // Fix, serialize params that used to be in the tile and are now in the navmesh
     MaxTilesCountSkipInclusion,
     TileResolutions, // Addition of a tile resolution index to the tile header.
@@ -86,7 +87,7 @@ public enum ENavMeshVersion
     VoxelAgentSleepSlopeFilterFix, // Fix, remove steep slope filtering during heightfield ledge filtering when the agent radius is included into a single voxel
     TileResolutionsAgentMaxStepHeight, // // Addition of AgentMaxStepHeight in the resolution params, deprecating the original AgentMaxStepHeight.
     NavLinkJumpConfigs, // Addition of NavLinkJumpConfigs, deprecating the original NavLinkJumpDownConfig
-    
+
     LatestPlusOne,
     Latest = LatestPlusOne - 1
 }
@@ -96,7 +97,7 @@ public enum ENavigationDataResolution : byte
     Low = 0,
     Default = 1,
     High = 2,
-    
+
     [Description("None")]
     Invalid = 3,
     MAX = 3,

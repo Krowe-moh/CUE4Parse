@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CUE4Parse_Conversion.Materials;
 
@@ -31,7 +32,12 @@ namespace CUE4Parse_Conversion.Meshes
                 lock (_material) material.TryWriteToDir(baseDirectory, out _, out _);
             });
 
-            savedFilePath = FixAndCreatePath(baseDirectory, FileName);
+
+            savedFilePath = FixAndCreatePath(
+                baseDirectory,
+                FileName.Replace(':', '_')
+            );
+
             File.WriteAllBytesAsync(savedFilePath, FileData);
             label = Path.GetFileName(savedFilePath);
             return File.Exists(savedFilePath);

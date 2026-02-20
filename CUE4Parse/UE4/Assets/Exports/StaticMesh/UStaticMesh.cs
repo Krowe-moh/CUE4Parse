@@ -168,9 +168,6 @@ public class UStaticMesh : UObject
             }
         }
 
-
-        if (Ar.Game < EGame.GAME_UE4_0) return;
-
         if (!stripDataFlags.IsEditorDataStripped())
         {
             if (Ar.Ver < EUnrealEngineObjectUE4Version.DEPRECATED_STATIC_MESH_THUMBNAIL_PROPERTIES_REMOVED)
