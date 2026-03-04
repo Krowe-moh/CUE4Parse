@@ -530,8 +530,9 @@ public class FStaticLODModel
             }
         }
 
-        if (Ar.Game is EGame.GAME_ReadyOrNot or EGame.GAME_HellLetLoose)
-            Ar.Position += 4;
+        if (Ar.Game is EGame.GAME_ReadyOrNot or EGame.GAME_HellLetLoose or EGame.GAME_DarkPicturesAnthologyManofMedan or
+            EGame.GAME_DarkPicturesAnthologyTheDevilinMe) Ar.Position += 4;
+        if (Ar.Game is EGame.GAME_DarkPicturesAnthologyLittleHope && !bIsLODCookedOut) Ar.Position += 4;
     }
 
     public void SerializeRenderItem_Legacy(FAssetArchive Ar, bool bHasVertexColors, byte numVertexColorChannels)
@@ -656,7 +657,8 @@ public class FStaticLODModel
             }
         }
 
-        if (FUE5SpecialProjectStreamObjectVersion.Get(Ar) >= FUE5SpecialProjectStreamObjectVersion.Type.SerializeSkeletalMeshMorphTargetRenderData)
+        if (FUE5SpecialProjectStreamObjectVersion.Get(Ar) >= FUE5SpecialProjectStreamObjectVersion.Type.SerializeSkeletalMeshMorphTargetRenderData ||
+                Ar.Game is EGame.GAME_TheQuarry)
         {
             bool bSerializeCompressedMorphTargets = Ar.ReadBoolean();
             if (bSerializeCompressedMorphTargets)
@@ -667,12 +669,7 @@ public class FStaticLODModel
 
         if (FUE5MainStreamObjectVersion.Get(Ar) >= FUE5MainStreamObjectVersion.Type.SkeletalVertexAttributes)
         {
-            var count = Ar.Read<int>();
-            VertexAttributeBuffers = new Dictionary<FName, FSkeletalMeshAttributeVertexBuffer>(count);
-            for (int i = 0; i < count; i++)
-            {
-                VertexAttributeBuffers[Ar.ReadFName()] = new FSkeletalMeshAttributeVertexBuffer(Ar);
-            }
+            VertexAttributeBuffers = Ar.ReadMap(Ar.ReadFName, () => new FSkeletalMeshAttributeVertexBuffer(Ar));
         }
 
         if (FFortniteMainBranchObjectVersion.Get(Ar) >= FFortniteMainBranchObjectVersion.Type.SkeletalHalfEdgeData)

@@ -99,6 +99,8 @@ public class UTexture2D : UTexture
                 bSerializeMipData = Ar.ReadBoolean();
             }
 
+            if (Ar.Position >= validPos) return;
+
             DeserializeCookedPlatformData(Ar, bSerializeMipData);
         }
     }

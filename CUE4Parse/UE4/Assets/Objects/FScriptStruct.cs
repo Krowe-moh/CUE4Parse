@@ -2,6 +2,7 @@ using System;
 using CUE4Parse.GameTypes._2XKO.Assets.Exports;
 using CUE4Parse.GameTypes.Borderlands4.Assets.Objects;
 using CUE4Parse.GameTypes.Brickadia.Objects;
+using CUE4Parse.GameTypes.SMG.UE4.Assets.Objects;
 using CUE4Parse.GameTypes.DuneAwakening.Assets.Objects;
 using CUE4Parse.GameTypes.FN.Objects;
 using CUE4Parse.GameTypes.Gothic1R.Assets.Objects;
@@ -9,6 +10,7 @@ using CUE4Parse.GameTypes.L2KD.Objects;
 using CUE4Parse.GameTypes.MA.Objects;
 using CUE4Parse.GameTypes.MindsEye.Objects;
 using CUE4Parse.GameTypes.NetEase.MAR.Objects;
+using CUE4Parse.GameTypes.NMZ.Assets;
 using CUE4Parse.GameTypes.OtherGames.Objects;
 using CUE4Parse.GameTypes.OuterWorlds2.Objects;
 using CUE4Parse.GameTypes.PUBG.Assets.Objects;
@@ -69,6 +71,7 @@ public class FScriptStruct
             "Box2D" => type == ReadType.ZERO ? new FBox2D() : new FBox2D(Ar),
             "Box2f" => type == ReadType.ZERO ? new TBox2<float>() : new TBox2<float>(Ar),
             "Box3f" => type == ReadType.ZERO ? new TBox3<float>() : new TBox3<float>(Ar),
+            "CapsuleShape" => type == ReadType.ZERO ? new FCapsuleShape() : new FCapsuleShape(Ar),
             "Color" => type == ReadType.ZERO ? new FColor() : Ar.Read<FColor>(),
             "ColorMaterialInput" when FFortniteMainBranchObjectVersion.Get(Ar) < FFortniteMainBranchObjectVersion.Type.MaterialInputUsesLinearColor
                 => type == ReadType.ZERO ? new FMaterialInput<FColor>() : new FMaterialInput<FColor>(Ar),
@@ -100,7 +103,8 @@ public class FScriptStruct
             "PannerDetails" => new FPannerDetails(Ar),
             "GameplayTagContainer" => type == ReadType.ZERO ? new FGameplayTagContainer() : new FGameplayTagContainer(Ar),
             "IntPoint" or "Int32Point" => type == ReadType.ZERO ? new FIntPoint() : Ar.Read<FIntPoint>(),
-            "IntVector2" => type == ReadType.ZERO ? new TIntVector2<int>() : Ar.Read<TIntVector2<int>>(),
+            "Int64Point" or "UInt64Point" => type == ReadType.ZERO ? new TIntVector2<long>() : Ar.Read<TIntVector2<long>>(),
+            "IntVector2" or "Int32Vector2" => type == ReadType.ZERO ? new TIntVector2<int>() : Ar.Read<TIntVector2<int>>(),
             "UintVector2" or "Uint32Point" => type == ReadType.ZERO ? new TIntVector2<uint>() : Ar.Read<TIntVector2<uint>>(),
             "IntVector" => type == ReadType.ZERO ? new FIntVector() : Ar.Read<FIntVector>(),
             "UintVector" => type == ReadType.ZERO ? new TIntVector3<uint>() : Ar.Read<TIntVector3<uint>>(),
@@ -181,6 +185,7 @@ public class FScriptStruct
             "InstancedStruct" => new FInstancedStruct(Ar),
             "InstancedStructContainer" => new FInstancedStructContainer(Ar),
             "InstancedPropertyBag" => new FInstancedPropertyBag(Ar),
+            "InstancedOverridablePropertyBag" => new FInstancedOverridablePropertyBag(Ar),
             "WorldConditionQueryDefinition" => new FWorldConditionQueryDefinition(Ar),
             "UniversalObjectLocatorFragment" => type == ReadType.ZERO ? new FUniversalObjectLocatorFragment() : new FUniversalObjectLocatorFragment(Ar),
             "KeyHandleMap" => new FStructFallback(),
@@ -350,6 +355,28 @@ public class FScriptStruct
 
             // Palia
             "VAL_CharacterCustomizationVariantOptionsArray" => new FVAL_CharacterCustomizationVariantOptionsArray(Ar),
+
+            // Steel Hunters
+            "ParamRegistryInfo" => new FStructFallback(Ar, structName, FRawHeader.FullRead, ReadType.RAW),
+
+            "GPRowName" when Ar.Game is EGame.GAME_AssaultFireFuture => new FGPRowName(Ar),
+            "AnnotationPointData2" when Ar.Game is EGame.GAME_AssaultFireFuture => new FAnnotationPointData2(Ar),
+            "MovieSceneTangentData" when Ar.Game is EGame.GAME_AssaultFireFuture => new FMovieSceneTangentData(Ar),
+            "WeaponPassiveID" when Ar.Game is EGame.GAME_AssaultFireFuture => Ar.Read<FRawUIntStruct>(),
+            "MGEPassiveEquipStruct" when Ar.Game is EGame.GAME_AssaultFireFuture => Ar.Read<FRawStruct<ulong>>(),
+            "AssetDataSerializable" when Ar.Game is EGame.GAME_AssaultFireFuture => new FAssetDataSerializable(Ar),
+
+            "ActorReference" when Ar.Game is EGame.GAME_DarkPicturesAnthologyHouseOfAshes or EGame.GAME_DarkPicturesAnthologyManofMedan or
+                EGame.GAME_DarkPicturesAnthologyLittleHope or EGame.GAME_DarkPicturesAnthologyTheDevilinMe or
+                EGame.GAME_TheQuarry or EGame.GAME_TheCastingofFrankStone => new FActorReference(Ar),
+
+            "ParameterWrapperArray" when Ar.Game is EGame.GAME_NevernessToEverness => new FStructFallback(Ar, structName, new FRawHeader([(0, 1)], ERawHeaderFlags.RawProperties), ReadType.RAW),
+
+            "MercunaPawnUsageFlags" when Ar.Game is EGame.GAME_HighOnLife2 => new FStructFallback(Ar, structName, FRawHeader.FullRead, ReadType.RAW),
+            "MercunaNavUsageTypes" when Ar.Game is EGame.GAME_HighOnLife2 => Ar.Read<FRawUIntStruct>(),
+
+            // Windrose
+            "R5CollisionApproximation" => new FStructFallback(Ar, structName, FRawHeader.FullRead, ReadType.RAW),
 
             _ => Ar.Game switch
             {

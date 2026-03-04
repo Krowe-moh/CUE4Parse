@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using CUE4Parse.UE4.Assets.Objects;
@@ -119,7 +120,12 @@ public class FSkyAtmosphereMapBuildData
     }
 }
 
-public class FReflectionCaptureMapBuildData(FAssetArchive Ar) : FReflectionCaptureData(Ar) { }
+public class FReflectionCaptureMapBuildData : FReflectionCaptureData {
+
+    public FReflectionCaptureMapBuildData() { }
+
+    public FReflectionCaptureMapBuildData(FAssetArchive Ar) : base(Ar) { }
+}
 
 [JsonConverter(typeof(FReflectionCaptureDataConverter))]
 public class FReflectionCaptureData
@@ -127,8 +133,10 @@ public class FReflectionCaptureData
     public int CubemapSize;
     public float AverageBrightness;
     public float Brightness;
-    public byte[]? FullHDRCapturedData;
+    [JsonIgnore] public byte[]? FullHDRCapturedData;
     public FPackageIndex? EncodedCaptureData;
+
+    public FReflectionCaptureData() { }
 
     public FReflectionCaptureData(FAssetArchive Ar)
     {
@@ -202,7 +210,7 @@ public class FVolumeLightingSample
     public float DirectionalLightShadowing;
     public float[][]? Lighting;
 
-    public FVolumeLightingSample(FAssetArchive Ar)
+    public FVolumeLightingSample(FAssetArchive Ar, int order)
     {
         Position = Ar.Read<FVector>();
         Radius = Ar.Read<float>();
@@ -222,7 +230,7 @@ public class FVolumeLightingSample
         }
         else
         {
-            Lighting = Ar.ReadArray(3, () => Ar.ReadArray<float>(9));
+            Lighting = Ar.ReadArray(3, () => Ar.ReadArray<float>(order*order));
         }
 
         if (Ar.Game >= EGame.GAME_UE4_0)
@@ -242,31 +250,28 @@ public class FPrecomputedLightVolumeData
     public FBox Bounds;
     public float SampleSpacing;
     public int NumSHSamples;
-    public FVolumeLightingSample[] HighQualitySamples;
-    public FVolumeLightingSample[]? LowQualitySamples;
+    public FVolumeLightingSample[] HighQualitySamples = [];
+    public FVolumeLightingSample[] LowQualitySamples = [];
 
-    public FPrecomputedLightVolumeData(FAssetArchive Ar)
+    public FPrecomputedLightVolumeData(FAssetArchive Ar, bool readbValid = true)
     {
-        var bValid = Ar.ReadBoolean();
+        if (readbValid && !Ar.ReadBoolean()) return;
 
-        if (bValid)
+        var bVolumeInitialized = Ar.ReadBoolean();
+        if (bVolumeInitialized)
         {
-            var bVolumeInitialized = Ar.ReadBoolean();
-            if (bVolumeInitialized)
+            Bounds = new FBox(Ar);
+            SampleSpacing = Ar.Read<float>();
+            NumSHSamples = 4;
+            if (FRenderingObjectVersion.Get(Ar) >= FRenderingObjectVersion.Type.IndirectLightingCache3BandSupport)
             {
-                Bounds = new FBox(Ar);
-                SampleSpacing = Ar.Read<float>();
-                NumSHSamples = 4;
-                if (FRenderingObjectVersion.Get(Ar) >= FRenderingObjectVersion.Type.IndirectLightingCache3BandSupport)
-                {
-                    NumSHSamples = Ar.Read<int>();
-                }
+                NumSHSamples = Ar.Read<int>();
+            }
 
-                HighQualitySamples = Ar.ReadArray(() => new FVolumeLightingSample(Ar));
-                if (Ar.Ver >= EUnrealEngineObjectUE4Version.VOLUME_SAMPLE_LOW_QUALITY_SUPPORT)
-                {
-                    LowQualitySamples = Ar.ReadArray(() => new FVolumeLightingSample(Ar));
-                }
+            HighQualitySamples = Ar.ReadArray(() => new FVolumeLightingSample(Ar, NumSHSamples is 9 ? 3 : 2));
+            if (Ar.Ver >= EUnrealEngineObjectUE4Version.VOLUME_SAMPLE_LOW_QUALITY_SUPPORT)
+            {
+                LowQualitySamples = Ar.ReadArray(() => new FVolumeLightingSample(Ar, NumSHSamples is 9 ? 3 : 2));
             }
         }
     }
@@ -378,6 +383,8 @@ public class FMeshMapBuildData
         };
 
         if (Ar.Game == EGame.GAME_ArenaBreakoutInfinite) Ar.Position += Ar.Read<int>() == 2 ? 156 : 4; // FTransferLightMap
+        if (Ar.Game is EGame.GAME_DarkPicturesAnthologyManofMedan or EGame.GAME_DarkPicturesAnthologyLittleHope or
+            EGame.GAME_TheQuarry && LightMap is not null) Ar.Position += 4;
 
         ShadowMap = Ar.Read<EShadowMapType>() switch
         {

@@ -42,6 +42,7 @@ namespace CUE4Parse.UE4.Objects.Engine
             }
 
             ExtraReferencedObjects = Ar.ReadArray(() => new FPackageIndex(Ar));
+            if (Ar.Game is EGame.GAME_AssaultFireFuture && TryGetValue<FPackageIndex>(out var composition, "MiniWorldComposition")) return;
             if (Ar.Game >= EGame.GAME_UE4_0)
             {
                 StreamingLevels = Ar.ReadArray(() => new FPackageIndex(Ar));

@@ -4,6 +4,7 @@ using CUE4Parse.UE4.Assets.Exports.Animation;
 using CUE4Parse.UE4.Assets.Exports.Nanite;
 using CUE4Parse.UE4.Assets.Exports.StaticMesh;
 using CUE4Parse.UE4.Assets.Objects;
+using CUE4Parse.UE4.Assets.Objects.Properties;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Engine;
@@ -194,6 +195,18 @@ public partial class USkeletalMesh : UObject
         {
             Ar.SkipFixedArray(sizeof(float));
         }
+        
+        if ((Ar.Game >= EGame.GAME_UE4_19 && !Ar.IsFilterEditorOnly) || Ar.Game < EGame.GAME_UE4_19)
+        {
+            if (Ar.Ver >= EUnrealEngineObjectUE4Version.APEX_CLOTH)
+            {
+                if (FSkeletalMeshCustomVersion.Get(Ar) < FSkeletalMeshCustomVersion.Type.NewClothingSystemAdded)
+                {
+                    var num = GetOrDefault("ClothingAssets", Array.Empty<StructProperty>()).Length;
+                    Ar.SkipMultipleFixedArrays(num, 1);
+                }
+            }
+        }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELETAL_MESH_SIMPLIFICATION && Ar.Game < EGame.GAME_UE4_0)
         {
@@ -203,7 +216,6 @@ public partial class USkeletalMesh : UObject
                 new FStaticLODModel(Ar, bHasVertexColors);
             }
         }
-
         // if (bEnablePerPolyCollision)
         // {
         //     var bodySetup = new FPackageIndex(Ar);

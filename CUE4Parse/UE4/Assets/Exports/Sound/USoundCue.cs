@@ -5,7 +5,9 @@ using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 
-namespace CUE4Parse.UE4.Assets.Exports.Sound
+namespace CUE4Parse.UE4.Assets.Exports.Sound;
+
+public class USoundCue : USoundBase
 {
     public struct FSoundCueEditorData
     {
@@ -16,12 +18,16 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound
     public class USoundCue : USoundBase
     {
         public FPackageIndex? FirstNode;
+        public float VolumeMultiplier;
+        public float PitchMultiplier;
         public Dictionary<FPackageIndex, FSoundCueEditorData>? EditorData;
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
             FirstNode = GetOrDefault<FPackageIndex>(nameof(FirstNode));
+            VolumeMultiplier = GetOrDefault(nameof(VolumeMultiplier), 0.75f);
+            PitchMultiplier = GetOrDefault(nameof(PitchMultiplier), 1f);
 
             if (Ar.Game == EGame.GAME_ScourgeOutbreak) return; // Editor Data Removed
 

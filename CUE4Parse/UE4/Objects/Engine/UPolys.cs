@@ -168,14 +168,17 @@ namespace CUE4Parse.UE4.Objects.Engine
         {
             base.Deserialize(Ar, validPos);
 
-            Num = Ar.Read<int>();
-            Max = Ar.Read<int>();
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.SERIALIZE_TTRANSARRAY_OWNER)
+            if (Ar.Ver < EUnrealEngineObjectUE4Version.BSP_UNDO_FIX)
             {
-                ElementOwner = new FPackageIndex(Ar);
-            }
+                Num = Ar.Read<int>();
+                Max = Ar.Read<int>();
 
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.SERIALIZE_TTRANSARRAY_OWNER)
+                {
+                    ElementOwner = new FPackageIndex(Ar);
+                }
+            }
+            
             Element = Ar.ReadArray(Num, () => new FPoly(Ar));
         }
     }
