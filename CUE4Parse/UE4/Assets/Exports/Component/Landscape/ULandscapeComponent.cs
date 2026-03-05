@@ -5,6 +5,7 @@ using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Core.Misc;
+using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.UE4.Assets.Exports.Component.Landscape;
@@ -91,6 +92,21 @@ public class ULandscapeComponent : UPrimitiveComponent
             if (bCookedMobileData)
             {
                 PlatformData = new FLandscapeComponentDerivedData(Ar);
+
+                if (Ar.Ver >= EUnrealEngineObjectUE4Version.SERIALIZE_LANDSCAPE_ES2_TEXTURES)
+                {
+                    new FPackageIndex(Ar); // MobileMaterialInterface
+                    new FPackageIndex(Ar); // MobileWeightNormalmapTexture
+                }
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE4Version.LANDSCAPE_GRASS_COOKING && Ar.Ver < EUnrealEngineObjectUE4Version.SERIALIZE_LANDSCAPE_GRASS_DATA)
+            {
+                var NumChannels = Ar.Read<int>();
+                if (NumChannels > 0)
+                {
+                    Ar.ReadArray(() => new FByteBulkData(Ar)); // OldData (cooked FGrassMap data)
+                }
             }
         }
     }

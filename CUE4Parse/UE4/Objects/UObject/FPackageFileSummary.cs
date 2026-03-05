@@ -343,7 +343,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 DependsOffset = Ar.Read<int>();
             }
 
-            if (FileVersionUE >= EUnrealEngineObjectUE3Version.ADDED_CROSSLEVEL_REFERENCES)
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.ADDED_CROSSLEVEL_REFERENCES && Ar.Game < EGame.GAME_UE4_0)
             {
                 ImportExportGuidsOffset = Ar.Read<int>();
                 ImportGuidsCount = Ar.Read<int>();

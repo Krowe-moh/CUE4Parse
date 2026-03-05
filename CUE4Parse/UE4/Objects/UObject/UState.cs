@@ -27,10 +27,14 @@ public class UState : UStruct
     {
         base.Deserialize(Ar, validPos);
 
-        ProbeMask = Ar.Read<long>();
         if (Ar.Ver < EUnrealEngineObjectUE3Version.REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
         {
+            ProbeMask = Ar.Read<long>();
             IgnoreMask = Ar.Read<long>();
+        }
+        else
+        {
+            ProbeMask = Ar.Read<long>();
         }
 
         LabelTableOffset = Ar.Read<short>();

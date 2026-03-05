@@ -7,7 +7,6 @@ public class UMBA_UIComp_DrawImageWithOverlay : UComponent;
 public class UMBA_UIComp_DrawStringScrollable : UComponent;
 public class UMBA_UIComp_ServerBrowserPresenter : UComponent;
 public class UMBA_UIComp_ListPresenter : UComponent;
-public class UUDKSkeletalMeshComponent : UComponent;
 public class UMBA_SpriteComponent : UComponent;
 public class UMBA_SimCar : UComponent;
 public class UMBA_PositionReplicationErrorCorrector : UComponent;

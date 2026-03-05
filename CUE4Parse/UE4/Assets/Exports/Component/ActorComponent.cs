@@ -1,11 +1,13 @@
 using CUE4Parse.UE4.Assets.Exports.Actor;
 using CUE4Parse.UE4.Assets.Exports.BuildData;
+using CUE4Parse.UE4.Assets.Exports.Component.Atmosphere;
 using CUE4Parse.UE4.Assets.Exports.Component.Landscape;
 using CUE4Parse.UE4.Assets.Exports.Component.Lights;
 using CUE4Parse.UE4.Assets.Exports.Component.SkeletalMesh;
 using CUE4Parse.UE4.Assets.Exports.Component.StaticMesh;
 using CUE4Parse.UE4.Assets.Exports.Sound;
 using CUE4Parse.UE4.Assets.Exports.Texture;
+using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Core.Misc;
@@ -67,6 +69,27 @@ public class UArrowComponent : UPrimitiveComponent
     }
 }
 public class UAsyncPhysicsInputComponent : UActorComponent;
+
+public class UAtmosphericFogComponent : USkyAtmosphereComponent
+{
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+
+        if (FUE5MainStreamObjectVersion.Get(Ar) < FUE5MainStreamObjectVersion.Type.RemovedAtmosphericFog)
+        {
+            if (Ar.Ver >= EUnrealEngineObjectUE4Version.ATMOSPHERIC_FOG_CACHE_DATA)
+            {
+                new FByteBulkData(Ar); // TransmittanceData
+                new FByteBulkData(Ar); // IrradianceData
+            }
+
+            new FByteBulkData(Ar); //InscatterData
+            Ar.Read<int>(); // CounterVal
+        }
+    }
+}
+
 public class UAudioCaptureComponent : USynthComponent;
 
 public class UAudioComponent : USceneComponent
@@ -131,8 +154,8 @@ public class UBrushComponent : UPrimitiveComponent
         BrushBodySetup = GetOrDefault(nameof(BrushBodySetup), new FPackageIndex());
 
         if (Ar.Game < EGame.GAME_UE4_0)
-        {
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.RECALCULATE_MAXACTIVEPARTICLE)
+        {// was RECALCULATE_MAXACTIVEPARTICLE
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.FLASH_DXT5_TEXTURE_SUPPORT && Ar.Game != EGame.GAME_LineOfSight)
             {
                 Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>())); // CachedPhysBrushData
             }
@@ -201,6 +224,25 @@ public class UFieldSystemMetaDataFilter : UFieldSystemMetaData;
 public class UFieldSystemMetaDataIteration : UFieldSystemMetaData;
 public class UFieldSystemMetaDataProcessingResolution : UFieldSystemMetaData;
 public class UFloatingPawnMovement : UPawnMovementComponent;
+
+public class UFluidSurfaceComponent : UPrimitiveComponent
+{
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_FLUID_LIGHTMAPS)
+        {
+            FLightMap? lightMap = Ar.Read<ELightMapType>() switch
+            {
+                ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
+                ELightMapType.LMT_2D => new FLightMap2D(Ar),
+                _ => null
+            };
+        }
+    }
+}
+
 public class UForceFeedbackComponent : USceneComponent;
 public class UFuncTestRenderingComponent : UPrimitiveComponent;
 public class UGameplayCameraComponent : USceneComponent;
@@ -290,7 +332,39 @@ public class UPaperGroupedSpriteComponent : UMeshComponent;
 public class UPaperRenderComponent : UPaperSpriteComponent;
 public class UPaperSpriteComponent : UMeshComponent;
 public class UPaperTerrainComponent : UPrimitiveComponent;
-public class UTerrainComponent : UPrimitiveComponent;
+
+public struct FTerrainPatchBounds
+{
+    public float MinHeight;
+    public float MaxHeight;
+    public float MaxDisplacement;
+}
+public class UTerrainComponent : UPrimitiveComponent
+{
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            /**
+             * This is a low poly version of the terrain vertices in world space. The
+             * triangle data is created based upon Terrain->CollisionTesselationLevel
+             */
+            Ar.ReadArray<FVector>(); // CollisionVertices
+            /** Used for in-game collision tests against terrain. */
+            Ar.ReadArray<int>(); // Nodes
+            Ar.Position += Ar.Read<int>() * 12;
+            //Ar.ReadArray<FTerrainPatchBounds>(); // PatchBounds
+
+            /*FLightMap? LightMap = Ar.Read<ELightMapType>() switch
+            {
+                ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
+                ELightMapType.LMT_2D => new FLightMap2D(Ar),
+                _ => null
+            };*/
+        }
+    }
+}
 public class UPaperTerrainSplineComponent : USplineComponent;
 public class UPaperTileMapComponent : UMeshComponent;
 public class UPaperTileMapRenderComponent : UPaperTileMapComponent;
@@ -365,7 +439,6 @@ public class USingleAnimSkeletalComponent : USkeletalMeshComponent;
 public class USkeletalMeshReplicatedComponent : USkeletalMeshComponent;
 public class UFPSSkeletalMeshComponent : USkeletalMeshComponent;
 public class USkinnedMeshComponent : UMeshComponent;
-public class USkyLightComponent : ULightComponentBase;
 public class USpeedTreeComponent : UPrimitiveComponent
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
@@ -380,6 +453,16 @@ public class USpeedTreeComponent : UPrimitiveComponent
                 ELightMapType.LMT_2D => new FLightMap2D(Ar),
                 _ => null
             };
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.SPEEDTREE_5_INTEGRATION)
+            {
+                FLightMap? FrondLightMap = Ar.Read<ELightMapType>() switch
+                {
+                    ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
+                    ELightMapType.LMT_2D => new FLightMap2D(Ar),
+                    _ => null
+                };
+            }
 
             FLightMap? LeafCardLightMap = Ar.Read<ELightMapType>() switch
             {

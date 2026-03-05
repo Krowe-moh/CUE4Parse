@@ -5,6 +5,7 @@ public class UComponent : UObject;
 public class UDistributionFloat : UComponent;
 // sort later
 
+public class UUDKSkeletalMeshComponent : UComponent;
 public class UTgSkeletalMeshComponent : UComponent;
 public class UCascadeParticleSystemComponent : UComponent;
 public class UFogVolumeSphericalDensityComponent : UComponent;

@@ -20,9 +20,9 @@ namespace CUE4Parse.UE4.Assets.Exports.Material;
 public class FTextureLookup
 {
     public int TexCoordIndex;
-    public int TextureIndex;
-    public int UScale;
-    public int VScale;
+    public int TextureIndex; // Index into Uniform2DTextureExpressions
+    public float UScale;
+    public float VScale;
 
     public FTextureLookup(FAssetArchive Ar)
     {
@@ -31,14 +31,14 @@ public class FTextureLookup
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.FONT_FORMAT_AND_UV_TILING_CHANGES)
         {
-            var uAndVScale = Ar.Read<int>();
+            var uAndVScale = Ar.Read<float>();
             UScale = uAndVScale;
             VScale = uAndVScale;
         }
         else
         {
-            UScale = Ar.Read<int>();
-            VScale = Ar.Read<int>();
+            UScale = Ar.Read<float>();
+            VScale = Ar.Read<float>();
         }
     }
 }
@@ -158,9 +158,9 @@ public class UMaterial : UMaterialInterface
             QualityMask = Ar.Read<int>();
         }
 
-        for (int QualityIndex = 0; QualityIndex < (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_FALLBACKS && Ar.Game != EGame.GAME_RocketLeague ? 2 : (Ar.Ver >= EUnrealEngineObjectUE3Version.RENDERING_REFACTOR ? 1 : 0)); QualityIndex++)
+        for (int QualityIndex = 0; QualityIndex < (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_FALLBACKS && Ar.Game != EGame.GAME_RocketLeague ? 2 : 1); QualityIndex++)
         {
-            if ((QualityMask & (1 << QualityIndex)) == 0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MATERIAL_QUALITY_LEVEL && (QualityMask & (1 << QualityIndex)) == 0)
             {
                 continue;
             }
@@ -542,7 +542,6 @@ public class UMaterial : UMaterialInterface
                 Regex.IsMatch(texture.Name, CMaterialParams2.RegexEmissive, RegexOptions.IgnoreCase))
             {
                 parameters.Textures[CMaterialParams2.FallbackEmissive] = texture;
-                continue;
             }
         }
     }

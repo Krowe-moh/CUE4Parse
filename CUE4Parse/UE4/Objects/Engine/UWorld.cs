@@ -36,12 +36,15 @@ namespace CUE4Parse.UE4.Objects.Engine
                 new FPackageIndex(Ar); // SaveGameSummary
             }
 
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_DECAL_MANAGER_FROM_UWORLD)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_DECAL_MANAGER && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_DECAL_MANAGER_FROM_UWORLD)
             {
                 new FPackageIndex(Ar); // DecalManager
             }
 
-            ExtraReferencedObjects = Ar.ReadArray(() => new FPackageIndex(Ar));
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_WORLD_EXTRA_REFERENCED_OBJECTS)
+            {
+                ExtraReferencedObjects = Ar.ReadArray(() => new FPackageIndex(Ar));
+            }
             if (Ar.Game is EGame.GAME_AssaultFireFuture && TryGetValue<FPackageIndex>(out var composition, "MiniWorldComposition")) return;
             if (Ar.Game >= EGame.GAME_UE4_0)
             {
