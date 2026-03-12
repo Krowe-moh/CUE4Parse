@@ -2126,9 +2126,11 @@ public enum EUnrealEngineObjectUE3Version
     //-IPhone adpcm compression now has a variable block size based on the quality setting in SoundNodeWave
     IPHONE_AUDIO_VARIABLE_BLOCK_SIZE_COMPRESSION = 867,
     // -----<new versions can be added before this line>-------------------------------------------------
+
     // this needs to be the last line (see note below)
     AUTOMATIC_VERSION_PLUS_ONE,
     AUTOMATIC_VERSION = AUTOMATIC_VERSION_PLUS_ONE - 1,
+
     LegacyUE3Version = ANDROID_ETC_SEPARATED
 }
 

@@ -89,6 +89,10 @@ public class UMaterial : UMaterialInterface
     public bool bDisableDepthTest { get; private set; }
     public bool bIsMasked { get; private set; }
     public FPackageIndex[] Expressions { get; private set; } = [];
+
+    public FExpressionInput? DiffuseColor { get; private set; }
+    public FExpressionInput? EmissiveColor { get; private set; }
+
     public EBlendMode BlendMode { get; private set; } = EBlendMode.BLEND_Opaque;
     public ETranslucencyLightingMode TranslucencyLightingMode { get; private set; } = ETranslucencyLightingMode.TLM_VolumetricNonDirectional;
     public EMaterialShadingModel ShadingModel { get; private set; } = EMaterialShadingModel.MSM_Unlit;
@@ -106,6 +110,10 @@ public class UMaterial : UMaterialInterface
         bDisableDepthTest = GetOrDefault<bool>(nameof(bDisableDepthTest));
         bIsMasked = GetOrDefault<bool>(nameof(bIsMasked));
         Expressions = GetOrDefault(nameof(Expressions), Expressions);
+
+        DiffuseColor = GetOrDefault<FExpressionInput>(nameof(DiffuseColor)) is { } diffusec ? new FExpressionInput(diffusec.FallbackStruct) : new FExpressionInput();
+        EmissiveColor = GetOrDefault<FExpressionInput>(nameof(EmissiveColor)) is { } emissivec ? new FExpressionInput(emissivec.FallbackStruct) : new FExpressionInput();
+
         BlendMode = GetOrDefault(nameof(BlendMode), BlendMode);
         TranslucencyLightingMode = GetOrDefault(nameof(TranslucencyLightingMode), TranslucencyLightingMode);
         ShadingModel = GetOrDefault(nameof(ShadingModel), ShadingModel);
@@ -486,6 +494,18 @@ public class UMaterial : UMaterialInterface
                     parameters.Switches[staticBoolParameter.ParameterName.Text] = staticBoolParameter.DefaultValue;
                     break;
             }
+        }
+
+        if ((DiffuseColor?.Expression?.TryLoad(out UMaterialExpression DiffuseExpr) ?? false))
+        {
+            if (DiffuseExpr is UMaterialExpressionVectorParameter vectorParameter)
+                parameters.DiffuseColor = vectorParameter.DefaultValue;
+        }
+
+        if ((EmissiveColor?.Expression?.TryLoad(out UMaterialExpression EmissiveExpr) ?? false))
+        {
+            if (EmissiveExpr is UMaterialExpressionVectorParameter vectorParameter)
+                parameters.EmissiveColor = vectorParameter.DefaultValue;
         }
 
         if (format != EMaterialFormat.AllLayersNoRef)

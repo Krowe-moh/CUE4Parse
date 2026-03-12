@@ -13,6 +13,11 @@ public class UNavCollision : Assets.Exports.UObject
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
+        var bGatherConvexGeometry = GetOrDefault<bool>("bGatherConvexGeometry");
+        var boxCollision = GetOrDefault<object[]>("BoxCollision", []);
+        var cylinderCollision = GetOrDefault<object[]>("CylinderCollision", []);
+        bool bUseConvexCollisionVer3 = bGatherConvexGeometry || (cylinderCollision.Length == 0 && boxCollision.Length == 0);
+        bool bUseConvexCollision = bGatherConvexGeometry || boxCollision.Length > 0 || cylinderCollision.Length > 0;
 
         var startPos = Ar.Position;
         int version;
@@ -31,15 +36,8 @@ public class UNavCollision : Assets.Exports.UObject
         _ = Ar.Read<FGuid>(); // Zeroed GUID, unused
         var bCooked = Ar.ReadBoolean();
 
-        // var bGatherConvexGeometry = GetOrDefault<bool>("bGatherConvexGeometry");
-        // var boxCollision = GetOrDefault<object[]>("BoxCollision", []);
-        // var cylinderCollision = GetOrDefault<object[]>("CylinderCollision", []);
-        // bool bUseConvexCollisionVer3 = bGatherConvexGeometry || (cylinderCollision.Length == 0 && boxCollision.Length == 0);
-        // bool bUseConvexCollision = bGatherConvexGeometry || boxCollision.Length > 0 || cylinderCollision.Length > 0;
-        // bool bProcessCookedData = version >= Consts.ShapeGeoExport ? bUseConvexCollision : bUseConvexCollisionVer3;
-        // if (bCooked && bProcessCookedData)
-
-        if (bCooked)
+        bool bProcessCookedData = version >= Consts.ShapeGeoExport ? bUseConvexCollision : bUseConvexCollisionVer3;
+        if (bCooked && bProcessCookedData)
             CookedFormatData = new FFormatContainer(Ar);
 
         if (version >= Consts.AreaClass)

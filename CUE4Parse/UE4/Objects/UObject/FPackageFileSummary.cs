@@ -87,9 +87,6 @@ namespace CUE4Parse.UE4.Objects.UObject
         public int ExportGuidsCount;
         public int ImportGuidsCount;
         public int ImportExportGuidsOffset;
-        public int GarbageSize;
-        public int CompressedChunkInfoOffset;
-        public int lastBlockSize;
         public readonly int DependsOffset;
         public readonly int SoftPackageReferencesCount;
         public readonly int SoftPackageReferencesOffset;
@@ -199,6 +196,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 if (legacyFileVersion != -4)
                 {
                     FileVersionUE.FileVersionUE3 = Ar.Read<int>();
+                   // FileVersionUE.FileVersionUE3 = (int) EUnrealEngineObjectUE3Version.AUTOMATIC_VERSION;
                 }
 
                 FileVersionUE.FileVersionUE4 = Ar.Read<int>();
@@ -312,7 +310,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 if ((int)FileVersionLicenseeUE > 29) Ar.Read<int>();
                 if ((int) FileVersionLicenseeUE > 28)
                 {
-                    Ar.Read<int>();Ar.Read<int>();Ar.Read<int>();Ar.Read<int>();Ar.Read<int>();
+                    Ar.ReadArray<int>(5);
                 }
             }
 
@@ -578,13 +576,6 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 Ar.Read<int>(); // count
                 Ar.Read<int>(); // offset
-            }
-
-            if (Ar.Game == EGame.GAME_RocketLeague)
-            {
-                GarbageSize = Ar.Read<int>();
-                CompressedChunkInfoOffset = Ar.Read<int>();
-                lastBlockSize = Ar.Read<int>();
             }
         }
 

@@ -38,6 +38,9 @@ public class CMaterialParams2
     public bool IsTranslucent => BlendMode == EBlendMode.BLEND_Translucent;
     public bool IsNull => Textures.Count == 0;
 
+    public FLinearColor? DiffuseColor;
+    public FLinearColor? EmissiveColor;
+
     /// <summary>
     /// SWITCH TO REGEX ONCE WE HAVE A GOOD OVERVIEW OF TEXTURE NAMES
     /// AND POSSIBLY RE-USE THE REGEX FOR BOTH UMaterial & UMaterialInstanceConstant
@@ -104,7 +107,7 @@ public class CMaterialParams2
             "Primary ARME", "CombineTex(HRA)", "ORN", "TPA_SpecColorTex", "Tex_RME", "CompVT", "MetalRoughOcc_Tex",
             "Layer00_MetalRoughOccDp_Tex", "Tex_SkinBase_ORM", "Tex_Core_Layer_AO", "RGB[AO/R/Metallic]_Texture",
             "Simple_OcclRoughMet_Texture", "P (NoneVT)", "Pack Tex1", "CASR", "Roughness_VT", "OcclusionRoughnessMetallicTexture",
-            "Clothing ORM", "ORC [Standard]", "ORME_Tex", 
+            "Clothing ORM", "ORC [Standard]", "ORME_Tex",
         ],
         ["SpecularMasks_2", "MRA B", "LP_2", "M2_T_PAK"],
         ["SpecularMasks_3", "MRA C", "LP_3", "M3_T_PAK"],
