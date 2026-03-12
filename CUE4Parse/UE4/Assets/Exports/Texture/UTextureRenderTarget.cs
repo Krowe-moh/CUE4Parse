@@ -5,7 +5,6 @@ namespace CUE4Parse.UE4.Assets.Exports.Texture;
 
 public class UTextureRenderTarget : UTexture
 {
-
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);

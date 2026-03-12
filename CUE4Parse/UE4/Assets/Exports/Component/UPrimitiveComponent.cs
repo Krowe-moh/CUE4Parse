@@ -13,7 +13,7 @@ public class UPrimitiveComponent : USceneComponent
         if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 16;
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedComponentGuid && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_COMPONENT_GUID)
         {
-            Ar.Read<FGuid>();
+            Ar.Position += 16; // Guid
         }
     }
 

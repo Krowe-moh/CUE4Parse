@@ -7,12 +7,12 @@ namespace CUE4Parse.UE4.Assets.Exports.Texture;
 
 public class UTextureCube : UTexture
 {
-    public FPackageIndex FacePosX { get; private set; }
-    public FPackageIndex FaceNegX { get; private set; }
-    public FPackageIndex FacePosY { get; private set; }
-    public FPackageIndex FaceNegY { get; private set; }
-    public FPackageIndex FacePosZ { get; private set; }
-    public FPackageIndex FaceNegZ { get; private set; }
+    public FPackageIndex? FacePosX { get; private set; }
+    public FPackageIndex? FaceNegX { get; private set; }
+    public FPackageIndex? FacePosY { get; private set; }
+    public FPackageIndex? FaceNegY { get; private set; }
+    public FPackageIndex? FacePosZ { get; private set; }
+    public FPackageIndex? FaceNegZ { get; private set; }
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
@@ -28,8 +28,7 @@ public class UTextureCube : UTexture
         {
             var SizeX = Ar.Read<int>();
             var SizeY = Ar.Read<int>();
-            var format = Ar.Read<int>();
-            Format = (EPixelFormat) format;
+            Format = (EPixelFormat) Ar.Read<int>();
             var numMips = Ar.Read<int>();
         }
 

@@ -13,7 +13,7 @@ public class FSkeletalMeshVertexBuffer
     public FVector MeshExtension;
     public FVector MeshOrigin;
     public bool bUseFullPrecisionUVs;
-    public bool bUsePackedPosition;
+    public bool bUsePackedPosition = true;
     public bool bExtraBoneInfluences;
     public FGPUVertHalf[] VertsHalf;
     public FGPUVertFloat[] VertsFloat;
@@ -43,7 +43,7 @@ public class FSkeletalMeshVertexBuffer
             NumTexCoords = Ar.Read<int>();
         }
 
-        bUseFullPrecisionUVs = Ar.ReadBoolean();
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedFullPrecisionUV) bUseFullPrecisionUVs = Ar.ReadBoolean();
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SUPPORT_GPUSKINNING_8_BONE_INFLUENCES && FSkeletalMeshCustomVersion.Get(Ar) < FSkeletalMeshCustomVersion.Type.UseSeparateSkinWeightBuffer)
         {
