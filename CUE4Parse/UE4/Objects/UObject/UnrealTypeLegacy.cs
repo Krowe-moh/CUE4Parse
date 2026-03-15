@@ -345,7 +345,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
     public class UDelegateProperty : UProperty
     {
-        public FPackageIndex SignatureFunction;
+        public FPackageIndex SignatureFunction; // UFunction
         public FPackageIndex? SourceDelegate;
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
@@ -376,7 +376,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
     public class UMulticastDelegateProperty : UProperty
     {
-        public FPackageIndex SignatureFunction;
+        public FPackageIndex SignatureFunction; // UFunction
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {

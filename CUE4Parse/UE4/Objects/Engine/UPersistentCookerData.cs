@@ -231,7 +231,6 @@ namespace CUE4Parse.UE4.Objects.Engine
         }
     }
 
-    public class UScourgePersistentCookerData : UPersistentCookerData;
     public class UGearsPersistentCookerData : UPersistentCookerData;
 
     public class UPersistentCookerData : Assets.Exports.UObject
