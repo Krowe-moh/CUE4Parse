@@ -49,9 +49,9 @@ public class CMaterialParams2
     public static readonly string[][] Diffuse =
     [
         [
-            "Trunk_BaseColor", "ShadedDiffuse", "LitDiffuse", "Base Colour",
+            "Trunk_BaseColor", "ShadedDiffuse", "LitDiffuse", "Base Colour", "CLRM", "Diffuse_Map", "Base Color", "Base_Tex",
             "Background Diffuse", "BG Diffuse Texture", "Diffuse", "Diffuse_1", "DiffuseTexture", "DiffuseMap", "Diffuse A", "Base Color Map",
-            "Diffuse A Map", "Diffuse Top", "Diffuse Side", "Base Diffuse", "Diffuse Base", "Diffuse Base Map", "Diffuse Color Map", "BaseColor_Tex", "Base_Tex",
+            "Diffuse A Map", "Diffuse Top", "Diffuse Side", "Base Diffuse", "Diffuse Base", "Diffuse Base Map", "Diffuse Color Map", "BaseColor_Tex",
             "DiffuseLayer1", "1 - Albedo", "albedo", "Albedo", "Aldebo", "ALB", "TextureAlbedo", "AlbedoTex", "Color_Texture", "color", "Base_D", "Tex_BaseColor",
             "Base Texture Color", "BaseColorA", "BC", "BCA", "BC_Map", "BCE", "Color", "CO", "CO_", "CO_1", "Base_CO", "Base Color + Linework", "Bc",
             "BaseColorVT", "Tex_Color", "Color Tex", "TexColor", "AlbedMap", "Tex_Colormap", "ColorMap", "Main_T_BaseColor", "BaseColour", "Base_Texture",
@@ -107,7 +107,7 @@ public class CMaterialParams2
             "Primary ARME", "CombineTex(HRA)", "ORN", "TPA_SpecColorTex", "Tex_RME", "CompVT", "MetalRoughOcc_Tex",
             "Layer00_MetalRoughOccDp_Tex", "Tex_SkinBase_ORM", "Tex_Core_Layer_AO", "RGB[AO/R/Metallic]_Texture",
             "Simple_OcclRoughMet_Texture", "P (NoneVT)", "Pack Tex1", "CASR", "Roughness_VT", "OcclusionRoughnessMetallicTexture",
-            "Clothing ORM", "ORC [Standard]", "ORME_Tex",
+            "Clothing ORM", "ORC [Standard]", "ORME_Tex", "Roughness VT", "RMAO VT",
         ],
         ["SpecularMasks_2", "MRA B", "LP_2", "M2_T_PAK"],
         ["SpecularMasks_3", "MRA C", "LP_3", "M3_T_PAK"],

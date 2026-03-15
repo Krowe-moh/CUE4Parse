@@ -18,12 +18,6 @@ public class UInstancedStaticMeshComponent : UStaticMeshComponent
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.BULKSERIALIZE_INSTANCE_DATA && Ar.Game < EGame.GAME_UE4_0)
-        {
-            Ar.SkipBulkArrayData(); // PerInstanceSMData
-            return;
-        }
-
         var bCooked = false;
         if (FFortniteMainBranchObjectVersion.Get(Ar) >= FFortniteMainBranchObjectVersion.Type.SerializeInstancedStaticMeshRenderData ||
             FEditorObjectVersion.Get(Ar) >= FEditorObjectVersion.Type.SerializeInstancedStaticMeshRenderData)
@@ -48,7 +42,7 @@ public class UInstancedStaticMeshComponent : UStaticMeshComponent
             return;
         }
 
-        var bHasSkipSerializationPropertiesData = FFortniteMainBranchObjectVersion.Get(Ar) < FFortniteMainBranchObjectVersion.Type.ISMComponentEditableWhenInheritedSkipSerialization || Ar.ReadBoolean();
+        var bHasSkipSerializationPropertiesData = Ar.Ver >= EUnrealEngineObjectUE3Version.BULKSERIALIZE_INSTANCE_DATA && FFortniteMainBranchObjectVersion.Get(Ar) < FFortniteMainBranchObjectVersion.Type.ISMComponentEditableWhenInheritedSkipSerialization || Ar.ReadBoolean();
         if (bHasSkipSerializationPropertiesData)
         {
             switch (Ar.Game)

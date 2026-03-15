@@ -31,9 +31,7 @@ namespace CUE4Parse_Conversion.Meshes
                 lock (_material) material.TryWriteToDir(baseDirectory, out _, out _);
             });
 
-
             savedFilePath = FixAndCreatePath(baseDirectory, FileName);
-
             File.WriteAllBytesAsync(savedFilePath, FileData);
             label = Path.GetFileName(savedFilePath);
             return File.Exists(savedFilePath);
