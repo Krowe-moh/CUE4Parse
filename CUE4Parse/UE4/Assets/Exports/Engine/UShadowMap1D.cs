@@ -11,7 +11,7 @@ public class UShadowMap1D : UObject
     /** The GUID of the light which this shadow-map is for. */
     FGuid LightGuid;
 
-    public void Deserialze(FAssetArchive Ar, long validPos)
+    public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
         Samples = Ar.ReadArray<float>();

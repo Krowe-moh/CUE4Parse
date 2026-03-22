@@ -50,6 +50,10 @@ public class UAIPerceptionStimuliSourceComponent : UActorComponent;
 public class UActorSequenceComponent : UActorComponent;
 public class UActorTextureStreamingBuildDataComponent : UActorComponent;
 public class UApplicationLifecycleComponent : UActorComponent;
+public class UApexComponentBase : UMeshComponent;
+public class UApexStaticComponent : UApexComponentBase;
+public class ApexStaticDestructibleComponent : UApexStaticComponent;
+
 public class UArchVisCharMovementComponent : UCharacterMovementComponent;
 
 public class UArrowComponent : UPrimitiveComponent
@@ -154,7 +158,8 @@ public class UBrushComponent : UPrimitiveComponent
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {// was RECALCULATE_MAXACTIVEPARTICLE
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.FLASH_DXT5_TEXTURE_SUPPORT && Ar.Game != EGame.GAME_LineOfSight)
+            // was FLASH_DXT5_TEXTURE_SUPPORT
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.IPHONE_AUDIO_VARIABLE_BLOCK_SIZE_COMPRESSION && Ar.Game != EGame.GAME_LineOfSight)
             {
                 Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>())); // CachedPhysBrushData
             }
@@ -430,6 +435,7 @@ public class UReturnResultsTerminal : UFieldNodeBase;
 public class URotatingMovementComponent : UMovementComponent;
 public class URuntimeVirtualTextureComponent : USceneComponent;
 public class USceneCaptureComponent : USceneComponent;
+public class USceneCaptureReflectComponent : USceneCaptureComponent;
 public class USceneCaptureComponent2D : USceneCaptureComponent;
 public class USceneCaptureComponentCube : USceneCaptureComponent;
 public class USensingComponent : UPawnSensingComponent;
@@ -498,7 +504,22 @@ public class UDrawLightConeComponent : UComponent;
 public class UVisConeComponent : UComponent;
 public class UDynamicLightEnvironmentComponent : UComponent;
 public class UDrawLightRadiusComponent : UActorComponent;
-public class UFracturedSkinnedMeshComponent : UActorComponent;
+
+public class UFracturedStaticMeshComponent : UStaticMeshComponent;
+public class UFracturedSkinnedMeshComponent : UActorComponent
+{
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            new UStaticMeshComponent().Deserialize(Ar, validPos);
+            return;
+        }
+
+        base.Deserialize(Ar, validPos);
+    }
+};
+
 public class USmartNavLinkComponent : UNavLinkCustomComponent;
 public class USparseVolumeTextureViewerComponent : UPrimitiveComponent;
 public class USpectatorPawnMovement : UFloatingPawnMovement;
@@ -536,6 +557,7 @@ public class UWaveScalar : UFieldNodeFloat;
 public class UWidgetComponent : UMeshComponent;
 public class UWidgetInteractionComponent : USceneComponent;
 public class UWindDirectionalSourceComponent : USceneComponent;
+public class UWindPointSourceComponent : UWindDirectionalSourceComponent;
 public class UWorldPartitionDestructibleHLODComponent : USceneComponent;
 public class UWorldPartitionDestructibleHLODMeshComponent : UWorldPartitionDestructibleHLODComponent;
 public class UWorldPartitionStreamingSourceComponent : UActorComponent;

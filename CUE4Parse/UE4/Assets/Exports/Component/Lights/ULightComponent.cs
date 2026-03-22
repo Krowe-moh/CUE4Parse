@@ -114,7 +114,7 @@ public class ULightComponent : ULightComponentBase
             }
         }
 
-        if (Ar.Ver > EUnrealEngineObjectUE3Version.SIMD_SIMPLIFIED_COLLISION_DATA && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVE_UNUSED_LIGHTING_PROPERTIES)
+        if (Ar.Ver > EUnrealEngineObjectUE3Version.ADDED_LIGHT_VOLUME_SUPPORT && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVE_UNUSED_LIGHTING_PROPERTIES)
         {
             Ar.ReadArray(() => new FConvexVolume(Ar)); // InclusionConvexVolumes
             Ar.ReadArray(() => new FConvexVolume(Ar)); // ExclusionConvexVolumes
@@ -207,12 +207,12 @@ public class UDominantSpotLightComponent : UPointLightComponent
 
 public class UDominantDirectionalLightComponent : UPointLightComponent
 {
-    public short[] DominantLightShadowMap;
+    public short[]? DominantLightShadowMap;
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         // Before super
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SPOTLIGHT_DOMINANTSHADOW_TRANSITION && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DOMINANTLIGHT_NORMALSHADOWS && Ar.Game < EGame.GAME_UE4_0)
         {
             DominantLightShadowMap = Ar.ReadArray(() => Ar.Read<short>());
         }
@@ -335,4 +335,15 @@ public class UDirectionalLightComponent : ULightComponent
     }
 }
 
-public class USkyLightComponent : ULightComponentBase;
+public class USkyLightComponent : ULightComponentBase
+{
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+
+        if (Ar.Ver >= EUnrealEngineObjectUE4Version.SKYLIGHT_MOBILE_IRRADIANCE_MAP && !(FReleaseObjectVersion.Get(Ar) >= FReleaseObjectVersion.Type.SkyLightRemoveMobileIrradianceMap))
+        {
+            // DummyIrradianceEnvironmentMap
+        }
+    }
+}

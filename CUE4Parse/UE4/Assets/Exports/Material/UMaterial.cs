@@ -166,7 +166,7 @@ public class UMaterial : UMaterialInterface
             QualityMask = Ar.Read<int>();
         }
 
-        for (int QualityIndex = 0; QualityIndex < (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_FALLBACKS && Ar.Game != EGame.GAME_RocketLeague ? 2 : 1); QualityIndex++)
+        for (int QualityIndex = 0; QualityIndex < (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_FALLBACKS && Ar.Game != EGame.GAME_RocketLeague ? Ar.Ver >= EUnrealEngineObjectUE3Version.HALFRES_MOTIONBLURDOF4 ? 1 : 2 : 1); QualityIndex++)
         {
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MATERIAL_QUALITY_LEVEL && (QualityMask & (1 << QualityIndex)) == 0)
             {

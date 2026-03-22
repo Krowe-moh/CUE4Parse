@@ -40,7 +40,7 @@ public class UStaticMeshComponent : UMeshComponent
                 MeshPaintTextureCooked = new FPackageIndex(Ar);
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRESERVE_SMC_VERT_COLORS && Ar.Ver < EUnrealEngineObjectUE3Version.REALD_DBAVARS_TO_SHADER_REGISTERS)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRESERVE_SMC_VERT_COLORS && Ar.Ver < EUnrealEngineObjectUE3Version.WIIU_COMPRESSED_SOUNDS)
         {
             Ar.Read<int>(); // Dummy
         }

@@ -192,6 +192,8 @@ public class FStreamableSoundInfo
     }
 }
 
+public class ULevelScriptBlueprint : UBlueprint;
+
 public class ULevel : Assets.Exports.UObject
 {
     public FPackageIndex WorldSettings;

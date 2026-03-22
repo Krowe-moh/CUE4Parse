@@ -13,7 +13,7 @@ public class FSkeletalMeshVertexBuffer
     public FVector MeshExtension;
     public FVector MeshOrigin;
     public bool bUseFullPrecisionUVs;
-    public bool bUsePackedPosition = true;
+    public bool bUsePackedPosition;
     public bool bExtraBoneInfluences;
     public FGPUVertHalf[] VertsHalf;
     public FGPUVertFloat[] VertsFloat;
@@ -58,7 +58,8 @@ public class FSkeletalMeshVertexBuffer
             MeshOrigin = new FVector(Ar);
         }
 
-        if (Ar.Game < EGame.GAME_UE4_0 && Ar.Game != EGame.GAME_RocketLeague) bUsePackedPosition = false;
+        // console exclusion ig
+        //if (Ar.Game < EGame.GAME_UE4_0 && Ar.Game != EGame.GAME_RocketLeague) bUsePackedPosition = false;
         if (Ar.Versions.Options.TryGetValue("SkeletalMesh.UsePackedPosition", out var value)) bUsePackedPosition = value;
 
         if (!bUseFullPrecisionUVs)
@@ -89,6 +90,8 @@ public class FSkeletalMeshVertexBuffer
     {
         if (VertsHalf.Length > 0) return VertsHalf.Length;
         if (VertsFloat.Length > 0) return VertsFloat.Length;
+        if (VertsHalfPacked.Length > 0) return VertsHalfPacked.Length;
+        if (VertsFloatPacked.Length > 0) return VertsFloatPacked.Length;
         return 0;
     }
 }

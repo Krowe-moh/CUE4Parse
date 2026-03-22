@@ -231,7 +231,7 @@ public class FVolumeLightingSample
             Lighting = Ar.ReadArray(3, () => Ar.ReadArray<float>(order*order));
         }
 
-        if (Ar.Game >= EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE4Version.SKY_BENT_NORMAL)
         {
             PackedSkyBentNormal = Ar.Read<FColor>();
         }
@@ -410,16 +410,35 @@ public class FLightMap(FAssetArchive Ar)
 public class FLegacyLightMap1D : FLightMap
 {
     private int NUM_DIRECTIONAL_LIGHTMAP_COEF = 2;
+    // ?
     private int NUM_GATHERED_LIGHTMAP_COEF = 4;
+    private int NUM_GATHERED_LIGHTMAP_COEF_LEGACY = 3;
     public FLegacyLightMap1D(FAssetArchive Ar) : base(Ar)
     {
         new FPackageIndex(Ar); // Owner
-        new FIntBulkData(Ar);
-        for (int elementIndex = 0; elementIndex < NUM_GATHERED_LIGHTMAP_COEF; elementIndex++)
+        new FIntBulkData(Ar); // DirectionalSamples
+        if (Ar.Ver <= EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128)
         {
-            if (elementIndex < NUM_DIRECTIONAL_LIGHTMAP_COEF || Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_SIMPLE_LIGHTING)
+            for (int elementIndex = 0; elementIndex < 3; elementIndex++)
             {
                 Ar.Read<FVector>();
+            }
+        }
+        else if (Ar.Ver < EUnrealEngineObjectUE3Version.MAXCOMPONENT_LIGHTMAP_ENCODING)
+        {
+            for (int elementIndex = 0; elementIndex < 4; elementIndex++)
+            {
+                Ar.Read<FVector>();
+            }
+        }
+        else
+        {
+            for (int elementIndex = 0; elementIndex < NUM_GATHERED_LIGHTMAP_COEF_LEGACY; elementIndex++)
+            {
+                if (elementIndex < NUM_DIRECTIONAL_LIGHTMAP_COEF || Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_SIMPLE_LIGHTING)
+                {
+                    Ar.Read<FVector>();
+                }
             }
         }
 
@@ -452,7 +471,14 @@ public class FLightMap2D : FLightMap
         VirtualTextures = new FPackageIndex[2];
         ScaleVectors = new FVector4[NUM_STORED_LIGHTMAP_COEF];
         AddVectors = new FVector4[NUM_STORED_LIGHTMAP_COEF];
-        if (Ar.Ver <= EUnrealEngineObjectUE4Version.SH_LIGHTMAPS)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.MAXCOMPONENT_LIGHTMAP_ENCODING)
+        {
+            for (int elementIndex = 0; elementIndex < 4; elementIndex++)
+            {
+                Ar.Position += 16;
+            }
+        }
+        else if (Ar.Ver <= EUnrealEngineObjectUE4Version.SH_LIGHTMAPS)
         {
             for (var CoefficientIndex = 0; CoefficientIndex < 3; CoefficientIndex++)
             {
