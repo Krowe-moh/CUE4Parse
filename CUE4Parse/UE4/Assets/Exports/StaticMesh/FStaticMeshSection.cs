@@ -54,10 +54,23 @@ public class FStaticMeshSection
             bEnableCollision = Ar.ReadBoolean();
             Ar.ReadBoolean(); // OldEnableCollision
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedCastShadow) bCastShadow = Ar.ReadBoolean();
-            FirstIndex = Ar.Read<int>();
-            NumTriangles = Ar.Read<int>();
-            MinVertexIndex = Ar.Read<int>();
-            MaxVertexIndex = Ar.Read<int>();
+        }
+        else
+        {
+            MaterialIndex = Ar.Read<int>();
+        }
+
+        FirstIndex = Ar.Read<int>();
+        NumTriangles = Ar.Read<int>();
+        MinVertexIndex = Ar.Read<int>();
+        MaxVertexIndex = Ar.Read<int>();
+        if (Ar.Game >= EGame.GAME_UE4_0)
+        {
+            bEnableCollision = Ar.ReadBoolean();
+            bCastShadow = Ar.ReadBoolean();
+        }
+        else
+        {
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERSION_16) MaterialIndex = Ar.Read<int>();
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_FRAGMENTINDEX) Ar.SkipFixedArray(8);
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_PLATFORMMESHDATA)
@@ -68,16 +81,7 @@ public class FStaticMeshSection
                     new FPS3StaticMeshData(Ar);
                 }
             }
-            return;
         }
-
-        MaterialIndex = Ar.Read<int>();
-        FirstIndex = Ar.Read<int>();
-        NumTriangles = Ar.Read<int>();
-        MinVertexIndex = Ar.Read<int>();
-        MaxVertexIndex = Ar.Read<int>();
-        bEnableCollision = Ar.ReadBoolean();
-        bCastShadow = Ar.ReadBoolean();
         if (Ar.Game == EGame.GAME_PlayerUnknownsBattlegrounds) Ar.Position += 5; // byte + int
         if (Ar.Game is EGame.GAME_AssaultFireFuture) return;
         bForceOpaque = FRenderingObjectVersion.Get(Ar) >= FRenderingObjectVersion.Type.StaticMeshSectionForceOpaqueField && Ar.ReadBoolean();
