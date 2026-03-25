@@ -276,7 +276,7 @@ public class UStaticMesh : UObject
         }
 
         if (Ar.Game is EGame.GAME_FateTrigger or EGame.GAME_GhostsofTabor or EGame.GAME_Aion2) Ar.Position += 4;
-        if (Ar.Game is EGame.GAME_TheFinals && Ar.ReadBoolean()) Ar.SkipMultipleBulkArrayData(5);
+        if (Ar.Game is EGame.GAME_TheFinals or EGame.GAME_ArcRaiders && Ar.ReadBoolean()) Ar.SkipMultipleBulkArrayData(5);
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SPEEDTREE_STATICMESH)
         {

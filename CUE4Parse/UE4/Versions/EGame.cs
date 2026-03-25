@@ -114,6 +114,7 @@ public enum EGame : uint
         GAME_DarkPicturesAnthologyTheDevilinMe = GAME_UE4_26 + 24,
         GAME_DarkPicturesAnthologyLittleHope = GAME_UE4_26 + 25,
         GAME_TheQuarry = GAME_UE4_26 + 26,
+        GAME_RocoKingdomWorld = GAME_UE4_26 + 27,
     GAME_UE4_27 = GameUtils.GameUe4Base + (27 << 16),
         GAME_Splitgate = GAME_UE4_27 + 1,
         GAME_HYENAS = GAME_UE4_27 + 2,
@@ -146,6 +147,7 @@ public enum EGame : uint
         GAME_DuetNightAbyss = GAME_UE4_27 + 29,
         GAME_LiesofP = GAME_UE4_27 + 30,
         GAME_BloodBowl3 = GAME_UE4_27 + 31,
+        GAME_MyHeroUltraRumble = GAME_UE4_27 + 32,
     GAME_UE4_28 = GameUtils.GameUe4Base + (28 << 16),
 
     GAME_UE4_LATEST = GAME_UE4_28,
@@ -177,7 +179,7 @@ public enum EGame : uint
         GAME_MarvelRivals = GAME_UE5_3 + 1,
         GAME_BlackStigma = GAME_UE5_3 + 2,
         GAME_Valorant = GAME_UE5_3 + 3,
-        GAME_Placeholder5 = GAME_UE5_3 + 4,
+        GAME_ArcRaiders = GAME_UE5_3 + 4,
         GAME_Aion2 = GAME_UE5_3 + 5,
         GAME_TheFinals = GAME_UE5_3 + 6,
         GAME_Avowed = GAME_UE5_3 + 7,
@@ -257,7 +259,7 @@ public static class GameUtils
                 < EGame.GAME_UE5_4 => new FPackageFileVersion(522, 1009),
                 < EGame.GAME_UE5_5 => new FPackageFileVersion(522, 1012),
                 < EGame.GAME_UE5_6 => new FPackageFileVersion(522, 1013),
-                < EGame.GAME_UE5_8 => new FPackageFileVersion(522, 1017),
+                < EGame.GAME_UE5_7 => new FPackageFileVersion(522, 1017),
                 _ => new FPackageFileVersion((int) EUnrealEngineObjectUE4Version.AUTOMATIC_VERSION, (int) EUnrealEngineObjectUE5Version.AUTOMATIC_VERSION)
             };
         }

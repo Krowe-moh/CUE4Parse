@@ -44,6 +44,12 @@ namespace CUE4Parse.UE4.Readers
         }
         public abstract string Name { get; }
 
+        public bool SupportPartialReads => Game switch
+        {
+            EGame.GAME_GameForPeace or EGame.GAME_Rennsport or EGame.GAME_DragonQuestXI => false,
+            _ => true,
+        };
+
         public override int ReadAt(long position, byte[] buffer, int offset, int count)
         {
             Position = position;
@@ -151,6 +157,27 @@ namespace CUE4Parse.UE4.Readers
             var result = new T[length];
             ReadArray(result, getter);
             return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T[] ReadArray<T, TContext>(int length, TContext[] context, Func<TContext, T> getter)
+        {
+            if (length == 0) return [];
+            var result = new T[length];
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = getter(context[i]);
+            }
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ForEach<T>(T[] array, Action<T> action)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                action(array[i]);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -665,11 +692,11 @@ namespace CUE4Parse.UE4.Readers
         {
             if (length < 0)
             {
-                throw new ParserException(this, "Read size is smaller than zero.");
+                throw new VersionException(this, "Read size is smaller than zero.");
             }
             if (Position + length > Length)
             {
-                throw new ParserException(this, "Read size is bigger than remaining archive length.");
+                throw new VersionException(this, "Read size is bigger than remaining archive length.");
             }
         }
 
