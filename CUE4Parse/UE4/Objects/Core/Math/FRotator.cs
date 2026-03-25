@@ -49,9 +49,9 @@ namespace CUE4Parse.UE4.Objects.Core.Math
             if (Ar.Game < EGame.GAME_UE4_0)
             {
                 const float scale = 360f / 65536f;
-                Pitch = Ar.Read<float>() * scale;
-                Yaw   = Ar.Read<float>() * scale;
-                Roll  = Ar.Read<float>() * scale;
+                Pitch = Ar.Read<int>() * scale;
+                Yaw   = Ar.Read<int>() * scale;
+                Roll  = Ar.Read<int>() * scale;
                 return;
             }
 

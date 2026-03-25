@@ -59,29 +59,29 @@ public class FSkeletalMeshVertexBuffer
         }
 
         // console exclusion ig
-        //if (Ar.Game < EGame.GAME_UE4_0 && Ar.Game != EGame.GAME_RocketLeague) bUsePackedPosition = false;
         if (Ar.Versions.Options.TryGetValue("SkeletalMesh.UsePackedPosition", out var value)) bUsePackedPosition = value;
+        // if (Ar.Game < EGame.GAME_UE4_0 && Ar.Game != EGame.GAME_RocketLeague) bUsePackedPosition = false;
 
         if (!bUseFullPrecisionUVs)
         {
             if (!bUsePackedPosition)
             {
-                VertsHalfPacked = Ar.ReadBulkArray(() => new FGPUVertHalfPacked(Ar, NumTexCoords));
+                VertsHalf = Ar.ReadBulkArray(() => new FGPUVertHalf(Ar, bExtraBoneInfluences, NumTexCoords));
             }
             else
             {
-                VertsHalf = Ar.ReadBulkArray(() => new FGPUVertHalf(Ar, bExtraBoneInfluences, NumTexCoords));
+                VertsHalfPacked = Ar.ReadBulkArray(() => new FGPUVertHalfPacked(Ar, NumTexCoords));
             }
         }
         else
         {
-            if (bUsePackedPosition)
+            if (!bUsePackedPosition)
             {
-                VertsFloatPacked = Ar.ReadBulkArray(() => new FGPUVertFloatPacked(Ar, NumTexCoords));
+                VertsFloat = Ar.ReadBulkArray(() => new FGPUVertFloat(Ar, bExtraBoneInfluences, NumTexCoords));
             }
             else
             {
-                VertsFloat = Ar.ReadArray(() => new FGPUVertFloat(Ar, bExtraBoneInfluences, NumTexCoords));
+                VertsFloatPacked = Ar.ReadBulkArray(() => new FGPUVertFloatPacked(Ar, NumTexCoords));
             }
         }
     }

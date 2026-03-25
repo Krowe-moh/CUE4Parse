@@ -11,6 +11,7 @@ using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace CUE4Parse.UE4.Assets.Exports.SkeletalMesh;
 
@@ -167,7 +168,6 @@ public partial class USkeletalMesh : UObject
         {
             Ar.ReadArray<int>(); // PerPolyBoneKDOPs
         }
-
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_MAPPING && Ar.Game < EGame.GAME_UE4_0)
         {
             Ar.ReadArray(Ar.ReadFString); // BoneBreakNames
@@ -183,6 +183,7 @@ public partial class USkeletalMesh : UObject
             var ApexClothingAssetcount = Ar.Read<int>();
             if (ApexClothingAssetcount > 0)
             {
+                Log.Warning("Skipped Apex");
                 Ar.Position = validPos;
                 return;
             }
@@ -195,7 +196,7 @@ public partial class USkeletalMesh : UObject
         {
             Ar.SkipFixedArray(sizeof(float));
         }
-        
+
         if ((Ar.Game >= EGame.GAME_UE4_19 && !Ar.IsFilterEditorOnly) || Ar.Game < EGame.GAME_UE4_19)
         {
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.APEX_CLOTH)

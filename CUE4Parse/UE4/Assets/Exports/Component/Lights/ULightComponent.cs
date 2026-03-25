@@ -222,6 +222,8 @@ public class UDominantDirectionalLightComponent : UPointLightComponent
 }
 public class UDominantPointLightComponent : UPointLightComponent;
 public class UParticleLightEnvironmentComponent : UPointLightComponent;
+public class ULightEnvironmentComponent : UActorComponent;
+public class UDynamicLightEnvironmentComponent : ULightEnvironmentComponent;
 public class UPointLightComponent : ULocalLightComponent
 {
     public float LightFalloffExponent { get; private set; }
@@ -232,7 +234,14 @@ public class UPointLightComponent : ULocalLightComponent
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        base.Deserialize(Ar, validPos);
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            new UDynamicLightEnvironmentComponent().Deserialize(Ar, validPos);
+        }
+        else
+        {
+            base.Deserialize(Ar, validPos);
+        }
 
         LightFalloffExponent = GetOrDefault(nameof(LightFalloffExponent), 8.0f);
         SourceRadius = GetOrDefault(nameof(SourceRadius), 0.0f);
@@ -339,7 +348,14 @@ public class USkyLightComponent : ULightComponentBase
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        base.Deserialize(Ar, validPos);
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            new ULightComponent().Deserialize(Ar, validPos);
+        }
+        else
+        {
+            base.Deserialize(Ar, validPos);
+        }
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SKYLIGHT_MOBILE_IRRADIANCE_MAP && !(FReleaseObjectVersion.Get(Ar) >= FReleaseObjectVersion.Type.SkyLightRemoveMobileIrradianceMap))
         {

@@ -96,7 +96,7 @@ public static class MeshConverter
             if (numTexCoords > Constants.MAX_MESH_UV_SETS)
                 Log.Warning($"Static mesh has too many UV sets ({numTexCoords})");
 
-            var screenSize = 0.0f;
+            var screenSize = 1.0f;
             if (i < originalMesh.RenderData.ScreenSize.Length)
             {
                 screenSize = originalMesh.RenderData.ScreenSize[i];

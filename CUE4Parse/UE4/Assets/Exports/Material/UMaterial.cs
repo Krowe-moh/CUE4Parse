@@ -92,6 +92,8 @@ public class UMaterial : UMaterialInterface
 
     public FExpressionInput? DiffuseColor { get; private set; }
     public FExpressionInput? EmissiveColor { get; private set; }
+    public FExpressionInput? Normal { get; private set; }
+    public FExpressionInput? SpecularColor { get; private set; }
 
     public EBlendMode BlendMode { get; private set; } = EBlendMode.BLEND_Opaque;
     public ETranslucencyLightingMode TranslucencyLightingMode { get; private set; } = ETranslucencyLightingMode.TLM_VolumetricNonDirectional;
@@ -113,6 +115,8 @@ public class UMaterial : UMaterialInterface
 
         DiffuseColor = GetOrDefault<FExpressionInput>(nameof(DiffuseColor)) is { } diffusec ? new FExpressionInput(diffusec.FallbackStruct) : new FExpressionInput();
         EmissiveColor = GetOrDefault<FExpressionInput>(nameof(EmissiveColor)) is { } emissivec ? new FExpressionInput(emissivec.FallbackStruct) : new FExpressionInput();
+        Normal = GetOrDefault<FExpressionInput>(nameof(Normal)) is { } normalc ? new FExpressionInput(normalc.FallbackStruct) : new FExpressionInput();
+        SpecularColor = GetOrDefault<FExpressionInput>(nameof(SpecularColor)) is { } specularc ? new FExpressionInput(specularc.FallbackStruct) : new FExpressionInput();
 
         BlendMode = GetOrDefault(nameof(BlendMode), BlendMode);
         TranslucencyLightingMode = GetOrDefault(nameof(TranslucencyLightingMode), TranslucencyLightingMode);
@@ -500,12 +504,28 @@ public class UMaterial : UMaterialInterface
         {
             if (DiffuseExpr is UMaterialExpressionVectorParameter vectorParameter)
                 parameters.DiffuseColor = vectorParameter.DefaultValue;
+            if (DiffuseExpr is UMaterialExpressionTextureSample { Texture: not null } textureParameter)
+                parameters.DiffuseTex = textureParameter.Texture;
         }
 
         if ((EmissiveColor?.Expression?.TryLoad(out UMaterialExpression EmissiveExpr) ?? false))
         {
             if (EmissiveExpr is UMaterialExpressionVectorParameter vectorParameter)
                 parameters.EmissiveColor = vectorParameter.DefaultValue;
+            if (EmissiveExpr is UMaterialExpressionTextureSample { Texture: not null } textureParameter)
+                parameters.EmissiveTex = textureParameter.Texture;
+        }
+
+        if ((Normal?.Expression?.TryLoad(out UMaterialExpression NormalExpr) ?? false))
+        {
+            if (NormalExpr is UMaterialExpressionTextureSample { Texture: not null } textureParameter)
+                parameters.NormalTex = textureParameter.Texture;
+        }
+
+        if ((SpecularColor?.Expression?.TryLoad(out UMaterialExpression SpecularExpr) ?? false))
+        {
+            if (SpecularExpr is UMaterialExpressionTextureSample { Texture: not null } textureParameter)
+                parameters.SpecularTex = textureParameter.Texture;
         }
 
         if (format != EMaterialFormat.AllLayersNoRef)

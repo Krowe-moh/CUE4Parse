@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using CUE4Parse.Compression;
 using CUE4Parse.FileProvider;
 using CUE4Parse.GameTypes.ACE7.Encryption;
@@ -44,6 +45,7 @@ namespace CUE4Parse.UE4.Assets
         public FPackageIndex[]? PreloadDependencies { get; }
         public FObjectDataResource[]? DataResourceMap { get; }
         public FSoftObjectPath[] SoftObjectPaths { get; }
+        public List<byte[]>? EditorThumbnails { get; }
         public FPackageTrailer? Trailer { get; }
 
         private ExportLoader[] _exportLoaders; // Nonnull if useLazySerialization is false
@@ -94,37 +96,44 @@ namespace CUE4Parse.UE4.Assets
 
             Summary = new FPackageFileSummary(uassetAr);
 
-            // clean up later
-            if (uassetAr.Game == EGame.GAME_RocketLeague && Summary.CompressionFlags != ECompressionFlags.COMPRESS_None)
+            var GarbageSize = 0;
+            var CompressedChunkInfoOffset = 0;
+            if (uassetAr.Game == EGame.GAME_RocketLeague)
             {
-                uassetAr.Position = 0;
-                byte[] before = uassetAr.ReadBytes(Summary.NameOffset);
+                GarbageSize = uassetAr.Read<int>();
+                CompressedChunkInfoOffset = uassetAr.Read<int>();
+                uassetAr.Read<int>(); // lastBlockSize
+                if (Summary.CompressionFlags != ECompressionFlags.COMPRESS_None)
+                {
+                    uassetAr.Position = 0;
+                    byte[] before = uassetAr.ReadBytes(Summary.NameOffset);
 
-                int encSize = Summary.TotalHeaderSize - Summary.GarbageSize - Summary.NameOffset;
-                encSize = (encSize + 15) & ~15; // AES block alignment
-                byte[] encryptedData = uassetAr.ReadBytes(encSize);
+                    int encSize = Summary.TotalHeaderSize - GarbageSize - Summary.NameOffset;
+                    encSize = (encSize + 15) & ~15; // AES block alignment
+                    byte[] encryptedData = uassetAr.ReadBytes(encSize);
 
-                RocketLeagueAes.Decrypt(encryptedData, Summary.CompressedChunkInfoOffset, true, out byte[] decryptedData);
+                    RocketLeagueAes.Decrypt(encryptedData, CompressedChunkInfoOffset, true, out byte[] decryptedData);
 
-                long remaining = uassetAr.Length - uassetAr.Position;
-                byte[] after = uassetAr.ReadBytes((int) remaining);
+                    long remaining = uassetAr.Length - uassetAr.Position;
+                    byte[] after = uassetAr.ReadBytes((int) remaining);
 
-                byte[] fullBuffer = new byte[before.Length + decryptedData.Length + after.Length];
-                int offset = 0;
-                Buffer.BlockCopy(before, 0, fullBuffer, offset, before.Length);
-                offset += before.Length;
-                Buffer.BlockCopy(decryptedData, 0, fullBuffer, offset, decryptedData.Length);
-                offset += decryptedData.Length;
-                Buffer.BlockCopy(after, 0, fullBuffer, offset, after.Length);
+                    byte[] fullBuffer = new byte[before.Length + decryptedData.Length + after.Length];
+                    int offset = 0;
+                    Buffer.BlockCopy(before, 0, fullBuffer, offset, before.Length);
+                    offset += before.Length;
+                    Buffer.BlockCopy(decryptedData, 0, fullBuffer, offset, decryptedData.Length);
+                    offset += decryptedData.Length;
+                    Buffer.BlockCopy(after, 0, fullBuffer, offset, after.Length);
 
-                uassetAr.SetBaseArchive(new FByteArchive("Rocket League - Decrypted Package", fullBuffer, uassetAr.Versions));
+                    uassetAr.SetBaseArchive(new FByteArchive("Rocket League - Decrypted Package", fullBuffer, uassetAr.Versions));
+                }
             }
 
             if (Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_GZIP) || Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB))
             {
                 if (uassetAr.Game == EGame.GAME_RocketLeague)
                 {
-                    uassetAr.SeekAbsolute(Summary.NameOffset + Summary.CompressedChunkInfoOffset, SeekOrigin.Begin);
+                    uassetAr.SeekAbsolute(Summary.NameOffset + CompressedChunkInfoOffset, SeekOrigin.Begin);
                     Summary.CompressedChunks = uassetAr.ReadArray(() => new FCompressedChunk(uassetAr));
                 }
 
@@ -187,7 +196,7 @@ namespace CUE4Parse.UE4.Assets
 
             if (Summary.ThumbnailTableOffset > 0)
             {
-                //EditorThumbnails = new List<byte[]>();
+                EditorThumbnails = new List<byte[]>();
                 uassetAr.SeekAbsolute(Summary.ThumbnailTableOffset, SeekOrigin.Begin);
                 var count = uassetAr.Read<int>();
 
@@ -207,7 +216,7 @@ namespace CUE4Parse.UE4.Assets
                     var totalBytes = uassetAr.Read<int>();
                     if (totalBytes == 0) continue;
                     var rawImage = uassetAr.ReadBytes(totalBytes);
-                    //EditorThumbnails.Add(rawImage);
+                    EditorThumbnails.Add(rawImage);
                 }
             }
 

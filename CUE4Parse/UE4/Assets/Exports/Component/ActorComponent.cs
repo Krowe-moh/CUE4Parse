@@ -502,7 +502,6 @@ public class UDrawPylonRadiusComponent : UComponent;
 public class USceneCaptureCubeMapComponent : UComponent;
 public class UDrawLightConeComponent : UComponent;
 public class UVisConeComponent : UComponent;
-public class UDynamicLightEnvironmentComponent : UComponent;
 public class UDrawLightRadiusComponent : UActorComponent;
 
 public class UFracturedStaticMeshComponent : UStaticMeshComponent;
@@ -513,10 +512,11 @@ public class UFracturedSkinnedMeshComponent : UActorComponent
         if (Ar.Game < EGame.GAME_UE4_0)
         {
             new UStaticMeshComponent().Deserialize(Ar, validPos);
-            return;
         }
-
-        base.Deserialize(Ar, validPos);
+        else
+        {
+            base.Deserialize(Ar, validPos);
+        }
     }
 };
 

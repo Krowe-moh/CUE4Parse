@@ -39,7 +39,11 @@ public class CMaterialParams2
     public bool IsNull => Textures.Count == 0;
 
     public FLinearColor? DiffuseColor;
+    public UTexture? DiffuseTex;
     public FLinearColor? EmissiveColor;
+    public UTexture? EmissiveTex;
+    public UTexture? NormalTex;
+    public UTexture? SpecularTex;
 
     /// <summary>
     /// SWITCH TO REGEX ONCE WE HAVE A GOOD OVERVIEW OF TEXTURE NAMES
