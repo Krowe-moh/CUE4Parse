@@ -96,7 +96,7 @@ public static class MeshConverter
             if (numTexCoords > Constants.MAX_MESH_UV_SETS)
                 Log.Warning($"Static mesh has too many UV sets ({numTexCoords})");
 
-            var screenSize = 1.0f;
+            var screenSize = 0.0f;
             if (i < originalMesh.RenderData.ScreenSize.Length)
             {
                 screenSize = originalMesh.RenderData.ScreenSize[i];
@@ -435,7 +435,6 @@ public static class MeshConverter
                         if (materialIndex < 0) sections[j] = new CMeshSection(srcLod.Sections[j]);
                         else
                         {
-                            // todo
                             sections[j] = new CMeshSection(materialIndex, srcLod.Sections[j],
                                 "a",
                                 originalMesh.Materials[materialIndex]);

@@ -9,7 +9,6 @@ namespace CUE4Parse.UE4.Assets.Exports.SkeletalMesh;
 [JsonConverter(typeof(FSkelMeshVertexBaseConverter))]
 public class FSkelMeshVertexBase
 {
-    private const int MAX_INFLUENCES_UE3 = 4;
     public FVector Pos;
     public FPackedNormal[] Normal;
     public FSkinWeightInfo? Infs;

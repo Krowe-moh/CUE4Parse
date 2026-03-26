@@ -7,7 +7,6 @@ namespace CUE4Parse.UE4.Assets.Exports.SkeletalMesh;
 
 public class FSoftVertex : FSkelMeshVertexBase
 {
-    private const int MAX_INFLUENCES_UE3 = 4;
     private int MAX_SKELETAL_UV_SETS = 1;
 
     public FMeshUVFloat[] UV;

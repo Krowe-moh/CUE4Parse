@@ -5,6 +5,7 @@ namespace CUE4Parse.UE4.Assets.Exports.SkeletalMesh;
 
 public class FGPUVertFloatPacked : FSkelMeshVertexBase
 {
+    public FVectorIntervalFixed32GPU Pos;
     public FMeshUVFloat[] UV;
 
     public FGPUVertFloatPacked()
@@ -16,7 +17,7 @@ public class FGPUVertFloatPacked : FSkelMeshVertexBase
     {
         SerializeForGPU(Ar);
 
-        Ar.Read<int>(); // packed index
+        Pos = new FVectorIntervalFixed32GPU(Ar);
         UV = Ar.ReadArray<FMeshUVFloat>(numSkelUVSets);
     }
 }

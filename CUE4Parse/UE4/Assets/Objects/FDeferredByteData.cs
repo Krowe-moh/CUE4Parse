@@ -47,7 +47,7 @@ public sealed class FBulkDataDeferredByteData : FDeferredByteData
 
     public FBulkDataDeferredByteData(FAssetArchive Ar, FByteBulkData bulkData, long offset, int size)
     {
-        BulkData = new FByteBulkData(Ar, bulkData, offset, size);
+        //BulkData = new FByteBulkData(Ar, bulkData, offset, size);
     }
 
     public override bool IsValid => BulkData is not null;

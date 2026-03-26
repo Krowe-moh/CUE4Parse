@@ -179,7 +179,7 @@ public class UCableComponent : UMeshComponent;
 public class UCameraComponent : USceneComponent;
 public class UCameraShakeSourceComponent : USceneComponent;
 public class UCapsuleComponent : UShapeComponent;
-public class UCylinderComponent : UShapeComponent;
+public class UCylinderComponent : UPrimitiveComponent;
 public class UChaosDebugDrawComponent : UActorComponent;
 public class UChaosDestructionListener : USceneComponent;
 public class UChaosEventListenerComponent : UActorComponent;
@@ -207,8 +207,8 @@ public class UDebugDrawComponent : UPrimitiveComponent;
 public class UDebugSkelMeshComponent : USkeletalMeshComponent;
 public class UDefaultPawnMovement : UFloatingPawnMovement;
 public class UDrawFrustumComponent : UPrimitiveComponent;
-public class UDrawSoundRadiusComponent : UComponent;
 public class UDrawSphereComponent : USphereComponent;
+public class UDrawSoundRadiusComponent : UDrawSphereComponent;
 public class UDynamicMeshComponent : UBaseDynamicMeshComponent;
 public class UEQSRenderingComponent : UDebugDrawComponent;
 public class UEditorAutomationActorComponent : UEditorUtilityActorComponent;
@@ -505,7 +505,7 @@ public class UVisConeComponent : UComponent;
 public class UDrawLightRadiusComponent : UActorComponent;
 
 public class UFracturedStaticMeshComponent : UStaticMeshComponent;
-public class UFracturedSkinnedMeshComponent : UActorComponent
+public class UFracturedSkinnedMeshComponent : UStaticMeshComponent
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
