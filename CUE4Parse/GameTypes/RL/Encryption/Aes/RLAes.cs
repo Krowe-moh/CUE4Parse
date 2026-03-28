@@ -1,9 +1,9 @@
 using System;
-using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using CUE4Parse.UE4.Exceptions;
+using CUE4Parse.UE4.Readers;
 
 namespace CUE4Parse.GameTypes.RL.Encryption.Aes
 {
@@ -14,59 +14,94 @@ namespace CUE4Parse.GameTypes.RL.Encryption.Aes
 
         static RocketLeagueAes()
         {
-            var defaultKey = new[] { new byte[] { 0xC7, 0xDF, 0x6B, 0x13, 0x25, 0x2A, 0xCC, 0x71, 0x47, 0xBB, 0x51, 0xC9, 0x8A, 0xD7, 0xE3, 0x4B, 0x7F, 0xE5, 0x00, 0xB7, 0x7F, 0xA5, 0xFA, 0xB2, 0x93, 0xE2, 0xF2, 0x4E, 0x6B, 0x17, 0xE7, 0x79 } };
-
-            // todo: make this user changeable.
-            string[] remoteKeys = HttpClient.GetStringAsync("https://raw.githubusercontent.com/ShinyEmii/Toga-Files/refs/heads/master/aes.txt").GetAwaiter().GetResult().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-            var allKeys = new System.Collections.Generic.List<byte[]>(defaultKey);
-            foreach (var line in remoteKeys)
-            {
-                if (!string.IsNullOrWhiteSpace(line))
-                    allKeys.Add(Convert.FromBase64String(line.Trim()));
-            }
-
-            KeyList = allKeys.ToArray();
+            KeyList = LoadKeys();
         }
 
-        public static bool Decrypt(byte[] inputData, int offset, bool upk, out byte[] outputData)
+        private static byte[][] LoadKeys()
+        {
+            var defaultKey = new[] { new byte[] { 0xC7, 0xDF, 0x6B, 0x13, 0x25, 0x2A, 0xCC, 0x71, 0x47, 0xBB, 0x51, 0xC9, 0x8A, 0xD7, 0xE3, 0x4B, 0x7F, 0xE5, 0x00, 0xB7, 0x7F, 0xA5, 0xFA, 0xB2, 0x93, 0xE2, 0xF2, 0x4E, 0x6B, 0x17, 0xE7, 0x79 } };
+
+            try
+            {
+                string content = HttpClient
+                    .GetStringAsync("https://raw.githubusercontent.com/ShinyEmii/Toga-Files/refs/heads/master/aes.txt")
+                    .GetAwaiter()
+                    .GetResult();
+
+                var lines = content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                var allKeys = new System.Collections.Generic.List<byte[]>(defaultKey);
+
+                foreach (var line in lines)
+                {
+                    if (!string.IsNullOrWhiteSpace(line))
+                        allKeys.Add(Convert.FromBase64String(line.Trim()));
+                }
+
+                return allKeys.ToArray();
+            }
+            catch
+            {
+                return defaultKey;
+            }
+        }
+
+        private static bool TryDecryptWithKey(byte[] inputData, byte[] key, int CheckSumDataOffset, bool upk, out byte[]? outputData)
+        {
+            outputData = null;
+            try
+            {
+                using var aes = new RijndaelManaged { KeySize = 256, Key = key, Mode = CipherMode.ECB, Padding = PaddingMode.None };
+
+                using var decryptor = aes.CreateDecryptor();
+
+                if (upk)
+                {
+                    byte[] decrypted = decryptor.TransformFinalBlock(inputData, 0, inputData.Length);
+
+                    var Ar = new FByteArchive("Rocket League - Decrypted Package", decrypted);
+                    Ar.Position = CheckSumDataOffset;
+                    byte prev = Ar.Read<byte>();
+
+                    for (long i = CheckSumDataOffset + 1; i < Ar.Length; ++i)
+                    {
+                        byte curr = Ar.Read<byte>();
+                        if (curr != (byte) ((prev + 1) % 255))
+                            return false;
+
+                        prev = curr;
+                    }
+
+                    outputData = decrypted;
+                    return true;
+                }
+                else
+                {
+                    int headerLen = Math.Min(256, inputData.Length);
+                    byte[] decrypted = decryptor.TransformFinalBlock(inputData, 0, headerLen);
+                    if (Encoding.ASCII.GetString(decrypted, 0, 4) == "RIFF")
+                    {
+                        outputData = decryptor.TransformFinalBlock(inputData, 0, inputData.Length);
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
+        public static bool Decrypt(byte[] inputData, int CheckSumDataOffset, bool upk, out byte[] outputData)
         {
             foreach (var key in KeyList)
             {
-                try
+                if (TryDecryptWithKey(inputData, key, CheckSumDataOffset, upk, out var result))
                 {
-                    using var aes = new RijndaelManaged { KeySize = 256, Key = key, Mode = CipherMode.ECB, Padding = PaddingMode.None };
-
-                    using var decryptor = aes.CreateDecryptor();
-
-                    if (upk)
-                    {
-                        byte[] decrypted = decryptor.TransformFinalBlock(inputData, 0, inputData.Length);
-
-                        using var ms = new MemoryStream(decrypted);
-                        using var br = new BinaryReader(ms);
-                        br.ReadBytes(offset);
-                        int count = br.ReadInt32();
-                        if (count > 0 && count < inputData.Length)
-                        {
-                            outputData = decrypted;
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        int headerLen = Math.Min(256, inputData.Length);
-                        byte[] decrypted = decryptor.TransformFinalBlock(inputData, 0, headerLen);
-                        if (Encoding.ASCII.GetString(decrypted, 0, 4) == "RIFF")
-                        {
-                            outputData = decryptor.TransformFinalBlock(inputData, 0, inputData.Length);
-                            return true;
-                        }
-                    }
-                }
-                catch
-                {
-                    // ignore
+                    outputData = result!;
+                    return true;
                 }
             }
 

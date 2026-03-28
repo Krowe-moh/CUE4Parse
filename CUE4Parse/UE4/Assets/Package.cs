@@ -96,29 +96,30 @@ namespace CUE4Parse.UE4.Assets
 
             Summary = new FPackageFileSummary(uassetAr);
 
-            var GarbageSize = 0;
+            var CheckSumDataSize = 0;
             var CompressedChunkInfoOffset = 0;
             if (uassetAr.Game == EGame.GAME_RocketLeague)
             {
-                GarbageSize = uassetAr.Read<int>();
+                CheckSumDataSize = uassetAr.Read<int>();
                 CompressedChunkInfoOffset = uassetAr.Read<int>();
-                uassetAr.Read<int>(); // lastBlockSize
+                var lastBlockSize = uassetAr.Read<int>();
                 if (Summary.CompressionFlags != ECompressionFlags.COMPRESS_None)
                 {
+                    var HeaderEnd = uassetAr.Position;
+                    var CheckSumDataOffset = (int)(Summary.TotalHeaderSize - HeaderEnd - CheckSumDataSize);
                     uassetAr.Position = 0;
-                    byte[] before = uassetAr.ReadBytes(Summary.NameOffset);
+                    var before = uassetAr.ReadBytes(Summary.NameOffset);
 
-                    int encSize = Summary.TotalHeaderSize - GarbageSize - Summary.NameOffset;
-                    encSize = (encSize + 15) & ~15; // AES block alignment
-                    byte[] encryptedData = uassetAr.ReadBytes(encSize);
+                    var encSize = (int)(Summary.TotalHeaderSize - (lastBlockSize + HeaderEnd));
+                    var encryptedData = uassetAr.ReadBytes(encSize);
 
-                    RocketLeagueAes.Decrypt(encryptedData, CompressedChunkInfoOffset, true, out byte[] decryptedData);
+                    RocketLeagueAes.Decrypt(encryptedData, CheckSumDataOffset, true, out byte[] decryptedData);
 
-                    long remaining = uassetAr.Length - uassetAr.Position;
-                    byte[] after = uassetAr.ReadBytes((int) remaining);
+                    var remaining = uassetAr.Length - uassetAr.Position;
+                    var after = uassetAr.ReadBytes((int) remaining);
 
-                    byte[] fullBuffer = new byte[before.Length + decryptedData.Length + after.Length];
-                    int offset = 0;
+                    var fullBuffer = new byte[before.Length + decryptedData.Length + after.Length];
+                    var offset = 0;
                     Buffer.BlockCopy(before, 0, fullBuffer, offset, before.Length);
                     offset += before.Length;
                     Buffer.BlockCopy(decryptedData, 0, fullBuffer, offset, decryptedData.Length);
