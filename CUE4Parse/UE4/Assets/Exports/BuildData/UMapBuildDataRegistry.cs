@@ -240,6 +240,7 @@ public class FVolumeLightingSample
         {
             DirectionalLightShadowing = Ar.Read<float>();
         }
+        if (Ar.Game is EGame.GAME_RocoKingdomWorld) Ar.Position += 116;
     }
 }
 
@@ -270,6 +271,12 @@ public class FPrecomputedLightVolumeData
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.VOLUME_SAMPLE_LOW_QUALITY_SUPPORT)
             {
                 LowQualitySamples = Ar.ReadArray(() => new FVolumeLightingSample(Ar, NumSHSamples is 9 ? 3 : 2));
+            }
+
+            if (Ar.Game is EGame.GAME_RocoKingdomWorld)
+            {
+                Ar.Position += 20;
+                Ar.SkipMultipleFixedArrays([4, 144]);
             }
         }
     }
@@ -520,6 +527,8 @@ public class FLightMap2D : FLightMap
                 }
             }
 
+            if (Ar.Game is EGame.GAME_RocoKingdomWorld) Ar.Position += 72;
+
             for (var CoefficientIndex = 0; CoefficientIndex < NUM_STORED_LIGHTMAP_COEF; CoefficientIndex++)
             {
                 ScaleVectors[CoefficientIndex] = Ar.Read<FVector4>();
@@ -532,7 +541,7 @@ public class FLightMap2D : FLightMap
 
         if (FRenderingObjectVersion.Get(Ar) >= FRenderingObjectVersion.Type.LightmapHasShadowmapData)
         {
-            bShadowChannelValid = Ar.ReadArray(4, () => Ar.ReadBoolean());
+            bShadowChannelValid = Ar.ReadArray(4, Ar.ReadBoolean);
             InvUniformPenumbraSize = Ar.Read<FVector4>();
         }
 
@@ -556,8 +565,8 @@ public class FLightMap2D : FLightMap
             }
         }
 
-        if (Ar.Game == EGame.GAME_RacingMaster) Ar.Position += 20;
-        if (Ar.Game == EGame.GAME_MetroAwakening) Ar.Position += 4;
+        if (Ar.Game is EGame.GAME_RacingMaster) Ar.Position += 20;
+        if (Ar.Game is EGame.GAME_MetroAwakening) Ar.Position += 4;
     }
 }
 
