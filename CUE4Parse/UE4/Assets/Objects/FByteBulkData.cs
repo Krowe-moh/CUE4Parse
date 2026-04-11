@@ -23,8 +23,8 @@ public class FCompressedChunkBlock
 
     public FCompressedChunkBlock(FArchive Ar)
     {
-        CompressedSize = Ar.ReverseBytes ? BinaryPrimitives.ReverseEndianness(Ar.Read<int>()) : Ar.Read<int>();
-        UncompressedSize = Ar.ReverseBytes ? BinaryPrimitives.ReverseEndianness(Ar.Read<int>()) : Ar.Read<int>();
+        CompressedSize = Ar.Read<int>();
+        UncompressedSize = Ar.Read<int>();
     }
 
     public FCompressedChunkBlock(Stream s, bool reverse)

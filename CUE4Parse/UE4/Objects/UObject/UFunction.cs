@@ -1,5 +1,4 @@
-﻿using CUE4Parse.UE4.Assets.Exports.Texture;
-using CUE4Parse.UE4.Assets.Readers;
+﻿using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Versions;
 using CUE4Parse.Utils;
 using Newtonsoft.Json;
@@ -48,7 +47,6 @@ public class UFunction : UStruct
             var RepOffset = Ar.Read<short>();
         }
 
-        // Todo: this doesn't exist in UE3 Console builds
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && !Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Game < EGame.GAME_UE4_0)
         {
             Ar.ReadFName(); // FriendlyName

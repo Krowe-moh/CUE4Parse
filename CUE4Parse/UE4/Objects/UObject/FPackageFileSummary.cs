@@ -1,7 +1,4 @@
 using System;
-using System.IO;
-using System.Text;
-using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Exceptions;
@@ -175,8 +172,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             if (Tag == PACKAGE_FILE_TAG_SWAPPED)
             {
                 Tag = PACKAGE_FILE_TAG;
-                Ar.ReverseBytes = true; // is only used to identify if an archive is reversed. no reverse logic currently
-                throw new ParserException("Byte swapping for packages not supported");
+                Ar.ReverseBytes = true;
             }
 
             legacyFileVersion = Ar.Read<int>();
@@ -184,10 +180,6 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 legacyFileVersion = (short)legacyFileVersion;
                 Ar.Position += 4;
-            }
-            if (Ar.Game == EGame.GAME_BatmanArkhamKnight)
-            {
-                legacyFileVersion = (short)legacyFileVersion;
             }
             if (Ar.Game == EGame.GAME_DeltaForceHawkOps) legacyFileVersion /= 659;
 

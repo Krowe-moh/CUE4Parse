@@ -1,4 +1,3 @@
-using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Versions;
 using CUE4Parse.Utils;
@@ -19,7 +18,6 @@ namespace CUE4Parse.UE4.Objects.UObject
             ArrayDim = Ar.Read<int>();
             PropertyFlags = Ar.Ver >= EUnrealEngineObjectUE3Version.PropertyFlagsSizeExpandedTo64Bits ? Ar.Read<EPropertyFlags>() : (EPropertyFlags) Ar.Read<uint>();
 
-            // Todo: needs Console check for UE3
             if ((!Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) || Ar.Game >= EGame.GAME_UE4_0) && Ar.Ver < EUnrealEngineObjectUE4Version.CATEGORY_MOVED_TO_METADATA)
             {
                 Ar.ReadFName(); // CategoryName
@@ -29,7 +27,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 }
             }
 
-            if (PropertyFlags.HasFlag(EPropertyFlags.Net) && Ar.Game < EGame.GAME_UE4_0) // Todo: Should this be edit flag?
+            if (PropertyFlags.HasFlag(EPropertyFlags.Net) && Ar.Game < EGame.GAME_UE4_0)
             {
                 Ar.Read<ushort>();
             }
@@ -366,11 +364,8 @@ namespace CUE4Parse.UE4.Objects.UObject
             writer.WritePropertyName("SignatureFunction");
             serializer.Serialize(writer, SignatureFunction);
 
-            if (!SourceDelegate?.IsNull ?? false)
-            {
-                writer.WritePropertyName("SourceDelegate");
-                serializer.Serialize(writer, SourceDelegate);
-            }
+            writer.WritePropertyName("SourceDelegate");
+            serializer.Serialize(writer, SourceDelegate);
         }
     }
 
