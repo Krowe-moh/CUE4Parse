@@ -234,11 +234,11 @@ public class UPointLightComponent : ULocalLightComponent
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if (Ar.Game < EGame.GAME_UE4_0)
-        {
-            new UDynamicLightEnvironmentComponent().Deserialize(Ar, validPos);
-        }
-        else
+      //  if (Ar.Game < EGame.GAME_UE4_0)
+      //  {
+      //      new UDynamicLightEnvironmentComponent().Deserialize(Ar, validPos);
+      //  }
+      //  else
         {
             base.Deserialize(Ar, validPos);
         }

@@ -53,11 +53,20 @@ public class ULandscapeComponent : UPrimitiveComponent
             LegacyMapBuildData = new FMeshMapBuildData();
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.LANDSCAPECOMPONENT_LIGHTMAPS)
             {
-                LegacyMapBuildData.LightMap = new FLightMap(Ar);
+                LegacyMapBuildData.LightMap = Ar.Read<ELightMapType>() switch
+                {
+                    ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
+                    ELightMapType.LMT_2D => new FLightMap2D(Ar),
+                    _ => null
+                };
             }
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.PRECOMPUTED_SHADOW_MAPS_BSP)
             {
-                LegacyMapBuildData.ShadowMap = new FShadowMap(Ar);
+                LegacyMapBuildData.ShadowMap = Ar.Read<EShadowMapType>() switch
+                {
+                    EShadowMapType.SMT_2D => new FShadowMap2D(Ar),
+                    _ => null
+                };
             }
         }
 
@@ -66,7 +75,7 @@ public class ULandscapeComponent : UPrimitiveComponent
             GrassData = new FLandscapeComponentGrassData(Ar);
         }
 
-        if (!Ar.IsFilterEditorOnly)
+        if (!Ar.IsFilterEditorOnly && Ar.Game >= EGame.GAME_UE4_0)
         {
             Ar.Position += sizeof(int); // SelectedType
         }

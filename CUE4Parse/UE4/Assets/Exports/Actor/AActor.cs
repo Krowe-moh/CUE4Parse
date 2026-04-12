@@ -1,5 +1,6 @@
 using CUE4Parse.UE4.Assets.Exports.NavigationSystem;
 using CUE4Parse.UE4.Assets.Readers;
+using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
@@ -380,6 +381,19 @@ public class ASpotLightMovable : ASpotLight;
 public class ASpotLightStatic : ASpotLight;
 public class ASpotLightStationary : ASpotLight;
 public class AStaticMeshActor : AActor;
+
+public class AStaticLightCollectionActor : ALight
+{
+    public FMatrix LightToWorldMatrix;
+
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+
+        LightToWorldMatrix = new FMatrix(Ar);
+    }
+}
+
 public class ASwitchActor : AActor;
 public class ATagCollectionModifierSharedActor : AActorModifierCoreSharedActor;
 public class ATargetPoint : AActor;
