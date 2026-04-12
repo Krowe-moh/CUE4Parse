@@ -458,9 +458,9 @@ namespace CUE4Parse.UE4.Assets
                     return new ResolvedExportObject(i, importPackage);
             }
 
-//#if DEBUG
-            Log.Fatal("Missing import of ({0}): {1} in {2} was not found, but the package exists.", Name, import.ObjectName, importPackage.GetFullName());
-//#endif
+#if DEBUG
+       //     Log.Fatal("Missing import of ({0}): {1} in {2} was not found, but the package exists.", Name, import.ObjectName, importPackage.GetFullName());
+#endif
             return new ResolvedImportObject(import, this);
         }
 

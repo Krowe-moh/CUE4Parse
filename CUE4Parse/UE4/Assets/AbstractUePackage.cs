@@ -85,9 +85,9 @@ public abstract class AbstractUePackage : UObject, IPackage
         var validPos = serialOffset + serialSize;
         try
         {
-            if (Ar.Game < EGame.GAME_UE4_0 && validPos - Ar.Position == 0) return; // not sure why, but some objects called "None" are just empty (rocketleague issue?)
+            if (validPos - Ar.Position == 0) return;
             obj.Deserialize(Ar, validPos);
-//#if DEBUG
+#if DEBUG
             var remaining = validPos - Ar.Position;
             switch (remaining)
             {
@@ -99,10 +99,10 @@ public abstract class AbstractUePackage : UObject, IPackage
                     Log.Warning("Did not read {0} correctly, {1} bytes exceeded", obj.ExportType, Math.Abs(remaining));
                     break;
                 default:
-                    //Log.Debug("Successfully read {0} at {1} with size {2}", obj.ExportType, serialOffset, serialSize);
+                    Log.Debug("Successfully read {0} at {1} with size {2}", obj.ExportType, serialOffset, serialSize);
                     break;
             }
-//#endif
+#endif
         }
         catch (Exception e)
         {
