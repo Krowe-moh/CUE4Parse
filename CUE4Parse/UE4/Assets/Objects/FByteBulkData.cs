@@ -26,20 +26,6 @@ public class FCompressedChunkBlock
         CompressedSize = Ar.Read<int>();
         UncompressedSize = Ar.Read<int>();
     }
-
-    public FCompressedChunkBlock(Stream s, bool reverse)
-    {
-        CompressedSize = reverse ? BinaryPrimitives.ReverseEndianness(ReadInt32(s)) : ReadInt32(s);
-        UncompressedSize = reverse ? BinaryPrimitives.ReverseEndianness(ReadInt32(s)) : ReadInt32(s);
-    }
-
-    private static int ReadInt32(Stream s)
-    {
-        Span<byte> buffer = stackalloc byte[4];
-        int read = s.Read(buffer);
-        if (read != 4) throw new EndOfStreamException();
-        return BitConverter.ToInt32(buffer);
-    }
 }
 
 public class FCompressedChunkHeader
@@ -82,54 +68,6 @@ public class FCompressedChunkHeader
 
         if (uncompSize != Sum.UncompressedSize)
             throw new Exception($"Header validation failed: uncompressed size mismatch {uncompSize} {Sum.UncompressedSize}");
-    }
-
-    public FCompressedChunkHeader(Stream Ar)
-    {
-        Tag = ReadUInt32(Ar);
-        bool ReverseBytes = false;
-        if (Tag == FPackageFileSummary.PACKAGE_FILE_TAG_SWAPPED)
-        {
-            ReverseBytes = true;
-        }
-        ChunkSize = ReadInt32(Ar);
-        ChunkSize = 0x20000;
-
-        Sum = new FCompressedChunkBlock(Ar, ReverseBytes);
-        int blockCount = (Sum.UncompressedSize + ChunkSize - 1) / ChunkSize;
-        Blocks = new FCompressedChunkBlock[blockCount];
-
-        int compSize = 0, uncompSize = 0, i = 0;
-        while (compSize < Sum.CompressedSize && uncompSize < Sum.UncompressedSize)
-        {
-            var block = new FCompressedChunkBlock(Ar, ReverseBytes);
-            Blocks[i++] = block;
-
-            compSize += block.CompressedSize;
-            uncompSize += block.UncompressedSize;
-        }
-
-        if (Blocks.Length > 1)
-            ChunkSize = Blocks[0].UncompressedSize;
-
-        if (uncompSize != Sum.UncompressedSize)
-            throw new Exception("Header validation failed: uncompressed size mismatch");
-    }
-
-    private static int ReadInt32(Stream s)
-    {
-        Span<byte> buffer = stackalloc byte[4];
-        int read = s.Read(buffer);
-        if (read != 4) throw new EndOfStreamException();
-        return BitConverter.ToInt32(buffer);
-    }
-
-    private static uint ReadUInt32(Stream s)
-    {
-        Span<byte> buffer = stackalloc byte[4];
-        int read = s.Read(buffer);
-        if (read != 4) throw new EndOfStreamException();
-        return BitConverter.ToUInt32(buffer);
     }
 }
 
@@ -184,47 +122,6 @@ namespace CUE4Parse.UE4.Assets.Objects
             if (bufferOffset != buffer.Length)
                 throw new Exception("Buffer not fully filled by decompressed data");
         }
-
-        public static void ReadCompressedChunk(Stream Ar, byte[] buffer, CompressionMethod Compression)
-        {
-            var header = new FCompressedChunkHeader(Ar);
-
-            int bufferOffset = 0;
-
-            foreach (var block in header.Blocks)
-            {
-                if (block.UncompressedSize + bufferOffset > buffer.Length)
-                    throw new Exception("Block uncompressed size exceeds output buffer");
-
-                var readBuffer = new byte[block.CompressedSize];
-                int bytesRead = 0;
-                while (bytesRead < readBuffer.Length)
-                {
-                    int r = Ar.Read(readBuffer, bytesRead, readBuffer.Length - bytesRead);
-                    if (r <= 0) throw new EndOfStreamException("Unexpected end of stream while reading compressed block");
-                    bytesRead += r;
-                }
-
-                if (block.CompressedSize == block.UncompressedSize) //block.CompressedSize <= 36 && block.UncompressedSize <= 32
-                {
-                    Buffer.BlockCopy(readBuffer, 0, buffer, bufferOffset, block.UncompressedSize);
-                }
-                else
-                {
-                    CUE4Parse.Compression.Compression.Decompress(
-                        readBuffer, 0, block.CompressedSize,
-                        buffer, bufferOffset, block.UncompressedSize,
-                        Compression, null // Ar is not needed for decompression anymore
-                    );
-                }
-
-                bufferOffset += block.UncompressedSize;
-            }
-
-            if (bufferOffset != buffer.Length)
-                throw new Exception("Buffer not fully filled by decompressed data");
-        }
-
 
         public FByteBulkData(byte[] data)
         {
@@ -312,24 +209,25 @@ namespace CUE4Parse.UE4.Assets.Objects
 
                 _data = new Lazy<byte[]?>(() =>
                 {
-                    using var fs = new FileStream(tfcPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    fs.Position = Header.OffsetInFile;
+                    using var fs = File.OpenRead(tfcPath);
+                    var streamarchive = new FStreamArchive("tfc", fs);
+                    streamarchive.Position = Header.OffsetInFile;
 
                     var data = new byte[Header.ElementCount];
 
                     if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
                     {
-                        ReadCompressedChunk(fs, data, CompressionMethod.Zlib);
+                        ReadCompressedChunk(streamarchive, data, CompressionMethod.Zlib);
                     }
                     else if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
                     {
-                        ReadCompressedChunk(fs, data, CompressionMethod.LZO);
+                        ReadCompressedChunk(streamarchive, data, CompressionMethod.LZO);
                     }
                     else
                     {
                         int bytesRead = 0;
                         while (bytesRead < data.Length)
-                            bytesRead += fs.Read(data, bytesRead, data.Length - bytesRead);
+                            bytesRead += streamarchive.Read(data, bytesRead, data.Length - bytesRead);
                     }
 
                     return data;

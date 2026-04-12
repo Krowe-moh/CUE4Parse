@@ -396,7 +396,7 @@ namespace CUE4Parse.UE4.Assets
 
             outerMostImport = ImportMap[-outerMostIndex.Index - 1];
             // We don't support loading script packages, so just return a fallback
-            if (outerMostImport.ObjectName.Text.StartsWith("/Script/") || import.ClassName.Text.StartsWith("Class") || import.ClassName.Text.StartsWith("Package"))
+            if (outerMostImport.ObjectName.Text.StartsWith("/Script/") || import.ClassName.Text.StartsWith("Class"))
             {
                 return new ResolvedImportObject(import, this);
             }
