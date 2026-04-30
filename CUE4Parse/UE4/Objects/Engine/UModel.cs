@@ -28,6 +28,17 @@ namespace CUE4Parse.UE4.Objects.Engine
 
         /** The vertex's shadow map coordinate for the backface of the node. */
         public readonly FVector2D BackfaceShadowTexCoord;
+
+        public FVert(FAssetArchive Ar)
+        {
+            pVertex = Ar.Read<int>();
+            iSide = Ar.Read<int>();
+            ShadowTexCoord = new FVector2D(Ar);
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.BACKFACESHADOWTEXCOORD)
+            {
+                BackfaceShadowTexCoord = new FVector2D(Ar);
+            }
+        }
     }
 
     /** Flags associated with a Bsp node. */
@@ -233,12 +244,12 @@ namespace CUE4Parse.UE4.Objects.Engine
             Actor = new FPackageIndex(Ar);
             Plane = Ar.Read<FPlane>();
             LightMapScale = Ar.Read<float>();
-            if (Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.BSP_LIGHTING_CHANNEL_SUPPORT && Ar.Game < EGame.GAME_UE4_0)
             {
                 Ar.Read<int>(); // LightingChannels
             }
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.INTEGRATED_LIGHTMASS)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.INTEGRATED_LIGHTMASS)
             {
                 iLightmassIndex = Ar.Read<int>();
             }
@@ -363,19 +374,15 @@ namespace CUE4Parse.UE4.Objects.Engine
             if (Ar.Ver < EUnrealEngineObjectUE4Version.BSP_UNDO_FIX)
             {
                 var surfsOwner = new FPackageIndex(Ar);
-                Surfs = Ar.ReadArray(() => new FBspSurf(Ar));
-            }
-            else
-            {
-                Surfs = Ar.ReadArray(() => new FBspSurf(Ar));
             }
 
-            Verts = Ar.ReadBulkArray<FVert>();
+            Surfs = Ar.ReadArray(() => new FBspSurf(Ar));
+            Verts = Ar.ReadBulkArray(() => new FVert(Ar));
 
             NumSharedSides = Ar.Read<int>();
             if (Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_ZONES_FROM_MODEL)
             {
-                var dummyZones = Ar.ReadArray<FZoneProperties>();
+                var dummyZones = Ar.ReadArray(() => new FZoneProperties(Ar));
             }
 
             var bHasEditorOnlyData = !Ar.IsFilterEditorOnly || Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_UNUSED_UPOLYS_FROM_UMODEL;
@@ -386,8 +393,8 @@ namespace CUE4Parse.UE4.Objects.Engine
                 {
                     Ar.ReadArray((() => new FBoxSphereBounds(Ar))); // Bounds
                 }
-                Ar.SkipBulkArrayData(); // DummyLeafHulls
-                Ar.SkipBulkArrayData(); // DummyLeaves
+                Ar.ReadBulkArray<int>(); // DummyLeafHulls
+                Ar.ReadBulkArray<int>(); // DummyLeaves
             }
 
             RootOutside = Ar.ReadBoolean();

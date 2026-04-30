@@ -149,7 +149,7 @@ public class UObject : AbstractPropertyHolder
                     Ar.Read<int>(); // TempMax
                 }
 
-                if (Flags.HasFlag(EObjectFlags.RF_Dynamic))
+                if (Flags.HasFlag(EObjectFlags.RF_Dynamic) || Class?.Name.Text == null)
                 {
                     return; // there some missing data after this
                 }
