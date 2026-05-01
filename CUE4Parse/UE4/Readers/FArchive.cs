@@ -586,14 +586,13 @@ namespace CUE4Parse.UE4.Readers
             // CompressionFormatToDecodeOldV1Files must match what was used to encode old files, cannot change
 
             // Serialize package file tag used to determine endianess.
-            var packageFileTag = Read<FCompressedChunkInfo>();
+            var packageFileTag = new FCompressedChunkInfo(this);
 
             // v1 header did not store CompressionFormatToDecode
             //	assume it was CompressionFormatToDecodeOldV1Files (usually Zlib)
             var compressionFormatToDecode = compressionFormatToDecodeOldV1Files;
 
             var bHeaderWasValid = false;
-            var bWasByteSwapped = false;
             var bReadCompressionFormat = false;
 
             // FPackageFileSummary has int32 Tag == PACKAGE_FILE_TAG
@@ -612,14 +611,14 @@ namespace CUE4Parse.UE4.Readers
             {
                 // v1 header, swapped
                 bHeaderWasValid = true;
-                bWasByteSwapped = true;
+                ReverseBytes = true;
             }
             else if (packageFileTag.CompressedSize == (long) ARCHIVE_V2_HEADER_TAG ||
                      packageFileTag.CompressedSize == (long) BYTESWAP_ORDER64(ARCHIVE_V2_HEADER_TAG))
             {
                 // v2 header
                 bHeaderWasValid = true;
-                bWasByteSwapped = (packageFileTag.CompressedSize != (long) ARCHIVE_V2_HEADER_TAG);
+                ReverseBytes = (packageFileTag.CompressedSize != (long) ARCHIVE_V2_HEADER_TAG);
                 bReadCompressionFormat = true;
 
                 compressionFormatToDecode = Read<byte>() switch
@@ -656,14 +655,7 @@ namespace CUE4Parse.UE4.Readers
             }
 
             // Read in base summary, contains total sizes :
-            var summary = Read<FCompressedChunkInfo>();
-
-            if (bWasByteSwapped)
-            {
-                summary.CompressedSize = (long) BYTESWAP_ORDER64((ulong) summary.CompressedSize);
-                summary.UncompressedSize = (long) BYTESWAP_ORDER64((ulong) summary.UncompressedSize);
-                packageFileTag.UncompressedSize = (long) BYTESWAP_ORDER64((ulong) packageFileTag.UncompressedSize);
-            }
+            var summary = new FCompressedChunkInfo(this);
 
             // Handle change in compression chunk size in backward compatible way.
             var loadingCompressionChunkSize = packageFileTag.UncompressedSize;
@@ -691,12 +683,7 @@ namespace CUE4Parse.UE4.Readers
             long totalChunkUncompressedSize = 0;
             for (var chunkIndex = 0; chunkIndex < totalChunkCount; chunkIndex++)
             {
-                compressionChunks[chunkIndex] = Read<FCompressedChunkInfo>();
-                if (bWasByteSwapped)
-                {
-                    compressionChunks[chunkIndex].CompressedSize = (long) BYTESWAP_ORDER64((ulong) compressionChunks[chunkIndex].CompressedSize);
-                    compressionChunks[chunkIndex].UncompressedSize = (long) BYTESWAP_ORDER64((ulong) compressionChunks[chunkIndex].UncompressedSize);
-                }
+                compressionChunks[chunkIndex] = new FCompressedChunkInfo(this);
                 maxCompressedSize = Math.Max(compressionChunks[chunkIndex].CompressedSize, maxCompressedSize);
 
                 totalChunkCompressedSize += compressionChunks[chunkIndex].CompressedSize;
@@ -787,7 +774,13 @@ namespace CUE4Parse.UE4.Readers
 
         private struct FCompressedChunkInfo
         {
-            public long CompressedSize, UncompressedSize;
+            public uint CompressedSize, UncompressedSize;
+
+            public FCompressedChunkInfo(FArchive Ar)
+            {
+                CompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : (uint)Ar.Read<long>();
+                UncompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : (uint)Ar.Read<long>();
+            }
         }
     }
 }

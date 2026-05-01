@@ -170,7 +170,8 @@ public class FPropertyTagData
             ["Quat"] = new[] { "RotKeys" },
             ["Rotator"] = new[] { "DecalRotation", "SpawnFacing" },
             ["Plane"] = new[] { "FacePlaneData", "PermutedVertexData" },
-            ["LinearColor"] = new[] { "LightComplexityColors", "DefaultColorList", "ColorBlindColorList", "m_StateBGColors", "m_StateFontColors", "IconColor" },
+            ["LinearColor"] = new[] { "LightComplexityColors", "DefaultColorList", "ColorBlindColorList", "IconColor" },
+            ["Color"] = new[] { "m_StateBGColors", "m_StateFontColors" },
             ["Guid"] = new[] { "IrrelevantLights", "ReferencedTextureGuids" },
             ["FontCharacter"] = new[] { "Characters" },
         };

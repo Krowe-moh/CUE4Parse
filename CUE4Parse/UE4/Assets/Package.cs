@@ -156,13 +156,8 @@ namespace CUE4Parse.UE4.Assets
                     uassetAr.Position = chunk.CompressedOffset;
 
                     var decompressedData = new byte[chunk.UncompressedSize];
-                    FByteBulkData.ReadCompressedChunk(
-                        uassetAr,
-                        decompressedData,
-                        Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB)
-                            ? CompressionMethod.Zlib
-                            : CompressionMethod.LZO
-                    );
+
+                    uassetAr.SerializeCompressedNew(decompressedData, chunk.UncompressedSize, Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB) ? CompressionMethod.Zlib.ToString() : CompressionMethod.LZO.ToString(), ECompressionFlags.COMPRESS_None, false, out _);
 
                     Array.Copy(
                         decompressedData,
