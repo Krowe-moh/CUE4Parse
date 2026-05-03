@@ -96,6 +96,7 @@ public class FStaticMeshComponentLODInfo
             }
             else
             {
+                if (Ar.Game is EGame.GAME_HonorofKingsWorld) Ar.Position += 4;
                 OverrideVertexColors = new FColorVertexBuffer(Ar.ReadArray<FColor>());
             }
         }

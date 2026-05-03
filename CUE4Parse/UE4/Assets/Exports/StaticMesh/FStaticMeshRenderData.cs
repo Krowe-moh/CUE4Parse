@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using CUE4Parse.UE4.Assets.Exports.Nanite;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
@@ -96,6 +97,12 @@ public class FStaticMeshRenderData
             SerializeInlineDataRepresentations(Ar);
         }
 
+        if (Ar.Game is EGame.GAME_HonorofKingsWorld &&
+            LODs.Any(x => x.Sections.Length > 0 && x.Sections[0] is { CustomData: 1 }))
+        {
+            Ar.SkipMultipleFixedArrays(Ar.Read<int>(), 41);
+        }
+
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.RENAME_CROUCHMOVESCHARACTERDOWN)
         {
             var stripped = false;
@@ -149,6 +156,21 @@ public class FStaticMeshRenderData
 
         Bounds = new FBoxSphereBounds(Ar);
 
+        if (Ar.Game == EGame.GAME_RocoKingdomWorld)
+        {
+            foreach (var lod in LODs)
+            {
+                if (lod.PositionVertexBuffer != null && lod.PositionVertexBuffer.Stride != 8) continue;
+                if (lod.PositionVertexBuffer?.Verts == null) continue;
+
+                var verts = lod.PositionVertexBuffer.Verts;
+                for (var i = 0; i < verts.Length; i++)
+                {
+                    verts[i] =  verts[i] * Bounds.BoxExtent + Bounds.Origin;
+                }
+            }
+        }
+
         if (Ar.Versions["StaticMesh.HasLODsShareStaticLighting"])
         {
             if (Ar.Game is >= EGame.GAME_UE5_6 or EGame.GAME_GrayZoneWarfare or EGame.GAME_HighOnLife2)
@@ -171,7 +193,7 @@ public class FStaticMeshRenderData
             Ar.Position += 4; // MaxStreamingTextureFactor
         }
 
-        if (Ar.Game is EGame.GAME_DeltaForceHawkOps or EGame.GAME_DeadzoneRogue) Ar.Position += 4;
+        if (Ar.Game is EGame.GAME_DeltaForce or EGame.GAME_DeadzoneRogue) Ar.Position += 4;
         if (Ar.Game is EGame.GAME_InfinityNikki) Ar.Position += 8;
 
         var screenSizeLength = Ar.Game switch
@@ -184,8 +206,14 @@ public class FStaticMeshRenderData
         ScreenSize = new float[screenSizeLength];
         for (var i = 0; i < ScreenSize.Length; ++i)
         {
-            var screenSize = new FPerPlatformFloat(Ar);
-            ScreenSize[i] = screenSize.Value;
+            if (Ar.Game >= EGame.GAME_UE4_20)
+            {
+                ScreenSize[i] = new FPerPlatformFloat(Ar).Value;
+            }
+            else
+            {
+                ScreenSize[i] = Ar.Read<float>();
+            }
 
             if (Ar.Game == EGame.GAME_HogwartsLegacy) Ar.Position += 8;
             if (Ar.Game == EGame.GAME_VisionsofMana) Ar.Position += 4;
