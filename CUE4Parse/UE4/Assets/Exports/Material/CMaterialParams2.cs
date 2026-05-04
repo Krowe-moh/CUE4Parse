@@ -22,7 +22,7 @@ public class CMaterialParams2
     public const string FallbackSpecularMasks = "PM_SpecularMasks";
     public const string FallbackEmissive = "PM_Emissive";
 
-    public const string RegexDiffuse = ".*(?:Diff|_Tex|_?Albedo|_?Base_?Color).*|(?:_D|_DIF|_DM|_C|_CM)$";
+    public const string RegexDiffuse = ".*(?:Diff|_Tex|_?Albedo|_?Base_?Color).*|(?:_D|_DIF|_DM|_C|_CM|_DS)$";
     public const string RegexNormals = "^NO_|.*Norm.*|(?:_N|_NM|_NRM)$";
     public const string RegexSpecularMasks = "^SP_|.*(?:Specu|_S_|MR|(?<!no)RM).*|(?:_S|_LP|_PAK)$";
     public const string RegexEmissive = ".*Emiss.*|(?:_E|_EM)$";
@@ -53,7 +53,7 @@ public class CMaterialParams2
     public static readonly string[][] Diffuse =
     [
         [
-            "Trunk_BaseColor", "ShadedDiffuse", "LitDiffuse", "Base Colour", "CLRM", "Diffuse_Map", "Base Color", "Base_Tex",
+            "Trunk_BaseColor", "ShadedDiffuse", "LitDiffuse", "Base Colour", "CLRM", "Diffuse_Map", "Base Color", "Base_Tex", "MobileBaseTexture",
             "Background Diffuse", "BG Diffuse Texture", "Diffuse", "Diffuse_1", "DiffuseTexture", "DiffuseMap", "Diffuse A", "Base Color Map",
             "Diffuse A Map", "Diffuse Top", "Diffuse Side", "Base Diffuse", "Diffuse Base", "Diffuse Base Map", "Diffuse Color Map", "BaseColor_Tex",
             "DiffuseLayer1", "1 - Albedo", "albedo", "Albedo", "Aldebo", "ALB", "TextureAlbedo", "AlbedoTex", "Color_Texture", "color", "Base_D", "Tex_BaseColor",
@@ -64,7 +64,7 @@ public class CMaterialParams2
             "BaseMap", "Tex_SkinBase_BC", "Tex_Core_Layer_Albedo", "BC_Texture", "RGBMap", "RGB_Map", "MW_TextureBaseColor", "Texture", "ColorOpacity",
             "Simple_BaseColor_Texture", "AlbedoTexture", "Albedo Texture", "BC_LUT", "BCO", "CR", "C/R" /*Finals*/, "BaseColor_Tex(a:mask)", "Base Color Map VT",
             "Basecolor_VT", "BaseColor_Map", "BaceColor_Map", "ColorAo", "RGBMask", "Color & Alpha", "BaseColor - Texture", "Clothing Diffuse",
-            "Base Color [Standard]", "Base Color VT", "BaseColorRoughness", "BaseColorAlpha",
+            "Base Color [Standard]", "Base Color VT", "DS", "_DS", "PaintLines(R=TeamColored, A=LineAlpha)"
         ],
         ["Background Diffuse 2", "Diffuse_Texture_2", "DiffuseLayer2", "Diffuse B", "Diffuse B Map", "BaseColorB", "CO_2", "M2_T_BC"],
         ["Background Diffuse 3", "Diffuse_Texture_3", "DiffuseLayer3", "Diffuse C", "Diffuse C Map", "BaseColorC", "CO_3", "M3_T_BC"],
@@ -78,7 +78,7 @@ public class CMaterialParams2
     public static readonly string[][] Normals =
     [
         [
-            "Trunk_Normal", "T_Normal", "normal", "normalmap", "NRRO", "Base Normal", "BaseNormalMap",
+            "Trunk_Normal", "F2DetailNormal", "T_Normal", "normal", "normalmap", "NRRO", "Base Normal",
             "Normals", "Normal", "NormalA", "NormalTexture", "Normal Texture", "Normal_Texture", "NormalMap", "Normal Tex",
             "Normal A Map", "Normals Top", "Normals Side", "Fallback Normal", "Base_N", "BaseNormal_Tex", "BaseNormal_NonVT",
             "Base_Normal", "BaseNormal", "Normal Base", "NormalVT", "TextureNormal", "Tex_BakedNormal", "TexNor", "Normal VT",

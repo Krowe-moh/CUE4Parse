@@ -261,7 +261,11 @@ public class UMaterial : UMaterialInterface
 
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
                 {
-                    Ar.ReadBoolean(); // bUsesSceneColor
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_USES_SCENECOLOR_FLAG)
+                    {
+                        Ar.ReadBoolean(); // bUsesSceneColor
+                    }
+
                     Ar.ReadBoolean(); // bUsesSceneDepth
                     if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICPARAMETERS_ADDED)
                     {
@@ -318,9 +322,9 @@ public class UMaterial : UMaterialInterface
         //FMaterialResource::Serialize
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_BLEND_OVERRIDE)
         {
-            Ar.Read<int>();
-            Ar.ReadBoolean();
-            Ar.ReadBoolean();
+            Ar.Read<int>(); // BlendModeOverrideValue (EBlendMode)
+            Ar.ReadBoolean(); // bIsBlendModeOverrided
+            Ar.ReadBoolean(); // bIsMaskedOverrideValue
         }
     }
 

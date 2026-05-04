@@ -56,15 +56,6 @@ public class FModelElement
             {
                 new FPackageIndex(Ar); // LightMap
             }
-            else if (Ar.Game < EGame.GAME_UE4_0)
-            {
-                LegacyMapBuildData.LightMap = Ar.Read<ELightMapType>() switch
-                {
-                    ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
-                    ELightMapType.LMT_2D => new FLightMap2D(Ar),
-                    _ => null
-                };
-            }
             else
             {
                 LegacyMapBuildData.LightMap = Ar.Read<ELightMapType>() switch
@@ -73,6 +64,10 @@ public class FModelElement
                     ELightMapType.LMT_2D => new FLightMap2D(Ar),
                     _ => null
                 };
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE4Version.PRECOMPUTED_SHADOW_MAPS_BSP)
+            {
                 LegacyMapBuildData.ShadowMap = Ar.Read<EShadowMapType>() switch
                 {
                     EShadowMapType.SMT_2D => new FShadowMap2D(Ar),
@@ -89,6 +84,11 @@ public class FModelElement
         Component = new FPackageIndex(Ar);
         Material = new FPackageIndex(Ar);
         Nodes = Ar.ReadArray<ushort>();
+
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            Ar.ReadArray(() => new FPackageIndex(Ar)); // ShadowMaps
+        }
 
         if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.MapBuildDataSeparatePackage)
         {
