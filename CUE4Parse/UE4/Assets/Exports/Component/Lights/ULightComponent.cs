@@ -4,6 +4,7 @@ using System.Linq;
 using CUE4Parse.UE4.Assets.Exports.BuildData;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
+using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
@@ -221,7 +222,23 @@ public class UDominantDirectionalLightComponent : UPointLightComponent
     }
 }
 public class UDominantPointLightComponent : UPointLightComponent;
-public class UParticleLightEnvironmentComponent : UPointLightComponent;
+
+public class UParticleLightEnvironmentComponent : UPointLightComponent
+{
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            new UDynamicLightEnvironmentComponent().Deserialize(Ar, validPos);
+            Ar.Read<FGuid>();
+        }
+        else
+        {
+            base.Deserialize(Ar, validPos);
+        }
+    }
+};
+
 public class ULightEnvironmentComponent : UActorComponent;
 public class UDynamicLightEnvironmentComponent : ULightEnvironmentComponent;
 public class UPointLightComponent : ULocalLightComponent
@@ -234,14 +251,7 @@ public class UPointLightComponent : ULocalLightComponent
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-      //  if (Ar.Game < EGame.GAME_UE4_0)
-      //  {
-      //      new UDynamicLightEnvironmentComponent().Deserialize(Ar, validPos);
-      //  }
-      //  else
-        {
-            base.Deserialize(Ar, validPos);
-        }
+        base.Deserialize(Ar, validPos);
 
         LightFalloffExponent = GetOrDefault(nameof(LightFalloffExponent), 8.0f);
         SourceRadius = GetOrDefault(nameof(SourceRadius), 0.0f);
@@ -348,14 +358,7 @@ public class USkyLightComponent : ULightComponentBase
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if (Ar.Game < EGame.GAME_UE4_0)
-        {
-            new ULightComponent().Deserialize(Ar, validPos);
-        }
-        else
-        {
-            base.Deserialize(Ar, validPos);
-        }
+        base.Deserialize(Ar, validPos);
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SKYLIGHT_MOBILE_IRRADIANCE_MAP && !(FReleaseObjectVersion.Get(Ar) >= FReleaseObjectVersion.Type.SkyLightRemoveMobileIrradianceMap))
         {
