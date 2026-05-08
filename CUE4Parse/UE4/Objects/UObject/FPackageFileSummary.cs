@@ -188,7 +188,6 @@ namespace CUE4Parse.UE4.Objects.UObject
                 if (legacyFileVersion != -4)
                 {
                     FileVersionUE.FileVersionUE3 = Ar.Read<int>();
-                   // FileVersionUE.FileVersionUE3 = (int) EUnrealEngineObjectUE3Version.AUTOMATIC_VERSION;
                 }
 
                 FileVersionUE.FileVersionUE4 = Ar.Read<int>();

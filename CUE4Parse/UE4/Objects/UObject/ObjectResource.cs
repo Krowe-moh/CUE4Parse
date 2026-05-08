@@ -266,7 +266,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             ObjectName = Ar.ReadFName();
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedArcheType && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_ARCHETYPE_INDEX_FROM_LINKER_TABLES)
             {
-                Ar.Read<int>(); // Archetype
+                new FPackageIndex(Ar); // Archetype
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag && Ar.Game < EGame.GAME_UE4_0)
@@ -308,7 +308,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Game >= EGame.GAME_UE4_0)
             {
-                ForcedExport = Ar.ReadBoolean(); // maybe make this do something
+                ForcedExport = Ar.ReadBoolean();
                 NotForClient = Ar.ReadBoolean();
                 NotForServer = Ar.ReadBoolean();
             }

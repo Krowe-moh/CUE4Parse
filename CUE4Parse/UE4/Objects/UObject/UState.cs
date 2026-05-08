@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CUE4Parse.UE4.Objects.UObject;
 
 [Flags]
-public enum StateFlags : uint
+public enum EStateFlags : uint
 {
     Editable    = 1 << 0,
     Auto        = 1 << 1,
@@ -16,10 +17,11 @@ public enum StateFlags : uint
 
 public class UState : UStruct
 {
-    public long ProbeMask;
-    public long IgnoreMask;
+    public ulong ProbeMask;
+    public ulong IgnoreMask;
     public short LabelTableOffset;
-    public StateFlags StateFlags;
+    [JsonConverter(typeof(StringEnumConverter))]
+    public EStateFlags StateFlags;
     public Dictionary<FName, FPackageIndex /*UFunction*/> FuncMap;
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
@@ -28,16 +30,16 @@ public class UState : UStruct
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.REDUCED_PROBEMASK_REMOVED_IGNOREMASK)
         {
-            ProbeMask = Ar.Read<long>();
-            IgnoreMask = Ar.Read<long>();
+            ProbeMask = Ar.Read<ulong>();
+            IgnoreMask = Ar.Read<ulong>();
         }
         else
         {
-            ProbeMask = Ar.Read<int>();
+            ProbeMask = Ar.Read<uint>();
         }
 
         LabelTableOffset = Ar.Read<short>();
-        StateFlags = Ar.Read<StateFlags>();
+        StateFlags = Ar.Read<EStateFlags>();
         if (Ar.Ver > EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction)
         {
             FuncMap = Ar.ReadMap(Ar.ReadFName, () => new FPackageIndex(Ar));
@@ -51,26 +53,19 @@ public class UState : UStruct
         writer.WritePropertyName("ProbeMask");
         writer.WriteValue(ProbeMask);
 
-        if (IgnoreMask != 0)
-        {
-            writer.WritePropertyName("IgnoreMask");
-            writer.WriteValue(IgnoreMask);
-        }
+        writer.WritePropertyName("IgnoreMask");
+        writer.WriteValue(IgnoreMask);
 
         writer.WritePropertyName("LabelTableOffset");
         writer.WriteValue(LabelTableOffset);
 
-        if (StateFlags != 0)
-        {
-            writer.WritePropertyName("StateFlags");
-            writer.WriteValue(StateFlags.ToStringBitfield());
-        }
+        writer.WritePropertyName("StateFlags");
+        writer.WriteValue(StateFlags);
 
         if (FuncMap is { Count: > 0 })
         {
             writer.WritePropertyName("FuncMap");
             serializer.Serialize(writer, FuncMap);
         }
-        writer.WriteEndObject();
     }
 }
