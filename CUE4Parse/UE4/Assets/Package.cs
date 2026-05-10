@@ -376,6 +376,12 @@ namespace CUE4Parse.UE4.Assets
         {
             var import = ImportMap[-importIndex.Index - 1];
             var outerMostIndex = importIndex;
+
+            if (import.ClassName.Text.StartsWith("Class") || import.ClassName.Text.StartsWith("Package"))
+            {
+                return new ResolvedImportObject(import, this);
+            }
+
             FObjectImport outerMostImport;
             while (true)
             {
