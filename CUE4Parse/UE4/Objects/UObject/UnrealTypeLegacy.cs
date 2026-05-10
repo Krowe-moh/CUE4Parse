@@ -29,7 +29,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (PropertyFlags.HasFlag(EPropertyFlags.Net) && Ar.Game < EGame.GAME_UE4_0)
             {
-                Ar.Read<ushort>();
+                Ar.Read<ushort>(); // RepOffset
             }
 
             if (Ar.Game >= EGame.GAME_UE4_0)

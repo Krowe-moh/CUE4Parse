@@ -161,6 +161,7 @@ public class UObject : AbstractPropertyHolder
                         Ar.Read<int>(); // NetIndex
                     }
 
+                    Ar.StructTypeStack.Push(Class?.Super?.Name.Text ?? Class?.Name.Text);
                     DeserializePropertiesTagged(Properties = [], Ar, false);
                     return;
                 }
@@ -230,6 +231,7 @@ public class UObject : AbstractPropertyHolder
                 }
             }
 
+            Ar.StructTypeStack.Push(Class?.Super?.Name.Text ?? Class?.Name.Text);
             DeserializePropertiesTagged(Properties = [], Ar, false);
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CUE4Parse.GameTypes.DaysGone.Assets;
 using CUE4Parse.UE4.Assets.Objects.Properties;
 using CUE4Parse.UE4.Assets.Readers;
@@ -32,6 +33,54 @@ public class UScriptArray
         Properties = properties;
     }
 
+    private static bool TryGetArrayInnerType(
+        IDictionary<string, MappingsProvider.Struct> mappingTypes,
+        string structName,
+        FName propertyName,
+        out string innerType,
+        out FPropertyTagData? innerTagData)
+    {
+        innerType = null;
+        innerTagData = null;
+
+        if (!mappingTypes.TryGetValue(structName, out var mappingStruct))
+            return false;
+
+        while (mappingStruct != null)
+        {
+            var property = mappingStruct.Properties.Values
+                .FirstOrDefault(p => p.Name == propertyName);
+
+            if (property?.MappingType is { Type: "ArrayProperty" } mapType)
+            {
+                if (mapType.InnerType.Type == "StructProperty")
+                {
+                    innerType = "StructProperty";
+                    innerTagData = new FPropertyTagData
+                    {
+                        Type = "StructProperty",
+                        StructType = mapType.InnerType.StructType,
+                        Name = mapType.InnerType.StructType
+                    };
+                }
+                else
+                {
+                    innerType = mapType.InnerType.Type;
+                }
+
+                return true;
+            }
+
+            if (mappingStruct.SuperType == null ||
+                !mappingTypes.TryGetValue(mappingStruct.SuperType, out mappingStruct))
+            {
+                break;
+            }
+        }
+
+        return false;
+    }
+
     public UScriptArray(FAssetArchive Ar, FPropertyTagData? tagData, ReadType type, int size)
     {
         InnerType = tagData?.InnerType;
@@ -47,15 +96,38 @@ public class UScriptArray
         {
             var count = elementCount > 0 ? elementCount : 1;
             var elemsize = (size - sizeof(int)) / count;
-            InnerTagData = FPropertyTagData.GetArrayStructType(Ar, tagData.Name, elemsize);
-            if (InnerTagData.StructType == "StructProperty")
+
+            if (!Ar.HasUnversionedProperties &&
+                tagData.Name is not null &&
+                Ar.Owner?.Provider?.MappingsForGame?.Types is { } mappingTypes)
             {
-                InnerType = InnerTagData.StructType;
-                InnerTagData.StructType = InnerTagData.Name;
+                var structName = Ar.StructTypeStack.Peek();
+
+                if (TryGetArrayInnerType(
+                        mappingTypes,
+                        structName,
+                        tagData.Name,
+                        out var innerType,
+                        out var innerTagData))
+                {
+                    InnerType = innerType;
+                    InnerTagData = innerTagData;
+                }
             }
-            else
+
+            if (InnerType == null)
             {
-                InnerType = InnerTagData.StructType;
+                Console.Write("a");
+                InnerTagData = FPropertyTagData.GetArrayStructType(Ar, tagData.Name, elemsize);
+                if (InnerTagData.StructType == "StructProperty")
+                {
+                    InnerType = InnerTagData.StructType;
+                    InnerTagData.StructType = InnerTagData.Name;
+                }
+                else
+                {
+                    InnerType = InnerTagData.StructType;
+                }
             }
         }
         else if (Ar.HasUnversionedProperties)

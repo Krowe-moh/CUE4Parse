@@ -384,13 +384,19 @@ public class AStaticMeshActor : AActor;
 
 public class AStaticLightCollectionActor : ALight
 {
-    public FMatrix LightToWorldMatrix;
+    public FPackageIndex[] LightComponents;
+    public FMatrix[] LightToWorldMatrix;
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
+        LightComponents = GetOrDefault<FPackageIndex[]>(nameof(LightComponents), []);
 
-        LightToWorldMatrix = new FMatrix(Ar);
+        LightToWorldMatrix = new FMatrix[LightComponents.Length];
+        for (int i = 0; i < LightComponents.Length; i++)
+        {
+            LightToWorldMatrix[i] = new FMatrix(Ar);
+        }
     }
 }
 

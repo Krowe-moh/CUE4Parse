@@ -358,8 +358,7 @@ public class UTerrainComponent : UPrimitiveComponent
             Ar.ReadArray<FVector>(); // CollisionVertices
             /** Used for in-game collision tests against terrain. */
             Ar.ReadArray<int>(); // Nodes
-            Ar.Position += Ar.Read<int>() * 12;
-            //Ar.ReadArray<FTerrainPatchBounds>(); // PatchBounds
+           // Ar.ReadArray<FTerrainPatchBounds>(); // PatchBounds
 
             /*FLightMap? LightMap = Ar.Read<ELightMapType>() switch
             {
