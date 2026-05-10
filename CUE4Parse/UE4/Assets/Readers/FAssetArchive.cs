@@ -44,7 +44,7 @@ namespace CUE4Parse.UE4.Assets.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override FName ReadFName()
         {
-            var nameIndex = Read<int>();
+            var nameIndex = Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex ? Read<int>() : ReadCompactIndex();
             var extraIndex = 0;
             if (Ver >= EUnrealEngineObjectUE3Version.FNAME_CHANGE_NAME_SPLIT)
             {

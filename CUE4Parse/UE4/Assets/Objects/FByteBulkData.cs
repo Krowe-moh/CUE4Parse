@@ -77,6 +77,7 @@ namespace CUE4Parse.UE4.Assets.Objects
 
             if (LazyLoad)
             {
+                if (Header.ElementCount <= 0) return; // empty mips (original imported size)
                 _data = new Lazy<byte[]?>(() =>
                 {
                     var data = new byte[Header.ElementCount];
@@ -85,6 +86,7 @@ namespace CUE4Parse.UE4.Assets.Objects
             }
             else
             {
+                if (Header.ElementCount <= 0) return; // empty mips (original imported size)
                 var data = new byte[Header.ElementCount];
                 if (ReadBulkDataInto(data)) _data = new Lazy<byte[]?>(() => data);
             }

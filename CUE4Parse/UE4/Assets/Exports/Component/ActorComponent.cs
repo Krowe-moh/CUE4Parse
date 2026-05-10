@@ -229,6 +229,7 @@ public class UFieldSystemMetaDataIteration : UFieldSystemMetaData;
 public class UFieldSystemMetaDataProcessingResolution : UFieldSystemMetaData;
 public class UFloatingPawnMovement : UPawnMovementComponent;
 
+public class UFluidInfluenceComponent : UPrimitiveComponent;
 public class UFluidSurfaceComponent : UPrimitiveComponent
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)

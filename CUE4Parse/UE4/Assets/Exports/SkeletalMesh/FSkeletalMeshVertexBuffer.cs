@@ -50,7 +50,6 @@ public class FSkeletalMeshVertexBuffer
             bExtraBoneInfluences = Ar.ReadBoolean();
         }
 
-        if (Ar.Game >= EGame.GAME_UE4_0) bUsePackedPosition = true;
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELETAL_MESH_SUPPORT_PACKED_POSITION && Ar.Game < EGame.GAME_UE4_0)
         {
             bUsePackedPosition = Ar.ReadBoolean();
@@ -58,8 +57,17 @@ public class FSkeletalMeshVertexBuffer
             MeshOrigin = new FVector(Ar);
         }
 
-        // console exclusion ig
-        // if (Ar.Game < EGame.GAME_UE4_0 && Ar.Game != EGame.GAME_RocketLeague) bUsePackedPosition = false;
+        if (Ar.Game >= EGame.GAME_UE4_0)
+        {
+            bUsePackedPosition = true;
+        }
+        else
+        {
+            // https://github.com/gildor2/UEViewer/blob/a0bfb468d42be831b126632fd8a0ae6b3614f981/Unreal/UnrealMesh/UnMesh3.cpp#L1045
+            // but umodel can somehow get it correct
+            bUsePackedPosition = false;
+        }
+
         if (Ar.Versions.Options.TryGetValue("SkeletalMesh.UsePackedPosition", out var value)) bUsePackedPosition = value;
 
         if (!bUseFullPrecisionUVs)

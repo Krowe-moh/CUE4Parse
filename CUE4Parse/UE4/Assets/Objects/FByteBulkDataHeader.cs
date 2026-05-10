@@ -50,6 +50,7 @@ public readonly struct FByteBulkDataHeader
                 CookedIndex = metaData.CookedIndex;
                 return;
             }
+
             Ar.Position -= 4;
         }
 
@@ -66,37 +67,39 @@ public readonly struct FByteBulkDataHeader
                 CookedIndex = metaData.CookedIndex;
                 return;
             }
+
             Ar.Position -= 4;
         }
 
-            BulkDataFlags = Ar.Read<EBulkDataFlags>();
-            if (Ar.Game == EGame.GAME_APBReloaded && (BulkDataFlags & (EBulkDataFlags) 0x100) != 0)
-            {
-                BulkDataFlags &= ~(EBulkDataFlags) 0x100;
-                BulkDataFlags |= BULKDATA_CompressedLZO;
-            }
+        BulkDataFlags = Ar.Read<EBulkDataFlags>();
+        if (Ar.Game == EGame.GAME_APBReloaded && (BulkDataFlags & (EBulkDataFlags) 0x100) != 0)
+        {
+            BulkDataFlags &= ~(EBulkDataFlags) 0x100;
+            BulkDataFlags |= BULKDATA_CompressedLZO;
+        }
 
-            ElementCount = BulkDataFlags.HasFlag(BULKDATA_Size64Bit) ? (int) Ar.Read<long>() : Ar.Read<int>();
-            SizeOnDisk = BulkDataFlags.HasFlag(BULKDATA_Size64Bit) ? (uint) Ar.Read<long>() : Ar.Read<uint>();
-            if (Ar.Game == EGame.GAME_RocketLeague)
+        ElementCount = BulkDataFlags.HasFlag(BULKDATA_Size64Bit) ? (int) Ar.Read<long>() : Ar.Read<int>();
+        SizeOnDisk = BulkDataFlags.HasFlag(BULKDATA_Size64Bit) ? (uint) Ar.Read<long>() : Ar.Read<uint>();
+        if (Ar.Game == EGame.GAME_RocketLeague)
+        {
+            if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
             {
-                if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
-                {
-                    OffsetInFile = (uint) Ar.Read<long>();
-                }
-                else
-                {
-                    OffsetInFile = Ar.Position;
-                }
+                OffsetInFile = (uint) Ar.Read<long>();
             }
             else
             {
-                OffsetInFile = Ar.Ver >= EUnrealEngineObjectUE4Version.BULKDATA_AT_LARGE_OFFSETS ? Ar.Read<long>() : Ar.Read<int>();
+                OffsetInFile = Ar.Position;
             }
-            if (!BulkDataFlags.HasFlag(BULKDATA_NoOffsetFixUp) && Ar.Game >= EGame.GAME_UE4_26)
-            {
-                OffsetInFile += Ar.Owner.Summary.BulkDataStartOffset;
-            }
+        }
+        else
+        {
+            OffsetInFile = Ar.Ver >= EUnrealEngineObjectUE4Version.BULKDATA_AT_LARGE_OFFSETS ? Ar.Read<long>() : Ar.Read<int>();
+        }
+
+        if (!BulkDataFlags.HasFlag(BULKDATA_NoOffsetFixUp) && Ar.Game >= EGame.GAME_UE4_26)
+        {
+            OffsetInFile += Ar.Owner.Summary.BulkDataStartOffset;
+        }
 
         if (BulkDataFlags.HasFlag(BULKDATA_BadDataVersion))
         {

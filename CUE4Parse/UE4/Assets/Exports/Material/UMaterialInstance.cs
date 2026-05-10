@@ -1,12 +1,15 @@
 using System;
+using System.Linq;
 using CUE4Parse.GameTypes.RocoKingdomWorld.Assets.Objects;
 using CUE4Parse.UE4.Assets.Exports.Material.Parameters;
+using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Objects.Properties;
 using CUE4Parse.UE4.Assets.Objects.Unversioned;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Assets.Utils;
 using CUE4Parse.UE4.Objects.Core.Misc;
+using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
@@ -42,30 +45,69 @@ public class UMaterialInstance : UMaterialInterface
             CachedData = new FStructFallback(Ar, "MaterialInstanceCachedData");
         }
 
-        if (bHasStaticPermutationResource && Ar.Ver >= EUnrealEngineObjectUE4Version.PURGED_FMATERIAL_COMPILE_OUTPUTS)
+        if (bHasStaticPermutationResource)
         {
-            if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.MaterialAttributeLayerParameters)
+            if (Ar.Ver >= EUnrealEngineObjectUE4Version.PURGED_FMATERIAL_COMPILE_OUTPUTS)
             {
-                StaticParameters = new FStaticParameterSet(Ar);
-                bHasNonUPropertyStaticParameters = true;
-            }
-
-            if (Ar is { Game: >= EGame.GAME_UE4_25, Owner.Provider.ReadShaderMaps: true })
-            {
-                var saved = Ar.Position;
-                try
+                if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.MaterialAttributeLayerParameters)
                 {
-                    DeserializeInlineShaderMaps(Ar, LoadedMaterialResources);
+                    StaticParameters = new FStaticParameterSet(Ar);
+                    bHasNonUPropertyStaticParameters = true;
                 }
-                catch (Exception e)
+
+                if (Ar is { Game: >= EGame.GAME_UE4_25, Owner.Provider.ReadShaderMaps: true })
                 {
-                    Log.Error(e, "Failed to deserialize inline shader maps.");
-                    Ar.Position = saved;
+                    var saved = Ar.Position;
+                    try
+                    {
+                        DeserializeInlineShaderMaps(Ar, LoadedMaterialResources);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e, "Failed to deserialize inline shader maps.");
+                        Ar.Position = saved;
+                    }
+                }
+                else
+                {
+                    Ar.Position = validPos;
                 }
             }
             else
             {
-                Ar.Position = validPos;
+                var QualityMask = 1;
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MATERIAL_QUALITY_LEVEL)
+                {
+                    QualityMask = Ar.Read<int>();
+                }
+
+                // FLASH_MERGE_TO_MAIN =1
+                // IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX =2
+                for (int QualityIndex = 0; QualityIndex < (Ar.Ver > EUnrealEngineObjectUE3Version.FLASH_MERGE_TO_MAIN && Ar.Ver <= EUnrealEngineObjectUE3Version.IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX ? 2 : 1); QualityIndex++)
+                {
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MATERIAL_QUALITY_LEVEL && (QualityMask & (1 << QualityIndex)) == 0)
+                    {
+                        continue;
+                    }
+
+                    var loadedResource = new FMaterialResource();
+                    loadedResource.Deserialize(Ar);
+
+                    StaticParameters = new FStaticParameterSet(Ar);
+                    bHasNonUPropertyStaticParameters = true;
+                }
+
+                //new FMaterialShaderMapId(Ar); // if PKG_ContainsInlinedShaders and specific ue3
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADER_MODEL_2)
+                {
+                    var loadedResource = new FMaterialResource();
+                    loadedResource.Deserialize(Ar);
+                    StaticParameters = new FStaticParameterSet(Ar);
+                }
+                if (Ar.Ver >= EUnrealEngineObjectUE4Version.MATERIAL_INSTANCE_BASE_PROPERTY_OVERRIDES)
+                {
+                    new FMaterialInstanceBasePropertyOverrides(Ar);
+                }
             }
         }
 
@@ -118,6 +160,7 @@ public class UMaterialInstance : UMaterialInterface
 [StructFallback]
 public class FStaticParameterSet
 {
+    public FGuid BaseMaterialId;
     public FStaticSwitchParameter[] StaticSwitchParameters;
     public FStaticComponentMaskParameter[] StaticComponentMaskParameters;
     public FNormalParameter[]? NormalParameters;
@@ -128,7 +171,7 @@ public class FStaticParameterSet
     {
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            Ar.Read<FGuid>(); // BaseMaterialId
+            BaseMaterialId = Ar.Read<FGuid>(); // BaseMaterialId
         }
         StaticSwitchParameters = Ar.ReadArray(() => new FStaticSwitchParameter(Ar));
         StaticComponentMaskParameters = Ar.ReadArray(() => new FStaticComponentMaskParameter(Ar));

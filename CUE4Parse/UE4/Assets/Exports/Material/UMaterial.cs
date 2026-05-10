@@ -181,150 +181,30 @@ public class UMaterial : UMaterialInterface
                 Ar.Position = validPos;
             }
         }
-
-        if (Ar.Game >= EGame.GAME_UE4_0)
-            return;
-
-        var QualityMask = 0;
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MATERIAL_QUALITY_LEVEL)
+        else
         {
-            QualityMask = Ar.Read<int>();
-        }
-
-        for (int QualityIndex = 0; QualityIndex < (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_FALLBACKS && Ar.Game != EGame.GAME_RocketLeague ? Ar.Ver >= EUnrealEngineObjectUE3Version.HALFRES_MOTIONBLURDOF4 ? 1 : 2 : 1); QualityIndex++)
-        {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MATERIAL_QUALITY_LEVEL && (QualityMask & (1 << QualityIndex)) == 0)
+            var QualityMask = 1;
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MATERIAL_QUALITY_LEVEL)
             {
-                continue;
             }
 
-            if (Ar.Ver < EUnrealEngineObjectUE4Version.PURGED_FMATERIAL_COMPILE_OUTPUTS)
+            for (int QualityIndex = 0; QualityIndex < (Ar.Ver > EUnrealEngineObjectUE3Version.FLASH_MERGE_TO_MAIN && Ar.Ver <= EUnrealEngineObjectUE3Version.IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX ? 2 : 1); QualityIndex++)
             {
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.FMATERIAL_COMPILATION_ERRORS)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MATERIAL_QUALITY_LEVEL && (QualityMask & (1 << QualityIndex)) == 0)
                 {
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_ERROR_RESAVE)
-                    {
-                        Ar.ReadArray(Ar.ReadFString); // CompileErrors
-                    }
-                    else
-                    {
-                        Ar.ReadMap(() => new FPackageIndex(Ar), Ar.ReadFString); // LegacyCompileErrors
-                    }
+                    continue;
                 }
 
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_TEXTUREDEPENDENCYLENGTH)
-                {
-                    Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>()); // TextureDependencyLengthMap
-                    Ar.Read<int>(); // MaxTextureDependencyLength
-                }
-
-                Ar.Read<FGuid>(); // Id
-
-                if (Ar.Ver < EUnrealEngineObjectUE4Version.REMOVED_FMATERIAL_COMPILE_OUTPUTS)
-                {
-                    Ar.Read<int>(); // NumUserTexCoords;
-                }
-
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
-                {
-                    Ar.ReadArray(() => new UniformExpression(Ar)); // UniformVectorExpressions
-                    Ar.ReadArray(() => new UniformExpression(Ar)); // UniformScalarExpressions
-                    var textures = Ar.ReadArray(() => new UniformExpression(Ar)); // Uniform2DTextureExpressions
-                   /*
-                    var texParams = textures
-                        .Select(u => u.Expression)
-                        .OfType<FMaterialUniformExpressionTextureParameter>()
-                        .Select(tp => tp.Texture)
-                        .ToArray();
-
-                    ReferencedTextures.AddRange(
-                        texParams
-                            .Select(idx => idx.TryLoad(out UTexture tex) ? tex : null)
-                            .Where(t => t != null)!);
-*/
-                    Ar.ReadArray(() => new UniformExpression(Ar)); // UniformCubeTextureExpressions
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_EDITOR_VERTEX_SHADER)
-                    {
-                        Ar.ReadArray(() => new UniformExpression(Ar));
-                        Ar.ReadArray(() => new UniformExpression(Ar));
-                    }
-                }
-                else
-                {
-                    Ar.ReadArray(() => new FPackageIndex(Ar));
-                    //  ReferencedTextures.AddRange(
-                    //        Ar.ReadArray(() => new FPackageIndex(Ar))
-                    //           .Select(idx => idx.TryLoad(out UTexture texture) ? texture : null)
-                    //           .Where(t => t != null)!
-                    //   ); // UniformExpressionTextures
-                }
-
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
-                {
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_USES_SCENECOLOR_FLAG)
-                    {
-                        Ar.ReadBoolean(); // bUsesSceneColor
-                    }
-
-                    Ar.ReadBoolean(); // bUsesSceneDepth
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICPARAMETERS_ADDED)
-                    {
-                        Ar.ReadBoolean(); // bUsesDynamicParameter
-                    }
-
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATEXP_LIGHTMAPUVS_ADDED)
-                    {
-                        Ar.ReadBoolean(); // bUsesLightmapUVs
-                    }
-
-                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_EDITOR_VERTEX_SHADER)
-                    {
-                        Ar.ReadBoolean(); // bUsesMaterialVertexPositionOffset
-                    }
-
-                    Ar.Read<int>(); // UsingTransforms
-                }
-
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.TEXTUREDENSITY)
-                {
-                    Ar.ReadArray(() => new FTextureLookup(Ar));
-                }
-
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.FALLBACK_DROPPED_COMPONENTS_TRACKING)
-                {
-                    Ar.Read<int>(); // DummyDroppedFallbackComponents
-                }
+                var loadedResource = new FMaterialResource();
+                loadedResource.Deserialize(Ar);
             }
-            else
+
+            //new FMaterialShaderMapId(Ar); // if PKG_ContainsInlinedShaders and ue3
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADER_MODEL_2)
             {
-                if (Ar is { Game: >= EGame.GAME_UE4_25, Owner.Provider.ReadShaderMaps: true })
-                {
-                    try
-                    {
-                        DeserializeInlineShaderMaps(Ar, LoadedMaterialResources);
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Warning(e, "Failed to deserialize inline shader maps.");
-                    }
-                    finally
-                    {
-                        Ar.Position = validPos;
-                    }
-                }
-                else
-                {
-                    Ar.Position = validPos;
-                }
+                var loadedResource = new FMaterialResource();
+                loadedResource.Deserialize(Ar);
             }
-        }
-
-        //FMaterialResource::Serialize
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_BLEND_OVERRIDE)
-        {
-            Ar.Read<int>(); // BlendModeOverrideValue (EBlendMode)
-            Ar.ReadBoolean(); // bIsBlendModeOverrided
-            Ar.ReadBoolean(); // bIsMaskedOverrideValue
         }
     }
 

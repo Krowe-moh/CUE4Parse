@@ -81,7 +81,13 @@ namespace CUE4Parse.UE4.Objects.UObject
 
         public FPackageIndex(FAssetArchive Ar)
         {
-            Index = Ar.Read<int>();
+            Index = Ar.Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex ? Ar.Read<int>() : Ar.ReadCompactIndex();
+            Owner = Ar.Owner;
+        }
+
+        public FPackageIndex(FAssetArchive Ar, bool IgnoreCompact)
+        {
+            Index = IgnoreCompact ? Ar.Read<int>() : Ar.ReadCompactIndex();
             Owner = Ar.Owner;
         }
 
@@ -435,7 +441,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             ClassPackage = Ar.ReadFName();
             ClassName = Ar.ReadFName();
-            OuterIndex = new FPackageIndex(Ar);
+            OuterIndex = new FPackageIndex(Ar, true);
             ObjectName = Ar.ReadFName();
 
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.NON_OUTER_PACKAGE_IMPORT && !Ar.IsFilterEditorOnly)

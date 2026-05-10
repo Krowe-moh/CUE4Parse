@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using CUE4Parse.UE4.Assets.Exports.Component;
 using CUE4Parse.UE4.Assets.Exports.Niagara.NiagaraShader;
+using CUE4Parse.UE4.Assets.Objects;
+using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Compression;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Core.Misc;
@@ -17,11 +20,119 @@ using Serilog;
 
 namespace CUE4Parse.UE4.Assets.Exports.Material;
 
-public class FMaterialResource : FMaterial;
+public class FMaterialResource : FMaterial
+{
+    public void Deserialize(FAssetArchive Ar)
+    {
+        LegacyDeserialize(Ar);
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_BLEND_OVERRIDE && Ar.Ver <= EUnrealEngineObjectUE4Version.MATERIAL_BLEND_OVERRIDE)
+        {
+            Ar.Read<int>(); // BlendModeOverrideValue (EBlendMode)
+            Ar.ReadBoolean(); // bIsBlendModeOverrided
+            Ar.ReadBoolean(); // bIsMaskedOverrideValue
+        }
+    }
+};
 
 public class FMaterial
 {
     public FMaterialShaderMap? LoadedShaderMap;
+
+    public void LegacyDeserialize(FAssetArchive Ar)
+    {
+        if (Ar.Ver < EUnrealEngineObjectUE4Version.PURGED_FMATERIAL_COMPILE_OUTPUTS)
+        {
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.FMATERIAL_COMPILATION_ERRORS)
+            {
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_ERROR_RESAVE)
+                {
+                    Ar.ReadArray(Ar.ReadFString); // CompileErrors
+                }
+                else
+                {
+                    Ar.ReadMap(() => new FPackageIndex(Ar), Ar.ReadFString); // LegacyCompileErrors
+                }
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_TEXTUREDEPENDENCYLENGTH)
+            {
+                Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>()); // TextureDependencyLengthMap
+                Ar.Read<int>(); // MaxTextureDependencyLength
+            }
+
+            Ar.Read<FGuid>(); // Id
+
+            if (Ar.Ver < EUnrealEngineObjectUE4Version.REMOVED_FMATERIAL_COMPILE_OUTPUTS)
+            {
+                Ar.Read<int>(); // NumUserTexCoords;
+            }
+
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.UNIFORM_EXPRESSIONS_IN_SHADER_CACHE)
+            {
+                Ar.ReadArray(() => new UniformExpression(Ar)); // UniformVectorExpressions
+                Ar.ReadArray(() => new UniformExpression(Ar)); // UniformScalarExpressions
+                Ar.ReadArray(() => new UniformExpression(Ar)); // Uniform2DTextureExpressions
+                Ar.ReadArray(() => new UniformExpression(Ar)); // UniformCubeTextureExpressions
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_EDITOR_VERTEX_SHADER)
+                {
+                    Ar.ReadArray(() => new UniformExpression(Ar)); // UniformVectorExpressions
+                    Ar.ReadArray(() => new UniformExpression(Ar)); // UniformScalarExpressions
+                }
+            }
+            else
+            {
+                Ar.ReadArray(() => new FPackageIndex(Ar)); // UniformExpressionTextures
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
+            {
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_USES_SCENECOLOR_FLAG)
+                {
+                    Ar.ReadBoolean(); // bUsesSceneColor
+                }
+
+                Ar.ReadBoolean(); // bUsesSceneDepth
+                if (Ar.Ver < EUnrealEngineObjectUE4Version.REMOVED_FMATERIAL_COMPILE_OUTPUTS)
+                {
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICPARAMETERS_ADDED)
+                    {
+                        Ar.ReadBoolean(); // bUsesDynamicParameter
+                    }
+
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATEXP_LIGHTMAPUVS_ADDED)
+                    {
+                        Ar.ReadBoolean(); // bUsesLightmapUVs
+                    }
+
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_EDITOR_VERTEX_SHADER)
+                    {
+                        Ar.ReadBoolean(); // bUsesMaterialVertexPositionOffset
+                    }
+                }
+
+                Ar.Read<int>(); // UsingTransforms
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.TEXTUREDENSITY)
+            {
+                Ar.ReadArray(() => new FTextureLookup(Ar));
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.FALLBACK_DROPPED_COMPONENTS_TRACKING)
+            {
+                Ar.Read<int>(); // DummyDroppedFallbackComponents
+            }
+        }
+        else
+        {
+            FMaterialResourceProxyReader resourceAr;
+            var ShaderMaps = new FByteBulkData(Ar);
+            using var ShaderMapsAr = new FByteArchive("ShaderMaps", ShaderMaps.Data, Ar.Versions);
+            resourceAr = new FMaterialResourceProxyReader(ShaderMapsAr);
+            DeserializeInlineShaderMap(resourceAr);
+        }
+    }
 
     public void DeserializeInlineShaderMap(FMaterialResourceProxyReader Ar)
     {

@@ -237,14 +237,14 @@ namespace CUE4Parse.UE4.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual T[] ReadArray<T>(Func<T> getter)
         {
-            var length = Read<int>();
+            var length = Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex ? Read<int>() : ReadCompactIndex();
             return ReadArray(length, getter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual T[] ReadArray<T>() where T : struct
         {
-            var length = Read<int>();
+            var length = Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex ? Read<int>() : ReadCompactIndex();
             return length > 0 ? ReadArray<T>(length) : [];
         }
 
@@ -443,6 +443,46 @@ namespace CUE4Parse.UE4.Readers
             return value;
         }
 
+        public virtual int ReadCompactIndex()
+        {
+            int index = 0;
+
+            byte b0 = Read<byte>();
+
+            if ((b0 & 0x40) != 0)
+            {
+                byte b1 = Read<byte>();
+                if ((b1 & 0x80) != 0)
+                {
+                    byte b2 = Read<byte>();
+                    if ((b2 & 0x80) != 0)
+                    {
+                        byte b3 = Read<byte>();
+                        if ((b3 & 0x80) != 0)
+                        {
+                            byte b4 = Read<byte>();
+                            index = b4;
+                        }
+
+                        index = (index << 7) | (b3 & 0x7F);
+                    }
+
+                    index = (index << 7) | (b2 & 0x7F);
+                }
+
+                index = (index << 7) | (b1 & 0x7F);
+            }
+
+            index = (index << 6) | (b0 & 0x3F);
+
+            if ((b0 & 0x80) != 0)
+            {
+                index *= -1;
+            }
+
+            return index;
+        }
+
         public virtual unsafe void SerializeBits(void* v, long lengthBits)
         {
             Serialize((byte*) v, (int) ((lengthBits + 7) / 8));
@@ -504,7 +544,7 @@ namespace CUE4Parse.UE4.Readers
         public virtual string ReadFString()
         {
             // > 0 for ANSICHAR, < 0 for UCS2CHAR serialization
-            var length = Read<int>();
+            var length = Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex ? Read<int>() : ReadCompactIndex();
 
             if (length == int.MinValue)
                 throw new ArgumentOutOfRangeException(nameof(length), "Archive is corrupted");
