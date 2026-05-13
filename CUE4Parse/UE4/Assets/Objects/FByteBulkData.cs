@@ -45,7 +45,7 @@ namespace CUE4Parse.UE4.Assets.Objects
         public FByteBulkData(FAssetArchive Ar)
         {
             Header = new FByteBulkDataHeader(Ar);
-            if (Header.ElementCount == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused))
+            if (Header.ElementCount == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused) || (Ar.Game < EGame.GAME_UE4_0 && BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile)))
             {
                 // Log.Warning("Bulk with no data");
                 return;
@@ -113,7 +113,6 @@ namespace CUE4Parse.UE4.Assets.Objects
 
             if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
             {
-
                 string tfcPath = Ar.Owner.Provider.TextureCachePaths[tfc];
                 if (!File.Exists(tfcPath))
                     throw new FileNotFoundException($"TFC file not found: {tfcPath}");

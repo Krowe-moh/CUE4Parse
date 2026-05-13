@@ -191,12 +191,16 @@ public partial class USkeletalMesh : UObject
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.APEX_CLOTHING && Ar.Game < EGame.GAME_UE4_0)
         {
-            // ApexClothingAsset doesn't have a serilize func??? help.
             var ApexClothingAssetcount = Ar.Read<int>();
-            if (ApexClothingAssetcount > 0)
+            for (var i = 0; i < ApexClothingAssetcount; i++)
             {
-                Log.Warning("Skipped Apex");
-                Ar.Position = validPos;
+                var bAssetValid = Ar.ReadBoolean();
+
+                if (bAssetValid)
+                {
+                    Log.Warning("Skipped Apex");
+                    Ar.Position = validPos;
+                }
                 return;
             }
         }
@@ -279,7 +283,7 @@ public partial class USkeletalMesh : UObject
 
         for (int index = 0; index < MorphTargets.Length; index++)
         {
-            if (!MorphTargets[index].TryLoad<UMorphTarget>(out var morphTarget)) 
+            if (!MorphTargets[index].TryLoad<UMorphTarget>(out var morphTarget))
                 continue;
 
             var morphLODModels = morphTarget.MorphLODModels;

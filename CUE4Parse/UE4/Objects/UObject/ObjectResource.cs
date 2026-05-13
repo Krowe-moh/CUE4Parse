@@ -278,7 +278,6 @@ namespace CUE4Parse.UE4.Objects.UObject
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag && Ar.Game < EGame.GAME_UE4_0)
             {
                 ObjectFlags = Ar.Read<long>();
-                ObjectFlags = (ObjectFlags >> 32) | (ObjectFlags << 32);
             }
             else
             {

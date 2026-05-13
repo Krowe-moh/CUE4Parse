@@ -77,7 +77,7 @@ public class UStruct : UField
             serializedScriptSize = bytecodeBufferSize;
         }
 
-        if (Ar.Owner!.Provider?.ReadScriptData == true && serializedScriptSize > 0)
+        if (Ar.Owner!.Provider?.ReadScriptData == true && Ar.Game > EGame.GAME_UE3_0 && serializedScriptSize > 0)
         {
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE)
             {
