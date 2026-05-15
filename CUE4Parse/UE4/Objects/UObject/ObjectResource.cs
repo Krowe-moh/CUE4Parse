@@ -224,7 +224,8 @@ namespace CUE4Parse.UE4.Objects.UObject
         public FPackageIndex ClassIndex;
         public FPackageIndex SuperIndex;
         public FPackageIndex TemplateIndex;
-        public long ObjectFlags;
+        public ulong ObjectFlags;
+        public ulong ObjectFlagsLegacy;
         public long SerialSize;
         public long SerialOffset;
         public bool ForcedExport;
@@ -277,7 +278,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag && Ar.Game < EGame.GAME_UE4_0)
             {
-                ObjectFlags = Ar.Read<long>();
+                ObjectFlagsLegacy = Ar.Read<ulong>();
             }
             else
             {

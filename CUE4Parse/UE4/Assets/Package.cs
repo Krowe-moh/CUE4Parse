@@ -323,6 +323,7 @@ namespace CUE4Parse.UE4.Assets
                         obj.Outer ??= new ResolvedPackageObject(this);
                         obj.Super = ResolvePackageIndex(export.SuperIndex) as ResolvedExportObject;
                         obj.Template = ResolvePackageIndex(export.TemplateIndex) as ResolvedExportObject;
+                        obj.FlagsLegacy |= (ObjectFlags64) export.ObjectFlagsLegacy;
                         obj.Flags |= (EObjectFlags) export.ObjectFlags; // We give loaded objects the RF_WasLoaded flag in ConstructObject, so don't remove it again in here
 
                         // Serialize

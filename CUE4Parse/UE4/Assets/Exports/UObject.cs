@@ -109,6 +109,7 @@ public class UObject : AbstractPropertyHolder
     public ResolvedObject? Template;
     public FGuid? ObjectGuid { get; private set; }
     public EObjectFlags Flags;
+    public ObjectFlags64 FlagsLegacy;
     public UStruct? SerializedSparseClassDataStruct;
     public FStructFallback? SerializedSparseClassData;
     // field for any custom data
@@ -149,12 +150,12 @@ public class UObject : AbstractPropertyHolder
                     Ar.Read<int>(); // TempMax
                 }
 
-                if (Flags.HasFlag(EObjectFlags.RF_Dynamic) || Class?.Name.Text == null)
+                if (Class?.Name.Text == null)
                 {
                     return; // there some missing data after this
                 }
 
-                if (Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject))
+                if (gurt())
                 {
                     if (Ar.Ver >= EUnrealEngineObjectUE3Version.LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX) // ue4 part does nothing currently
                     {
@@ -166,7 +167,7 @@ public class UObject : AbstractPropertyHolder
                     return;
                 }
 
-                if (Flags.HasFlag(EObjectFlags.RF_NonPIEDuplicateTransient) || Ar.Ver < EUnrealEngineObjectUE3Version.Release47)
+                if (FlagsLegacy.HasFlag(ObjectFlags64.HasStack) || Ar.Ver < EUnrealEngineObjectUE3Version.Release47)
                 {
                     var Node = new FPackageIndex();
                     if (Ar.Ver >= EUnrealEngineObjectUE3Version.Release51)
@@ -222,6 +223,10 @@ public class UObject : AbstractPropertyHolder
                     if (this is UComponent)
                     {
                         new FPackageIndex(Ar);
+                        if (Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_COMPONENT_TEMPLATES || gurtlegacy())
+                        {
+                            Ar.ReadFName();
+                        }
                     }
                 }
 
@@ -493,8 +498,15 @@ public class UObject : AbstractPropertyHolder
         writer.WritePropertyName(nameof(Name)); // ctrl click depends on the name, we always need it
         writer.WriteValue(Name);
 
-        writer.WritePropertyName(nameof(Flags));
-        writer.WriteValue(Flags.ToStringBitfield());
+        if (FlagsLegacy > 0)
+        {
+            writer.WritePropertyName(nameof(FlagsLegacy));
+            writer.WriteValue(FlagsLegacy.ToStringBitfield());
+        } else
+        {
+            writer.WritePropertyName(nameof(Flags));
+            writer.WriteValue(Flags.ToStringBitfield());
+        }
 
         if (Class is { Object.Value: { } clas })
         {
@@ -590,6 +602,18 @@ public class UObject : AbstractPropertyHolder
         }
 
         return IsNameStableForNetworking();
+    }
+
+    public bool gurt() => FlagsLegacy.HasFlag(ObjectFlags64.PropertiesObject);
+
+    public bool gurtlegacy()
+    {
+        if (Outer?.TryLoad(out var outer) == true && outer.gurt())
+        {
+            return true;
+        }
+
+        return gurt();
     }
 
     /** IsSupportedForNetworking means an object can be referenced over the network */
