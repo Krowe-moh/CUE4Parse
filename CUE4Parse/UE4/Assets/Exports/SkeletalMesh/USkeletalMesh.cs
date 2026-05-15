@@ -200,12 +200,11 @@ public partial class USkeletalMesh : UObject
                 {
                     Log.Warning("Skipped Apex");
                     Ar.Position = validPos;
+                    return;
                 }
-                return;
             }
         }
 
-        // does UE3 have this?
         if (Ar.Game >= EGame.GAME_UE4_0) _ = Ar.ReadArray(() => new FPackageIndex(Ar)); // dummyObjs
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICTEXTUREINSTANCES && FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.TextureStreamingMeshUVChannelData)

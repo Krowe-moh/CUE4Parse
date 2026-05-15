@@ -117,7 +117,6 @@ public class UScriptArray
 
             if (InnerType == null)
             {
-                Console.Write("a");
                 InnerTagData = FPropertyTagData.GetArrayStructType(Ar, tagData.Name, elemsize);
                 if (InnerTagData.StructType == "StructProperty")
                 {
