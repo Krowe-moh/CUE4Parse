@@ -8,10 +8,17 @@ public class ULandscapeHeightfieldCollisionComponent : USceneComponent
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        base.Deserialize(Ar, validPos);
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            new UPrimitiveComponent().Deserialize(Ar, validPos);
+        }
+        else
+        {
+            base.Deserialize(Ar, validPos);
+        }
         if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 16;
 
-        if (Ar.Ver < EUnrealEngineObjectUE4Version.LANDSCAPE_COLLISION_DATA_COOKING)
+        if (Ar.Game < EGame.GAME_UE4_0) // Ar.Ver < EUnrealEngineObjectUE4Version.LANDSCAPE_COLLISION_DATA_COOKING but editor only
         {
             new FByteBulkData(Ar); // CollisionHeightData
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.LANDSCAPE_PHYS_MATERIALS)

@@ -162,7 +162,7 @@ public class UStaticMesh : UObject
             }
             RenderData.Bounds = Bounds;
 
-            Ar.ReadArray(() => new FPackageIndex(Ar)); // LODInfo
+            Ar.Read<int>(); // LODInfo
         }
 
         if (!stripDataFlags.IsEditorDataStripped())
@@ -179,7 +179,7 @@ public class UStaticMesh : UObject
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERSION_18 && FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.DeprecatedHighResSourceMesh)
             {
                 var Deprecated_HighResSourceMeshName = Ar.ReadFString();
-                //var Deprecated_HighResSourceMeshCRC = Ar.Read<uint>();
+                var Deprecated_HighResSourceMeshCRC = Ar.Read<uint>();
             }
         }
 

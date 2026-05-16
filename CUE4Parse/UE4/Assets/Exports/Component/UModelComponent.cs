@@ -23,13 +23,6 @@ public class UModelComponent : UPrimitiveComponent
     {
         base.Deserialize(Ar, validPos);
         Model = new FPackageIndex(Ar);
-        // todo
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.IMPROVED_ANGLEBASEDSSAO)
-        {
-            Ar.ReadArray<int>(); // Ar << StaticLights;
-            return;
-        }
-
         if (Ar.Ver <= EUnrealEngineObjectUE4Version.REMOVE_ZONES_FROM_MODEL)
             Ar.Position += 4; // DummyZoneIndex
         Elements = Ar.ReadArray(() => new FModelElement(Ar));
