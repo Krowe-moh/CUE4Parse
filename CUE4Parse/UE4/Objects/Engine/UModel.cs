@@ -36,7 +36,7 @@ namespace CUE4Parse.UE4.Objects.Engine
             ShadowTexCoord = new FVector2D(Ar);
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.BACKFACESHADOWTEXCOORD)
             {
-                BackfaceShadowTexCoord = new FVector2D(Ar);
+                BackfaceShadowTexCoord = new FVector2D(Ar); // some builds have this removed in UE3
             }
         }
     }

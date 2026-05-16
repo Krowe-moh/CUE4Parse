@@ -259,15 +259,11 @@ public class ULevel : Assets.Exports.UObject
                 if (Ar.Ver < EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
                 {
                     Ar.ReadArray(() => new FStreamableTextureInfo(Ar)); // TextureInfos
+                    Ar.ReadArray(() => new FStreamableSoundInfo(Ar)); // SoundInfos
                 }
                 else
                 {
                     Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadArray(() => new FStreamableTextureInstance(Ar))); // TextureToInstancesMap
-                }
-
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.RENDERING_REFACTOR)
-                {
-                    Ar.ReadArray(() => new FStreamableSoundInfo(Ar)); // SoundInfos
                 }
             }
 
@@ -321,53 +317,44 @@ public class ULevel : Assets.Exports.UObject
                 Ar.ReadArray(() => Ar.ReadBulkArray<byte>()); // CachedPhysConvexBSPData
                 Ar.Read<int>(); // CachedPhysConvexBSPVersion
             }
-        };
+        }
+
+        ;
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.PERLEVEL_NAVLIST)
         {
             NavListStart = new FPackageIndex(Ar);
             NavListEnd = new FPackageIndex(Ar);
-        }
 
-        if (Ar.Game < EGame.GAME_UE4_0)
-        {
             new FPackageIndex(Ar); // CoverListStart
             new FPackageIndex(Ar); // CoverListEnd
-            Ar.ReadArray(() => new FPackageIndex(Ar));
-        }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.PYLONLIST_IN_ULEVEL && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVED_OLD_NAVMESH)
-        {
-            new FPackageIndex(Ar); // LegacyPylonListStart
-            new FPackageIndex(Ar); // LegacyPylonListEnd
-        }
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PYLONLIST_IN_ULEVEL && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVED_OLD_NAVMESH)
+            {
+                new FPackageIndex(Ar); // LegacyPylonListStart
+                new FPackageIndex(Ar); // LegacyPylonListEnd
+            }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.COVERGUIDREFS_IN_ULEVEL && Ar.Game < EGame.GAME_UE4_0)
-        {
-            Ar.Read<int>(); // CrossLevelCoverGuidRefs
-            Ar.Read<int>(); // CoverLinkRefs
-            Ar.Read<int>(); // CoverIndexPairs
-        }
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.COVERGUIDREFS_IN_ULEVEL && Ar.Game < EGame.GAME_UE4_0)
+            {
+                var aa = Ar.Read<int>(); // CrossLevelCoverGuidRefs
+                var aaa = Ar.Read<int>(); // CoverLinkRefs
+                var aaaa = Ar.Read<int>(); // CoverIndexPairs
+            }
 
-        if (Ar.Game < EGame.GAME_UE4_0)
-        {
-            Ar.ReadArray(() => new FPackageIndex(Ar)); // CrossLevelActors
+            var a = Ar.ReadArray(() => new FPackageIndex(Ar)); // CrossLevelActors
         }
 
         if (Ar.Game == EGame.GAME_MetroAwakening && GetOrDefault<bool>("bIsLightingScenario")) return;
-        if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.MapBuildDataSeparatePackage)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.GI_CHARACTER_LIGHTING && FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.MapBuildDataSeparatePackage)
         {
             _ = new FPrecomputedLightVolumeData(Ar, false);
         }
+
         if (Ar.Game == EGame.GAME_OutlastTrials)
         {
             PrecomputedVolumeDistanceField = new FPrecomputedVolumeDistanceField(Ar);
             return;
-        }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.GI_CHARACTER_LIGHTING && Ar.Game < EGame.GAME_UE4_0)
-        {
-           // new FPackageIndex(Ar);
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.NONUNIFORM_PRECOMPUTED_VISIBILITY)
@@ -379,12 +366,12 @@ public class ULevel : Assets.Exports.UObject
         {
             new FBox(Ar); // LegacyPrecomputedVisibilityVolume
             Ar.Read<float>(); // LegacyPrecomputedVisibilityCellSize
-            Ar.ReadArray<byte>(); // LegacyPrecomputedVisibilityData
+            Ar.ReadArray(() => Ar.ReadArray<byte>()); // LegacyPrecomputedVisibilityData
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.IMAGE_REFLECTION_SHADOWING)
         {
-            //PrecomputedVolumeDistanceField = new FPrecomputedVolumeDistanceField(Ar);
+            PrecomputedVolumeDistanceField = new FPrecomputedVolumeDistanceField(Ar);
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.WORLD_LEVEL_INFO && Ar.Ver < EUnrealEngineObjectUE4Version.WORLD_LEVEL_INFO_UPDATED)

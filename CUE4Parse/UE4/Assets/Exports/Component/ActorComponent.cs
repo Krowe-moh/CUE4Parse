@@ -495,6 +495,7 @@ public class USpeedTreeComponent : UPrimitiveComponent
     }
 };
 public class UDynamicPausedLightEnvironmentComponent : UComponent;
+public class UDynamicSpriteComponent  : USpriteComponent;
 public class ULensFlareComponent : UComponent;
 public class UMapObjectiveVisualisation : UComponent;
 public class UInteractionSocketComponent : UComponent;

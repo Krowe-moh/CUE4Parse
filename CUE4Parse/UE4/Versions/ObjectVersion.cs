@@ -974,6 +974,7 @@ public enum EUnrealEngineObjectUE3Version
     temp8 = 128,
     // StaticMeshActor Socket Type Added
     temp9 = 128,
+    AddedIsValidToFBox = 146,
     MovedFriendlyNameToUFunction = 160,
     TextureDeprecatedFromPoly = 170,
     // Deprecated FCompactIndex

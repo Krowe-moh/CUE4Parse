@@ -358,7 +358,14 @@ public class USkyLightComponent : ULightComponentBase
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        base.Deserialize(Ar, validPos);
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            new ULightComponent().Deserialize(Ar, validPos);
+        }
+        else
+        {
+            base.Deserialize(Ar, validPos);
+        }
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SKYLIGHT_MOBILE_IRRADIANCE_MAP && !(FReleaseObjectVersion.Get(Ar) >= FReleaseObjectVersion.Type.SkyLightRemoveMobileIrradianceMap))
         {
