@@ -44,7 +44,7 @@ public sealed class FByteBulkData : TBulkData<byte>
             _dataPosition += offset;
         }
 
-        if (Header.ElementCount == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused) || (Ar.Game < EGame.GAME_UE4_0 && BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile)))
+        if (Header.SizeOnDisk == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused))
         {
             return;
         }
