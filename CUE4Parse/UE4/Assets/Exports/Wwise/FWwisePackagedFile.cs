@@ -69,7 +69,7 @@ public class FWwisePackagedFile : FStructFallback
             // i know it's ugly, but i don't see other solution without rewriting everything
             catch (RIFFSectionSizeException)
             {
-               /* if (bulkData.TryCombineBulkData(Ar, out var combinedData))
+                if (bulkData.TryCombineBulkData(Ar, out var combinedData, out var fullBulkData))
                 {
                     try
                     {
@@ -83,7 +83,7 @@ public class FWwisePackagedFile : FStructFallback
                     {
                         Log.Error("Failed to read Wwise bank data for {Name} from combined bulk data", name);
                     }
-                }*/
+                }
             }
             catch
             {

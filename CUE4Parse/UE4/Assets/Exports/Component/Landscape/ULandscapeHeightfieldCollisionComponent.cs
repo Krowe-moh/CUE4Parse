@@ -20,7 +20,7 @@ public class ULandscapeHeightfieldCollisionComponent : USceneComponent
 
         if (Ar.Game < EGame.GAME_UE4_0) // Ar.Ver < EUnrealEngineObjectUE4Version.LANDSCAPE_COLLISION_DATA_COOKING but editor only
         {
-            new FByteBulkData(Ar); // CollisionHeightData
+            new FWordBulkData(Ar); // CollisionHeightData
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.LANDSCAPE_PHYS_MATERIALS)
             {
                 new FByteBulkData(Ar); // DominantLayerData

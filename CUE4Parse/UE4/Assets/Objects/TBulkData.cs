@@ -17,7 +17,7 @@ using static CUE4Parse.UE4.Assets.Objects.EBulkDataFlags;
 namespace CUE4Parse.UE4.Assets.Objects;
 
 [JsonConverter(typeof(TBulkDataConverter))]
-public abstract class TBulkData<T> where T : struct
+public abstract class TBulkData<T> where T: struct
 {
     public FByteBulkDataHeader Header { get; init; }
     public EBulkDataFlags BulkDataFlags => Header.BulkDataFlags;
@@ -52,20 +52,18 @@ public abstract class TBulkData<T> where T : struct
         _dataPosition = Ar.Position;
         _savedAr = Ar;
 
-        if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || BulkDataFlags is BULKDATA_LazyLoadable or BULKDATA_None)
+        if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || Ar.Game == EGame.GAME_RocketLeague || BulkDataFlags is BULKDATA_LazyLoadable or BULKDATA_None)
         {
             Ar.Position += Header.SizeOnDisk;
         }
 
         if (Header.ElementCount <= 0) return; // empty mips (original imported size)
         _data = new Lazy<T[]?>(() => ReadBulkDataInto(out var data) ? data : null);
-        Ar.Position += Header.ElementCount;
     }
 
     protected TBulkData(FAssetArchive Ar, string tfc)
     {
         Header = new FByteBulkDataHeader(Ar);
-        if (Header.ElementCount <= 0) return;
         if (Header.SizeOnDisk == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused))
         {
             _data = new Lazy<T[]?>(() => []);
@@ -96,6 +94,12 @@ public abstract class TBulkData<T> where T : struct
                     streamarchive.SerializeCompressedNew(uncompressedData, size, "Zlib", ECompressionFlags.COMPRESS_NoFlags, false, out _);
                     Unsafe.CopyBlockUnaligned(ref Unsafe.As<T, byte>(ref data[0]), ref uncompressedData[0], (uint) size);
                 }
+                else if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
+                {
+                    var uncompressedData = new byte[size];
+                    streamarchive.SerializeCompressedNew(uncompressedData, size, "LZO", ECompressionFlags.COMPRESS_NoFlags, false, out _);
+                    Unsafe.CopyBlockUnaligned(ref Unsafe.As<T, byte>(ref data[0]), ref uncompressedData[0], (uint) size);
+                }
                 else
                 {
                     var buffer = new byte[size];
@@ -110,8 +114,13 @@ public abstract class TBulkData<T> where T : struct
             return;
         }
 
+        if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || Ar.Game == EGame.GAME_RocketLeague || BulkDataFlags is BULKDATA_LazyLoadable or BULKDATA_None)
+        {
+            Ar.Position += Header.SizeOnDisk;
+        }
+
+        if (Header.ElementCount <= 0) return; // empty mips (original imported size)
         _data = new Lazy<T[]?>(() => ReadBulkDataInto(out var data) ? data : null);
-        Ar.Position += Header.ElementCount;
     }
 
     /// <summary>
@@ -243,7 +252,6 @@ public abstract class TBulkData<T> where T : struct
                 payloadAr = new FAssetArchive(reader, Ar.Owner);
             }
         }
-
         return payloadAr != null;
     }
 }
