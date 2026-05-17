@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Runtime.CompilerServices;
+using CUE4Parse.Compression;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Objects.Core.Misc;
@@ -28,8 +30,116 @@ public sealed class FByteArrayData : TBulkData<byte>
 [JsonConverter(typeof(FByteBulkDataConverter))]
 public sealed class FByteBulkData : TBulkData<byte>
 {
-    public FByteBulkData(FAssetArchive Ar) : base(Ar) { }
-    public FByteBulkData(FAssetArchive Ar, string tfc) : base(Ar, tfc) { }
+    public FByteBulkData(FAssetArchive Ar)
+    {
+        Header = new FByteBulkDataHeader(Ar);
+        if (Header.ElementCount == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused) || (Ar.Game < EGame.GAME_UE4_0 && BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile)))
+        {
+            // Log.Warning("Bulk with no data");
+            return;
+        }
+
+        _dataPosition = Ar.Position;
+        _savedAr = Ar;
+
+        if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload))
+        {
+            Ar.Position += Header.ElementCount;
+        }
+
+        if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
+        {
+            var data = new byte[Header.ElementCount];
+            Ar.SerializeCompressedNew(data, Header.ElementCount, CompressionMethod.Zlib.ToString(), ECompressionFlags.COMPRESS_None, false, out _);
+            _data = new Lazy<byte[]>(() => data);
+            return;
+        }
+
+        if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
+        {
+            var data = new byte[Header.ElementCount];
+            Ar.SerializeCompressedNew(data, Header.ElementCount, CompressionMethod.LZO.ToString(), ECompressionFlags.COMPRESS_None, false, out _);
+            _data = new Lazy<byte[]>(() => data);
+            return;
+        }
+
+        if (Header.ElementCount <= 0) return; // empty mips (original imported size)
+
+        _data = new Lazy<byte[]?>(() => ReadBulkDataInto(out var data) ? data : null);
+
+        if (Ar.Game < EGame.GAME_UE4_0) Ar.Position += Header.ElementCount;
+    }
+
+    public FByteBulkData(FAssetArchive Ar, string tfc)
+    {
+        Header = new FByteBulkDataHeader(Ar);
+        if (Header.ElementCount == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused))
+        {
+            // Log.Warning("Bulk with no data");
+            return;
+        }
+
+        _dataPosition = Ar.Position;
+        _savedAr = Ar;
+
+        if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload))
+        {
+            Ar.Position += Header.ElementCount;
+        }
+
+        if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
+        {
+            string tfcPath = Ar.Owner.Provider.TextureCachePaths[tfc];
+            if (!File.Exists(tfcPath))
+                throw new FileNotFoundException($"TFC file not found: {tfcPath}");
+
+            _data = new Lazy<byte[]?>(() =>
+            {
+                using var fs = File.OpenRead(tfcPath);
+                var streamarchive = new FStreamArchive("tfc", fs, Ar.Versions);
+                streamarchive.Position = Header.OffsetInFile;
+
+                var data = new byte[Header.ElementCount];
+
+                if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
+                {
+                    streamarchive.SerializeCompressedNew(data, Header.ElementCount, CompressionMethod.Zlib.ToString(), ECompressionFlags.COMPRESS_None, false, out _);
+                }
+                else if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
+                {
+                    streamarchive.SerializeCompressedNew(data, Header.ElementCount, CompressionMethod.LZO.ToString(), ECompressionFlags.COMPRESS_None, false, out _);
+                }
+                else
+                {
+                    int bytesRead = 0;
+                    while (bytesRead < data.Length)
+                        bytesRead += streamarchive.Read(data, bytesRead, data.Length - bytesRead);
+                }
+
+                return data;
+            });
+            return;
+        }
+
+        if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
+        {
+            var data = new byte[Header.ElementCount];
+            Ar.SerializeCompressedNew(data, Header.ElementCount, CompressionMethod.Zlib.ToString(), ECompressionFlags.COMPRESS_None, false, out _);
+            _data = new Lazy<byte[]?>(() => data);
+            return;
+        }
+
+        if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
+        {
+            var data = new byte[Header.ElementCount];
+            Ar.SerializeCompressedNew(data, Header.ElementCount, CompressionMethod.LZO.ToString(), ECompressionFlags.COMPRESS_None, false, out _);
+            _data = new Lazy<byte[]?>(() => data);
+            return;
+        }
+
+        _data = new Lazy<byte[]?>(() => ReadBulkDataInto(out var data) ? data : null);
+        Ar.Position += Header.ElementCount;
+    }
 
     /// <summary>
     /// Creates a new FByteBulkData instance for a portion of the original bulk data.
@@ -89,6 +199,7 @@ public sealed class FByteBulkData : TBulkData<byte>
             Log.Error(e, "Could not create {0} reader for FByteBulkData", name);
             reader = null!;
         }
+
         return reader != null;
     }
 
@@ -114,6 +225,7 @@ public sealed class FByteBulkData : TBulkData<byte>
             dataAr.SerializeCompressedNew(uncompressedData, GetDataSize(), "Zlib", ECompressionFlags.COMPRESS_NoFlags, false, out _);
             data = uncompressedData;
         }
+
         return true;
     }
 
