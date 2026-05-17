@@ -87,7 +87,7 @@ public class CMaterialParams2
             "Texture A Normal", "CliffNormal", "Skin Normal", "Normal_MAIN","Main_T_Normal(B：SSSMask)", "PBREmissiveTex",
             "Primary Normal Map", "ORN" /*ABI*/, "NRO_Base_Normal", "Layer00_Normal_Tex", "Tex_SkinBase_N", "Tex_Core_Layer_Normal",
             "Simple_Normal_Texture", "BaseNormal Texture", "NOH", "N/O/H", "NMH", "NWO" /*Finals*/, "Normal_VT", "NRM_Map",
-            "Normal - Texture", "Clothing Normal", "Normal [Standard]",
+            "Normal - Texture", "Clothing Normal", "Normal [Standard]", "NCD_Mask", "Normal Map (Packed)", "N2R(M)","Normal Texture (N)"
         ],
         ["Normals_Texture_2", "Texture B Normal", "NormalB", "Normal B Map", "NM_2", "M2_T_NRM"],
         ["Normals_Texture_3", "Texture C Normal", "NormalC", "Normal C Map", "NM_3", "M3_T_NRM"],

@@ -24,6 +24,7 @@ namespace CUE4Parse.UE4.Objects.PhysicsEngine
             if (bCooked)
             {
                 if (Ar.Game is EGame.GAME_Aion2 && GetOrDefault<bool>("bNeverNeedsCookedCollisionData")) return;
+                if (Ar.Game is EGame.GAME_Highguard) return;
                 if (Ar.Ver >= EUnrealEngineObjectUE4Version.STORE_HASCOOKEDDATA_FOR_BODYSETUP)
                 {
                     _ = Ar.ReadBoolean(); // bTemp

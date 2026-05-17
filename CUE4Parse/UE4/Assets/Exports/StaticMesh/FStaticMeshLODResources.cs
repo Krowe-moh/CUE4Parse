@@ -174,6 +174,7 @@ public class FStaticMeshLODResources
     {
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERTEXBUFFER_MERGE)
         {
+            if (Ar.Game is EGame.GAME_Abzu) Ar.Position += 4;
             if (Ar.Ver < EUnrealEngineObjectUE3Version.SEPARATED_STATIC_MESH_POSITIONS) goto noPosition;
             PositionVertexBuffer = new FPositionVertexBuffer(Ar);
             noPosition:
@@ -246,6 +247,12 @@ public class FStaticMeshLODResources
             {
                 // UE4.8 or older, or when has CDSF_ReversedIndexBuffer
                 DepthOnlyIndexBuffer = new FRawStaticIndexBuffer(Ar);
+            }
+
+            if (Ar.Game is EGame.GAME_Abzu)
+            {
+                Ar.Position += 4;
+                Ar.SkipMultipleFixedArrays([8, 4, 24, 4]);
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.FTEXT_HISTORY && Ar.Ver < EUnrealEngineObjectUE4Version.RENAME_CROUCHMOVESCHARACTERDOWN)

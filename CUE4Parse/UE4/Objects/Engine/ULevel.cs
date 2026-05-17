@@ -79,6 +79,11 @@ public readonly struct FPrecomputedVisibilityHandler : IUStruct
             _ = Ar.ReadArray(() => new FCompressedVisibilityChunk(Ar));
             Ar.Position += 57;
         }
+        else if (Ar.Game is EGame.GAME_TheDivisionResurgence)
+        {
+            Ar.SkipFixedArray(8);
+            _ = Ar.ReadArray(() => new FPrecomputedVisibilityBucket(Ar));
+        }
     }
 }
 
