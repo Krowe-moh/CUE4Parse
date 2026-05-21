@@ -198,6 +198,9 @@ public class UMaterial : UMaterialInterface
 
                 var loadedResource = new FMaterialResource();
                 loadedResource.Deserialize(Ar);
+
+                if (loadedResource.ReferencedTextures is not null)
+                    ReferencedTextures.AddRange(loadedResource.ReferencedTextures);
             }
 
             //new FMaterialShaderMapId(Ar); // if PKG_ContainsInlinedShaders and ue3
@@ -205,6 +208,9 @@ public class UMaterial : UMaterialInterface
             {
                 var loadedResource = new FMaterialResource();
                 loadedResource.Deserialize(Ar);
+
+                if (loadedResource.ReferencedTextures is not null)
+                    ReferencedTextures.AddRange(loadedResource.ReferencedTextures);
             }
         }
     }
