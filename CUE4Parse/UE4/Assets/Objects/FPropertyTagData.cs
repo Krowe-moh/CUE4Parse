@@ -133,15 +133,25 @@ public class FPropertyTagData
 
     public static FPropertyTagData? GetArrayStructType(FAssetArchive Ar, string? name, int elementSize)
     {
-        if (name is "Attachments" or "Children" or "ShadowMaps" or "WeaponFireAnim"
-                or "WeaponIdleAnims" && elementSize == 4)
+        if (name is "Attachments" or "WeaponFireAnim" or "WeaponIdleAnims" && elementSize == 4)
         {
-            return new FPropertyTagData("ObjectProperty", name);
+        //    return new FPropertyTagData("ObjectProperty", name);
         }
 
         if (name == "Points" && elementSize == 4)
         {
-            return new FPropertyTagData("FloatProperty", name);
+      //      return new FPropertyTagData("FloatProperty", name);
+        }
+
+        var gurt = Ar.StructTypeStack.Peek();
+
+        if (((gurt == "AnimNodeAimOffset" || gurt == "UTAnimNodeJumpLeanOffset") && name == "Profiles") || (gurt == "TerrainLayerSetup" && name == "Materials") || (gurt == "InterpTrackSound" && name == "Sounds"))
+        {
+            return new FPropertyTagData("StructProperty");
+        }
+        if ((gurt == "UIImage" && name == "InactiveStates") || (gurt is "UIScene" && name == "Children") || (gurt == "LandscapeComponent" && name == "ShadowMaps"))
+        {
+            return new FPropertyTagData("ObjectProperty");
         }
 
         var map = new Dictionary<string, string[]>

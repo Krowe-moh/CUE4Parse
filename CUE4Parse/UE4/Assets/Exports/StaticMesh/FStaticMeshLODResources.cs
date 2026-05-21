@@ -51,7 +51,7 @@ public class FStaticMeshLODResources
         }
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedRawTriangles && Ar.Game < EGame.GAME_UE4_0)
         {
-            new FByteBulkData((FAssetArchive)Ar); // RawTriangles
+            new FByteBulkData((FAssetArchive)Ar, true); // RawTriangles
         }
 
         SkipBulk:

@@ -171,6 +171,10 @@ namespace CUE4Parse.UE4.Assets
                 uassetAr.SetBaseArchive(new FByteArchive("Decompressed Package", buffer, uassetAr.Versions));
             }
 
+          //  var outputPath = Name + ".upk";
+         //   Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
+         //   File.WriteAllBytes(outputPath, uassetAr.ReadBytes((int)uassetAr.Length));
+
             uassetAr.SeekAbsolute(Summary.NameOffset, SeekOrigin.Begin);
             NameMap = new FNameEntrySerialized[Summary.NameCount];
             uassetAr.ReadArray(NameMap, () => new FNameEntrySerialized(uassetAr));
@@ -375,17 +379,18 @@ namespace CUE4Parse.UE4.Assets
         private ResolvedObject? ResolveImport(FPackageIndex importIndex)
         {
             var import = ImportMap[-importIndex.Index - 1];
-            var outerMostIndex = importIndex;
+            var className = import.ClassName.Text;
 
-            if (import.ClassName.Text.StartsWith("Class") || import.ClassName.Text.StartsWith("Package"))
+            if (className.StartsWith("Class") || className.StartsWith("Package"))
             {
                 return new ResolvedImportObject(import, this);
             }
 
+            var outerMostIndex = importIndex;
             FObjectImport outerMostImport;
+
             while (true)
             {
-                // special case when the outermost import is an export in this package
                 if (outerMostIndex.IsExport)
                     return new ResolvedImportObject(import, this);
 
@@ -395,9 +400,8 @@ namespace CUE4Parse.UE4.Assets
                 outerMostIndex = outerMostImport.OuterIndex;
             }
 
-            outerMostImport = ImportMap[-outerMostIndex.Index - 1];
-            // We don't support loading script packages, so just return a fallback
-            if (outerMostImport.ObjectName.Text.StartsWith("/Script/") || import.ClassName.Text.StartsWith("Class") || import.ClassName.Text.StartsWith("Package"))
+            var outerMostObjectName = outerMostImport.ObjectName.Text;
+            if (outerMostObjectName.StartsWith("/Script/") || outerMostObjectName.StartsWith("Class") || outerMostObjectName.StartsWith("Package"))
             {
                 return new ResolvedImportObject(import, this);
             }
@@ -405,67 +409,79 @@ namespace CUE4Parse.UE4.Assets
             if (Provider == null)
                 return null;
 
-            Package? importPackage = null;
-            if (Provider.TryLoadPackage(outerMostImport.ObjectName.Text, out var package))
+            var importObjectName = import.ObjectName.Text;
+            if (Provider.TryLoadPackage(outerMostObjectName, out var package))
             {
                 if (package is IoPackage ioPackage)
                 {
-                    for (int i = 0; i < ioPackage.ExportMap.Length; i++)
+                    var ioExportMap = ioPackage.ExportMap;
+                    for (int i = 0; i < ioExportMap.Length; i++)
                     {
-                        FExportMapEntry export = ioPackage.ExportMap[i];
-                        if (ioPackage.CreateFNameFromMappedName(export.ObjectName).Text == import.ObjectName.Text)
+                        if (ioPackage.CreateFNameFromMappedName(ioExportMap[i].ObjectName).Text == importObjectName)
                         {
                             return ioPackage.ResolvePackageIndex(new FPackageIndex(ioPackage, i + 1));
                         }
                     }
 #if DEBUG
-                    Log.Fatal("Missing import of ({0}): {1} in {2} was not found, but the package exists.", Name, import.ObjectName, ioPackage.GetFullName());
+                    Log.Fatal("Missing import of ({0}): {1} in {2} was not found, but the package exists.", Name, importObjectName, ioPackage.GetFullName());
 #endif
                     return new ResolvedImportObject(import, this);
                 }
+            }
 
-                importPackage = package as Package;
+            Package? importPackage = package as Package;
+
+            if (importPackage == null && Provider.TryLoadPackage(outerMostImport.ClassPackage.Text, out var packageLast))
+            {
+                importPackage = packageLast as Package;
             }
 
             if (importPackage == null)
             {
-//#if DEBUG
-                Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, import.ObjectName, Name);
-//#endif
+#if DEBUG
+                Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, importObjectName, Name);
+#endif
                 return new ResolvedImportObject(import, this);
             }
 
             string? outer = null;
+            string? outer2 = null;
             if (outerMostIndex != import.OuterIndex && import.OuterIndex.IsImport)
             {
-                var outerImport = ImportMap[-import.OuterIndex.Index - 1];
+                outer2 = className;
                 outer = ResolveImport(import.OuterIndex)?.GetPathName();
                 if (outer == null)
                 {
-//#if DEBUG
+#if DEBUG
+                    var outerImport = ImportMap[-import.OuterIndex.Index - 1];
                     Log.Fatal("Missing outer for import of ({0}): {1} in {2} was not found, but the package exists.", Name, outerImport.ObjectName, importPackage.GetFullName());
-//#endif
+#endif
                     return new ResolvedImportObject(import, this);
                 }
             }
 
-            for (var i = 0; i < importPackage.ExportMap.Length; i++)
+            var exportMap = importPackage.ExportMap;
+            for (var i = 0; i < exportMap.Length; i++)
             {
-                var export = importPackage.ExportMap[i];
-                if (export.ObjectName.Text != import.ObjectName.Text)
+                var export = exportMap[i];
+                if (export.ObjectName.Text != importObjectName)
                     continue;
+
                 var thisOuter = importPackage.ResolvePackageIndex(export.OuterIndex);
-                if (thisOuter?.GetPathName() == outer)
+                var outerPath = thisOuter?.GetPathName();
+                var exportClassName = export.ClassIndex.Name;
+
+                if (outerPath == outer || exportClassName == outer || outerPath == outer2 || exportClassName == outer2)
                     return new ResolvedExportObject(i, importPackage);
             }
 
 #if DEBUG
-       //     Log.Fatal("Missing import of ({0}): {1} in {2} was not found, but the package exists.", Name, import.ObjectName, importPackage.GetFullName());
+            Log.Fatal("Missing import of ({0}): {1} in {2} was not found, but the package exists.", Name, importObjectName, importPackage.GetFullName());
 #endif
             return new ResolvedImportObject(import, this);
         }
 
-    private class ResolvedExportObject : ResolvedObject
+        private class ResolvedExportObject : ResolvedObject
         {
             private readonly FObjectExport _export;
 

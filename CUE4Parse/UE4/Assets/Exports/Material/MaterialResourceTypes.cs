@@ -294,18 +294,53 @@ public class FShaderPipeline
     }
 }
 
-public class FShader(FMemoryImageArchive Ar)
+public class FShader
 {
-    public FShaderParameterBindings Bindings = new FShaderParameterBindings(Ar);
-    public FShaderParameterMapInfo ParameterMapInfo = new FShaderParameterMapInfo(Ar);
-    public FHashedName[] UniformBufferParameterStructs = Ar.ReadArray<FHashedName>();
-    public FShaderUniformBufferParameter[] UniformBufferParameters = Ar.ReadArray<FShaderUniformBufferParameter>();
-    public ulong Type = Ar.Read<ulong>(); // TIndexedPtr<FShaderType>
-    public ulong VFType = Ar.Read<ulong>(); // TIndexedPtr<FVertexFactoryType>
-    public FShaderTarget Target = Ar.Read<FShaderTarget>();
-    public int ResourceIndex = Ar.Read<int>();
-    public uint NumInstructions = Ar.Read<uint>();
-    public uint SortKey = Ar.Game >= EGame.GAME_UE5_0 ? Ar.Read<uint>() : 0;
+    public FShaderParameterBindings? Bindings;
+    public FShaderParameterMapInfo? ParameterMapInfo;
+    public FHashedName[]? UniformBufferParameterStructs;
+    public FShaderUniformBufferParameter[]? UniformBufferParameters;
+    public ulong Type;     // TIndexedPtr<FShaderType>
+    public ulong VFType;   // TIndexedPtr<FVertexFactoryType>
+    public FShaderTarget Target;
+    public int ResourceIndex;
+    public uint NumInstructions;
+    public uint SortKey;
+
+    public FShader(FMemoryImageArchive Ar)
+    {
+        if (Ar.Game >= EGame.GAME_UE4_0)
+        {
+            Bindings = new FShaderParameterBindings(Ar);
+            ParameterMapInfo = new FShaderParameterMapInfo(Ar);
+            UniformBufferParameterStructs = Ar.ReadArray<FHashedName>();
+            UniformBufferParameters = Ar.ReadArray<FShaderUniformBufferParameter>();
+            Type = Ar.Read<ulong>();
+            VFType = Ar.Read<ulong>();
+        }
+
+        Target = Ar.Read<FShaderTarget>();
+
+        if (Ar.Game < EGame.GAME_UE4_0)
+        {
+            //if (Ar.Ver < EUnrealEngineObjectUE3Version.PARAMETER_MAP_COMPARISON)
+            Ar.ReadArray<byte>();
+            Ar.Read<ulong>();
+            Ar.Read<FGuid>();
+            Ar.Read<int>();
+        }
+        if (Ar.Game >= EGame.GAME_UE4_0)
+        {
+            ResourceIndex = Ar.Read<int>();
+        }
+
+        NumInstructions = Ar.Ver >= EUnrealEngineObjectUE3Version.SHADER_NUMINSTRUCTIONS ? Ar.Read<uint>() : 0;
+
+        if (Ar.Game >= EGame.GAME_UE4_0)
+        {
+            SortKey = Ar.Read<uint>();
+        }
+    }
 }
 
 public class FShaderParameterBindings
@@ -325,6 +360,8 @@ public class FShaderParameterBindings
 
     public uint StructureLayoutHash = 0;
     public ushort RootParameterBufferIndex = 0xFFFF;
+
+    public FShaderParameterBindings() {}
 
     public FShaderParameterBindings(FMemoryImageArchive Ar)
     {
@@ -409,6 +446,8 @@ public class FShaderParameterMapInfo
     public FShaderParameterInfo[] SRVs;
     public FShaderLooseParameterBufferInfo[] LooseParameterBuffers;
     public ulong Hash;
+
+    public FShaderParameterMapInfo() {}
 
     public FShaderParameterMapInfo(FMemoryImageArchive Ar)
     {

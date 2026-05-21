@@ -103,7 +103,7 @@ public class UMaterial : UMaterialInterface
     public bool bForceNaniteUsage;
 
     private readonly List<IObject> _displayedReferencedTextures = [];
-    private bool _shouldDisplay;
+    private bool _shouldDisplay = true;
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
@@ -114,10 +114,10 @@ public class UMaterial : UMaterialInterface
         bIsMasked = GetOrDefault<bool>(nameof(bIsMasked));
         Expressions = GetOrDefault(nameof(Expressions), Expressions);
 
-        DiffuseColor = GetOrDefault<FExpressionInput>(nameof(DiffuseColor)) is { } diffusec ? new FExpressionInput(diffusec.FallbackStruct) : new FExpressionInput();
-        EmissiveColor = GetOrDefault<FExpressionInput>(nameof(EmissiveColor)) is { } emissivec ? new FExpressionInput(emissivec.FallbackStruct) : new FExpressionInput();
-        Normal = GetOrDefault<FExpressionInput>(nameof(Normal)) is { } normalc ? new FExpressionInput(normalc.FallbackStruct) : new FExpressionInput();
-        SpecularColor = GetOrDefault<FExpressionInput>(nameof(SpecularColor)) is { } specularc ? new FExpressionInput(specularc.FallbackStruct) : new FExpressionInput();
+        DiffuseColor = GetOrDefault<FExpressionInput>(nameof(DiffuseColor)) is { } diffusec && diffusec?.FallbackStruct != null ? new FExpressionInput(diffusec.FallbackStruct) : new FExpressionInput();
+        EmissiveColor = GetOrDefault<FExpressionInput>(nameof(EmissiveColor)) is { } emissivec && emissivec?.FallbackStruct != null ? new FExpressionInput(emissivec.FallbackStruct) : new FExpressionInput();
+        Normal = GetOrDefault<FExpressionInput>(nameof(Normal)) is { } normalc && normalc?.FallbackStruct != null ? new FExpressionInput(normalc.FallbackStruct) : new FExpressionInput();
+        SpecularColor = GetOrDefault<FExpressionInput>(nameof(SpecularColor)) is { } specularc && specularc?.FallbackStruct != null ? new FExpressionInput(specularc.FallbackStruct) : new FExpressionInput();
 
         BlendMode = GetOrDefault(nameof(BlendMode), BlendMode);
         TranslucencyLightingMode = GetOrDefault(nameof(TranslucencyLightingMode), TranslucencyLightingMode);

@@ -43,27 +43,6 @@ public abstract class TBulkData<T> where T: struct
     protected TBulkData(FAssetArchive Ar)
     {
         Header = new FByteBulkDataHeader(Ar);
-        if (Header.SizeOnDisk == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused) || (Ar.Game < EGame.GAME_UE4_0 && BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile)))
-        {
-            _data = new Lazy<T[]?>(() => []);
-            return;
-        }
-
-        _dataPosition = Ar.Position;
-        _savedAr = Ar;
-
-        if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || Ar.Game == EGame.GAME_RocketLeague || BulkDataFlags is BULKDATA_LazyLoadable or BULKDATA_None)
-        {
-            Ar.Position += Header.SizeOnDisk;
-        }
-
-        if (Header.ElementCount <= 0) return; // empty mips (original imported size)
-        _data = new Lazy<T[]?>(() => ReadBulkDataInto(out var data) ? data : null);
-    }
-
-    protected TBulkData(FAssetArchive Ar, string tfc)
-    {
-        Header = new FByteBulkDataHeader(Ar);
         if (Header.SizeOnDisk == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused))
         {
             _data = new Lazy<T[]?>(() => []);
@@ -73,53 +52,11 @@ public abstract class TBulkData<T> where T: struct
         _dataPosition = Ar.Position;
         _savedAr = Ar;
 
-        if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
-        {
-            string tfcPath = Ar.Owner.Provider.TextureCachePaths[tfc];
-            if (!File.Exists(tfcPath))
-                throw new FileNotFoundException($"TFC file not found: {tfcPath}");
-
-            _data = new Lazy<T[]?>(() =>
-            {
-                using var fs = File.OpenRead(tfcPath);
-                var streamarchive = new FStreamArchive("tfc", fs, Ar.Versions);
-                streamarchive.Position = Header.OffsetInFile;
-
-                var size = GetDataSize();
-                T[] data = new T[Header.ElementCount];
-
-                if (BulkDataFlags.HasFlag(BULKDATA_SerializeCompressedZLIB))
-                {
-                    var uncompressedData = new byte[size];
-                    streamarchive.SerializeCompressedNew(uncompressedData, size, "Zlib", ECompressionFlags.COMPRESS_NoFlags, false, out _);
-                    Unsafe.CopyBlockUnaligned(ref Unsafe.As<T, byte>(ref data[0]), ref uncompressedData[0], (uint) size);
-                }
-                else if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
-                {
-                    var uncompressedData = new byte[size];
-                    streamarchive.SerializeCompressedNew(uncompressedData, size, "LZO", ECompressionFlags.COMPRESS_NoFlags, false, out _);
-                    Unsafe.CopyBlockUnaligned(ref Unsafe.As<T, byte>(ref data[0]), ref uncompressedData[0], (uint) size);
-                }
-                else
-                {
-                    var buffer = new byte[size];
-                    int bytesRead = 0;
-                    while (bytesRead < buffer.Length)
-                        bytesRead += streamarchive.Read(buffer, bytesRead, buffer.Length - bytesRead);
-                    Unsafe.CopyBlockUnaligned(ref Unsafe.As<T, byte>(ref data[0]), ref buffer[0], (uint) size);
-                }
-
-                return data;
-            });
-            return;
-        }
-
         if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || Ar.Game == EGame.GAME_RocketLeague || BulkDataFlags is BULKDATA_LazyLoadable or BULKDATA_None)
         {
             Ar.Position += Header.SizeOnDisk;
         }
 
-        if (Header.ElementCount <= 0) return; // empty mips (original imported size)
         _data = new Lazy<T[]?>(() => ReadBulkDataInto(out var data) ? data : null);
     }
 
@@ -155,18 +92,6 @@ public abstract class TBulkData<T> where T: struct
             var uncompressedData = new byte[size];
             data = new T[Header.ElementCount];
             dataAr.SerializeCompressedNew(uncompressedData, size, "Zlib", ECompressionFlags.COMPRESS_NoFlags, false, out _);
-            Unsafe.CopyBlockUnaligned(ref Unsafe.As<T, byte>(ref data[0]), ref uncompressedData[0], (uint) size);
-
-            // To-Do rewrite once SerializeCompressedNew/Decompress works with span
-            // var dest = MemoryMarshal.AsBytes(data.AsSpan());
-            // dataAr.SerializeCompressedNew(dest, size, "Zlib", ECompressionFlags.COMPRESS_NoFlags, false, out _);
-        }
-        else if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
-        {
-            var size = GetDataSize();
-            var uncompressedData = new byte[size];
-            data = new T[Header.ElementCount];
-            dataAr.SerializeCompressedNew(uncompressedData, size, "LZO", ECompressionFlags.COMPRESS_NoFlags, false, out _);
             Unsafe.CopyBlockUnaligned(ref Unsafe.As<T, byte>(ref data[0]), ref uncompressedData[0], (uint) size);
 
             // To-Do rewrite once SerializeCompressedNew/Decompress works with span

@@ -162,7 +162,12 @@ namespace CUE4Parse.FileProvider
                 !collection.TryGetValue(fixedPath.SubstringBeforeWithLast('.') + GameFile.UePackageExtensions[1], out file) && // umap
                 !collection.TryGetValue(path, out file)) // in case FixPath broke something
             {
-                file = null;
+                var nameOnly = Path.GetFileNameWithoutExtension(fixedPath);
+                file = collection.FirstOrDefault(x =>
+                    StringComparer.OrdinalIgnoreCase.Equals(
+                        Path.GetFileNameWithoutExtension(x.Key), nameOnly
+                    )
+                ).Value;
             }
 
             return file != null;
@@ -483,7 +488,7 @@ namespace CUE4Parse.FileProvider
             if (lastPart.Contains('.') && lastPart.SubstringBefore('.') == lastPart.SubstringAfter('.'))
                 path = string.Concat(path.SubstringBeforeWithLast('/'), lastPart.SubstringBefore('.'));
             if (path[^1] != '/' && !lastPart.Contains('.'))
-                path += "." + GameFile.UePackageExtensions[0]; // uasset
+                path += "." + GameFile.UePackageExtensions[2]; // a uasset
 
             var ret = path;
             var root = path.SubstringBefore('/');
