@@ -344,6 +344,7 @@ public struct FTerrainPatchBounds
     public float MaxHeight;
     public float MaxDisplacement;
 }
+
 public class UTerrainComponent : UPrimitiveComponent
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
@@ -351,29 +352,58 @@ public class UTerrainComponent : UPrimitiveComponent
         base.Deserialize(Ar, validPos);
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            /**
-             * This is a low poly version of the terrain vertices in world space. The
-             * triangle data is created based upon Terrain->CollisionTesselationLevel
-             */
-            Ar.ReadArray<FVector>(); // CollisionVertices
-            /** Used for in-game collision tests against terrain. */
-            Ar.ReadArray<int>(); // Nodes
-           // Ar.ReadArray<FTerrainPatchBounds>(); // PatchBounds
-
-            /*FLightMap? LightMap = Ar.Read<ELightMapType>() switch
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.TERRAIN_COLLISION)
             {
-                ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
-                ELightMapType.LMT_2D => new FLightMap2D(Ar),
-                _ => null
-            };*/
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.ADD_TERRAIN_BVTREE)
+                {
+                    new FPackageIndex(Ar); // CollisionVertices
+                    Ar.Read<short>(); // DummyTree
+                }
+                else
+                {
+                    /**
+                     * This is a low poly version of the terrain vertices in world space. The
+                     * triangle data is created based upon Terrain->CollisionTesselationLevel
+                     */
+                    Ar.ReadArray<FVector>(); // CollisionVertices
+                }
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADD_TERRAIN_BVTREE)
+            {
+                /** Used for in-game collision tests against terrain. */
+                Ar.ReadArray<int>(); // Nodes
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.SERIALIZE_TERRAIN_PATCHBOUNDS)
+            {
+                Ar.ReadArray<FTerrainPatchBounds>(); // PatchBounds
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOOK_PHYS_BSP_TERRAIN && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVE_COOKED_PHYS_TERRAIN)
+            {
+                Ar.ReadBulkArray<byte>(); // DummyTerrainData
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.LIGHTMAP_NON_UOBJECT)
+            {
+                FLightMap? LightMap = Ar.Read<ELightMapType>() switch
+                {
+                    ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
+                    ELightMapType.LMT_2D => new FLightMap2D(Ar),
+                    _ => null
+                };
+            }
         }
     }
 }
+
 public class UPaperTerrainSplineComponent : USplineComponent;
 public class UPaperTileMapComponent : UMeshComponent;
 public class UPaperTileMapRenderComponent : UPaperTileMapComponent;
 
 public class UUTParticleSystemComponent : UUDKParticleSystemComponent;
+public class UUDKAIDecisionComponent : UActorComponent;
 public class UUDKParticleSystemComponent : UParticleSystemComponent;
 
 public class UParticleSystemComponent : UFXSystemComponent

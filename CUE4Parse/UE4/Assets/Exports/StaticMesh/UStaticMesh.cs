@@ -59,7 +59,7 @@ public class UStaticMesh : UObject
     public FPackageIndex BodySetup { get; private set; }
     public FPackageIndex NavCollision { get; private set; }
     public FGuid LightingGuid { get; private set; }
-    public FPackageIndex[] Sockets { get; private set; } // UStaticMeshSocket[]
+    public FPackageIndex?[] Sockets { get; private set; } // UStaticMeshSocket[]
     public FStaticMeshRenderData? RenderData { get; private set; }
     public FStaticMaterial[]? StaticMaterials { get; private set; }
     public ResolvedObject?[] Materials { get; set; } // UMaterialInterface[]

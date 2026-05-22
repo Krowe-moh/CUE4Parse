@@ -239,18 +239,7 @@ public class ALightmassPortal : AActor;
 public class ALocalFogVolume : AInfo;
 public class ALocationVolume : AVolume;
 public class AManipulator : AActor;
-public class AMaterialInstanceActor : AActor
-{
-    public FPackageIndex MatInst;
-
-    public override void Deserialize(FAssetArchive Ar, long validPos)
-    {
-        base.Deserialize(Ar, validPos);
-
-        MatInst = GetOrDefault(nameof(MatInst), new FPackageIndex());
-    }
-}
-
+public class AMaterialInstanceActor : AActor;
 public class AMediaBundleActorBase : AActor;
 public class AMediaPlate : AActor;
 public class AMeshMergeCullingVolume : AVolume;

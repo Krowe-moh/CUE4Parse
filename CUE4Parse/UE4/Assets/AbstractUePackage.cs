@@ -99,7 +99,6 @@ public abstract class AbstractUePackage : UObject, IPackage
                     Log.Warning("Did not read {0} correctly, {1} bytes exceeded", obj.ExportType, Math.Abs(remaining));
                     break;
                 default:
-                    Log.Debug("Successfully read {0} at {1} with size {2}", obj.ExportType, serialOffset, serialSize);
                     break;
             }
 #endif
@@ -110,7 +109,7 @@ public abstract class AbstractUePackage : UObject, IPackage
             {
                 throw new ParserException($"Could not read {obj.ExportType} {obj.Name} correctly", e);
             }
-            Log.Error(e, $"Could not read {0} {obj.Name} correctly", obj.ExportType);
+            Log.Error(e, "Could not read {0} {1} correctly", obj.ExportType, obj.Name);
         }
     }
 

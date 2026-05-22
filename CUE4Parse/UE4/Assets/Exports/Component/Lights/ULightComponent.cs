@@ -230,7 +230,7 @@ public class UParticleLightEnvironmentComponent : UPointLightComponent
         if (Ar.Game < EGame.GAME_UE4_0)
         {
             new UDynamicLightEnvironmentComponent().Deserialize(Ar, validPos);
-            Ar.Read<FGuid>();
+            //Ar.Read<FGuid>();
         }
         else
         {

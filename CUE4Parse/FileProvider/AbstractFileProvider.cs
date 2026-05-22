@@ -487,8 +487,8 @@ namespace CUE4Parse.FileProvider
             // This part is only for FSoftObjectPaths and not really needed anymore internally, but it's still in here for user input
             if (lastPart.Contains('.') && lastPart.SubstringBefore('.') == lastPart.SubstringAfter('.'))
                 path = string.Concat(path.SubstringBeforeWithLast('/'), lastPart.SubstringBefore('.'));
-            if (path[^1] != '/' && !lastPart.Contains('.'))
-                path += "." + GameFile.UePackageExtensions[2]; // a uasset
+            if (path[^1] != '/' && !lastPart.Contains('.') && Versions.Game >= EGame.GAME_UE4_0)
+                path += "." + GameFile.UePackageExtensions[0]; // uasset
 
             var ret = path;
             var root = path.SubstringBefore('/');

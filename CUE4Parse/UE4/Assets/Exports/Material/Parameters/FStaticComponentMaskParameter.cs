@@ -3,6 +3,7 @@ using CUE4Parse.UE4.Assets.Utils;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Readers;
+using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.UE4.Assets.Exports.Material.Parameters
 {
@@ -26,10 +27,13 @@ namespace CUE4Parse.UE4.Assets.Exports.Material.Parameters
             B = Ar.ReadBoolean();
             A = Ar.ReadBoolean();
             bOverride = Ar.ReadBoolean();
-            ExpressionGuid = Ar.Read<FGuid>();
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.MATERIAL_FALLBACKS)
+            {
+                ExpressionGuid = Ar.Read<FGuid>();
+            }
         }
 
-        public FLinearColor ToFLinearColor() 
+        public FLinearColor ToFLinearColor()
         {
             return new FLinearColor(R ? 1f : 0, G ? 1f : 0, B ? 1f : 0, A ? 1f : 0);
         }

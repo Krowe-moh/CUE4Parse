@@ -152,6 +152,7 @@ public class UObject : AbstractPropertyHolder
 
                 if (Class?.Name.Text == null)
                 {
+                    Ar.Position = validPos;
                     return; // there some missing data after this
                 }
 
