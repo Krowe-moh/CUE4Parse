@@ -198,9 +198,8 @@ public partial class USkeletalMesh : UObject
 
                 if (bAssetValid)
                 {
-                    Log.Warning("Skipped Apex");
-                    Ar.Position = validPos;
-                    return;
+                    Ar.ReadArray<byte>(); // NameBuffer
+                    Ar.ReadArray<byte>(); // Buffer
                 }
             }
         }

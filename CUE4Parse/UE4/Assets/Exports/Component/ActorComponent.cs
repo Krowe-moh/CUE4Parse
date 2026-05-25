@@ -157,16 +157,8 @@ public class UBrushComponent : UPrimitiveComponent
         BrushBodySetup = GetOrDefault(nameof(BrushBodySetup), new FPackageIndex());
 
         if (Ar.Game < EGame.GAME_UE4_0)
-        {// was RECALCULATE_MAXACTIVEPARTICLE
-            // was FLASH_DXT5_TEXTURE_SUPPORT
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.IPHONE_AUDIO_VARIABLE_BLOCK_SIZE_COMPRESSION && Ar.Game != EGame.GAME_LineOfSight)
-            {
-                Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>())); // CachedPhysBrushData
-            }
-            else
-            {
-                Ar.ReadArray(() => Ar.ReadBulkArray<byte>()); // CachedPhysBrushData
-            }
+        {
+            Ar.ReadArray(() => Ar.ReadBulkArray<byte>()); // CachedPhysBrushData
         }
     }
 
@@ -403,6 +395,7 @@ public class UPaperTileMapComponent : UMeshComponent;
 public class UPaperTileMapRenderComponent : UPaperTileMapComponent;
 
 public class UUTParticleSystemComponent : UUDKParticleSystemComponent;
+public class UDBParticleSystemComponent : UParticleSystemComponent;
 public class UUDKAIDecisionComponent : UActorComponent;
 public class UUDKParticleSystemComponent : UParticleSystemComponent;
 
