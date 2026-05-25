@@ -149,7 +149,7 @@ public class FPropertyTagData
         {
             return new FPropertyTagData("StructProperty");
         }
-        if ((gurt == "UIImage" && name == "InactiveStates") || (gurt is "UIScene" && name == "Children") || (gurt == "LandscapeComponent" && name == "ShadowMaps"))
+        if ((gurt == "UIImage" && name == "InactiveStates") || (gurt is "UIScene" && name == "Children") || (gurt == "LandscapeComponent" && name == "ShadowMaps") || (gurt == "ReachSpec" && name == "End"))
         {
             return new FPropertyTagData("ObjectProperty");
         }
