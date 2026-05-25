@@ -5,6 +5,7 @@ using CUE4Parse.UE4.Assets.Exports.BuildData;
 using CUE4Parse.UE4.Assets.Exports.Engine;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
+using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
@@ -319,12 +320,10 @@ public class ULevel : Assets.Exports.UObject
 
             if (Ar.Ver > EUnrealEngineObjectUE3Version.CONVEX_BSP && Ar.Game < EGame.GAME_UE4_0)
             {
-                Ar.ReadArray(() => Ar.ReadBulkArray<byte>()); // CachedPhysConvexBSPData
+                Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>())); // CachedPhysConvexBSPData
                 Ar.Read<int>(); // CachedPhysConvexBSPVersion
             }
         }
-
-        ;
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.PERLEVEL_NAVLIST)
         {
@@ -342,9 +341,9 @@ public class ULevel : Assets.Exports.UObject
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.COVERGUIDREFS_IN_ULEVEL && Ar.Game < EGame.GAME_UE4_0)
             {
-                var aa = Ar.Read<int>(); // CrossLevelCoverGuidRefs
-                var aaa = Ar.Read<int>(); // CoverLinkRefs
-                var aaaa = Ar.Read<int>(); // CoverIndexPairs
+                Ar.ReadMap(Ar.Read<FGuid>, Ar.Read<int>); // CrossLevelCoverGuidRefs
+                Ar.ReadArray(() => new FPackageIndex(Ar)); // CoverLinkRefs
+                Ar.ReadMap(Ar.Read<int>, Ar.Read<byte>); // CoverIndexPairs
             }
 
             var a = Ar.ReadArray(() => new FPackageIndex(Ar)); // CrossLevelActors
@@ -366,8 +365,7 @@ public class ULevel : Assets.Exports.UObject
         {
             PrecomputedVisibilityHandler = new FPrecomputedVisibilityHandler(Ar);
         }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOMPUTED_VISIBILITY && Ar.Game < EGame.GAME_UE4_0)
+        else if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOMPUTED_VISIBILITY && Ar.Game < EGame.GAME_UE4_0)
         {
             new FBox(Ar); // LegacyPrecomputedVisibilityVolume
             Ar.Read<float>(); // LegacyPrecomputedVisibilityCellSize

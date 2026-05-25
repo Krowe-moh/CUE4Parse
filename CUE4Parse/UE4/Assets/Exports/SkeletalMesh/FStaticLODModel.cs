@@ -360,7 +360,7 @@ public class FStaticLODModel
                     }
                 }
 
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCES)
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCES && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_EXTRA_SKELMESH_VERTEX_INFLUENCES)
                 {
                     Ar.ReadArray(() => new FSkeletalMeshVertexInfluences(Ar));
                 }
