@@ -439,12 +439,9 @@ public class FLegacyLightMap1D : FLightMap
         }
         else
         {
-            for (int elementIndex = 0; elementIndex < NUM_GATHERED_LIGHTMAP_COEF; elementIndex++)
+            for (int elementIndex = 0; elementIndex < 3; elementIndex++)
             {
-                if (elementIndex < NUM_DIRECTIONAL_LIGHTMAP_COEF || Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_SIMPLE_LIGHTING)
-                {
-                    Ar.Read<FVector>();
-                }
+                Ar.Read<FVector>();
             }
         }
 

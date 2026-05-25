@@ -41,7 +41,7 @@ public class FStaticReceiverData
         }
         Indices = Ar.ReadBulkArray<short>();
         Ar.Read<int>(); // NumTriangles
-        if (Ar.Ver > EUnrealEngineObjectUE3Version.DECAL_STATIC_DECALS_SERIALIZED) return;
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.DECAL_ADDED_DECAL_VERTEX_LIGHTMAP_COORD) return;
         FLightMap? lightMap = Ar.Read<ELightMapType>() switch
         {
             ELightMapType.LMT_1D => new FLegacyLightMap1D(Ar),
