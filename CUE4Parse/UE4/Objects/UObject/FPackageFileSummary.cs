@@ -175,6 +175,20 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.ReverseBytes = true;
             }
 
+            if (Ar.Game < EGame.GAME_UE4_0)
+            {
+                var possibleTag = Ar.Read<uint>();
+                Ar.Position -= 4;
+                if (possibleTag == PACKAGE_FILE_TAG || possibleTag == 0x20000 || possibleTag == 0x10000)
+                {
+                    Ar.Position = 0;
+                    var decompressedData = new byte[Ar.Length];
+
+                    Ar.SerializeCompressedNew(decompressedData, (int)Ar.Length*20, CompressionMethod.Oodle.ToString(), ECompressionFlags.COMPRESS_None, false, out _);
+                    Ar = new FByteArchive("Decompressed Package", decompressedData, Ar.Versions);
+                }
+            }
+
             legacyFileVersion = Ar.Read<int>();
             if (Ar.Game == EGame.GAME_MortalRoyale)
             {

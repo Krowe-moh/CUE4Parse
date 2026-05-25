@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CUE4Parse.FileProvider.Objects;
 using CUE4Parse.FileProvider.Vfs;
+using CUE4Parse.GameTypes.RL.Encryption.Aes;
 using CUE4Parse.MappingsProvider;
 using CUE4Parse.UE4.Assets;
 using CUE4Parse.UE4.Assets.Exports;
@@ -672,6 +673,25 @@ namespace CUE4Parse.FileProvider
         public IReadOnlyDictionary<string, byte[]> SavePackage(string path) => SavePackage(this[path]);
         public IReadOnlyDictionary<string, byte[]> SavePackage(GameFile file)
         {
+            if (Versions.Game < EGame.GAME_UE4_0)
+            {
+                if (file.IsUePackage)
+                {
+                    using var upkAr = file.CreateReader();
+                    var dictdecrypted = new Dictionary<string, byte[]> { { file.Path, Package.GetDecryptedData(upkAr) } };
+                    return dictdecrypted;
+                }
+
+                if (file.Extension == "ewem")
+                {
+                    using var upkAr = file.CreateReader();
+                    var data = SaveAsset(file);
+                    RocketLeagueAes.Decrypt(data, 0, false, out byte[] decryptedData);
+                    var dictdecrypted = new Dictionary<string, byte[]> { { file.Path, decryptedData } };
+                    return dictdecrypted;
+                }
+            }
+
             Files.FindPayloads(file, out var uexp, out var ubulks, out var uptnls, true);
 
             var dict = new Dictionary<string, byte[]> { { file.Path, file.Read() } };

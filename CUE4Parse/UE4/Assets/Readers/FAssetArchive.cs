@@ -21,6 +21,14 @@ namespace CUE4Parse.UE4.Assets.Readers
         private readonly Dictionary<PayloadType, Func<FByteBulkDataHeader?, FAssetArchive?>> _payloads;
         public Stack<string> StructTypeStack { get; } = new();
         private FArchive _baseArchive;
+        public override bool ReverseBytes
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => _baseArchive.ReverseBytes;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set => _baseArchive.ReverseBytes = value;
+        }
 
         public readonly IPackage? Owner;
         public int AbsoluteOffset;

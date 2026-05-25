@@ -352,6 +352,131 @@ namespace CUE4Parse.UE4.Assets
             IsFullyLoaded = true;
         }
 
+        public static byte[] GetDecryptedData(FArchive uasset)
+        {
+            uasset.Versions = (VersionContainer) uasset.Versions.Clone();
+
+            var uassetAr = new FAssetArchive(uasset, null);
+
+            var summary = new FPackageFileSummary(uassetAr);
+
+            var checkSumDataSize = 0;
+            var compressedChunkInfoOffset = 0;
+
+            if (uassetAr.Game == EGame.GAME_RocketLeague)
+            {
+                checkSumDataSize = uassetAr.Read<int>();
+                compressedChunkInfoOffset = uassetAr.Read<int>();
+                var lastBlockSize = uassetAr.Read<int>();
+
+                if (summary.CompressionFlags != ECompressionFlags.COMPRESS_None)
+                {
+                    var headerEnd = uassetAr.Position;
+                    var checkSumDataOffset =
+                        (int) (summary.TotalHeaderSize - headerEnd - checkSumDataSize);
+
+                    uassetAr.Position = 0;
+
+                    var before = uassetAr.ReadBytes(summary.NameOffset);
+
+                    var encSize =
+                        (int) (summary.TotalHeaderSize - (lastBlockSize + headerEnd));
+
+                    var encryptedData = uassetAr.ReadBytes(encSize);
+
+                    RocketLeagueAes.Decrypt(
+                        encryptedData,
+                        checkSumDataOffset,
+                        true,
+                        out byte[] decryptedData);
+
+                    var remaining = uassetAr.Length - uassetAr.Position;
+                    var after = uassetAr.ReadBytes((int) remaining);
+
+                    var fullBuffer = new byte[
+                        before.Length +
+                        decryptedData.Length +
+                        after.Length];
+
+                    var offset = 0;
+
+                    Buffer.BlockCopy(before, 0, fullBuffer, offset, before.Length);
+                    offset += before.Length;
+
+                    Buffer.BlockCopy(decryptedData, 0, fullBuffer, offset, decryptedData.Length);
+                    offset += decryptedData.Length;
+
+                    Buffer.BlockCopy(after, 0, fullBuffer, offset, after.Length);
+
+                    uassetAr.SetBaseArchive(
+                        new FByteArchive(
+                            "Rocket League - Decrypted Package",
+                            fullBuffer,
+                            uassetAr.Versions));
+                }
+            }
+
+            if (summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_GZIP) ||
+                summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB))
+            {
+                if (uassetAr.Game == EGame.GAME_RocketLeague)
+                {
+                    uassetAr.SeekAbsolute(
+                        summary.NameOffset + compressedChunkInfoOffset,
+                        SeekOrigin.Begin);
+
+                    summary.CompressedChunks =
+                        uassetAr.ReadArray(() => new FCompressedChunk(uassetAr));
+                }
+
+                long totalSize = uassetAr.Length;
+
+                foreach (var chunk in summary.CompressedChunks)
+                {
+                    var endOffset =
+                        chunk.UncompressedOffset + chunk.UncompressedSize;
+
+                    if (endOffset > totalSize)
+                        totalSize = endOffset;
+                }
+
+                var buffer = new byte[totalSize];
+
+                uassetAr.Position = 0;
+                uassetAr.Read(buffer, 0, (int) uassetAr.Length);
+
+                foreach (var chunk in summary.CompressedChunks)
+                {
+                    uassetAr.Position = chunk.CompressedOffset;
+
+                    var decompressedData =
+                        new byte[chunk.UncompressedSize];
+
+                    uassetAr.SerializeCompressedNew(
+                        decompressedData,
+                        chunk.UncompressedSize,
+                        summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB)
+                            ? CompressionMethod.Zlib.ToString()
+                            : CompressionMethod.LZO.ToString(),
+                        ECompressionFlags.COMPRESS_None,
+                        false,
+                        out _);
+
+                    Array.Copy(
+                        decompressedData,
+                        0,
+                        buffer,
+                        (int) chunk.UncompressedOffset,
+                        decompressedData.Length);
+                }
+
+                return buffer;
+            }
+
+            uassetAr.Position = 0;
+            return uassetAr.ReadBytes((int) uassetAr.Length);
+        }
+
         public override int GetExportIndex(string name, StringComparison comparisonType = StringComparison.Ordinal)
         {
             for (var i = 0; i < ExportMap.Length; i++)

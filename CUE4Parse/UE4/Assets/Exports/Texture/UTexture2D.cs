@@ -66,7 +66,7 @@ public class UTexture2D : UTexture
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VERSION_NUMBER_FIX_FOR_FLASH_TEXTURES)
             {
-                Ar.Read<int>();
+                Ar.Read<int>(); // CachedFlashMipsMaxResolution
                 Ar.ReadArray(() => new FTexture2DMipMap(Ar));
                 new FByteBulkData(Ar);
             }
