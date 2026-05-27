@@ -5,6 +5,9 @@ namespace CUE4Parse.UE4.Assets.Exports.ApexDestruction;
 public class UApexClothingAsset : UApexDestructibleAsset;
 public class UApexDestructibleAsset : UObject
 {
+    public byte[]? NameBuffer;
+    public byte[]? NxDestructibleAssetBuffer;
+
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
@@ -13,8 +16,8 @@ public class UApexDestructibleAsset : UObject
 
         if (bAssetValid)
         {
-            Ar.ReadArray<byte>(); // NameBuffer
-            Ar.ReadArray<byte>(); // NxDestructibleAssetBuffer
+            NameBuffer = Ar.ReadArray<byte>();
+            NxDestructibleAssetBuffer = Ar.ReadArray<byte>();
         }
     }
 }

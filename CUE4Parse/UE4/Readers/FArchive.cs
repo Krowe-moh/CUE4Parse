@@ -189,7 +189,7 @@ namespace CUE4Parse.UE4.Readers
         public override void Flush() { }
         public override bool CanRead { get; } = true;
         public override bool CanWrite { get; } = false;
-        public virtual bool ReverseBytes { get; set; } = false;
+        public virtual bool ReverseBytes { get; set; }
         public override void SetLength(long value) { throw new InvalidOperationException(); }
         public override void Write(byte[] buffer, int offset, int count) { throw new InvalidOperationException(); }
 
@@ -607,7 +607,7 @@ namespace CUE4Parse.UE4.Readers
             if (length == 0) return string.Empty;
             if (length < 0) throw new ParserException($"Negative Utf8String length '{length}'");
             if (length > Length - Position) throw new ParserException($"Invalid Utf8String length '{length}'");
-            
+
             return Encoding.UTF8.GetString(ReadBytes(length));
         }
 
