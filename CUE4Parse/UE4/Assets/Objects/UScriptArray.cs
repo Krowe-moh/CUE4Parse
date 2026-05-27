@@ -129,7 +129,7 @@ public class UScriptArray
                 }
             }
         }
-        else if (Ar.HasUnversionedProperties)
+        else if (Ar.HasUnversionedProperties || type is ReadType.RAW)
         {
             InnerTagData = tagData.InnerTypeData;
         }
