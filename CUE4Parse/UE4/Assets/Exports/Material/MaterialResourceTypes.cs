@@ -325,21 +325,21 @@ public class FShader
 
     public FShader(FMemoryImageArchive Ar)
     {
-       if (Ar.Game >= EGame.GAME_UE4_0)
+        if (Ar.Game >= EGame.GAME_UE4_0)
         {
-        Bindings = new FShaderParameterBindings(Ar);
-        ParameterMapInfo = new FShaderParameterMapInfo(Ar);
-        UniformBufferParameterStructs = Ar.ReadArray<FHashedName>();
-        UniformBufferParameters = Ar.ReadArray<FShaderUniformBufferParameter>();
+            Bindings = new FShaderParameterBindings(Ar);
+            ParameterMapInfo = new FShaderParameterMapInfo(Ar);
+            UniformBufferParameterStructs = Ar.ReadArray<FHashedName>();
+            UniformBufferParameters = Ar.ReadArray<FShaderUniformBufferParameter>();
 
-        var type = Ar.Read<ulong>() >> 1;
-        Type = Ar.PointerTable is FShaderMapPointerTable pointerTable && type < (ulong)pointerTable.Types.Length ? pointerTable.Types[type] : new(type);
-        var vfType = Ar.Read<ulong>() >> 1;
-        VFType = Ar.PointerTable is FShaderMapPointerTable pointerTable1 && vfType < (ulong)pointerTable1.VFTypes.Length ? pointerTable1.VFTypes[vfType] : new(vfType);
+            var type = Ar.Read<ulong>() >> 1;
+            Type = Ar.PointerTable is FShaderMapPointerTable pointerTable && type < (ulong) pointerTable.Types.Length ? pointerTable.Types[type] : new(type);
+            var vfType = Ar.Read<ulong>() >> 1;
+            VFType = Ar.PointerTable is FShaderMapPointerTable pointerTable1 && vfType < (ulong) pointerTable1.VFTypes.Length ? pointerTable1.VFTypes[vfType] : new(vfType);
         }
 
         Target = Ar.Read<FShaderTarget>();
-        
+
         if (Ar.Game < EGame.GAME_UE4_0)
         {
             //if (Ar.Ver < EUnrealEngineObjectUE3Version.PARAMETER_MAP_COMPARISON)
@@ -348,10 +348,12 @@ public class FShader
             Ar.Read<FGuid>();
             Ar.Read<int>();
         }
+
         if (Ar.Game >= EGame.GAME_UE4_0)
         {
             ResourceIndex = Ar.Read<int>();
         }
+
         NumInstructions = Ar.Ver >= EUnrealEngineObjectUE3Version.SHADER_NUMINSTRUCTIONS && Ar.Game < EGame.GAME_UE5_6 ? Ar.Read<uint>() : 0u;
         SortKey = Ar.Game is >= EGame.GAME_UE5_0 and < EGame.GAME_UE5_9 ? Ar.Read<uint>() : 0;
     }
