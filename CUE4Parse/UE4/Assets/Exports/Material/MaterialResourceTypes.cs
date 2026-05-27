@@ -180,6 +180,16 @@ public class FGlobalShaderCache
     }
 }
 
+public class FCookerShaderData
+{
+    public Dictionary<string, FSHAHash> Shaders;
+
+    public FCookerShaderData(FArchive Ar)
+    {
+        Shaders = Ar.ReadMap(Ar.ReadFString, () => new FSHAHash(Ar));
+    }
+}
+
 public abstract class FShaderMapBase
 {
     public FShaderMapContent Content;
