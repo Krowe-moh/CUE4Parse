@@ -96,7 +96,7 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            SourceArt = new FByteBulkData(Ar); // sometimes has data, dds format
+            SourceArt = new FByteBulkData(Ar);
             return;
         }
 

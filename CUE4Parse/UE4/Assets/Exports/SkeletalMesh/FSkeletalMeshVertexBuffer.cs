@@ -67,8 +67,6 @@ public class FSkeletalMeshVertexBuffer
         }
         else
         {
-            // https://github.com/gildor2/UEViewer/blob/a0bfb468d42be831b126632fd8a0ae6b3614f981/Unreal/UnrealMesh/UnMesh3.cpp#L1045
-            // but umodel can somehow get it correct
             bUsePackedPosition = false;
         }
 
