@@ -38,6 +38,12 @@ namespace CUE4Parse.UE4.Readers
             get => Versions.Ver;
             set => Versions.Ver = value;
         }
+        public EUnrealEngineObjectLicenseeUEVersion LicenseeVer
+        {
+            get => Versions.LicenseeVer;
+            set => Versions.LicenseeVer = value;
+        }
+
         public ETexturePlatform Platform
         {
             get => Versions.Platform;

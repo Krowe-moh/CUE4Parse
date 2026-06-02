@@ -289,7 +289,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 SerialSize = Ar.Read<int>();
 
-                if (Ar.Game == EGame.GAME_RocketLeague)
+                if (Ar.Game == EGame.GAME_RocketLeague && (int)Ar.LicenseeVer > 22)
                 {
                     SerialOffset = Ar.Read<long>();
                     goto exportflag;
