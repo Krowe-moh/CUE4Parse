@@ -81,13 +81,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
         public FPackageIndex(FAssetArchive Ar)
         {
-            Index = Ar.Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex ? Ar.Read<int>() : Ar.ReadCompactIndex();
-            Owner = Ar.Owner;
-        }
-
-        public FPackageIndex(FAssetArchive Ar, bool IgnoreCompact)
-        {
-            Index = IgnoreCompact ? Ar.Read<int>() : Ar.ReadCompactIndex();
+            Index = Ar.CheckAndReadCompactIndex();
             Owner = Ar.Owner;
         }
 
@@ -268,7 +262,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             ClassIndex = new FPackageIndex(Ar);
             SuperIndex = new FPackageIndex(Ar);
             TemplateIndex = Ar.Ver >= EUnrealEngineObjectUE4Version.TemplateIndex_IN_COOKED_EXPORTS ? new FPackageIndex(Ar) : new FPackageIndex();
-            OuterIndex = Ar.Ver >= EUnrealEngineObjectUE3Version.Release50 ? new FPackageIndex(Ar, true) : new FPackageIndex();
+            OuterIndex = Ar.Ver >= EUnrealEngineObjectUE3Version.Release50 ? new FPackageIndex(Ar, Ar.Read<int>()) : new FPackageIndex();
             aa3Skip:
             ObjectName = Ar.ReadFName();
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedArcheType && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_ARCHETYPE_INDEX_FROM_LINKER_TABLES)
@@ -287,7 +281,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Ver < EUnrealEngineObjectUE4Version.e64BIT_EXPORTMAP_SERIALSIZES)
             {
-                SerialSize = Ar.Read<int>();
+                SerialSize = Ar.CheckAndReadCompactIndex();
 
                 if (Ar.Game == EGame.GAME_RocketLeague && (int)Ar.LicenseeVer > 22)
                 {
@@ -297,7 +291,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
                 if (SerialSize > 0 || Ar.Ver >= EUnrealEngineObjectUE3Version.MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE)
                 {
-                    SerialOffset = Ar.Read<int>();
+                    SerialOffset = Ar.CheckAndReadCompactIndex();
                 }
             }
             else
@@ -441,7 +435,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             ClassPackage = Ar.ReadFName();
             ClassName = Ar.ReadFName();
-            OuterIndex = new FPackageIndex(Ar);
+            OuterIndex = new FPackageIndex(Ar, Ar.Read<int>());
             ObjectName = Ar.ReadFName();
 
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.NON_OUTER_PACKAGE_IMPORT && !Ar.IsFilterEditorOnly)

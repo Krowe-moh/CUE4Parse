@@ -1,5 +1,8 @@
 using CUE4Parse.UE4;
 using CUE4Parse.UE4.Assets.Readers;
+using CUE4Parse.UE4.Objects.Core.Misc;
+using CUE4Parse.UE4.Objects.UObject;
+using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.GameTypes.SMG.UE4.Assets.Objects;
 
@@ -12,9 +15,17 @@ public class FActorReference : IUStruct
 
     public FActorReference(FAssetArchive Ar)
     {
-        bIsAlias = Ar.ReadBoolean();
-        ActorName = Ar.ReadFString();
-        Type = Ar.Read<byte>();
-        SelectedType = Ar.Read<byte>();
+        if (Ar.Game >= EGame.GAME_UE4_0)
+        {
+            bIsAlias = Ar.ReadBoolean();
+            ActorName = Ar.ReadFString();
+            Type = Ar.Read<byte>();
+            SelectedType = Ar.Read<byte>();
+        }
+        else
+        {
+            new FPackageIndex(Ar); // Actor
+            Ar.Read<FGuid>(); // Guid
+        }
     }
 }

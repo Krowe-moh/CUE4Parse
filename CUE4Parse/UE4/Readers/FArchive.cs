@@ -449,7 +449,9 @@ namespace CUE4Parse.UE4.Readers
             return value;
         }
 
-        public virtual int ReadCompactIndex()
+        public int CheckAndReadCompactIndex() => Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex ? Read<int>() : ReadCompactIndex();
+
+        public int ReadCompactIndex()
         {
             int index = 0;
 

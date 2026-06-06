@@ -145,7 +145,7 @@ public class FPropertyTagData
 
         var gurt = Ar.StructTypeStack.Peek();
 
-        if (((gurt == "AnimNodeAimOffset" || gurt == "UTAnimNodeJumpLeanOffset") && name == "Profiles") || (gurt == "TerrainLayerSetup" && name == "Materials") || (gurt == "InterpTrackSound" && name == "Sounds"))
+        if (((gurt == "AnimNodeAimOffset" || gurt == "UTAnimNodeJumpLeanOffset") && name == "Profiles") || ((gurt == "TerrainLayerSetup" || gurt == "InterpTrackFloatMaterialParam" || gurt == "InterpTrackVectorMaterialParam") && name == "Materials") || (gurt == "InterpTrackSound" && name == "Sounds"))
         {
             return new FPropertyTagData("StructProperty");
         }

@@ -215,7 +215,7 @@ public class UObject : AbstractPropertyHolder
 
                     if (!Node.IsNull)
                     {
-                        Ar.Read<int>();
+                        Ar.CheckAndReadCompactIndex();
                     }
                 }
 

@@ -62,8 +62,8 @@ public class FPoly
             Material = new FPackageIndex(Ar);
         }
 
-        Link = Ar.Read<int>();
-        BrushPoly = Ar.Read<int>();
+        Link = Ar.CheckAndReadCompactIndex();
+        BrushPoly = Ar.CheckAndReadCompactIndex();
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.PanUVRemovedFromPoly)
         {
