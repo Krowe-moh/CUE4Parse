@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Linq;
 using System.Runtime.InteropServices;
 using AssetRipper.TextureDecoder.Bc;
+using AssetRipper.TextureDecoder.Pvrtc;
 using CUE4Parse.Compression;
 using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse.UE4.Exceptions;
@@ -363,6 +364,15 @@ public static class TextureDecoder
                 break;
             case EPixelFormat.PF_ETC2_RGBA:
                 data = DetexHelper.DecodeDetexLinear(bytes, sizeX, sizeY, false, DetexTextureFormat.DETEX_TEXTURE_FORMAT_ETC2_EAC, DetexPixelFormat.DETEX_PIXEL_FORMAT_BGRA8);
+                colorType = EPixelFormat.PF_B8G8R8A8;
+                break;
+
+            case EPixelFormat.PF_PVRTC2:
+                PvrtcDecoder.DecompressPVRTC(bytes, sizeX, sizeY, true, out data);
+                colorType = EPixelFormat.PF_B8G8R8A8;
+                break;
+            case EPixelFormat.PF_PVRTC4:
+                PvrtcDecoder.DecompressPVRTC(bytes, sizeX, sizeY, false, out data);
                 colorType = EPixelFormat.PF_B8G8R8A8;
                 break;
 
