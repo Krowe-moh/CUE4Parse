@@ -204,7 +204,7 @@ public class UMaterial : UMaterialInterface
             }
 
             //new FMaterialShaderMapId(Ar); // if PKG_ContainsInlinedShaders and ue3
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADER_MODEL_2)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128 && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADER_MODEL_2)
             {
                 var loadedResource = new FMaterialResource();
                 loadedResource.Deserialize(Ar);

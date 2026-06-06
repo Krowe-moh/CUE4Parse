@@ -348,13 +348,6 @@ namespace CUE4Parse.UE4.Objects.UObject
                 DependsOffset = Ar.Read<int>();
             }
 
-            if (FileVersionUE >= EUnrealEngineObjectUE3Version.ADDED_CROSSLEVEL_REFERENCES && Ar.Game < EGame.GAME_UE4_0)
-            {
-                ImportExportGuidsOffset = Ar.Read<int>();
-                ImportGuidsCount = Ar.Read<int>();
-                ExportGuidsCount = Ar.Read<int>();
-            }
-
             if (FileVersionUE >= EUnrealEngineObjectUE4Version.ADD_STRING_ASSET_REFERENCES_MAP)
             {
                 SoftPackageReferencesCount = Ar.Read<int>();
@@ -364,6 +357,13 @@ namespace CUE4Parse.UE4.Objects.UObject
             if (FileVersionUE >= EUnrealEngineObjectUE4Version.ADDED_SEARCHABLE_NAMES)
             {
                 SearchableNamesOffset = Ar.Read<int>();
+            }
+
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.ADDED_CROSSLEVEL_REFERENCES && Ar.Game < EGame.GAME_UE4_0)
+            {
+                ImportExportGuidsOffset = Ar.Read<int>();
+                ImportGuidsCount = Ar.Read<int>();
+                ExportGuidsCount = Ar.Read<int>();
             }
 
             if (FileVersionUE >= EUnrealEngineObjectUE3Version.ASSET_THUMBNAILS_IN_PACKAGES)

@@ -17,7 +17,6 @@ public class UStaticMeshComponent : UMeshComponent
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        Ar.Position = validPos; // broke because of bulkdata probs
         if (Ar.Position == validPos) return;
         if (Ar.Game is EGame.GAME_Borderlands3) Ar.ReadBoolean();
         if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 12;

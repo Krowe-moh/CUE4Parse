@@ -16,6 +16,7 @@ public class UTexture2D : UTexture
     public int SizeX { get; private set; }
     public int SizeY { get; private set; }
     public TextureAddress AddressY { get; private set; }
+    public bool bForcePVRTC4 { get; private set; }
     public FName TextureFileCacheName { get; private set; }
 
     public override TextureAddress GetTextureAddressX() => AddressX;
@@ -30,6 +31,7 @@ public class UTexture2D : UTexture
         AddressY = GetOrDefault<TextureAddress>(nameof(AddressY));
         SizeX = GetOrDefault<int>(nameof(SizeX));
         SizeY = GetOrDefault<int>(nameof(SizeY));
+        bForcePVRTC4 = GetOrDefault<bool>(nameof(bForcePVRTC4));
         TextureFileCacheName = GetOrDefault<FName>(nameof(TextureFileCacheName));
 
         var stripDataFlags = new FStripDataFlags(Ar);
@@ -86,6 +88,27 @@ public class UTexture2D : UTexture
 
             if (bHasLegacyMips && legacyMips.Length > 0)
             {
+                // extra android stuff needed
+                if (false) // if game is ios
+                {
+                    if (Format == EPixelFormat.PF_DXT1)
+                    {
+                        Format = bForcePVRTC4 ? EPixelFormat.PF_PVRTC4 : EPixelFormat.PF_PVRTC2;
+                    }
+                    else if (Format == EPixelFormat.PF_DXT5)
+                    {
+                        Format = EPixelFormat.PF_PVRTC4;
+                    }
+                } else if (false) // if game is android
+                {
+                    if (Format == EPixelFormat.PF_DXT1)
+                    {
+                        Format = EPixelFormat.PF_ETC1;
+                    } else if (Format == EPixelFormat.PF_DXT5)
+                    {
+                        // unsupported RGBA4
+                    }
+                }
                 PlatformData.Mips = legacyMips;
             }
         }

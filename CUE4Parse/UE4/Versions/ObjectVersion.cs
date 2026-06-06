@@ -979,6 +979,7 @@ public enum EUnrealEngineObjectUE3Version
     TextureDeprecatedFromPoly = 170,
     // Deprecated FCompactIndex
     DeprecatedCompactIndex = 178,
+    AddedComponentMapToExports = 178, // needs actual version
     // Change InterpData to being a subclass of SequenceVariable attached to SeqAct_Interps
     temp10 = 179,
     // Removed UPrimitive
@@ -1009,7 +1010,6 @@ public enum EUnrealEngineObjectUE3Version
     AddedRawTriangles = 218,
     AddedArcheType = 220,
     AddedBulkLod = 221,
-    AddedComponentMapToExports,
     AddedInterfacesFeature = 222,
     // lowest found version for UE3 packages
     // Removing Length, XSize, YSize and ZSize from VJointPos

@@ -40,24 +40,12 @@ namespace CUE4Parse.UE4.Objects.Engine
         public Dictionary<Guid, FIndividualCompressedShaderInfo> CompressedShaderInfos;
 
         // Code chunks for this shader type that were split apart due to size limits
-        public List<FCompressedShaderCodeChunk> CodeChunks;
+        public FCompressedShaderCodeChunk[] CodeChunks;
 
         public FTypeSpecificCompressedShaderCode(FAssetArchive Ar)
         {
-            int mapCount = Ar.Read<int>();
-            for (int i = 0; i < mapCount; i++)
-            {
-                var guid = Ar.Read<Guid>();
-                var info = new FIndividualCompressedShaderInfo(Ar);
-                CompressedShaderInfos[guid] = info;
-            }
-
-            int chunkCount = Ar.Read<int>();
-            for (int i = 0; i < chunkCount; i++)
-            {
-                var chunk = new FCompressedShaderCodeChunk(Ar);
-                CodeChunks.Add(chunk);
-            }
+            CompressedShaderInfos = Ar.ReadMap(() => Ar.Read<Guid>(), () => new FIndividualCompressedShaderInfo(Ar));
+            CodeChunks = Ar.ReadArray(() => new FCompressedShaderCodeChunk(Ar));
         }
     }
     public struct FShader
@@ -136,23 +124,25 @@ namespace CUE4Parse.UE4.Objects.Engine
                 Ar.ReadMap(Ar.ReadFName, () => new FTypeSpecificCompressedShaderCode(Ar));
             }
 
-            var c = Ar.Read<int>(); // NumShaders
+            var NumShaders = Ar.Read<int>();
 
-            for (int i = 0; i < c; i++)
+            for (int i = 0; i < NumShaders; i++)
             {
-            Ar.ReadFName(); // ShaderType
+                Ar.ReadFName(); // ShaderType
 
-            var ca = Ar.Read<FGuid>(); // ShaderId
+                Ar.Read<FGuid>(); // ShaderId
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.FIXED_AUTO_SHADER_VERSIONING)
-            {
-                new FSHAHash(Ar); // SavedHash
+                if (Ar.Ver >= EUnrealEngineObjectUE3Version.FIXED_AUTO_SHADER_VERSIONING)
+                {
+                    new FSHAHash(Ar); // SavedHash
+                }
+
+                var SkipOffset = Ar.Read<int>();
+                //shaders = Ar.ReadArray(() => new FShader(Ar));
+                Ar.Position = SkipOffset;
             }
 
-            var ac = Ar.Read<int>(); // SkipOffset
-            shaders = Ar.ReadArray(() => new FShader(Ar));
-            Ar.Position += ac;
-        }
+            Ar.Read<int>(); // Array but complex, so just read array count
         }
 
         protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
