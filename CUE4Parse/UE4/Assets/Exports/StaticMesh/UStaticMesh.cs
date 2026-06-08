@@ -81,7 +81,10 @@ public class UStaticMesh : UObject
             Bounds = new FBoxSphereBounds(Ar);
         }
 
-        BodySetup = new FPackageIndex(Ar);
+        if (Ar.Game == EGame.GAME_WutheringWaves && GetOrDefault<bool>("bUseStandaloneBodySetup"))
+            BodySetup = GetOrDefault<FPackageIndex>("StandaloneBodySetup");
+        else
+            BodySetup = new FPackageIndex(Ar);
 
         if(Ar.Ver < EUnrealEngineObjectUE3Version.REMOVE_STATICMESH_COLLISIONMODEL)
         {

@@ -411,6 +411,7 @@ public static class MeshConverter
                 ScreenSize = originalMesh?.LODInfo?[i].ScreenSize.Default ?? 4,
                 HasNormals = true,
                 HasTangents = true,
+                LODIndex = i,
                 Indices = new Lazy<uint[]>(() =>
                 {
                     if (srcLod.Indices?.Buffer == null)

@@ -46,6 +46,8 @@ public class FStaticMeshSection
     public bool bAffectDistanceFieldLighting;
     public int? CustomData;
 
+    public FStaticMeshSection() { }
+
     public FStaticMeshSection(FArchive Ar)
     {
         if (Ar.Game < EGame.GAME_UE4_0)

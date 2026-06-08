@@ -1,27 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <NeutralLanguage>en</NeutralLanguage>
-    <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <TargetFramework>net8.0</TargetFramework>
-    <IsPublishable>false</IsPublishable>
-    <Platforms>AnyCPU</Platforms>
     <Description>C# Parser for Unreal Engine packages &amp; assets</Description>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
-    <Version>1.2.2</Version>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
-    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -44,6 +25,25 @@
     <PackageReference Include="VGAudio" Version="2.2.1" />
     <PackageReference Include="Zlib-ng.NET" Version="1.2.0" />
     <PackageReference Include="ZstdSharp.Port" Version="0.8.6" />
+    <PackageReference Include="Blake3" />
+    <PackageReference Include="BouncyCastle.Cryptography" />
+    <PackageReference Include="FixedMathSharp" />
+    <PackageReference Include="Fmod5Sharp" />
+    <PackageReference Include="GenericReader" />
+    <PackageReference Include="Infrablack.UE4Config" />
+    <PackageReference Include="LZMA-SDK" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="OffiUtils" />
+    <PackageReference Include="OodleSharp" />
+    <PackageReference Include="Oodle.NET" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="K4os.Compression.LZ4.Streams" />
+    <PackageReference Include="SubstreamSharp" />
+    <PackageReference Include="System.IO.Hashing" />
+    <PackageReference Include="VGAudio" />
+    <PackageReference Include="Zlib-ng.NET" />
+    <PackageReference Include="ZstdSharp.Port" />
   </ItemGroup>
 
   <ItemGroup>
@@ -102,4 +102,5 @@
     </RemoveDir>
     <Message Text="Deleted directories: '@(DeletedList)'" />
   </Target>
+
 </Project>

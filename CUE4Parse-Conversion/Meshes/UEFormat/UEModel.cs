@@ -59,7 +59,7 @@ public class UEModel : UEFormatExport
                 var lod = mesh.LODs[lodIdx];
                 using var subLodChunk = new FStaticDataChunk($"LOD{lodIdx}");
                 SerializeStaticMeshData(subLodChunk, lod.Verts, lod.Indices.Value, lod.VertexColors, lod.ExtraVertexColors, lod.Sections.Value, lod.ExtraUV.Value);
-                SerializeSkeletalMeshData(subLodChunk, lod.Verts, morphTargets, lodIdx);
+                SerializeSkeletalMeshData(subLodChunk, lod.Verts, morphTargets, lod.LODIndex);
                 subLodChunk.Serialize(lodChunk);
 
                 lodChunk.Count++;
@@ -226,7 +226,7 @@ public class UEModel : UEFormatExport
             foreach (var morphTarget in morphTargets)
             {
                 var morph = morphTarget.Load<UMorphTarget>();
-                if (morph?.MorphLODModels is null || lodIndex >= morph.MorphLODModels.Length) continue;
+                if (morph?.MorphLODModels is null || lodIndex >= morph.MorphLODModels.Length || morph.MorphLODModels[lodIndex].Vertices.Length == 0) continue;
 
                 var morphLod = morph.MorphLODModels[lodIndex];
 
