@@ -41,6 +41,7 @@ public class UStaticMeshComponent : UMeshComponent
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRESERVE_SMC_VERT_COLORS && Ar.Ver < EUnrealEngineObjectUE3Version.WIIU_COMPRESSED_SOUNDS)
+        if (Ar.Ver > EUnrealEngineObjectUE3Version.SPHEREMASK_HARDNESS && Ar.Ver < EUnrealEngineObjectUE3Version.WIIU_COMPRESSED_SOUNDS)
         {
             Ar.Read<int>(); // Dummy
         }

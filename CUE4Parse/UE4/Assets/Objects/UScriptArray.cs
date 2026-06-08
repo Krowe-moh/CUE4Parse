@@ -84,7 +84,7 @@ public class UScriptArray
     public UScriptArray(FAssetArchive Ar, FPropertyTagData? tagData, ReadType type, int size)
     {
         InnerType = tagData?.InnerType;
-        var elementCount = Ar.Read<int>();
+        var elementCount = Ar.CheckAndReadCompactIndex();
 
         if (elementCount > Ar.Length - Ar.Position)
         {

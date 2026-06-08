@@ -243,14 +243,14 @@ namespace CUE4Parse.UE4.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual T[] ReadArray<T>(Func<T> getter)
         {
-            var length = Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex ? Read<int>() : ReadCompactIndex();
+            var length = CheckAndReadCompactIndex();
             return ReadArray(length, getter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual T[] ReadArray<T>() where T : struct
         {
-            var length = Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex ? Read<int>() : ReadCompactIndex();
+            var length = CheckAndReadCompactIndex();
             return length > 0 ? ReadArray<T>(length) : [];
         }
 
@@ -368,7 +368,7 @@ namespace CUE4Parse.UE4.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Dictionary<TKey, TValue> ReadMap<TKey, TValue>(Func<TKey> keyGetter, Func<TValue> valueGetter) where TKey : notnull
         {
-            var length = Read<int>();
+            var length = CheckAndReadCompactIndex();
             return ReadMap(length, keyGetter, valueGetter);
         }
 
@@ -552,7 +552,7 @@ namespace CUE4Parse.UE4.Readers
         public virtual string ReadFString()
         {
             // > 0 for ANSICHAR, < 0 for UCS2CHAR serialization
-            var length = Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex ? Read<int>() : ReadCompactIndex();
+            var length = CheckAndReadCompactIndex();
 
             if (length == int.MinValue)
                 throw new ArgumentOutOfRangeException(nameof(length), "Archive is corrupted");

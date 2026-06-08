@@ -17,7 +17,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Texture;
 
 public class UBinkMediaTexture : UTexture;
 
-public abstract class UTexture : UUnrealMaterial, IAssetUserData
+public class UTexture : UUnrealMaterial, IAssetUserData
 {
     public FGuid LightingGuid { get; private set; }
     public TextureCompressionSettings CompressionSettings { get; private set; }
@@ -82,6 +82,10 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
             Ar.Position += 8 * 2;
         }
 
+        if (Ar.Game < EGame.GAME_UE3_0)
+        {
+            Ar.ReadArray(() => new FLegacyMipMap(Ar));
+        }
         if (Ar.Ver < EUnrealEngineObjectUE3Version.CompMipsDeprecated)
         {
             var bHasComp = GetOrDefault("bHasComp", false);
@@ -90,9 +94,10 @@ public abstract class UTexture : UUnrealMaterial, IAssetUserData
                 Ar.ReadArray(() => new FLegacyMipMap(Ar));
             }
 
-            Ar.ReadArray(() => new FTexture2DMipMap(Ar));
             return;
         }
+
+        if (Ar.Game < EGame.GAME_UE3_0) return;
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {

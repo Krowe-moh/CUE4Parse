@@ -18,21 +18,22 @@ public class UFont : UObject
             Ar.ReadArray(() => new FFontCharacter(Ar)); // Characters
             Ar.Read<int>(); // CharactersPerPage
         }
-        else if (Ar.Ver <= EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128)
+        else if (Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_FONTS_SERIALIZATION)
         {
             Ar.ReadArray(() => new FFontCharacter(Ar)); // Characters
             Ar.ReadArray(() => new FPackageIndex(Ar)); // Textures
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.Release119)
-            {
-                Ar.Read<int>(); // Kerning
-            }
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.Release119 && Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_FONTS_SERIALIZATION)
+        {
+            Ar.Read<int>(); // Kerning
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.Release69)
         {
             CharRemap = Ar.ReadMap(Ar.Read<ushort>, Ar.Read<ushort>);
 
-            if (Ar.Ver <= EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_FONTS_SERIALIZATION && Ar.Game < EGame.GAME_UE4_0)
             {
                 Ar.ReadBoolean(); // IsRemapped
             }

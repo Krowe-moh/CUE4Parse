@@ -1011,6 +1011,7 @@ public enum EUnrealEngineObjectUE3Version
     AddedArcheType = 220,
     AddedBulkLod = 221,
     AddedInterfacesFeature = 222,
+    RefactoredPropertyTags = 223,
     // lowest found version for UE3 packages
     // Removing Length, XSize, YSize and ZSize from VJointPos
     REMOVE_SIZE_VJOINTPOS = 224,

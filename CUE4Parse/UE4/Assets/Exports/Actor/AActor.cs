@@ -369,7 +369,26 @@ public class ASpotLight : ALight;
 public class ASpotLightMovable : ASpotLight;
 public class ASpotLightStatic : ASpotLight;
 public class ASpotLightStationary : ASpotLight;
+public class AStaticMeshActorBase : AStaticMeshActor;
 public class AStaticMeshActor : AActor;
+
+public class AStaticMeshCollectionActor : AStaticMeshActorBase
+{
+    public FPackageIndex[] StaticMeshComponents;
+    public FMatrix[] WorldMatrix;
+
+    public override void Deserialize(FAssetArchive Ar, long validPos)
+    {
+        base.Deserialize(Ar, validPos);
+        StaticMeshComponents = GetOrDefault<FPackageIndex[]>(nameof(StaticMeshComponents), []);
+
+        WorldMatrix = new FMatrix[StaticMeshComponents.Length];
+        for (int i = 0; i < StaticMeshComponents.Length; i++)
+        {
+            WorldMatrix[i] = new FMatrix(Ar);
+        }
+    }
+}
 
 public class AStaticLightCollectionActor : ALight
 {
