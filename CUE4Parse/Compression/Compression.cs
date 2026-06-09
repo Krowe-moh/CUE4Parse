@@ -4,8 +4,6 @@ using CUE4Parse.UE4.Readers;
 using K4os.Compression.LZ4;
 
 using OffiUtils;
-using SharpLzo;
-using ZstdSharp;
 using OodleDotNet;
 
 using OodleSharp;

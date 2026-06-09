@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Text;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Exports.Sound;
 using CUE4Parse.UE4.Assets.Exports.Wwise;
@@ -18,6 +20,7 @@ public static class SoundDecoder
         {
             case UAkMediaAssetData mediaAsset: mediaAsset.Decode(shouldDecompress, out audioFormat, out data); break;
             case USoundNodeWave nodeWave: nodeWave.Decode(shouldDecompress, out audioFormat, out data); break;
+            case USound sound: sound.Decode(shouldDecompress, out audioFormat, out data); break;
             case USoundWave soundWave: soundWave.Decode(shouldDecompress, out audioFormat, out data); break;
             default:
                 audioFormat = string.Empty;
@@ -55,6 +58,26 @@ public static class SoundDecoder
             audioFormat = "WEM";
         }
         data = Decompress(shouldDecompress, ref audioFormat, input);
+    }
+    public static void Decode(this USound sound, bool shouldDecompress, out string audioFormat, out byte[]? data)
+    {
+        if (sound?.Data?.Data.Length < 4)
+        {
+            audioFormat = string.Empty;
+            data = null;
+            return;
+        }
+        File.WriteAllBytes(sound.Name + ".bin", sound.Data.Data);
+
+        var riff = Encoding.ASCII.GetBytes("RIFF");
+        var riffOffset = sound.Data.Data.AsSpan().IndexOf(riff);
+
+        data = sound.Data.Data[riffOffset..];
+
+        var magic = (EChunkIdentifier)BitConverter.ToUInt32(data, 0);
+        audioFormat = magic == EChunkIdentifier.RIFF ? "WEM" : "OGG";
+
+        data = Decompress(shouldDecompress, ref audioFormat, data);
     }
 
     public static void Decode(this USoundWave soundWave, bool shouldDecompress, out string audioFormat, out byte[]? data)

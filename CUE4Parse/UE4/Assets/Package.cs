@@ -163,7 +163,7 @@ namespace CUE4Parse.UE4.Assets
                         decompressedData,
                         0,
                         buffer,
-                        (int) chunk.UncompressedOffset,
+                        chunk.UncompressedOffset,
                         decompressedData.Length
                     );
                 }
@@ -171,9 +171,7 @@ namespace CUE4Parse.UE4.Assets
                 uassetAr.SetBaseArchive(new FByteArchive("Decompressed Package", buffer, uassetAr.Versions));
             }
 
-          //  var outputPath = Name + ".upk";
-         //   Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
-         //   File.WriteAllBytes(outputPath, uassetAr.ReadBytes((int)uassetAr.Length));
+            if (uassetAr.Game < EGame.GAME_UE4_0 && Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_Custom)) throw new NotSupportedException("LZX Decompression not supported");
 
             uassetAr.SeekAbsolute(Summary.NameOffset, SeekOrigin.Begin);
             NameMap = new FNameEntrySerialized[Summary.NameCount];

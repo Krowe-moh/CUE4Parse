@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using AssetRipper.TextureDecoder.Bc;
 using AssetRipper.TextureDecoder.Pvrtc;
+using AssetRipper.TextureDecoder.Rgb.Formats;
 using CUE4Parse.Compression;
 using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse.UE4.Exceptions;
@@ -434,11 +435,11 @@ public static class TextureDecoder
                 break;
 
             case EPixelFormat.PF_PVRTC2:
-                PvrtcDecoder.DecompressPVRTC(bytes, sizeX, sizeY, true, out data);
+                PvrtcDecoder.DecompressPVRTC<ColorRGBA<byte>, byte>(bytes, sizeX, sizeY, true, out data);
                 colorType = EPixelFormat.PF_B8G8R8A8;
                 break;
             case EPixelFormat.PF_PVRTC4:
-                PvrtcDecoder.DecompressPVRTC(bytes, sizeX, sizeY, false, out data);
+                PvrtcDecoder.DecompressPVRTC<ColorRGBA<byte>, byte>(bytes, sizeX, sizeY, false, out data);
                 colorType = EPixelFormat.PF_B8G8R8A8;
                 break;
 
