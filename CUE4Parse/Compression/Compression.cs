@@ -93,6 +93,7 @@ public static class Compression
             CompressionMethod.Gzip => CompressionAlgorithm.Gzip,
             CompressionMethod.Oodle => CompressionAlgorithm.Oodle,
             CompressionMethod.LZ4 => CompressionAlgorithm.LZ4,
+            CompressionMethod.LZO => CompressionAlgorithm.LZO,
             CompressionMethod.Brotli => CompressionAlgorithm.Brotli,
             CompressionMethod.Zstd => CompressionAlgorithm.Zstd,
             _ when reader is not null => throw new UnknownCompressionMethodException(reader, $"Compression method \"{method}\" is unknown"),
