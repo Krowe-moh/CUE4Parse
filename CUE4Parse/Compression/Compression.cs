@@ -7,7 +7,7 @@ using OffiUtils;
 using OodleDotNet;
 
 using OodleSharp;
-
+using SharpLzo;
 using ZlibngDotNet;
 
 using ZstdSharpMethods = ZstdSharp.Unsafe.Methods;
@@ -41,6 +41,27 @@ public static class Compression
                 return true;
             }
         }, replace: true)
+        .Add(CompressionAlgorithm.LZO,
+            static (source, destination, out written) =>
+            {
+                try
+                {
+                    var src = source.ToArray();
+
+                    var decompressed = Lzo.Decompress(src, destination.Length);
+
+                    written = decompressed.Length;
+
+                    decompressed.AsSpan().CopyTo(destination);
+
+                    return true;
+                }
+                catch
+                {
+                    written = 0;
+                    return false;
+                }
+            })
         .Build();
 
     public static void UseNativeOodle(Oodle oodle)

@@ -156,7 +156,7 @@ public class UObject : AbstractPropertyHolder
                     return; // there some missing data after this
                 }
 
-                if (gurt())
+                if (FlagsLegacy.HasFlag(ObjectFlags64.PropertiesObject))
                 {
                     if (Ar.Ver >= EUnrealEngineObjectUE3Version.LINKERFREE_PACKAGEMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_NET_INDEX) // ue4 part does nothing currently
                     {
@@ -605,16 +605,22 @@ public class UObject : AbstractPropertyHolder
         return IsNameStableForNetworking();
     }
 
-    public bool gurt() => FlagsLegacy.HasFlag(ObjectFlags64.PropertiesObject);
-
     public bool gurtlegacy()
     {
-        if (Outer?.TryLoad(out var outer) == true && outer.gurt())
-        {
+        if (FlagsLegacy.HasFlag(ObjectFlags64.PropertiesObject))
             return true;
+
+        var current = Outer;
+
+        while (current?.TryLoad(out var outer) == true)
+        {
+            if (outer.FlagsLegacy.HasFlag(ObjectFlags64.PropertiesObject))
+                return true;
+
+            current = outer.Outer;
         }
 
-        return gurt();
+        return false;
     }
 
     /** IsSupportedForNetworking means an object can be referenced over the network */

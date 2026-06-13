@@ -40,7 +40,7 @@ namespace CUE4Parse.UE4.Objects.Core.Math
         {
             Min = new FVector(Ar);
             Max = new FVector(Ar);
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedIsValidToFBox) IsValid = Ar.Read<byte>();
+            IsValid = Ar.Read<byte>();
         }
 
         public FBox(FVector[] points)

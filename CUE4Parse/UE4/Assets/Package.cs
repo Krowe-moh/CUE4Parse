@@ -464,7 +464,7 @@ namespace CUE4Parse.UE4.Assets
                         decompressedData,
                         0,
                         buffer,
-                        (int) chunk.UncompressedOffset,
+                        chunk.UncompressedOffset,
                         decompressedData.Length);
                 }
 
