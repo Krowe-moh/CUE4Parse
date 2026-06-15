@@ -15,8 +15,13 @@ public class UFont : UObject
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.Release122)
         {
-            Ar.ReadArray(() => new FFontCharacter(Ar)); // Characters
-            Ar.Read<int>(); // CharactersPerPage
+            var Pages = Ar.ReadArray(() => new FFontPage(Ar));
+            var CharactersPerPage = Ar.Read<int>();
+            if (Pages.Length == 0 && CharactersPerPage == 0)
+            {
+                Ar.ReadFString(); // FontName
+                Ar.Read<int>(); // FontHeight
+            }
         }
         else if (Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_FONTS_SERIALIZATION)
         {

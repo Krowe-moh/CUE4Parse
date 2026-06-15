@@ -192,7 +192,7 @@ namespace CUE4Parse.UE4.Assets
             ExportsLazy = new Lazy<UObject>[Summary.ExportCount];
             uassetAr.ReadArray(ExportMap, () => new FObjectExport(uassetAr));
 
-            if (Summary.ThumbnailTableOffset > 0)
+            if (Summary.ThumbnailTableOffset > 0 && false)
             {
                 EditorThumbnails = new List<byte[]>();
                 uassetAr.SeekAbsolute(Summary.ThumbnailTableOffset, SeekOrigin.Begin);
