@@ -82,7 +82,7 @@ public class UClass : UStruct
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.DeprecatedClassDependencies)
         {
-            Ar.ReadArray(() => new Dependency(Ar));
+            Ar.ReadArray(() => new FDependency(Ar));
         }
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.PackageImportsDeprecated)
@@ -198,10 +198,7 @@ public class UClass : UStruct
             _ = Ar.ReadFName();
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_COOKED_TO_UCLASS)
-        {
-            bCooked = Ar.ReadBoolean();
-        }
+        bCooked = Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_COOKED_TO_UCLASS && Ar.ReadBoolean();
 
         ClassDefaultObject = new FPackageIndex(Ar);
 
