@@ -8,6 +8,7 @@ namespace CUE4Parse.UE4.Versions;
 public enum EGame : uint
 {
     // bytes: 04.NN.FF.XX : 04/05=UE4/5, NN=UE4 subversion, FF=Flags (curently not used), XX=game (0=base engine)
+    GAME_UE2_0 = GameUtils.GameUe2Base + (0 << 16),
     GAME_UE3_0 = GameUtils.GameUe3Base + (0 << 16),
         GAME_RocketLeague = GAME_UE3_0 + 1,
         GAME_SuddenAttack2 = GAME_UE3_0 + 2,
@@ -248,6 +249,7 @@ public enum EGame : uint
 
 public static class GameUtils
 {
+    public const int GameUe2Base = 0x2000000;
     public const int GameUe3Base = 0x3000000;
     public const int GameUe4Base = 0x4000000;
     public const int GameUe5Base = 0x5000000;
