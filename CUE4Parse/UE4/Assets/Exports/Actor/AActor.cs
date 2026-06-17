@@ -369,7 +369,7 @@ public class ASpotLight : ALight;
 public class ASpotLightMovable : ASpotLight;
 public class ASpotLightStatic : ASpotLight;
 public class ASpotLightStationary : ASpotLight;
-public class AStaticMeshActorBase : AStaticMeshActor;
+public class AStaticMeshActorBase : AActor;
 public class AStaticMeshActor : AActor;
 
 public class AStaticMeshCollectionActor : AStaticMeshActorBase
