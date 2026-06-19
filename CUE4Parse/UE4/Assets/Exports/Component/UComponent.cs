@@ -1,3 +1,5 @@
+using CUE4Parse.UE4.Assets.Exports.Component.StaticMesh;
+
 namespace CUE4Parse.UE4.Assets.Exports.Component;
 
 // Base UComponent class for all components, needed for UE3 and below
@@ -49,13 +51,13 @@ public class UDistributionVectorUniformRange : UDistributionVector;
 public class UUTVehicleScorpionWheel : UComponent;
 
 // sort
-public class UEvilDissolvingStaticMeshComponent : UComponent;
+public class UEvilDissolvingStaticMeshComponent : UStaticMeshComponent;
 public class UEvilDynamicLight_Base : UComponent;
 public class UEvilSceneCaptureHighlightComponent : UComponent;
 
 public class UUTAmbientSoundComponent : UComponent;
 public class UUTHoverWheel : UComponent;
-public class UUTGibStaticMeshComponent : UComponent;
+public class UUTGibStaticMeshComponent : UStaticMeshComponent;
 public class UUDKVehicleSimHover : UComponent;
 public class UUDKVehicleSimHoverboard : UComponent;
 public class UUDKVehicleSimChopper : UComponent;

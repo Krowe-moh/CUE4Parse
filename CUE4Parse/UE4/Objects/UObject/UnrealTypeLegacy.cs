@@ -1,3 +1,4 @@
+using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Versions;
 using CUE4Parse.Utils;
@@ -31,6 +32,8 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 Ar.Read<ushort>(); // RepOffset
             }
+
+            if (Ar.Game == EGame.GAME_RocketLeague && (int)Ar.LicenseeVer > 10) _ = Ar.ReadFString(); // ObjectName
 
             if (Ar.Game >= EGame.GAME_UE4_0)
             {

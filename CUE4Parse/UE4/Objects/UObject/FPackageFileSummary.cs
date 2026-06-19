@@ -185,7 +185,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                     Ar.Position = 0;
                     var decompressedData = new byte[Ar.Length];
 
-                    Ar.SerializeCompressedNew(decompressedData, (int)Ar.Length*20, CompressionMethod.Oodle.ToString(), ECompressionFlags.COMPRESS_None, false, out _);
+                    Ar.SerializeCompressedNew(decompressedData, (int)Ar.Length*20, CompressionMethod.Zlib.ToString(), COMPRESS_None, false, out _);
                     Ar = new FByteArchive("Decompressed Package", decompressedData, Ar.Versions);
                 }
             }
