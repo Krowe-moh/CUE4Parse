@@ -26,6 +26,7 @@ public abstract class TBulkData<T> where T: struct
     protected Lazy<T[]?>? _data { get; init; }
 
     protected FAssetArchive? _savedAr { get; init; }
+    protected string? _savedTfc { get; init; }
     protected long _dataPosition { get; init; }
 
     protected TBulkData() { }
@@ -49,10 +50,12 @@ public abstract class TBulkData<T> where T: struct
             return;
         }
 
+        if (Header.ElementCount <= 0) return; // empty mips (original imported size)
+
         _dataPosition = Ar.Position;
         _savedAr = Ar;
 
-        if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || Ar.Game == EGame.GAME_RocketLeague || BulkDataFlags is BULKDATA_LazyLoadable or BULKDATA_None)
+        if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || Ar.Game < EGame.GAME_UE4_0 || BulkDataFlags is BULKDATA_LazyLoadable or BULKDATA_None)
         {
             Ar.Position += Header.SizeOnDisk;
         }
@@ -92,6 +95,17 @@ public abstract class TBulkData<T> where T: struct
             var uncompressedData = new byte[size];
             data = new T[Header.ElementCount];
             dataAr.SerializeCompressedNew(uncompressedData, size, "Zlib", ECompressionFlags.COMPRESS_NoFlags, false, out _);
+            Unsafe.CopyBlockUnaligned(ref Unsafe.As<T, byte>(ref data[0]), ref uncompressedData[0], (uint) size);
+
+            // To-Do rewrite once SerializeCompressedNew/Decompress works with span
+            // var dest = MemoryMarshal.AsBytes(data.AsSpan());
+            // dataAr.SerializeCompressedNew(dest, size, "Zlib", ECompressionFlags.COMPRESS_NoFlags, false, out _);
+        } else if (BulkDataFlags.HasFlag(BULKDATA_CompressedLZO))
+        {
+            var size = GetDataSize();
+            var uncompressedData = new byte[size];
+            data = new T[Header.ElementCount];
+            dataAr.SerializeCompressedNew(uncompressedData, size, "LZO", ECompressionFlags.COMPRESS_NoFlags, false, out _);
             Unsafe.CopyBlockUnaligned(ref Unsafe.As<T, byte>(ref data[0]), ref uncompressedData[0], (uint) size);
 
             // To-Do rewrite once SerializeCompressedNew/Decompress works with span
@@ -144,6 +158,19 @@ public abstract class TBulkData<T> where T: struct
             archive = ubulkAr;
             position = ubulkAr.Length == Header.SizeOnDisk ? 0 : Header.OffsetInFile;
         }
+        else if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile) && archive.Game < EGame.GAME_UE4_0)
+        {
+            string tfcPath = _savedAr.Owner.Provider.TextureCachePaths[_savedTfc];
+            if (!File.Exists(tfcPath))
+                throw new FileNotFoundException($"TFC file not found: {tfcPath}");
+
+            var fs = File.OpenRead(tfcPath);
+            fs.Seek(Header.OffsetInFile, SeekOrigin.Begin);
+            var bytes = new byte[GetDataSize()];
+            fs.ReadExactly(bytes);
+            archive = new FAssetArchive(new FByteArchive("tfc", bytes, _savedAr.Versions), _savedAr.Owner);
+            position = 0;
+        }
         else if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
         {
             if (Header.OffsetInFile + Header.SizeOnDisk > archive.Length)
@@ -155,6 +182,7 @@ public abstract class TBulkData<T> where T: struct
         }
         else if (BulkDataFlags.HasFlag(BULKDATA_LazyLoadable) || BulkDataFlags.HasFlag(BULKDATA_None))
         {
+            if (archive.Game < EGame.GAME_UE4_0) archive.Position += Header.ElementCount;
             //
         }
 
