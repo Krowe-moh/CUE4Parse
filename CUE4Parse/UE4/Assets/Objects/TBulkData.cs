@@ -40,6 +40,12 @@ public abstract class TBulkData<T> where T: struct
     {
         _data = data;
     }
+    protected TBulkData(FAssetArchive ar, string? tfc = null)
+        : this(ar)
+    {
+        _savedAr = ar;
+        _savedTfc = tfc;
+    }
 
     protected TBulkData(FAssetArchive Ar)
     {
@@ -130,6 +136,7 @@ public abstract class TBulkData<T> where T: struct
 
         if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload))
         {
+            if (_savedAr.Game < EGame.GAME_UE4_0) position = Header.OffsetInFile;
         }
         else if (BulkDataFlags.HasFlag(BULKDATA_OptionalPayload))
         {
@@ -182,8 +189,6 @@ public abstract class TBulkData<T> where T: struct
         }
         else if (BulkDataFlags.HasFlag(BULKDATA_LazyLoadable) || BulkDataFlags.HasFlag(BULKDATA_None))
         {
-            if (archive.Game < EGame.GAME_UE4_0) archive.Position += Header.ElementCount;
-            //
         }
 
         return true;

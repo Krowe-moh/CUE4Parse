@@ -30,8 +30,8 @@ public struct FSharedImage
         GammaSpace = Ar.Read<byte>();
         var RawData = Ar.ReadArray<byte>((int)Ar.Read<long>());
 
-       // var bulkdata = new FByteArrayData(RawData);
-       // Mip = new FTexture2DMipMap(bulkdata, SizeX, SizeY, this.SizeZ);
+        var bulkdata = new FByteArrayData(RawData);
+        Mip = new FTexture2DMipMap(bulkdata, SizeX, SizeY, this.SizeZ);
     }
 }
 

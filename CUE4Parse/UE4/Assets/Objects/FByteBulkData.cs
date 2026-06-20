@@ -64,26 +64,8 @@ public sealed class FByteBulkData : TBulkData<byte>
     /// <summary>
     /// Creates a new FByteBulkData instance that reads payload from an external TFC file.
     /// </summary>
-    public FByteBulkData(FAssetArchive Ar, string tfc) : base()
-    {
-        Header = new FByteBulkDataHeader(Ar);
-        if (Header.SizeOnDisk == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused))
-        {
-            _data = new Lazy<byte[]?>(() => []);
-            return;
-        }
-
-        if (Header.ElementCount <= 0) return; // empty mips (original imported size)
-
-        _dataPosition = Ar.Position;
-        _savedAr = Ar;
-        _savedTfc = tfc;
-
-        _data = new Lazy<byte[]?>(() =>
-        {
-            return ReadBulkDataInto(out var data) ? data : null;
-        });
-    }
+    public FByteBulkData(FAssetArchive Ar, string tfc) : base(Ar, tfc)
+    { }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetDataSize() => Header.ElementCount;
