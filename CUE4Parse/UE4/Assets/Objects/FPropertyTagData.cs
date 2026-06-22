@@ -28,7 +28,7 @@ public class FPropertyTagData
     public UEnum? Enum;
 
     public FPropertyTagData() { }
-    internal FPropertyTagData(FAssetArchive Ar, string type, string name = "", int size = 0)
+    internal FPropertyTagData(FAssetArchive Ar, string type, string name = "")
     {
         Name = name;
         Type = type;

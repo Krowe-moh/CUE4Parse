@@ -60,7 +60,7 @@ public class USoundNodeWave : UObject
                 PCSound = new FByteBulkData(Ar);
             }
 
-            if (Ar.Game == EGame.GAME_SuddenAttack2) return; // Only pc
+            if (Ar.Game == EGame.GAME_SuddenAttack2) return; // Only pc audio
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_CACHED_COOKED_XBOX360_DATA)
             {

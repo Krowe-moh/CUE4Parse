@@ -163,12 +163,15 @@ namespace CUE4Parse.FileProvider
                 !collection.TryGetValue(fixedPath.SubstringBeforeWithLast('.') + GameFile.UePackageExtensions[1], out file) && // umap
                 !collection.TryGetValue(path, out file)) // in case FixPath broke something
             {
-                var nameOnly = Path.GetFileNameWithoutExtension(fixedPath);
-                file = collection.FirstOrDefault(x =>
-                    StringComparer.OrdinalIgnoreCase.Equals(
-                        Path.GetFileNameWithoutExtension(x.Key), nameOnly
-                    )
-                ).Value;
+                if (Versions.Game >= EGame.GAME_UE4_0)
+                {
+                    file = null;
+                }
+                else
+                {
+                    var nameOnly = Path.GetFileNameWithoutExtension(fixedPath);
+                    file = collection.Values.FirstOrDefault(x => x.NameWithoutExtension.Equals(nameOnly, StringComparison.OrdinalIgnoreCase));
+                }
             }
 
             return file != null;

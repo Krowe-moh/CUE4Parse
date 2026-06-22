@@ -435,12 +435,12 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 if (FileVersionUE >= EUnrealEngineObjectUE3Version.PACKAGEFILESUMMARY_CHANGE)
                 {
-                    var EngineVersion = Ar.Read<int>();
+                    Ar.Read<int>(); // EngineVersion
                 }
 
                 if (FileVersionUE >= EUnrealEngineObjectUE3Version.PACKAGEFILESUMMARY_CHANGE_COOK_VER_ADDED)
                 {
-                    var CookerVersion = Ar.Read<int>();
+                    Ar.Read<int>(); // CookerVersion
                 }
             }
 

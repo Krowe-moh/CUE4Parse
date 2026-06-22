@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Readers;
@@ -8,18 +6,14 @@ using Newtonsoft.Json;
 
 namespace CUE4Parse.UE4.Objects.PhysicsEngine;
 
-public class UPhysicsAssetInstance : UPhysicsAsset
+public class UPhysicsAssetInstance : Assets.Exports.UObject
 {
+    public Dictionary<FRigidBodyIndexPair, bool> CollisionDisableTable;
+
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        var numRows = Ar.Read<int>();
-        CollisionDisableTable = new Dictionary<FRigidBodyIndexPair, bool>(numRows);
-        for (var i = 0; i < numRows; i++)
-        {
-            var rowKey = new FRigidBodyIndexPair(Ar);
-            CollisionDisableTable[rowKey] = Ar.ReadBoolean();
-        }
+        CollisionDisableTable = Ar.ReadMap(() => new FRigidBodyIndexPair(Ar), Ar.ReadBoolean);
     }
 
     protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
@@ -29,12 +23,9 @@ public class UPhysicsAssetInstance : UPhysicsAsset
         writer.WritePropertyName("CollisionDisableTable");
         writer.WriteStartArray();
 
-        if (CollisionDisableTable != null)
+        foreach (var Table in CollisionDisableTable)
         {
-            foreach (var Table in CollisionDisableTable)
-            {
-                serializer.Serialize(writer, Table);
-            }
+            serializer.Serialize(writer, Table);
         }
 
         writer.WriteEndArray();
@@ -58,13 +49,7 @@ public class UPhysicsAsset : Assets.Exports.UObject
 
         if (Ar.Game >= EGame.GAME_UE4_0)
         {
-            var numRows = Ar.Read<int>();
-            CollisionDisableTable = new Dictionary<FRigidBodyIndexPair, bool>(numRows);
-            for (var i = 0; i < numRows; i++)
-            {
-                var rowKey = new FRigidBodyIndexPair(Ar);
-                CollisionDisableTable[rowKey] = Ar.ReadBoolean();
-            }
+            CollisionDisableTable = Ar.ReadMap(() => new FRigidBodyIndexPair(Ar), Ar.ReadBoolean);
         }
     }
 
@@ -72,18 +57,18 @@ public class UPhysicsAsset : Assets.Exports.UObject
     {
         base.WriteJson(writer, serializer);
 
-        writer.WritePropertyName("CollisionDisableTable");
-        writer.WriteStartArray();
-
         if (CollisionDisableTable != null)
         {
+            writer.WritePropertyName("CollisionDisableTable");
+            writer.WriteStartArray();
+
             foreach (var Table in CollisionDisableTable)
             {
                 serializer.Serialize(writer, Table);
             }
-        }
 
-        writer.WriteEndArray();
+            writer.WriteEndArray();
+        }
     }
 }
 

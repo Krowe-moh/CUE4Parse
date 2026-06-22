@@ -15,10 +15,10 @@ public class UAkAssetData : UObject
         base.Deserialize(Ar, validPos);
 
         var bulkData = new FByteBulkData(Ar);
-       // if (!bulkData.TryCreateReader("AkAssetData", out FArchive dataAr)) return;
+        if (!bulkData.TryCreateReader("AkAssetData", out FArchive dataAr)) return;
 
-      //  using var reader = new FWwiseArchive(dataAr);
-      //  Data = new WwiseReader(reader, new WwiseBulkDataSource(Ar, bulkData));
+        using var reader = new FWwiseArchive(dataAr);
+        Data = new WwiseReader(reader, new WwiseBulkDataSource(Ar, bulkData));
     }
 
     protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)

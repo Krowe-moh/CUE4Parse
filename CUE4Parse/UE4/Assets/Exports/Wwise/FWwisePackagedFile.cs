@@ -54,17 +54,17 @@ public class FWwisePackagedFile : FStructFallback
     }
 
     public void SerializeBulkData(FAssetArchive Ar)
-    {/*
+    {
         var name = PathName.IsNone ? Hash.ToString() : PathName.ToString();
         if (PackagingStrategy is EWwisePackagingStrategy.BulkData)
         {
             var bulkData = new FByteBulkData(Ar);
-           // if (!bulkData.TryCreateReader("AkAssetData", out FArchive dataAr)) return;
+            if (!bulkData.TryCreateReader("AkAssetData", out FArchive dataAr)) return;
 
             try
             {
-               // using var reader = new FWwiseArchive(dataAr);
-             //   BulkData = new WwiseReader(reader, new WwiseBulkDataSource(Ar, bulkData));
+                using var reader = new FWwiseArchive(dataAr);
+                BulkData = new WwiseReader(reader, new WwiseBulkDataSource(Ar, bulkData));
             }
             // i know it's ugly, but i don't see other solution without rewriting everything
             catch (RIFFSectionSizeException)
@@ -97,6 +97,6 @@ public class FWwisePackagedFile : FStructFallback
         {
             Log.Warning("Wwise bank data for {Name} uses unsupported packaging strategy {stategy}", name,
                 PackagingStrategy.ToString());
-        }*/
+        }
     }
 }
