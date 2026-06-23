@@ -356,7 +356,14 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedDelegateSourceToUDelegateProperty && Ar.Game < EGame.GAME_UE4_0)
             {
-                SourceDelegate = new FPackageIndex(Ar);
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.ADDED_UExPORTER_PREFFERED_FORMAT)
+                {
+                    Ar.ReadFName(); // SourceDelegate
+                }
+                else
+                {
+                    SourceDelegate = new FPackageIndex(Ar);
+                }
             }
         }
 

@@ -18,7 +18,7 @@ public class ULandscapeHeightfieldCollisionComponent : USceneComponent
         }
         if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 16;
 
-        if (Ar.Game < EGame.GAME_UE4_0) // Ar.Ver < EUnrealEngineObjectUE4Version.LANDSCAPE_COLLISION_DATA_COOKING but editor only
+        if (Ar.Ver < EUnrealEngineObjectUE4Version.LANDSCAPE_COLLISION_DATA_COOKING && (Ar.IsFilterEditorOnly || Ar.Game < EGame.GAME_UE4_0))
         {
             new FWordBulkData(Ar); // CollisionHeightData
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.LANDSCAPE_PHYS_MATERIALS)

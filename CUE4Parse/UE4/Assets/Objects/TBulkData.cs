@@ -62,7 +62,7 @@ public abstract class TBulkData<T> where T: struct
         _dataPosition = Ar.Position;
         _savedAr = Ar;
 
-        if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || Ar.Game < EGame.GAME_UE4_0 || BulkDataFlags is BULKDATA_LazyLoadable or BULKDATA_None)
+        if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || BulkDataFlags is BULKDATA_LazyLoadable or BULKDATA_None or BULKDATA_NoOffsetFixUp || ((BulkDataFlags is BULKDATA_CompressedLZO or BULKDATA_SerializeCompressedZLIB and not BULKDATA_PayloadAtEndOfFile) && Ar.Game < EGame.GAME_UE4_0))
         {
             Ar.Position += Header.SizeOnDisk;
         }

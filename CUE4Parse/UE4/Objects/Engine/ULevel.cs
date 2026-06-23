@@ -346,7 +346,7 @@ public class ULevel : Assets.Exports.UObject
                 Ar.ReadMap(Ar.Read<int>, Ar.Read<byte>); // CoverIndexPairs
             }
 
-            var a = Ar.ReadArray(() => new FPackageIndex(Ar)); // CrossLevelActors
+            Ar.ReadArray(() => new FPackageIndex(Ar)); // CrossLevelActors
         }
 
         if (Ar.Game == EGame.GAME_MetroAwakening && GetOrDefault<bool>("bIsLightingScenario")) return;
