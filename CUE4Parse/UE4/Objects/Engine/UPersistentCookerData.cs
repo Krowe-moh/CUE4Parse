@@ -277,7 +277,10 @@ namespace CUE4Parse.UE4.Objects.Engine
                 CookedTextureFileCacheInfoMap = Ar.ReadMap(() => Ar.ReadFString(), () => new FCookedTextureFileCacheInfo(Ar));
                 if (Ar.Ver > EUnrealEngineObjectUE3Version.CONVERT_KISMET_OBJECTS)
                 {
-                    TextureUsageInfos = Ar.ReadMap(() => Ar.ReadFString(), () => new FCookedTextureUsageInfo(Ar));
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_TEXTURE_USAGE_INFO)
+                    {
+                        TextureUsageInfos = Ar.ReadMap(() => Ar.ReadFString(), () => new FCookedTextureUsageInfo(Ar));
+                    }
                     CookedPrefixCommonInfoMap = Ar.ReadMap(() => Ar.ReadFString(), () => new FForceCookedInfo(Ar));
                     PMapForcedObjectsMap = Ar.ReadMap(() => Ar.ReadFString(), () => new FForceCookedInfo(Ar));
                     FilenameToScriptSHA = Ar.ReadMap(() => Ar.ReadFString(), () => new FSHAHash(Ar));
