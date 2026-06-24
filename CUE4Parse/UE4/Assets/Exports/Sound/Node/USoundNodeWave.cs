@@ -40,6 +40,11 @@ public class USoundNodeWave : UObject
         }
         else
         {
+            if (Ar.Game == EGame.GAME_APBReloaded)
+            {
+                Ar.Position += 8; // Bulkdata header
+            }
+
             RawSound = new FByteBulkData(Ar);
         }
 
@@ -88,7 +93,7 @@ public class USoundNodeWave : UObject
             }
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_SOUNDNODEWAVE_GUID)
+        if (Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_SOUNDNODEWAVE_GUID && Ar.Game is not EGame.GAME_APBReloaded)
         {
             Ar.Read<FGuid>(); // CompressedDataGuid
         }

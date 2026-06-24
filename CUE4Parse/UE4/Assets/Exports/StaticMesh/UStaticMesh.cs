@@ -178,7 +178,7 @@ public class UStaticMesh : UObject
                  }
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERSION_18 && FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.DeprecatedHighResSourceMesh)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERSION_18 && FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.DeprecatedHighResSourceMesh && Ar.Game is not EGame.GAME_APBReloaded)
             {
                 var Deprecated_HighResSourceMeshName = Ar.ReadFString();
                 var Deprecated_HighResSourceMeshCRC = Ar.Read<uint>();

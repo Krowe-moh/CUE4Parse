@@ -81,7 +81,8 @@ public class UTexture : UUnrealMaterial, IAssetUserData
 
         if (Ar.Game == EGame.GAME_APBReloaded)
         {
-            Ar.Position += 8 * 2;
+            Ar.Position += 8 * 2; // Bulkdata headers
+            return;
         }
 
         if (Ar.Game < EGame.GAME_UE3_0)
