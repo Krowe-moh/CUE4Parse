@@ -121,7 +121,7 @@ public class FDecalVertex : IUStruct
             TangentX = new FPackedNormal(Ar);
         }
 
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.SKELETAL_MESH_REMOVE_BINORMAL_TANGENT_VECTOR)
+        if (Ar.Ver < EUnrealEngineObjectUE3Version.SKELETAL_MESH_REMOVE_BINORMAL_TANGENT_VECTOR) // needs >= check ig
         {
             TangentY = new FPackedNormal(Ar);
         }

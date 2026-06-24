@@ -419,12 +419,12 @@ namespace CUE4Parse.UE4.Objects.Engine
 
             if (Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_ZONES_FROM_MODEL)
             {
-                var dummyPortalNodes = Ar.ReadBulkArray<int>();
+                Ar.ReadBulkArray<int>(); // PortalNodes
             }
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADOW_VOLUMES)
             {
-                var dummyEdges = Ar.ReadBulkArray(() => Ar.ReadBytes(16));
+                Ar.ReadBulkArray(() => Ar.ReadBytes(16)); // Edges
             }
 
             if (Ar.Ver > EUnrealEngineObjectUE3Version.USE_UMA_RESOURCE_ARRAY_MESH_DATA)

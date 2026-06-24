@@ -204,7 +204,7 @@ public class FStaticMeshLODResources
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADOW_VOLUMES)
             {
-                new FStaticMeshShadowVolumeStream(Ar); // FColorVertexBuffer but uses floats
+                new FStaticMeshShadowVolumeStream(Ar); // ShadowExtrusionVertexBuffer (FColorVertexBuffer but uses floats)
             }
 
             skipStreams:

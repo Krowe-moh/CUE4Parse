@@ -254,14 +254,14 @@ public class FStaticLODModel
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADOW_VOLUMES)
         {
-            Ar.ReadArray<short>(); // indices
+            Ar.ReadArray<short>(); // ShadowIndices
         }
 
         ActiveBoneIndices = Ar.ReadArray<short>();
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADOW_VOLUMES)
         {
-            Ar.ReadArray<byte>(); // NumTriangles
+            Ar.ReadArray<byte>(); // ShadowTriangleDoubleSided
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.DeprecatedOldLodformat)
@@ -278,7 +278,7 @@ public class FStaticLODModel
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADOW_VOLUMES)
         {
-            Ar.ReadArray(() => Ar.ReadBytes(16));
+            Ar.ReadArray(() => Ar.ReadBytes(16)); // Edges
         }
         //  < 202
 

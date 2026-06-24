@@ -120,7 +120,7 @@ public class UStaticMesh : UObject
 
             if (InternalVersion >= STATICMESH_VERSION_CONTENT_TAGS && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_LEGACY_CONTENT_TAGS)
             {
-                Ar.ReadArray(Ar.ReadFName);
+                Ar.ReadArray(Ar.ReadFName); // ContentTags
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATIC_MESH_SOURCE_DATA_COPY)
