@@ -27,7 +27,7 @@ namespace CUE4Parse.UE4.Objects.PhysicsEngine
                 if (Ar.Game is EGame.GAME_Highguard) return;
                 if (Ar.Ver >= EUnrealEngineObjectUE4Version.STORE_HASCOOKEDDATA_FOR_BODYSETUP)
                 {
-                    _ = Ar.ReadBoolean(); // bTemp
+                    _ = Ar.ReadBoolean(); // bHasCookedCollisionData
                 }
 
                 CookedFormatData = new FFormatContainer(Ar);

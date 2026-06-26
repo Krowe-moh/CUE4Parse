@@ -51,18 +51,16 @@ public abstract class TBulkData<T> where T: struct
     protected TBulkData(FAssetArchive Ar)
     {
         Header = new FByteBulkDataHeader(Ar);
-        if (Header.SizeOnDisk == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused))
+        if (Header.SizeOnDisk == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused) || Header.ElementCount <= 0)
         {
             _data = new Lazy<T[]?>(() => []);
             return;
         }
 
-        if (Header.ElementCount <= 0) return; // empty mips (original imported size)
-
         _dataPosition = Ar.Position;
         _savedAr = Ar;
 
-        if ((BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) && Ar.Game >= EGame.GAME_UE4_0)|| BulkDataFlags is BULKDATA_LazyLoadable or BULKDATA_None or BULKDATA_NoOffsetFixUp || ((BulkDataFlags is BULKDATA_CompressedLZO or BULKDATA_SerializeCompressedZLIB and not BULKDATA_PayloadAtEndOfFile) && Ar.Game < EGame.GAME_UE4_0))
+        if ((BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) && Ar.Game >= EGame.GAME_UE4_0) || (!(BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile)) && Ar.Game < EGame.GAME_UE4_0))
         {
             Ar.Position += Header.SizeOnDisk;
         }
@@ -159,13 +157,16 @@ public abstract class TBulkData<T> where T: struct
         }
         else if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile) && archive.Game < EGame.GAME_UE4_0)
         {
+            if (_savedTfc is null)
+                throw new ParserException(archive, "uh no tfc ig");
+
             string tfcPath = _savedAr.Owner.Provider.TextureCachePaths[_savedTfc];
             if (!File.Exists(tfcPath))
                 throw new FileNotFoundException($"TFC file not found: {tfcPath}");
 
-            var fs = File.OpenRead(tfcPath);
+            var bytes = new byte[Header.SizeOnDisk];
+            using var fs = File.OpenRead(tfcPath);
             fs.Seek(Header.OffsetInFile, SeekOrigin.Begin);
-            var bytes = new byte[GetDataSize()];
             fs.ReadExactly(bytes);
             archive = new FAssetArchive(new FByteArchive("tfc", bytes, _savedAr.Versions), _savedAr.Owner);
             position = 0;

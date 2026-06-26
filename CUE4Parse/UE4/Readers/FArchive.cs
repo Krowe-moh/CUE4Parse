@@ -668,7 +668,7 @@ namespace CUE4Parse.UE4.Readers
             // low 32 bits of ARCHIVE_V2_HEADER_TAG are == PACKAGE_FILE_TAG
             const ulong ARCHIVE_V2_HEADER_TAG = PACKAGE_FILE_TAG | ((ulong) 0x22222222 << 32);
 
-            if (packageFileTag.CompressedSize == PACKAGE_FILE_TAG)
+            if (packageFileTag.CompressedSize == PACKAGE_FILE_TAG || packageFileTag.CompressedSize == PACKAGE_FILE_TAG_LOS)
             {
                 // v1 header, not swapped
                 bHeaderWasValid = true;
