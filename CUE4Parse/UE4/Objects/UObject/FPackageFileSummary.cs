@@ -263,6 +263,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 FileVersionLicenseeUE = (EUnrealEngineObjectLicenseeUEVersion)(legacyFileVersion >> 16);
                 legacyFileVersion &= 0xFFFF;
+                if (Ar.Game == EGame.GAME_DirtyBomb) legacyFileVersion = 840;
                 FileVersionUE.FileVersionUE3 = legacyFileVersion;
                 Ar.Ver = FileVersionUE;
                 Ar.LicenseeVer = FileVersionLicenseeUE;
