@@ -187,7 +187,8 @@ public class UMaterial : UMaterialInterface
 
             if (Ar.Game == EGame.GAME_APBReloaded) return;
 
-            for (int QualityIndex = 0; QualityIndex < (Ar.Ver > EUnrealEngineObjectUE3Version.FLASH_MERGE_TO_MAIN && Ar.Ver <= EUnrealEngineObjectUE3Version.IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX ? 2 : Ar.Game == EGame.GAME_RocketLeague ? 2 : 1); QualityIndex++)
+            for (int QualityIndex = 0; QualityIndex < (Ar.Ver > EUnrealEngineObjectUE3Version.FLASH_MERGE_TO_MAIN && Ar.Game < EGame.GAME_UE4_0 ? 2 : 1); QualityIndex++)
+            //for (int QualityIndex = 0; QualityIndex < (Ar.Ver > EUnrealEngineObjectUE3Version.FLASH_MERGE_TO_MAIN && Ar.Ver <= EUnrealEngineObjectUE3Version.IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX ? 2 : Ar.Game == EGame.GAME_RocketLeague ? 2 : 1); QualityIndex++)
             {
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MATERIAL_QUALITY_LEVEL && (QualityMask & (1 << QualityIndex)) == 0)
                 {

@@ -88,6 +88,13 @@ namespace CUE4Parse.UE4.Assets
             }
             else uassetAr = new FAssetArchive(uasset, this);
 
+            var Tag = uassetAr.Read<uint>();
+            if (Tag == FPackageFileSummary.PACKAGE_FILE_TAG_SWAPPED)
+            {
+                uassetAr = new FAssetArchive(new FArchiveBigEndian(uasset), this);
+            }
+            uassetAr.Position -= 4;
+
             Summary = new FPackageFileSummary(uassetAr);
 
             if (uassetAr.Game == EGame.GAME_RocketLeague)
