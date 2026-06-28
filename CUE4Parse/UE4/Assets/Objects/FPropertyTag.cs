@@ -1,11 +1,13 @@
 using System.Runtime.InteropServices;
 using CUE4Parse.MappingsProvider;
+using CUE4Parse.MappingsProvider.Usmap;
 using CUE4Parse.UE4.Assets.Objects.Properties;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Objects.UObject.BlueprintDecompiler;
+using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Serilog;
 

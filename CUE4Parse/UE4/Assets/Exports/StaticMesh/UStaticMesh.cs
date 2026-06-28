@@ -194,6 +194,11 @@ public class UStaticMesh : UObject
         }
 
         if (Ar.Game == EGame.GAME_Dishonored)
+        {
+            Ar.Position = validPos;
+            return; // so it doesn't throw
+        }
+
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRESERVE_SMC_VERT_COLORS && Ar.Ver < EUnrealEngineObjectUE4Version.STATIC_MESH_REFACTOR)
         {
             Ar.Read<int>(); // VertexPositionVersionNumber

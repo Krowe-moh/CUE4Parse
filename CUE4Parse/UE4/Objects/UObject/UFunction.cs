@@ -17,23 +17,23 @@ public class UFunction : UStruct
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
         {
-            var paramsSize = Ar.Read<short>();
+            Ar.Read<short>(); // ParmsSize
         }
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            var NativeToken = Ar.Read<short>();
+            Ar.Read<short>(); // iNative
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
             {
-                var paramsCount = Ar.Read<byte>();
+                Ar.Read<byte>(); // NumParms
             }
 
-            var OperPrecedence = Ar.Read<byte>();
+            Ar.Read<byte>(); // OperPrecedence
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.Release64)
             {
-                var returnValueOffset = Ar.Read<ushort>();
+                Ar.Read<ushort>(); // ReturnValueOffset
             }
         }
 

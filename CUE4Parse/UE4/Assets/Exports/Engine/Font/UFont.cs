@@ -6,6 +6,8 @@ namespace CUE4Parse.UE4.Assets.Exports.Engine.Font;
 
 public class UFont : UObject
 {
+    private FFontPage[] Pages;
+    private int CharactersPerPage;
     public Dictionary<ushort, ushort> CharRemap;
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
@@ -14,13 +16,8 @@ public class UFont : UObject
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.Release122)
         {
-            var Pages = Ar.ReadArray(() => new FFontPage(Ar));
-            var CharactersPerPage = Ar.Read<int>();
-            if (Pages.Length == 0 && CharactersPerPage == 0)
-            {
-                Ar.ReadFString(); // FontName
-                Ar.Read<int>(); // FontHeight
-            }
+            Pages = Ar.ReadArray(() => new FFontPage(Ar));
+            CharactersPerPage = Ar.Read<int>();
         }
         else if (Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_FONTS_SERIALIZATION)
         {
@@ -41,6 +38,12 @@ public class UFont : UObject
             {
                 Ar.ReadBoolean(); // IsRemapped
             }
+        }
+
+        if (Pages.Length == 0 && CharactersPerPage == 0)
+        {
+            Ar.ReadFString(); // FontName
+            Ar.Read<int>(); // FontHeight
         }
     }
 }

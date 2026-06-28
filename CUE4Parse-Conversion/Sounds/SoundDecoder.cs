@@ -1,3 +1,4 @@
+﻿using System.Text;
 using CUE4Parse_Conversion.Sounds.ADPCM;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Exports.Sound;
