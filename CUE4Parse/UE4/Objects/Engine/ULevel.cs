@@ -273,7 +273,7 @@ public class ULevel : Assets.Exports.UObject
                 }
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICTEXTUREINSTANCES)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICTEXTUREINSTANCES && Ar.Game is not EGame.GAME_Dishonored)
             {
                 Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadArray(() => new FDynamicTextureInstance(Ar))); // DynamicTextureInstances
             }
@@ -372,6 +372,7 @@ public class ULevel : Assets.Exports.UObject
             Ar.ReadArray(() => Ar.ReadArray<byte>()); // LegacyPrecomputedVisibilityData
         }
 
+        if (Ar.Game is EGame.GAME_Dishonored) return;
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.IMAGE_REFLECTION_SHADOWING)
         {
             PrecomputedVolumeDistanceField = new FPrecomputedVolumeDistanceField(Ar);

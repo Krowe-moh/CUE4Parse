@@ -101,7 +101,13 @@ public class FStaticMeshComponentLODInfo
             }
         }
 
-        if (!stripFlags.IsEditorDataStripped() && (!Ar.IsFilterEditorOnly || Ar.Game < EGame.GAME_UE4_0) && Ar.Ver >= EUnrealEngineObjectUE3Version.PRESERVE_SMC_VERT_COLORS)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRESERVE_SMC_VERT_COLORS && Ar.Ver < EUnrealEngineObjectUE3Version.STATIC_MESH_SOURCE_DATA_COPY)
+        {
+            if (Ar.Game is EGame.GAME_Dishonored) return;
+            Ar.ReadArray<FVector>(); // VertexColorPositions
+        }
+
+        if (!stripFlags.IsEditorDataStripped() && (!Ar.IsFilterEditorOnly || Ar.Game < EGame.GAME_UE4_0) && Ar.Ver >= EUnrealEngineObjectUE3Version.STATIC_MESH_SOURCE_DATA_COPY)
         {
             PaintedVertices = Ar.ReadArray(() => new FPaintedVertex(Ar));
         }

@@ -84,7 +84,7 @@ public readonly struct FByteBulkDataHeader
         {
             if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))
             {
-                OffsetInFile = (uint) Ar.Read<long>();
+                OffsetInFile = Ar.Read<long>();
             }
             else
             {

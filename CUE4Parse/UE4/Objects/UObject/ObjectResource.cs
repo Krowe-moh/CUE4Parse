@@ -286,10 +286,8 @@ namespace CUE4Parse.UE4.Objects.UObject
                 if (Ar.Game == EGame.GAME_RocketLeague && (int)Ar.LicenseeVer > 22)
                 {
                     SerialOffset = Ar.Read<long>();
-                    goto exportflag;
                 }
-
-                if (SerialSize > 0 || Ar.Ver >= EUnrealEngineObjectUE3Version.MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE)
+                else if (SerialSize > 0 || Ar.Ver >= EUnrealEngineObjectUE3Version.MOVED_EXPORTIMPORTMAPS_ADDED_TOTALHEADERSIZE)
                 {
                     SerialOffset = Ar.CheckAndReadCompactIndex();
                 }
@@ -318,7 +316,6 @@ namespace CUE4Parse.UE4.Objects.UObject
                 var LegacyComponentMap = Ar.ReadMap(() => Ar.ReadFName(), () => new FPackageIndex(Ar));
             }
 
-            exportflag:
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.FOBJECTEXPORT_EXPORTFLAGS && Ar.Game < EGame.GAME_UE4_0)
             {
                 Ar.Read<int>(); // ExportFlags

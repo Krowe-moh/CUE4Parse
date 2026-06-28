@@ -96,7 +96,7 @@ public class UStaticMesh : UObject
 
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.COMPACTKDOPSTATICMESH)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.COMPACTKDOPSTATICMESH || Ar.Game == EGame.GAME_Dishonored)
             {
                 Ar.ReadBulkArray(() => new FkDOPNode3(Ar));
             }
@@ -194,6 +194,7 @@ public class UStaticMesh : UObject
             LightingGuid = FGuid.Random();
         }
 
+        if (Ar.Game == EGame.GAME_Dishonored)
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRESERVE_SMC_VERT_COLORS && Ar.Ver < EUnrealEngineObjectUE4Version.STATIC_MESH_REFACTOR)
         {
             Ar.Read<int>(); // VertexPositionVersionNumber

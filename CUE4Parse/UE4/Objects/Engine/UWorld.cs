@@ -41,6 +41,7 @@ namespace CUE4Parse.UE4.Objects.Engine
                 new FPackageIndex(Ar); // DecalManager
             }
 
+            if (Ar.Game is EGame.GAME_Dishonored) return;
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_WORLD_EXTRA_REFERENCED_OBJECTS)
             {
                 ExtraReferencedObjects = Ar.ReadArray(() => new FPackageIndex(Ar));
