@@ -214,9 +214,17 @@ public partial class USkeletalMesh : UObject
                 }
             }
         }
-
-        if (Ar.Game >= EGame.GAME_UE4_0) _ = Ar.ReadArray(() => new FPackageIndex(Ar)); // dummyObjs
-
+        
+        switch (Ar.Game)
+        {
+            case EGame.GAME_Back4Blood:
+                Ar.Position += 8;
+                break;
+            case >= EGame.GAME_UE4_0:
+                _ = Ar.ReadArray(() => new FPackageIndex(Ar)); // dummyObjs
+                break;
+        }
+        
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICTEXTUREINSTANCES && FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.TextureStreamingMeshUVChannelData)
         {
             Ar.SkipFixedArray(sizeof(float));
@@ -319,7 +327,7 @@ public partial class USkeletalMesh : UObject
                 }
                 else
                 {
-                    if (morphLODModels[j].Vertices.Length > 0 || morphLODModels[j].NumBaseMeshVerts == 0 || morphLODModels[j].SectionIndices.Length == 0 || LODModels[j].MorphTargetVertexInfoBuffers is null) continue;
+                    if (morphLODModels[j].Vertices.Length > 0 || morphLODModels[j].NumBaseMeshVerts == 0 || morphLODModels[j].SectionIndices.Length == 0 || j >= LODModels.Length || LODModels[j].MorphTargetVertexInfoBuffers is null) continue;
                     morphLODModels[j] = new FMorphTargetLODModel(LODModels[j].MorphTargetVertexInfoBuffers!, index, morphLODModels[j].SectionIndices);
                 }
             }
@@ -330,7 +338,7 @@ public partial class USkeletalMesh : UObject
             Array.Copy(morphLODModels, newMorphLods, morphLODModels.Length);
             for (int j = morphLODModels.Length; j < maxLodLevel; j++)
             {
-                if (LODModels[j].MorphTargetVertexInfoBuffers is not null)
+                if (j < LODModels.Length && LODModels[j].MorphTargetVertexInfoBuffers is not null)
                     newMorphLods[j] = new FMorphTargetLODModel(LODModels[j].MorphTargetVertexInfoBuffers!, index, []);
                 else
                     newMorphLods[j] = new FMorphTargetLODModel();

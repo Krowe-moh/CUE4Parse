@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Objects.Core.Math;
@@ -133,6 +132,7 @@ public class UInstancedStaticMeshComponent : UStaticMeshComponent
             }
 
             if (Ar.Game is EGame.GAME_AssaultFireFuture) Ar.SkipBulkArrayData();
+            if (Ar.Game is EGame.GAME_NeedForSpeedMobile) Ar.SkipMultipleBulkArrayData(2);
 
             var renderDataSizeBytes = Ar.Read<ulong>();
             Ar.Position += (long) renderDataSizeBytes;
