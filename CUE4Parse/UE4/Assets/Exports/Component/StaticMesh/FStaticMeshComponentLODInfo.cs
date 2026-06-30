@@ -63,7 +63,6 @@ public class FStaticMeshComponentLODInfo
                     ELightMapType.LMT_2D => new FLightMap2D(Ar),
                     _ => null
                 };
-
                 if (Ar.Ver >= EUnrealEngineObjectUE4Version.PRECOMPUTED_SHADOW_MAPS)
                 {
                     var shadowMap = Ar.Read<EShadowMapType>() switch

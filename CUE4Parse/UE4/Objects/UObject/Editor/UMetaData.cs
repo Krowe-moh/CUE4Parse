@@ -11,7 +11,7 @@ public class UMetaData : Assets.Exports.UObject
 {
     private Dictionary<FPackageIndex, Dictionary<FName, string>> ObjectMetaDataMap;
     private Dictionary<FName, string>? RootMetaDataMap;
-
+    
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);

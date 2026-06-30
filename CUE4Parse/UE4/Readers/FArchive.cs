@@ -109,7 +109,7 @@ namespace CUE4Parse.UE4.Readers
             var size = Unsafe.SizeOf<T>();
             var readLength = size * length;
             CheckReadSize(readLength);
-
+            
             var buffer = ReadBytes(readLength);
 
             var result = new T[length];
@@ -132,19 +132,7 @@ namespace CUE4Parse.UE4.Readers
         {
             Versions = versions ?? new VersionContainer();
         }
-
-        public static readonly Dictionary<Type, Func<FArchive, object>> _read = new()
-        {
-            { typeof(short),  ar => BinaryPrimitives.ReadInt16BigEndian(ar.ReadBytes(sizeof(short))) },
-            { typeof(int),    ar => BinaryPrimitives.ReadInt32BigEndian(ar.ReadBytes(sizeof(int))) },
-            { typeof(long),   ar => BinaryPrimitives.ReadInt64BigEndian(ar.ReadBytes(sizeof(long))) },
-            { typeof(ushort), ar => BinaryPrimitives.ReadUInt16BigEndian(ar.ReadBytes(sizeof(ushort))) },
-            { typeof(uint),   ar => BinaryPrimitives.ReadUInt32BigEndian(ar.ReadBytes(sizeof(uint))) },
-            { typeof(ulong),  ar => BinaryPrimitives.ReadUInt64BigEndian(ar.ReadBytes(sizeof(ulong))) },
-            { typeof(float),  ar => BinaryPrimitives.ReadSingleBigEndian(ar.ReadBytes(sizeof(float))) },
-            { typeof(double), ar => BinaryPrimitives.ReadDoubleBigEndian(ar.ReadBytes(sizeof(double))) },
-        };
-
+        
         public override void Flush() { }
         public override bool CanRead { get; } = true;
         public override bool CanWrite { get; } = false;
@@ -817,8 +805,8 @@ namespace CUE4Parse.UE4.Readers
 
             public FCompressedChunkInfo(FArchive Ar)
             {
-                CompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : (uint)Ar.Read<long>();
-                UncompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : (uint)Ar.Read<long>();
+                CompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : Ar.Read<long>();
+                UncompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : Ar.Read<long>();
             }
         }
     }

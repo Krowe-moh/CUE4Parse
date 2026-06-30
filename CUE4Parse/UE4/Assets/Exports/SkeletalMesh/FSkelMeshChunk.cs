@@ -47,6 +47,7 @@ public class FSkelMeshChunk
         {
             MaxBoneInfluences = Ar.Read<int>();
         }
+        HasClothData = false;
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.APEX_CLOTH)
         {

@@ -428,6 +428,8 @@ public static class TextureDecoder
                 colorType = EPixelFormat.PF_B8G8R8A8;
                 break;
 
+            // Uses AssetRipper since depth data doesn't exist
+            // If this format is used in any UE4/UE5, then switch to the different decoder
             case EPixelFormat.PF_PVRTC2:
                 PvrtcDecoder.DecompressPVRTC<ColorRGBA<byte>, byte>(bytes, sizeX, sizeY, true, out data);
                 colorType = EPixelFormat.PF_R8G8B8A8;

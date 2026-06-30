@@ -273,7 +273,8 @@ public class UStaticMesh : UObject
                     case EGame.GAME_NeedForSpeedMobile:
                         Ar.SkipMultipleBulkArrayData(3);
                         Ar.Position += 4;
-                        if (Ar.ReadBoolean())
+                        var count1 = Ar.Read<int>();
+                        for (var i = 0; i < count1; i++)
                         {
                             Ar.Position += 4;
                             Ar.SkipMultipleFixedArrays(2, 4);
@@ -293,7 +294,8 @@ public class UStaticMesh : UObject
         if (Ar.Game is EGame.GAME_FateTrigger or EGame.GAME_GhostsofTabor or EGame.GAME_Aion2) Ar.Position += 4;
         if (Ar.Game is EGame.GAME_TheFinals or EGame.GAME_ArcRaiders && Ar.ReadBoolean()) Ar.SkipMultipleBulkArrayData(5);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE4Version.SPEEDTREE_STATICMESH)
+        // (Ar.Ver >= EUnrealEngineObjectUE4Version.SPEEDTREE_STATICMESH), but we check UE version for Materials
+        if (Ar.Game >= EGame.GAME_UE4_14)
         {
             var bHasSpeedTreeWind = Ar.ReadBoolean();
             if (bHasSpeedTreeWind)

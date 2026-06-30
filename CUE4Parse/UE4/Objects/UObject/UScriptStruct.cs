@@ -10,7 +10,6 @@ public class UScriptStruct : UStruct
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.LIGHTING_CHANNEL_SUPPORT)
         {
             StructFlags = Ar.Read<EStructFlags>();
