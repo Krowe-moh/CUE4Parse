@@ -43,18 +43,8 @@ public static class Compression
         }, replace: true)
         .Add(CompressionAlgorithm.LZO, static (source, destination, out written) =>
         {
-            try
-            {
-                var result = Lzo.Decompress(source.ToArray(), destination.Length);
-                written = result.Length;
-                result.CopyTo(destination);
-                return true;
-            }
-            catch
-            {
-                written = 0;
-                return false;
-            }
+            var result = Lzo.TryDecompress(source, source.Length, destination, out written);
+            return result == LzoResult.OK;
         })
         .Build();
 

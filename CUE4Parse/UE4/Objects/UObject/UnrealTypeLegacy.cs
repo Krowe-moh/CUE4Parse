@@ -19,7 +19,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             ArrayDim = Ar.Read<int>();
             PropertyFlags = Ar.Ver >= EUnrealEngineObjectUE3Version.PropertyFlagsSizeExpandedTo64Bits ? Ar.Read<EPropertyFlags>() : (EPropertyFlags) Ar.Read<uint>();
 
-            if ((!Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) || Ar.Game >= EGame.GAME_UE4_0) && Ar.Ver < EUnrealEngineObjectUE4Version.CATEGORY_MOVED_TO_METADATA)
+            if ((validPos - Ar.Position) >= 12 || (Ar.Ver < EUnrealEngineObjectUE3Version.DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES && (validPos - Ar.Position) >= 8) || (Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform == ETexturePlatform.XboxAndPlaystation4 || Ar.Game >= EGame.GAME_UE4_0) && Ar.Ver < EUnrealEngineObjectUE4Version.CATEGORY_MOVED_TO_METADATA)
             {
                 Ar.ReadFName(); // CategoryName
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES)

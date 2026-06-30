@@ -1,8 +1,6 @@
-using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
-using CommunityToolkit.HighPerformance;
 using CUE4Parse.Compression;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Exports.Texture;
@@ -109,7 +107,7 @@ namespace CUE4Parse.UE4.Readers
             var size = Unsafe.SizeOf<T>();
             var readLength = size * length;
             CheckReadSize(readLength);
-            
+
             var buffer = ReadBytes(readLength);
 
             var result = new T[length];
@@ -132,7 +130,7 @@ namespace CUE4Parse.UE4.Readers
         {
             Versions = versions ?? new VersionContainer();
         }
-        
+
         public override void Flush() { }
         public override bool CanRead { get; } = true;
         public override bool CanWrite { get; } = false;
@@ -568,7 +566,7 @@ namespace CUE4Parse.UE4.Readers
             return Encoding.UTF8.GetString(ReadSpan(length));
         }
 
-        public string ReadFAnsiString() => ReadFAnsiString(Read<int>());
+        public string ReadFAnsiString() => ReadFAnsiString(CheckAndReadCompactIndex());
         public virtual string ReadFAnsiString(int length)
         {
             if (length == 0) return string.Empty;
@@ -805,8 +803,8 @@ namespace CUE4Parse.UE4.Readers
 
             public FCompressedChunkInfo(FArchive Ar)
             {
-                CompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : Ar.Read<long>();
-                UncompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : Ar.Read<long>();
+                CompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : (uint)Ar.Read<long>();
+                UncompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : (uint)Ar.Read<long>();
             }
         }
     }

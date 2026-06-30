@@ -28,7 +28,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             }
             else
             {
-                // ignored for now
+                Name = Ar.ReadFAnsiString();
             }
 
             if (Ar.Game == EGame.GAME_PlayerUnknownsBattlegrounds)

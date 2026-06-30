@@ -4,6 +4,7 @@ using CUE4Parse.UE4.Assets.Exports.Material;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.UObject;
+using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 
@@ -14,7 +15,7 @@ namespace CUE4Parse.UE4.Objects.Engine
         public ushort ChunkIndex;
         public ushort UncompressedCodeLength;
         public int UncompressedCodeOffset;
-        public FIndividualCompressedShaderInfo(FAssetArchive Ar)
+        public FIndividualCompressedShaderInfo(FArchive Ar)
         {
             ChunkIndex = Ar.Read<ushort>();
             UncompressedCodeOffset = Ar.Read<int>();
@@ -27,7 +28,7 @@ namespace CUE4Parse.UE4.Objects.Engine
         public int UncompressedSize;
         public byte[] CompressedCode;
 
-        public FCompressedShaderCodeChunk(FAssetArchive Ar)
+        public FCompressedShaderCodeChunk(FArchive Ar)
         {
             UncompressedSize = Ar.Read<int>();
             CompressedCode = Ar.ReadArray<byte>();
@@ -42,7 +43,7 @@ namespace CUE4Parse.UE4.Objects.Engine
         // Code chunks for this shader type that were split apart due to size limits
         public FCompressedShaderCodeChunk[] CodeChunks;
 
-        public FTypeSpecificCompressedShaderCode(FAssetArchive Ar)
+        public FTypeSpecificCompressedShaderCode(FArchive Ar)
         {
             CompressedShaderInfos = Ar.ReadMap(() => Ar.Read<Guid>(), () => new FIndividualCompressedShaderInfo(Ar));
             CodeChunks = Ar.ReadArray(() => new FCompressedShaderCodeChunk(Ar));
@@ -87,30 +88,13 @@ namespace CUE4Parse.UE4.Objects.Engine
             //VertexFactoryType = Ar.ReadFName();
         }
     }
-    public class UShaderCache : Assets.Exports.UObject
+    public struct FShaderCache
     {
         public EShaderPlatform Platform;
-        public int ShaderCachePriority;
-        public FShader[] shaders;
         public Dictionary<FName, int>? ShaderTypeMap;
-        public Dictionary<FName, int>? VertexFactoryMap;
-
-        public override void Deserialize(FAssetArchive Ar, long validPos)
+        public FShaderCache(FArchive Ar)
         {
-            base.Deserialize(Ar, validPos);
-
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.SHADER_CACHE_PRIORITY)
-            {
-                ShaderCachePriority = Ar.Read<int>();
-            }
-
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.GLOBAL_SHADER_FILE)
-            {
-                Platform = Ar.Read<EShaderPlatform>();
-                ShaderTypeMap = Ar.ReadMap(Ar.ReadFName, () => Ar.Read<int>());
-                VertexFactoryMap = Ar.ReadMap(Ar.ReadFName, () => Ar.Read<int>());
-            }
-            else
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.GLOBAL_SHADER_FILE)
             {
                 Platform = Ar.Read<EShaderPlatform>();
                 if (Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_AUTO_SHADER_VERSIONING)
@@ -139,10 +123,61 @@ namespace CUE4Parse.UE4.Objects.Engine
 
                 var SkipOffset = Ar.Read<int>();
                 //shaders = Ar.ReadArray(() => new FShader(Ar));
-                Ar.Position = SkipOffset;
+                Ar.Seek(SkipOffset, SeekOrigin.Begin);
+            }
+        }
+    }
+    public class UShaderCache : Assets.Exports.UObject
+    {
+        public EShaderPlatform Platform;
+        public int ShaderCachePriority;
+        public FShader[] shaders;
+        public Dictionary<FName, int>? ShaderTypeMap;
+        public Dictionary<FName, int>? VertexFactoryMap;
+
+        public override void Deserialize(FAssetArchive Ar, long validPos)
+        {
+            base.Deserialize(Ar, validPos);
+
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.SHADER_CACHE_PRIORITY)
+            {
+                ShaderCachePriority = Ar.Read<int>();
             }
 
-            Ar.Read<int>(); // Array but complex, so just read array count
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.GLOBAL_SHADER_FILE)
+            {
+                Platform = Ar.Read<EShaderPlatform>();
+                ShaderTypeMap = Ar.ReadMap(Ar.ReadFName, () => Ar.Read<int>());
+                VertexFactoryMap = Ar.ReadMap(Ar.ReadFName, () => Ar.Read<int>());
+            }
+
+            new FShaderCache(Ar);
+
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_AUTO_SHADER_VERSIONING)
+            {
+                Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.Read<int>());
+            }
+
+            var NumMaterialShaderMaps = Ar.Read<int>();
+
+            for (int i = 0; i < NumMaterialShaderMaps; i++)
+            {
+               new FStaticParameterSet(Ar);
+
+               if (Ar.Ver >= EUnrealEngineObjectUE3Version.UNIFORMEXPRESSION_TEXTUREINDEX)
+               {
+                   Ar.Read<int>(); // ShaderMapVersion
+                   Ar.Read<int>(); // ShaderMapLicenseeVersion
+               }
+
+               var SkipOffset = Ar.Read<int>();
+               Ar.Seek(SkipOffset, SeekOrigin.Begin);
+            }
+
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.GLOBAL_SHADER_FILE)
+            {
+                //Ar.ReadMap(Ar.ReadFName, () => FShader stuff);
+            }
         }
 
         protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
