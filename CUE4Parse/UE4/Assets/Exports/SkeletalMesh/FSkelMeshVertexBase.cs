@@ -18,7 +18,7 @@ public class FSkelMeshVertexBase
         Normal = [];
     }
 
-    public void SerializeForGPU(FArchive Ar, bool bExtraBoneInfluences = false)
+    public void SerializeForGPU(FArchive Ar, bool bExtraBoneInfluences)
     {
         if (Ar.Ver < EUnrealEngineObjectUE3Version.SKELETAL_MESH_SUPPORT_PACKED_POSITION) Pos = Ar.Read<FVector>();
         Normal = new FPackedNormal[3];
@@ -37,7 +37,6 @@ public class FSkelMeshVertexBase
     {
         Normal = new FPackedNormal[3];
         Pos = Ar.Read<FVector>();
-
         if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.IncreaseNormalPrecision)
         {
             Normal[0] = new FPackedNormal(Ar);

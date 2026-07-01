@@ -10,8 +10,8 @@ public class ARecastNavMesh : ANavigationData
 {
     public float AgentHeight;
     public float AgentRadius;
-    public FNavMeshResolutionParam[] NavMeshResolutionParams;
-
+    public FNavMeshResolutionParam[] NavMeshResolutionParams; 
+    
     public ENavMeshVersion NavMeshVersion;
     public FPImplRecastNavMesh? RecastNavMeshImpl;
     
@@ -26,7 +26,7 @@ public class ARecastNavMesh : ANavigationData
 
         if (!TryGetAllValues(out NavMeshResolutionParams, nameof(NavMeshResolutionParams)))
             NavMeshResolutionParams = new FNavMeshResolutionParam[3];
-
+        
         NavMeshVersion = Ar.Read<ENavMeshVersion>();
 
         var recastNavMeshSizePos = Ar.Position;
@@ -47,18 +47,18 @@ public class ARecastNavMesh : ANavigationData
             RecastNavMeshImpl = new FPImplRecastNavMesh(Ar, this);
         }
     }
-
+    
     protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
     {
         base.WriteJson(writer, serializer);
-
+        
         writer.WritePropertyName(nameof(NavMeshVersion));
         serializer.Serialize(writer, NavMeshVersion);
-
+        
         writer.WritePropertyName(nameof(RecastNavMeshImpl));
         serializer.Serialize(writer, RecastNavMeshImpl);
     }
-
+    
     public float GetCellSize(ENavigationDataResolution resolution) => NavMeshResolutionParams[(byte)resolution].CellSize;
     public float GetAgentMaxStepHeight(ENavigationDataResolution resolution) => NavMeshResolutionParams[(byte)resolution].AgentMaxStepHeight;
 }
@@ -100,7 +100,7 @@ public enum ENavigationDataResolution : byte
     Low = 0,
     Default = 1,
     High = 2,
-
+    
     [Description("None")]
     Invalid = 3,
     MAX = 3,

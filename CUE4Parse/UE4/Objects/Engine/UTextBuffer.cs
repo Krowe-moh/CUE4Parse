@@ -17,6 +17,7 @@ namespace CUE4Parse.UE4.Objects.Engine
             Top = Ar.Read<int>();
             Text = Ar.ReadFString();
         }
+
         protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
         {
             base.WriteJson(writer, serializer);
