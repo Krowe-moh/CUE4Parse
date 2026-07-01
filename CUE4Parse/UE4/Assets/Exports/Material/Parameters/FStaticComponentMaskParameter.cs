@@ -33,7 +33,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Material.Parameters
             }
         }
 
-        public FLinearColor ToFLinearColor()
+        public FLinearColor ToFLinearColor() 
         {
             return new FLinearColor(R ? 1f : 0, G ? 1f : 0, B ? 1f : 0, A ? 1f : 0);
         }
