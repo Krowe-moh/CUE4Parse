@@ -1,4 +1,4 @@
-using CUE4Parse.UE4.Assets.Exports.ActorX;
+﻿using CUE4Parse.UE4.Assets.Exports.ActorX;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.UObject;
@@ -24,6 +24,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
                 Ar.Read<int>(); // NumChildren
             }
             ParentIndex = Ar.Read<int>();
+
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELMESH_DRAWSKELTREEMANAGER && Ar.Ver < EUnrealEngineObjectUE4Version.REFERENCE_SKELETON_REFACTOR)
             {
                 Ar.Read<FColor>(); // BoneColor
