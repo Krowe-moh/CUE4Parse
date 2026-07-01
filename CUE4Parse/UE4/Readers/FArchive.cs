@@ -107,9 +107,8 @@ namespace CUE4Parse.UE4.Readers
             var size = Unsafe.SizeOf<T>();
             var readLength = size * length;
             CheckReadSize(readLength);
-
+            
             var buffer = ReadBytes(readLength);
-
             var result = new T[length];
             if (length > 0) Unsafe.CopyBlockUnaligned(ref Unsafe.As<T, byte>(ref result[0]), ref buffer[0], (uint)(readLength));
             return result;
@@ -130,7 +129,7 @@ namespace CUE4Parse.UE4.Readers
         {
             Versions = versions ?? new VersionContainer();
         }
-
+        
         public override void Flush() { }
         public override bool CanRead { get; } = true;
         public override bool CanWrite { get; } = false;
