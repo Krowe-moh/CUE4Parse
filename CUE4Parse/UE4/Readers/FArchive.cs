@@ -802,8 +802,8 @@ namespace CUE4Parse.UE4.Readers
 
             public FCompressedChunkInfo(FArchive Ar)
             {
-                CompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : (uint)Ar.Read<long>();
-                UncompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : (uint)Ar.Read<long>();
+                CompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : Ar.Read<long>();
+                UncompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : Ar.Read<long>();
             }
         }
     }
