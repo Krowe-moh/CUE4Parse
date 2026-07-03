@@ -18,6 +18,7 @@ public enum EGame : uint
         GAME_ScourgeOutbreak = GAME_UE3_0 + 7,
         GAME_DirtyBomb = GAME_UE3_0 + 8,
         GAME_Dishonored = GAME_UE3_0 + 9,
+        GAME_AvaGlobal = GAME_UE3_0 + 10,
 
     GAME_UE4_0 = GameUtils.GameUe4Base + (0 << 16),
     GAME_UE4_1 = GameUtils.GameUe4Base + (1 << 16),
