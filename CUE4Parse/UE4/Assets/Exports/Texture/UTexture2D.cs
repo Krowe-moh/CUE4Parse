@@ -53,7 +53,7 @@ public class UTexture2D : UTexture
                 legacyMips = Ar.ReadArray(() => TextureFileCacheName.IsNone ? new FTexture2DMipMap(Ar) : new FTexture2DMipMap(Ar, TextureFileCacheName.Text));
             }
 
-            if (Ar.Game == EGame.GAME_DCUniverseOnline) return;
+            if (Ar.Game == EGame.GAME_DCUniverseOnline && ((int)Ar.LicenseeVer & 0xFF00) >= 0x1700) return;
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_TEXTURE_FILECACHE_GUIDS)
             {

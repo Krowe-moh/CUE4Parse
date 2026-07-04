@@ -203,10 +203,12 @@ namespace CUE4Parse.UE4.Readers
 
         public T[] ReadBulkArray<T>() where T : struct
         {
+            if (Game == EGame.GAME_AvaGlobal && Ver >= EUnrealEngineObjectUE3Version.SHARED_SHADER_PARAMS) goto elementsize;
             if (Ver < EUnrealEngineObjectUE3Version.ADDED_BULKSERIALIZE_SANITY_CHECKING)
             {
                 return ReadArray<T>();
             }
+            elementsize:
             var elementSize = Read<int>();
             var elementCount = Read<int>();
             if (elementCount == 0)

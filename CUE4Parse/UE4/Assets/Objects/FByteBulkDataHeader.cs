@@ -113,5 +113,7 @@ public readonly struct FByteBulkDataHeader
             Ar.Position += BulkDataFlags.HasFlag(BULKDATA_Size64Bit) ? sizeof(long) : sizeof(uint); // DuplicateSizeOnDisk
             Ar.Position += Ar.Ver >= EUnrealEngineObjectUE4Version.BULKDATA_AT_LARGE_OFFSETS ? sizeof(long) : sizeof(int); // DuplicateOffset
         }
+
+        if (Ar.Game == EGame.GAME_LetItDie) Ar.Position += 8;
     }
 }

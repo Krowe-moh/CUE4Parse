@@ -102,7 +102,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         public readonly ECompressionFlags CompressionFlags;
         public readonly int PackageSource;
         public bool bUnversioned;
-        public readonly FTextureAllocations[] TextureAllocations;
+        public readonly FTextureAllocations[]? TextureAllocations;
         public readonly int AssetRegistryDataOffset;
         public int BulkDataStartOffset; // serialized as long
         public readonly int WorldTileInfoDataOffset;
