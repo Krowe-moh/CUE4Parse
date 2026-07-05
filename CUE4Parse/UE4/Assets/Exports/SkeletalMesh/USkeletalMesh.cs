@@ -87,6 +87,8 @@ public partial class USkeletalMesh : UObject
             }
         }
 
+        if (Ar.Game is EGame.GAME_LordOfMysteries) Ar.Position += 4;
+
         ReferenceSkeleton = new FReferenceSkeleton(Ar);
         if (Ar.Game < EGame.GAME_UE4_0)
         {

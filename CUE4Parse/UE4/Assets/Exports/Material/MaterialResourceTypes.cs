@@ -223,7 +223,7 @@ public abstract class FShaderMapBase
 
         if (bShareCode)
         {
-            ResourceHash = new FSHAHash(Ar);
+            ResourceHash = new FSHAHash(Ar, Ar.Game >= EGame.GAME_UE5_8 ? 8 : FSHAHash.SIZE);
         }
         else
         {
@@ -254,7 +254,7 @@ public class FShaderMapContent
     public virtual void Deserialize(FMemoryImageArchive Ar)
     {
         ShaderHash = Ar.ReadHashTable();
-        ShaderTypes = Ar.ReadArray<FHashedName>();
+        ShaderTypes = Ar.ReadArray(() => new FHashedName(Ar));
         ShaderPermutations = Ar.ReadArray<int>();
         Shaders = Ar.ReadArrayOfPtrs(() => new FShader(Ar));
         ShaderPipelines = Ar.ReadArrayOfPtrs(() => new FShaderPipeline(Ar));
@@ -290,7 +290,7 @@ public class FShaderPipeline
 
     public FShaderPipeline(FMemoryImageArchive Ar)
     {
-        TypeName = Ar.Read<FHashedName>();
+        TypeName = new FHashedName(Ar);
         Shaders = new FShader[SF_NumGraphicsFrequencies];
         for (int i = 0; i < Shaders.Length; i++)
         {
@@ -319,6 +319,7 @@ public class FShader
     public int ResourceIndex;
     public uint NumInstructions;
     public uint SortKey;
+    // public FShaderCode Code; // ?
 
     public FShader(FMemoryImageArchive Ar)
     {
@@ -326,13 +327,8 @@ public class FShader
         {
             Bindings = new FShaderParameterBindings(Ar);
             ParameterMapInfo = new FShaderParameterMapInfo(Ar);
-            UniformBufferParameterStructs = Ar.ReadArray<FHashedName>();
+            UniformBufferParameterStructs = Ar.ReadArray(() => new FHashedName(Ar));
             UniformBufferParameters = Ar.ReadArray<FShaderUniformBufferParameter>();
-
-            var type = Ar.Read<ulong>() >> 1;
-            Type = Ar.PointerTable is FShaderMapPointerTable pointerTable && type < (ulong) pointerTable.Types.Length ? pointerTable.Types[type] : new(type);
-            var vfType = Ar.Read<ulong>() >> 1;
-            VFType = Ar.PointerTable is FShaderMapPointerTable pointerTable1 && vfType < (ulong) pointerTable1.VFTypes.Length ? pointerTable1.VFTypes[vfType] : new(vfType);
         }
 
         Target = Ar.Read<FShaderTarget>();
@@ -645,6 +641,11 @@ public struct FShaderTarget
     private uint _packed;
     public EShaderFrequency Frequency => (EShaderFrequency)(_packed & 0xF);
     public EShaderPlatform Platform => (EShaderPlatform)((_packed >> 4) & 0xFFFF); // was 7 bits before 5.0
+
+    public FShaderTarget(uint packed)
+    {
+        _packed = packed;
+    }
 }
 
 /** The base type of a value in a shader parameter structure. */
@@ -703,7 +704,7 @@ public class FGlobalShaderMapContent : FShaderMapContent
     public override void Deserialize(FMemoryImageArchive Ar)
     {
         base.Deserialize(Ar);
-        HashedSourceFilename = Ar.Read<FHashedName>();
+        HashedSourceFilename = new FHashedName(Ar);
     }
 }
 
@@ -730,7 +731,7 @@ public class FMaterialShaderMapContent : FShaderMapContent
         });
 
         MaterialCompilationOutput = new FMaterialCompilationOutput(Ar);
-        ShaderContentHash = new FSHAHash(Ar);
+        ShaderContentHash = new FSHAHash(Ar, Ar.Game >= EGame.GAME_UE5_8 ? 8 : FSHAHash.SIZE);
 
         if (Ar.Game >= EGame.GAME_UE5_5)
         {
@@ -750,7 +751,7 @@ public class FMeshMaterialShaderMap : FShaderMapContent
     {
         base.Deserialize(Ar);
 
-        VertexFactoryTypeName = Ar.Read<FHashedName>();
+        VertexFactoryTypeName = new FHashedName(Ar);
     }
 }
 
@@ -949,7 +950,7 @@ public class FHashedMaterialParameterInfo
 
     public FHashedMaterialParameterInfo(FMemoryImageArchive Ar)
     {
-        Name = Ar.Read<FHashedName>();
+        Name = new FHashedName(Ar);
         Index = Ar.Read<int>();
         Association = Ar.Read<EMaterialParameterAssociation>();
         Ar.Position = Ar.Position.Align(4);
@@ -1401,8 +1402,8 @@ public struct FRHIUniformBufferResource
 
 public class FShaderMapResourceCode(FArchive Ar)
 {
-    public FSHAHash ResourceHash = new FSHAHash(Ar);
-    public FSHAHash[] ShaderHashes = Ar.ReadArray(() => new FSHAHash(Ar));
+    public FSHAHash ResourceHash = new FSHAHash(Ar, Ar.Game >= EGame.GAME_UE5_8 ? 8 : FSHAHash.SIZE);
+    public FSHAHash[] ShaderHashes = Ar.Game >= EGame.GAME_UE5_8 ? Ar.ReadArray(() => new FSHAHash(Ar, 8)) : Ar.ReadArray(() => new FSHAHash(Ar));
     public FShaderEntry[] ShaderEntries = Ar.Game < EGame.GAME_UE5_5 ? Ar.ReadArray(() => new FShaderEntry(Ar)) : [];
     public FShaderCodeResource[] ShaderCodeResources = Ar.Game >= EGame.GAME_UE5_5 ? Ar.ReadArray(() => new FShaderCodeResource(Ar)) : [];
 }
@@ -1550,19 +1551,50 @@ public class FShaderMapPointerTable : FPointerTableBase
         if (Ar.bUseNewFormat) base.LoadFromArchive(Ar);
         var NumTypes = Ar.Read<int>();
         var NumVFTypes = Ar.Read<int>();
-        Types = Ar.ReadArray<FHashedName>(NumTypes);
-        VFTypes = Ar.ReadArray<FHashedName>(NumVFTypes);
+        Types = Ar.ReadArray(NumTypes, () => new FHashedName(Ar));
+        VFTypes = Ar.ReadArray(NumVFTypes, () => new FHashedName(Ar));
         if (!Ar.bUseNewFormat && this is not FNiagaraShaderMapPointerTable) base.LoadFromArchive(Ar);
     }
 }
 
+[JsonConverter(typeof(FHashedNameJsonConverter))]
 public struct FHashedName
 {
     public ulong Hash;
 
-    public FHashedName(ulong value) => Hash = value;
+    public FHashedName(ulong value)
+    {
+        Hash = value;
+    }
 
-    public FHashedName(FMemoryImageArchive Ar) => Hash = Ar.Read<ulong>();
+    public FHashedName(FArchive Ar)
+    {
+        Hash = Ar.Read<ulong>();
+    }
+
+    public override string ToString()
+    {
+        return Hash.ToString("X16");
+    }
+}
+
+public class FHashedNameJsonConverter : JsonConverter<FHashedName>
+{
+    public override void WriteJson(JsonWriter writer, FHashedName value, JsonSerializer serializer)
+    {
+        if (HashedNamesProvider.TryGetEntry(value.Hash, out var name))
+        {
+            writer.WriteValue(name);
+            return;
+        }
+
+        writer.WriteValue(value.Hash);
+    }
+
+    public override FHashedName ReadJson(JsonReader reader, Type objectType, FHashedName existingValue, bool hasExistingValue, JsonSerializer serializer)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public class FPointerTableBase
@@ -1588,9 +1620,11 @@ public class FTypeLayoutDesc
 
     public FTypeLayoutDesc(FMaterialResourceProxyReader Ar)
     {
-        Name = Ar.bUseNewFormat ? Ar.ReadFString() : Ar.Read<FHashedName>();
+        Name = Ar.bUseNewFormat ? Ar.ReadFString() : new FHashedName(Ar);
         SavedLayoutSize = Ar.Read<uint>();
         SavedLayoutHash = new FSHAHash(Ar);
+
+        if (Ar.bUseNewFormat) HashedNamesProvider.TryAdd((string) Name);
     }
 }
 
@@ -1648,7 +1682,7 @@ public class FMaterialShaderMapId
             var legacyQualityLevel = (EMaterialQualityLevel) Ar.Read<byte>(); // Is it enum?
         }
         if (Ar.Game == EGame.GAME_TheFirstDescendant) Ar.Position += 4;
-        CookedShaderMapIdHash = new FSHAHash(Ar);
+        CookedShaderMapIdHash = new FSHAHash(Ar, Ar.Game >= EGame.GAME_UE5_8 ? 8 : FSHAHash.SIZE);
 
         if (!bIsLegacyPackage)
         {
@@ -1699,6 +1733,20 @@ public enum EUniformBufferBindingFlags : byte
 public enum EShaderPlatform : byte
 {
     SP_PCD3D_SM5					= 0,
+
+    SP_OPENGL_SM4                   = 1,
+    SP_PS4                          = 2,
+    /** Used when running in Feature Level ES2 in OpenGL. */
+    SP_OPENGL_PCES2                 = 3,
+    SP_XBOXONE_D3D12                = 4,
+    SP_PCD3D_SM4                    = 5,
+    SP_OPENGL_SM5                   = 6,
+    /** Used when running in Feature Level ES2 in D3D11. */
+    SP_PCD3D_ES2                    = 7,
+    SP_OPENGL_ES2_ANDROID           = 8,
+    SP_OPENGL_ES2_WEBGL             = 9,
+    SP_OPENGL_ES2_IOS               = 10,
+
     SP_METAL						= 11,
     SP_METAL_MRT					= 12,
     SP_PCD3D_ES3_1					= 14,

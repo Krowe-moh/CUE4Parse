@@ -66,7 +66,7 @@ public class FStaticMeshLODResources
             MaxDeviation = Ar.Read<float>();
         }
 
-        if (Ar.Game == EGame.GAME_ThePathless) Ar.Position += 4;
+        if (Ar.Game is EGame.GAME_ThePathless or EGame.GAME_ARKSurvivalAscended) Ar.Position += 4;
         if (Ar.Game == EGame.GAME_NeedForSpeedMobile)
         {
             Ar.SkipFixedArray(36);
@@ -88,6 +88,8 @@ public class FStaticMeshLODResources
         if (Ar.Game != EGame.GAME_Splitgate)
             bIsLODCookedOut = Ar.ReadBoolean();
         var bInlined = Ar.ReadBoolean() || Ar.Game == EGame.GAME_RogueCompany;
+
+        if (Ar.Game is EGame.GAME_LordOfMysteries) Ar.Position += 4;
 
         if (!stripDataFlags.IsAudioVisualDataStripped() && !bIsLODCookedOut)
         {
