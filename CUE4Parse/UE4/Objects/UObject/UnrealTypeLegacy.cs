@@ -44,6 +44,8 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 BlueprintReplicationCondition = (ELifetimeCondition) Ar.Read<byte>();
             }
+
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.temp10) Ar.Read<byte>();
         }
 
         protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)

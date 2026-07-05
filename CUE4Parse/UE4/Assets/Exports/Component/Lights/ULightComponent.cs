@@ -349,7 +349,7 @@ public class USkyLightComponent : ULightComponentBase
     {
         if (Ar.Game < EGame.GAME_UE4_0)
         {
-            new ULightComponent().Deserialize(Ar, validPos);
+            //new ULightComponent().Deserialize(Ar, validPos);
         }
         else
         {

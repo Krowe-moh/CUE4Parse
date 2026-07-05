@@ -175,12 +175,14 @@ namespace CUE4Parse.UE4.Objects.UObject
                 if (possibleTag == PACKAGE_FILE_TAG || possibleTag == 0x20000 || possibleTag == 0x10000)
                 {
                     Ar.Position = 0;
-                    var decompressedData = new byte[Ar.Length];
+                    var decompressedData = new byte[Ar.Length*10];
 
                     Ar.SerializeCompressedNew(decompressedData, (int)Ar.Length*20, CompressionMethod.Zlib.ToString(), COMPRESS_None, false, out _);
                     Ar = new FByteArchive("Decompressed Package", decompressedData, Ar.Versions);
                 }
             }
+
+            Ar.Position = 4;
 
             legacyFileVersion = Ar.Read<int>();
             if (Ar.Game == EGame.GAME_MortalRoyale)

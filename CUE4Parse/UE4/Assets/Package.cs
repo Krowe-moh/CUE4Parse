@@ -263,6 +263,7 @@ namespace CUE4Parse.UE4.Assets
                 if (Summary.CompressionFlags != ECompressionFlags.COMPRESS_None)
                 {
                     var headerEnd = uassetAr.Position;
+                    var checkSumDataOffset = (int) (Summary.TotalHeaderSize - headerEnd - checkSumDataSize);
 
                     uassetAr.Position = 0;
                     var before = uassetAr.ReadBytes(Summary.NameOffset);
@@ -272,7 +273,7 @@ namespace CUE4Parse.UE4.Assets
 
                     RocketLeagueAes.Decrypt(encryptedData, checkSumDataOffset, true, out var decryptedData);
 
-                    var after = uassetAr.ReadBytes((int)(uassetAr.Length - uassetAr.Position));
+                    var after = uassetAr.ReadBytes((int) (uassetAr.Length - uassetAr.Position));
 
                     var fullBuffer = new byte[before.Length + decryptedData.Length + after.Length];
                     Buffer.BlockCopy(before, 0, fullBuffer, 0, before.Length);
@@ -299,7 +300,6 @@ namespace CUE4Parse.UE4.Assets
                 foreach (var chunk in Summary.CompressedChunks)
                 {
                     uassetAr.Position = chunk.CompressedOffset;
-
                     var decompressedData = new byte[chunk.UncompressedSize];
 
                     uassetAr.SerializeCompressedNew(decompressedData, chunk.UncompressedSize,

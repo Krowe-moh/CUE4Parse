@@ -6,7 +6,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Engine.Font;
 
 public class UFont : UObject
 {
-    private FFontPage[] Pages;
+    private FFontPage[]? Pages;
     private int CharactersPerPage;
     public Dictionary<ushort, ushort> CharRemap;
 
@@ -40,7 +40,7 @@ public class UFont : UObject
             }
         }
 
-        if (Pages.Length == 0 && CharactersPerPage == 0)
+        if (Pages?.Length == 0 && CharactersPerPage == 0)
         {
             Ar.ReadFString(); // FontName
             Ar.Read<int>(); // FontHeight

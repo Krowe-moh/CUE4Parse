@@ -44,7 +44,7 @@ public class FSkeletalMeshVertexBuffer
         }
         else
         {
-            //NumTexCoords = 1;
+            NumTexCoords = 1;
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedFullPrecisionUV) bUseFullPrecisionUVs = Ar.ReadBoolean();
