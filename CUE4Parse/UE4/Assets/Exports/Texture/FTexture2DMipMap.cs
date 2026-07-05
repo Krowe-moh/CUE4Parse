@@ -56,29 +56,13 @@ public class FTexture2DMipMap
         }
     }
 
-    public FTexture2DMipMap(FAssetArchive Ar, string tfc, bool bSerializeMipData = true)
+    public FTexture2DMipMap(FAssetArchive Ar, string tfc)
     {
-        var cooked = Ar.Ver >= EUnrealEngineObjectUE4Version.TEXTURE_SOURCE_ART_REFACTOR && Ar.Game < EGame.GAME_UE5_0 ? Ar.ReadBoolean() : Ar.IsFilterEditorOnly;
+        BulkData = new FByteBulkData(Ar, tfc);
 
-        if (bSerializeMipData) BulkData = new FByteBulkData(Ar, tfc);
-
-        if (Ar.Game == EGame.GAME_Borderlands3)
-        {
-            SizeX = Ar.Read<ushort>();
-            SizeY = Ar.Read<ushort>();
-            SizeZ = Ar.Read<ushort>();
-        }
-        else
-        {
-            SizeX = Ar.Read<int>();
-            SizeY = Ar.Read<int>();
-            SizeZ = Ar.Game >= EGame.GAME_UE4_20 ? Ar.Read<int>() : 1;
-        }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE4Version.TEXTURE_DERIVED_DATA2 && !cooked)
-        {
-            var derivedDataKey = Ar.ReadFString();
-        }
+        SizeX = Ar.Read<int>();
+        SizeY = Ar.Read<int>();
+        SizeZ = 1;
     }
 
     public bool EnsureValidBulkData(UTextureAllMipDataProviderFactory? provider, int mipLevel)

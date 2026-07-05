@@ -42,19 +42,11 @@ public class UUIDynamicFieldProvider : UObject
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.ADDED_COLLECTION_DATA)
         {
-            var oldVersion = Ar.ReadMap(
+            Ar.ReadMap(
                 () => Ar.ReadFName(),
                 () => Ar.ReadMap(
                     () => Ar.ReadFName(),
                     () => Ar.ReadFString()
-                )
-            );
-
-            PersistentCollectionData = oldVersion.ToDictionary(
-                outer => outer.Key,
-                outer => outer.Value.ToDictionary(
-                    inner => inner.Key,
-                    inner => new [] { inner.Value }
                 )
             );
         }

@@ -11,7 +11,7 @@ public enum EGame : uint
     GAME_UE3_0 = GameUtils.GameUe3Base + (0 << 16),
         GAME_RocketLeague = GAME_UE3_0 + 1,
         GAME_SuddenAttack2 = GAME_UE3_0 + 2,
-        GAME_DCUniverseOnline = GAME_UE3_0 + 3,
+        GAME_Placeholder7 = GAME_UE3_0 + 3,
         GAME_MortalRoyale = GAME_UE3_0 + 4,
         GAME_AmericanArmy3 = GAME_UE3_0 + 5,
         GAME_APBReloaded = GAME_UE3_0 + 6,

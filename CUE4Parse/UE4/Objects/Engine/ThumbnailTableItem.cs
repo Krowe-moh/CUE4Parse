@@ -3,13 +3,13 @@ using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.UE4.Objects.Engine
 {
-    public readonly struct ThumbnailTableItem : IUStruct
+    public readonly struct FThumbnailTableItem : IUStruct
     {
         public readonly string ObjectClassName;
         public readonly string ObjectPath;
         public readonly int ThumbnailOffset;
 
-        public ThumbnailTableItem(FArchive Ar)
+        public FThumbnailTableItem(FArchive Ar)
         {
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.CONTENT_BROWSER_FULL_NAMES)
             {

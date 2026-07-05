@@ -24,7 +24,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.Release64)
             {
-                Name = Ar.Game == EGame.GAME_DCUniverseOnline ? Ar.ReadFUtf8String() : Ar.ReadFString().Trim();
+                Name = Ar.ReadFString().Trim();
                 if (Ar.Game == EGame.GAME_AvaGlobal) Ar.Position += (Name.Length ^ 7) & 0xF;
             }
             else

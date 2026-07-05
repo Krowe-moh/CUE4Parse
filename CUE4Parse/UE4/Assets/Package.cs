@@ -35,7 +35,7 @@ namespace CUE4Parse.UE4.Assets
         public FObjectImport[] ImportMap { get; }
         public FObjectExport[] ExportMap { get; }
         public FImportGuids[]? ImportGuids { get; }
-        public ThumbnailTableItem[]? ThumbnailTable { get; }
+        public FThumbnailTableItem[]? ThumbnailTable { get; }
         public Dictionary<FGuid, int> ExportGuidsAwaitingLookup { get; } = new();
         public FPackageIndex[][]? DependsMap { get; }
         public FPackageIndex[]? PreloadDependencies { get; }
@@ -95,78 +95,12 @@ namespace CUE4Parse.UE4.Assets
             {
                 uassetAr = new FAssetArchive(new FArchiveBigEndian(uasset), this);
             }
+
             uassetAr.Position -= 4;
-            
+
             Summary = new FPackageFileSummary(uassetAr);
 
-            if (uassetAr.Game == EGame.GAME_RocketLeague)
-            {
-                var checkSumDataSize = uassetAr.Read<int>();
-                var compressedChunkInfoOffset = uassetAr.Read<int>();
-                var lastBlockSize = uassetAr.Read<int>();
-
-                if (Summary.CompressionFlags != ECompressionFlags.COMPRESS_None)
-                {
-                    var headerEnd = uassetAr.Position;
-                    var checkSumDataOffset = (int)(Summary.TotalHeaderSize - headerEnd - checkSumDataSize);
-
-                    uassetAr.Position = 0;
-                    var before = uassetAr.ReadBytes(Summary.NameOffset);
-
-                    var encryptedSize = (int)(Summary.TotalHeaderSize - lastBlockSize - headerEnd);
-                    var encryptedData = uassetAr.ReadBytes(encryptedSize);
-
-                    RocketLeagueAes.Decrypt(encryptedData, checkSumDataOffset, true, out var decryptedData);
-
-                    var after = uassetAr.ReadBytes((int)(uassetAr.Length - uassetAr.Position));
-
-                    var fullBuffer = new byte[before.Length + decryptedData.Length + after.Length];
-
-                    Buffer.BlockCopy(before, 0, fullBuffer, 0, before.Length);
-                    Buffer.BlockCopy(decryptedData, 0, fullBuffer, before.Length, decryptedData.Length);
-                    Buffer.BlockCopy(after, 0, fullBuffer, before.Length + decryptedData.Length, after.Length);
-
-                    uassetAr.SetBaseArchive(new FByteArchive("Rocket League - Decrypted Package", fullBuffer, uassetAr.Versions));
-
-                    uassetAr.SeekAbsolute(Summary.NameOffset + compressedChunkInfoOffset, SeekOrigin.Begin);
-
-                    Summary.CompressedChunks = uassetAr.ReadArray(() => new FCompressedChunk(uassetAr));
-                }
-            }
-
-            if (Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_GZIP) || Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB))
-            {
-                long totalSize = uassetAr.Length;
-
-                foreach (var chunk in Summary.CompressedChunks)
-                {
-                    totalSize = Math.Max(totalSize, chunk.UncompressedOffset + chunk.UncompressedSize);
-                }
-
-                var buffer = new byte[totalSize];
-
-                uassetAr.Position = 0;
-                uassetAr.Read(buffer, 0, (int)uassetAr.Length);
-
-                foreach (var chunk in Summary.CompressedChunks)
-                {
-                    uassetAr.Position = chunk.CompressedOffset;
-
-                    var decompressedData = new byte[chunk.UncompressedSize];
-
-                    uassetAr.SerializeCompressedNew(decompressedData, chunk.UncompressedSize,
-                        Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB)
-                            ? CompressionMethod.Zlib.ToString()
-                            : CompressionMethod.LZO.ToString(),
-                        ECompressionFlags.COMPRESS_None, false, out _);
-
-                    Array.Copy(decompressedData, 0, buffer, chunk.UncompressedOffset, decompressedData.Length);
-                }
-
-                uassetAr.SetBaseArchive(new FByteArchive("Decompressed Package", buffer, uassetAr.Versions));
-            }
-
-            if (uassetAr.Game < EGame.GAME_UE4_0 && Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_Custom)) throw new NotSupportedException("LZX Decompression not supported");
+            DecryptAndDecompress(uassetAr, Summary);
 
             uassetAr.SeekAbsolute(Summary.NameOffset, SeekOrigin.Begin);
             NameMap = new FNameEntrySerialized[Summary.NameCount];
@@ -187,30 +121,6 @@ namespace CUE4Parse.UE4.Assets
             ExportsLazy = new Lazy<UObject>[Summary.ExportCount];
             uassetAr.ReadArray(ExportMap, () => new FObjectExport(uassetAr));
 
-            if (Summary.ThumbnailTableOffset > 0)
-            {
-                EditorThumbnails = new List<byte[]>();
-                uassetAr.SeekAbsolute(Summary.ThumbnailTableOffset, SeekOrigin.Begin);
-                var count = uassetAr.Read<int>();
-
-                var thumbnailOffsets = new List<int>(count);
-
-                for (int i = 0; i < count; i++)
-                {
-                    var thumbnail = new ThumbnailTableItem(uassetAr);
-                    thumbnailOffsets.Add(thumbnail.ThumbnailOffset);
-                }
-
-                foreach (var offset in thumbnailOffsets)
-                {
-                    uassetAr.SeekAbsolute(offset + 8, SeekOrigin.Begin);
-                    var totalBytes = uassetAr.Read<int>();
-                    if (totalBytes == 0) continue;
-                    var rawImage = uassetAr.ReadBytes(totalBytes);
-                    EditorThumbnails.Add(rawImage);
-                }
-            }
-
             if (!useLazySerialization && Summary is { DependsOffset: > 0, ExportCount: > 0 })
             {
                 uassetAr.SeekAbsolute(Summary.DependsOffset, SeekOrigin.Begin);
@@ -226,7 +136,7 @@ namespace CUE4Parse.UE4.Assets
             if (Summary is { ThumbnailTableOffset: > 0 })
             {
                 uassetAr.SeekAbsolute(Summary.ThumbnailTableOffset, SeekOrigin.Begin);
-                ThumbnailTable = uassetAr.ReadArray(() => new ThumbnailTableItem(uassetAr));
+                ThumbnailTable = uassetAr.ReadArray(() => new FThumbnailTableItem(uassetAr));
             }
 
             if (Summary is { ImportExportGuidsOffset: > 0 })
@@ -342,15 +252,8 @@ namespace CUE4Parse.UE4.Assets
             IsFullyLoaded = true;
         }
 
-        public static byte[] GetDecryptedData(FArchive uasset)
+        private static void DecryptAndDecompress(FAssetArchive uassetAr, FPackageFileSummary Summary)
         {
-            uasset.Versions = (VersionContainer) uasset.Versions.Clone();
-
-            var uassetAr = new FAssetArchive(uasset, null);
-
-            var Summary = new FPackageFileSummary(uassetAr);
-
-
             if (uassetAr.Game == EGame.GAME_RocketLeague)
             {
                 var checkSumDataSize = uassetAr.Read<int>();
@@ -360,12 +263,11 @@ namespace CUE4Parse.UE4.Assets
                 if (Summary.CompressionFlags != ECompressionFlags.COMPRESS_None)
                 {
                     var headerEnd = uassetAr.Position;
-                    var checkSumDataOffset = (int)(Summary.TotalHeaderSize - headerEnd - checkSumDataSize);
 
                     uassetAr.Position = 0;
                     var before = uassetAr.ReadBytes(Summary.NameOffset);
 
-                    var encryptedSize = (int)(Summary.TotalHeaderSize - lastBlockSize - headerEnd);
+                    var encryptedSize = (int) (Summary.TotalHeaderSize - lastBlockSize - headerEnd);
                     var encryptedData = uassetAr.ReadBytes(encryptedSize);
 
                     RocketLeagueAes.Decrypt(encryptedData, checkSumDataOffset, true, out var decryptedData);
@@ -373,13 +275,11 @@ namespace CUE4Parse.UE4.Assets
                     var after = uassetAr.ReadBytes((int)(uassetAr.Length - uassetAr.Position));
 
                     var fullBuffer = new byte[before.Length + decryptedData.Length + after.Length];
-
                     Buffer.BlockCopy(before, 0, fullBuffer, 0, before.Length);
                     Buffer.BlockCopy(decryptedData, 0, fullBuffer, before.Length, decryptedData.Length);
                     Buffer.BlockCopy(after, 0, fullBuffer, before.Length + decryptedData.Length, after.Length);
 
                     uassetAr.SetBaseArchive(new FByteArchive("Rocket League - Decrypted Package", fullBuffer, uassetAr.Versions));
-
                     uassetAr.SeekAbsolute(Summary.NameOffset + compressedChunkInfoOffset, SeekOrigin.Begin);
 
                     Summary.CompressedChunks = uassetAr.ReadArray(() => new FCompressedChunk(uassetAr));
@@ -389,16 +289,12 @@ namespace CUE4Parse.UE4.Assets
             if (Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_GZIP) || Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB))
             {
                 long totalSize = uassetAr.Length;
-
                 foreach (var chunk in Summary.CompressedChunks)
-                {
                     totalSize = Math.Max(totalSize, chunk.UncompressedOffset + chunk.UncompressedSize);
-                }
 
                 var buffer = new byte[totalSize];
-
                 uassetAr.Position = 0;
-                uassetAr.Read(buffer, 0, (int)uassetAr.Length);
+                uassetAr.Read(buffer, 0, (int) uassetAr.Length);
 
                 foreach (var chunk in Summary.CompressedChunks)
                 {
@@ -415,8 +311,19 @@ namespace CUE4Parse.UE4.Assets
                     Array.Copy(decompressedData, 0, buffer, chunk.UncompressedOffset, decompressedData.Length);
                 }
 
-                return buffer;
+                uassetAr.SetBaseArchive(new FByteArchive("Decompressed Package", buffer, uassetAr.Versions));
             }
+
+            if (uassetAr.Game < EGame.GAME_UE4_0 && Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_Custom)) throw new NotSupportedException("Custom Decompression not supported");
+        }
+
+        public static byte[] GetDecryptedData(FArchive uasset)
+        {
+            uasset.Versions = (VersionContainer) uasset.Versions.Clone();
+            var uassetAr = new FAssetArchive(uasset, null);
+            var Summary = new FPackageFileSummary(uassetAr);
+
+            DecryptAndDecompress(uassetAr, Summary);
 
             uassetAr.Position = 0;
             return uassetAr.ReadBytes((int) uassetAr.Length);

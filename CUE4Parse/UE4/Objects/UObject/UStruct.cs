@@ -19,14 +19,7 @@ public class UStruct : UField
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MOVED_SUPERFIELD_TO_USTRUCT)
-        {
-            SuperStruct = new FPackageIndex(Ar);
-        }
-        else
-        {
-            SuperStruct = SuperField;
-        }
+        SuperStruct = Ar.Ver >= EUnrealEngineObjectUE3Version.MOVED_SUPERFIELD_TO_USTRUCT ? new FPackageIndex(Ar) : SuperField;
 
         if (Ar.Ver < EUnrealEngineObjectUE4Version.CONSOLIDATE_HEADER_PARSER_ONLY_PROPERTIES)
         {
@@ -107,7 +100,7 @@ public class UStruct : UField
             Ar.Position += serializedScriptSize;
         }
 
-        if (Ar.Game < EGame.GAME_UE4_0 && GetType() is UStruct)
+        if (Ar.Game >= EGame.GAME_UE3_0 && Ar.Game < EGame.GAME_UE4_0 && GetType() is UStruct)
         {
             DeserializePropertiesTagged(Properties, Ar, false);
         }

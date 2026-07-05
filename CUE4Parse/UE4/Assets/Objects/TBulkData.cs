@@ -58,7 +58,7 @@ public abstract class TBulkData<T> where T: struct
         _dataPosition = Ar.Position;
         _savedAr = Ar;
 
-        if ((BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) && Ar.Game >= EGame.GAME_UE4_0) || (!(BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile)) && Ar.Game < EGame.GAME_UE4_0))
+        if (((BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || BulkDataFlags is BULKDATA_LazyLoadable or BULKDATA_None) && Ar.Game >= EGame.GAME_UE4_0) || (!(BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile)) && Ar.Game < EGame.GAME_UE4_0))
         {
             Ar.Position += Header.SizeOnDisk;
         }
@@ -156,11 +156,16 @@ public abstract class TBulkData<T> where T: struct
         else if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile) && archive.Game < EGame.GAME_UE4_0)
         {
             if (_savedTfc is null)
-                throw new ParserException(archive, "uh no tfc ig");
+                throw new ParserException(archive, "TFC: something wrong");
 
-            string tfcPath = _savedAr.Owner.Provider.TextureCachePaths[_savedTfc];
-            if (!File.Exists(tfcPath))
-                throw new FileNotFoundException($"TFC file not found: {tfcPath}");
+            if (!_savedAr.Owner.Provider.TextureCachePaths.TryGetValue(_savedTfc, out var tfcPath))
+            {
+                // there is a mip that's in the upk, could use it
+                throw new ParserException(archive, $"Missing TFC: {_savedTfc}");
+            }
+
+            //if (!File.Exists(tfcPath))
+            //    return true;
 
             var bytes = new byte[Header.SizeOnDisk];
             using var fs = File.OpenRead(tfcPath);

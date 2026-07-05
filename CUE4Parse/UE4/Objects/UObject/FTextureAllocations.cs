@@ -1,10 +1,9 @@
-﻿using System;
-using CUE4Parse.UE4.Assets.Exports.Texture;
+﻿using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse.UE4.Readers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace CUE4Parse.UE4.Objects.Engine
+namespace CUE4Parse.UE4.Objects.UObject
 {
     /** Flags used for texture creation */
     [Flags]

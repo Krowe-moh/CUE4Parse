@@ -93,12 +93,12 @@ public class FStaticMeshComponentLODInfo
                 var bLoadVertexColorData = Ar.Read<byte>();
                 if (bLoadVertexColorData == 1)
                 {
+                    if (Ar.Game is EGame.GAME_HonorofKingsWorld) Ar.Position += 4;
                     OverrideVertexColors = new FColorVertexBuffer(Ar);
                 }
             }
             else
             {
-                if (Ar.Game is EGame.GAME_HonorofKingsWorld) Ar.Position += 4;
                 OverrideVertexColors = new FColorVertexBuffer(Ar.ReadArray<FColor>());
             }
         }
