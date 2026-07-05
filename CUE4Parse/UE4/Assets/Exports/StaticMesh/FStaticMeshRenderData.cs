@@ -21,11 +21,9 @@ public class FStaticMeshRenderData
     public bool bLODsShareStaticLighting;
     public float[] ScreenSize = [];
 
-    public FStaticMeshRenderData()
-    {
-    }
+    public FStaticMeshRenderData() { }
 
-    public FStaticMeshRenderData(FAssetArchive Ar, bool isSingleLod = false)
+    public FStaticMeshRenderData(FAssetArchive Ar)
     {
         if (Ar.Versions["StaticMesh.KeepMobileMinLODSettingOnDesktop"])
             _ = Ar.Read<int>(); // minMobileLODIdx
@@ -62,12 +60,6 @@ public class FStaticMeshRenderData
         }
         else
         {
-            if (isSingleLod)
-            {
-                LODs = [new FStaticMeshLODResources(Ar)];
-                return;
-            }
-
             LODs = Ar.ReadArray(() => new FStaticMeshLODResources(Ar));
             if (Ar.Game < EGame.GAME_UE4_0) return;
         }
@@ -142,7 +134,7 @@ public class FStaticMeshRenderData
             if (Ar.ReadBoolean())
             {
                 _ = new FBox(Ar);
-                Ar.Position += 4 + 3 * 56;
+                Ar.Position += 4+3*56;
                 Ar.SkipFixedArray(1); // SDF array??
                 for (var i = 0; i < LODs.Length; i++)
                 {

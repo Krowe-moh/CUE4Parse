@@ -12,7 +12,7 @@ public class FSkeletalMeshVertexBuffer
     public int NumTexCoords;
     public FVector MeshExtension;
     public FVector MeshOrigin;
-    public bool bUseFullPrecisionUVs;
+    public bool bUseFullPrecisionUVs = true;
     public bool bUsePackedPosition;
     public bool bExtraBoneInfluences;
     public FGPUVertHalf[] VertsHalf;
@@ -44,7 +44,7 @@ public class FSkeletalMeshVertexBuffer
         }
         else
         {
-            NumTexCoords = 1;
+            //NumTexCoords = 1;
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedFullPrecisionUV) bUseFullPrecisionUVs = Ar.ReadBoolean();
@@ -61,11 +61,7 @@ public class FSkeletalMeshVertexBuffer
             MeshOrigin = new FVector(Ar);
         }
 
-        if (Ar.Game >= EGame.GAME_UE4_0)
-        {
-            bUsePackedPosition = true;
-        }
-        else
+        if (Ar.Game < EGame.GAME_UE4_0)
         {
             bUsePackedPosition = false;
         }
