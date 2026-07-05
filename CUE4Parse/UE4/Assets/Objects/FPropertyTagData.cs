@@ -128,18 +128,8 @@ public class FPropertyTagData
         Enum = info.Enum;
     }
 
-    public static FPropertyTagData? GetArrayStructType(FAssetArchive Ar, string? name, int elementSize)
+    public static FPropertyTagData? GetArrayStructType(FAssetArchive Ar, string? name)
     {
-        if (name is "Attachments" or "WeaponFireAnim" or "WeaponIdleAnims" && elementSize == 4)
-        {
-        //    return new FPropertyTagData("ObjectProperty", name);
-        }
-
-        if (name == "Points" && elementSize == 4)
-        {
-      //      return new FPropertyTagData("FloatProperty", name);
-        }
-
         var gurt = Ar.StructTypeStack.Peek();
 
         if (((gurt == "AnimNodeAimOffset" || gurt == "UTAnimNodeJumpLeanOffset") && name == "Profiles") || ((gurt == "ReachSpec" || gurt == "AdvancedReachSpec") && name == "End") || ((gurt == "TerrainLayerSetup" || gurt == "InterpTrackFloatMaterialParam" || gurt == "InterpTrackVectorMaterialParam") && name == "Materials") || (gurt == "InterpTrackSound" && name == "Sounds"))
