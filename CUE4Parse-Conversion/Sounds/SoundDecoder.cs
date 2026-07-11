@@ -72,7 +72,7 @@ public static class SoundDecoder
         data = sound.Data.Data[riffOffset..];
 
         var magic = (EChunkIdentifier)BitConverter.ToUInt32(data, 0);
-        audioFormat = magic == EChunkIdentifier.RIFF ? "WEM" : "OGG";
+        audioFormat = "OGG";
 
         data = Decompress(shouldDecompress, ref audioFormat, data);
     }

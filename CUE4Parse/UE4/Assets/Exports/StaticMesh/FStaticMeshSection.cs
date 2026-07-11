@@ -10,23 +10,23 @@ public class FPS3StaticMeshData
 {
     public int[] IoBufferSize;
     public int[] ScratchBufferSize;
-    public short[] CommandBufferHoleSize;
-    public short[] IndexBias;
-    public short[] VertexCount;
-    public short[] TriangleCount;
-    public short[] FirstVertex;
-    public short[] FirstTriangle;
+    public ushort[] CommandBufferHoleSize;
+    public ushort[] IndexBias;
+    public ushort[] VertexCount;
+    public ushort[] TriangleCount;
+    public ushort[] FirstVertex;
+    public ushort[] FirstTriangle;
 
     public FPS3StaticMeshData(FArchive Ar)
     {
         IoBufferSize = Ar.ReadArray<int>();
         ScratchBufferSize = Ar.ReadArray<int>();
-        CommandBufferHoleSize = Ar.ReadArray<short>();
-        IndexBias = Ar.ReadArray<short>();
-        VertexCount = Ar.ReadArray<short>();
-        TriangleCount = Ar.ReadArray<short>();
-        FirstVertex = Ar.ReadArray<short>();
-        FirstTriangle = Ar.ReadArray<short>();
+        CommandBufferHoleSize = Ar.ReadArray<ushort>();
+        IndexBias = Ar.ReadArray<ushort>();
+        VertexCount = Ar.ReadArray<ushort>();
+        TriangleCount = Ar.ReadArray<ushort>();
+        FirstVertex = Ar.ReadArray<ushort>();
+        FirstTriangle = Ar.ReadArray<ushort>();
     }
 }
 
@@ -74,7 +74,7 @@ public class FStaticMeshSection
         else
         {
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERSION_16) MaterialIndex = Ar.Read<int>();
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_FRAGMENTINDEX) Ar.SkipFixedArray(8);
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_FRAGMENTINDEX) Ar.SkipFixedArray(8); // Fragment
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_PLATFORMMESHDATA)
             {
                 var bLoadPlatformData = Ar.ReadFlag();
