@@ -14,9 +14,9 @@ public static class FInstancedStructCustomVersion
         VersionPlusOne,
         LatestVersion = VersionPlusOne - 1
     }
-    
+
     public static readonly FGuid GUID = new(0xE21E1CAA, 0xAF47425E, 0x89BF6AD4, 0x4C44A8BB);
-    
+
     public static Type Get(FArchive Ar)
     {
         var ver = Ar.CustomVer(GUID);
@@ -25,7 +25,7 @@ public static class FInstancedStructCustomVersion
 
         return Ar.Game switch
         {
-            < EGame.GAME_UE5_3 => (Type) (-1),
+            < GAME_UE5_3 => (Type) (-1),
             _ => Type.LatestVersion
         };
     }

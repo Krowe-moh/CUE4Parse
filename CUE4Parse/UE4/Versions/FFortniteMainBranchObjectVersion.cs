@@ -647,64 +647,64 @@ public static class FFortniteMainBranchObjectVersion
 
         // Cooked CPU-side morph target points are now stored internally in the same compressed format as the GPU morph data.
         MorphTargetCookedCPUDataCompressed,
-        
+
         // AnimNext variables converted to references
         AnimNextVariableReferences,
-        
+
         // The default distortion rendering mode used by the Lens Component is now the Lens Distortion Scene View Extension
         LensComponentDefaultToDistortionSVE,
-        
+
         // Animation default blend option changed from Linear to HermiteCubic (aka SmoothStep, ease in / ease out)
         ChangeDefaultAlphaBlendType,
-        
+
         // Moved Position/Velocity/Projection Iteration Counts from FChaosVDFRigidParticleControlFlags to FChaosVDParticleDynamicMisc
         PerParticleIterationCountMovedToDynamicMisc,
-        
+
         // Added missing custom serialization for some properties in the ParticleDynamicMisc structure used by the Chaos Visual Debugger
         AddedMissingSerializationForPropertiesInDynamicMisc,
-        
+
         // Change default value for deprecated bEnableWorldPartitionGenerationSources
         PCGDeprecateWorldPartitionGenerationSources,
-        
+
         // Refactored the composite (plugin) actor scene capture management.
         CompositeActorSceneCaptureRefactor,
-        
+
         // Moved HLOD Layer properties to an editor only optional object
         HLODLayerEditorOnlyObject,
-        
+
         // Deduplicated particle debug names serialization in the Chaos Visual Debugger
         DeduplicatedDebugNameSerializationInCVD,
-        
+
         // Add BloomGaussianIntensity and BloomConvolutionIntensity
         SpecializeBloomIntensity,
-        
+
         // Add support for world partition actor component descriptors
         WorldPartitionActorComponentDesc,
-        
+
         // Migrate Non-Edit layer landscapes to use the edit layer (ULandscapeEditLayer) system
         MigrateLandscapeNonEditLayerToEditLayer,
-        
+
         // FDynamicMeshAttributeSet has Morph Targets.
         DynamicMeshAttributesMorphTargets,
-        
+
         // Introduce landscape advanced weight blending
         LandscapeAdvancedWeightBlending,
-        
+
         // Add support for FastGeo transformer setting assets
         FastGeoTransformerSettingAssets,
-        
+
         // UAF can now generate procedural systems for assets
         UAFProceduralSystems,
-        
+
         // Firefight: version 228 was introduced and backed out, adding it back to allow assets created in the meantime to load
         Firefight_228,
-        
+
         // Add default runtime state to FDataLayerInstanceDes
         WorldPartitionDataLayerDefaultRuntimeState,
-        
+
         // Introducing FGuid to UAF variable entries
         UAFVariablesGuid,
-        
+
         // Introducing FGuid cached to FAnimNext(Soft)VariableReference
         UAFVariableReferenceGUID,
 
@@ -771,7 +771,7 @@ public static class FFortniteMainBranchObjectVersion
         // PCG Graph's Instanced Property Bags now support Hierarchy Editor, post loading existing data into new format
         PCG_PropertyBagHierarchySupport,
 
-        // Introduce per-proxy overridable landscape grass 
+        // Introduce per-proxy overridable landscape grass
         OverridableLandscapeGrassTypes,
 
         // AnimSequenceTransformProviderData now has bounds.
@@ -810,10 +810,10 @@ public static class FFortniteMainBranchObjectVersion
         // Added toggle to show/hide per-pin attribute creation settings on PCG Custom HLSL nodes
         PCGCustomHLSLAttributeCreationSettingsToggle,
 
-        // Converting FPCGMetadataAttribute<T> to Generic attributes. 
+        // Converting FPCGMetadataAttribute<T> to Generic attributes.
         ConvertFPCGMetadataAttributeToGenericAttributes,
 
-        // Merging PCG Metadata Attribute base and Generic ones. 
+        // Merging PCG Metadata Attribute base and Generic ones.
         MergePCGMetadataAttributeBaseAndGeneric,
 
         // AnimSequenceTransformProviderData supports multiple layers
@@ -834,23 +834,23 @@ public static class FFortniteMainBranchObjectVersion
 
         return Ar.Game switch
         {
-              EGame.GAME_Aion2 => Type.WorldPartitionHLODActorDescSerializeSourceHLODLayer,
-            < EGame.GAME_UE4_20 => Type.BeforeCustomVersionWasAdded,
-            < EGame.GAME_UE4_21 => Type.CachedMaterialQualityNodeUsage,
-            < EGame.GAME_UE4_22 => Type.FoliageLazyObjPtrToSoftObjPtr,
-            < EGame.GAME_UE4_23 => Type.FortHUDElementNowRequiresTag,
-            < EGame.GAME_UE4_24 => Type.SupportVirtualBoneInRetargeting,
-            < EGame.GAME_UE4_26 => Type.AnimLayerGuidConformation,
-            < EGame.GAME_UE4_27 => Type.ChaosSolverPropertiesMoved,
-            < EGame.GAME_UE5_0 => Type.RemoveLandscapeWaterInfo,
-            < EGame.GAME_UE5_1 => Type.GravityOverrideDefinedInWorldSpace,
-            < EGame.GAME_UE5_2 => Type.WorldPartitionHLODActorDescSerializeStats,
-            < EGame.GAME_UE5_3 => Type.WorldPartitionHLODActorUseSourceCellGuid,
-            < EGame.GAME_UE5_4 => Type.WaterBodyStaticMeshFixup,
-            < EGame.GAME_UE5_5 => Type.SkeletalHalfEdgeData,
-            < EGame.GAME_UE5_6 => Type.SolverIterationsDataSupportInChaosVisualDebugger,
-            < EGame.GAME_UE5_7 => Type.PCGChangedSurfaceSamplerDefaultGridCreationMode,
-            < EGame.GAME_UE5_8 => Type.LandscapeAdvancedWeightBlending,
+              GAME_Aion2 => Type.WorldPartitionHLODActorDescSerializeSourceHLODLayer,
+            < GAME_UE4_20 => Type.BeforeCustomVersionWasAdded,
+            < GAME_UE4_21 => Type.CachedMaterialQualityNodeUsage,
+            < GAME_UE4_22 => Type.FoliageLazyObjPtrToSoftObjPtr,
+            < GAME_UE4_23 => Type.FortHUDElementNowRequiresTag,
+            < GAME_UE4_24 => Type.SupportVirtualBoneInRetargeting,
+            < GAME_UE4_26 => Type.AnimLayerGuidConformation,
+            < GAME_UE4_27 => Type.ChaosSolverPropertiesMoved,
+            < GAME_UE5_0 => Type.RemoveLandscapeWaterInfo,
+            < GAME_UE5_1 => Type.GravityOverrideDefinedInWorldSpace,
+            < GAME_UE5_2 => Type.WorldPartitionHLODActorDescSerializeStats,
+            < GAME_UE5_3 => Type.WorldPartitionHLODActorUseSourceCellGuid,
+            < GAME_UE5_4 => Type.WaterBodyStaticMeshFixup,
+            < GAME_UE5_5 => Type.SkeletalHalfEdgeData,
+            < GAME_UE5_6 => Type.SolverIterationsDataSupportInChaosVisualDebugger,
+            < GAME_UE5_7 => Type.PCGChangedSurfaceSamplerDefaultGridCreationMode,
+            < GAME_UE5_8 => Type.LandscapeAdvancedWeightBlending,
             _ => Type.LatestVersion
         };
     }

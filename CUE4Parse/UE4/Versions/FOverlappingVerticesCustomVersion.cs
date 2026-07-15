@@ -28,7 +28,7 @@ public static class FOverlappingVerticesCustomVersion
 
         return Ar.Game switch
         {
-            < EGame.GAME_UE4_19 => Type.BeforeCustomVersionWasAdded,
+            < GAME_UE4_19 => Type.BeforeCustomVersionWasAdded,
             _ => Type.LatestVersion
         };
     }

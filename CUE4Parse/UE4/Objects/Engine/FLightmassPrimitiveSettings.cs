@@ -22,7 +22,7 @@ namespace CUE4Parse.UE4.Objects.Engine
             {
                 bUseTwoSidedLighting = Ar.ReadBoolean();
                 bShadowIndirectOnly = Ar.ReadBoolean();
-                if (Ar.Game is EGame.GAME_OutlastTrials) Ar.Position += 4;
+                if (Ar.Game is GAME_OutlastTrials) Ar.Position += 4;
                 FullyOccludedSamplesFraction = Ar.Read<float>();
             }
 

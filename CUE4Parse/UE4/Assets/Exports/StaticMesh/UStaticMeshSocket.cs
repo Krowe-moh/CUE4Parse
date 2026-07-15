@@ -15,7 +15,7 @@ public class UStaticMeshSocket : UObject
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 16;
+        if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 16;
         base.Deserialize(Ar, validPos);
 
         SocketName = GetOrDefault<FName>(nameof(SocketName));

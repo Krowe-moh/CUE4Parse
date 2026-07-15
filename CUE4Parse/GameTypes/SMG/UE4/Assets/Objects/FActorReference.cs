@@ -15,7 +15,7 @@ public class FActorReference : IUStruct
 
     public FActorReference(FAssetArchive Ar)
     {
-        if (Ar.Game >= EGame.GAME_UE4_0)
+        if (Ar.Game >= GAME_UE4_0)
         {
             bIsAlias = Ar.ReadBoolean();
             ActorName = Ar.ReadFString();

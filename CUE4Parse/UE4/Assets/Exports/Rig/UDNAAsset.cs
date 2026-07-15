@@ -56,7 +56,7 @@ public class UDNAAsset : UObject
                 if (!eof.SequenceEqual(_eof))
                     throw new InvalidDataException("Invalid end of file signature");
 
-                if (Ar.Game == EGame.GAME_ArenaBreakoutInfinite)
+                if (Ar.Game == GAME_ArenaBreakoutInfinite)
                     return;
             }
             else if (Version.FileVersion >= FileVersion.v26)

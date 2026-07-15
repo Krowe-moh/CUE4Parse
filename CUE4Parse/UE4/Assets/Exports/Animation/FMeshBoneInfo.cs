@@ -17,7 +17,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
         public FMeshBoneInfo(FAssetArchive Ar)
         {
             Name = Ar.ReadFName();
-            if (Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Game < GAME_UE4_0)
             {
                 Ar.Read<int>(); // reserved Flags
                 BonePos = new VJointPosPsk(Ar);

@@ -75,12 +75,12 @@ public readonly struct FPrecomputedVisibilityHandler : IUStruct
         PrecomputedVisibilityCellBucketSizeXY = Ar.Read<int>();
         PrecomputedVisibilityNumCellBuckets = Ar.Read<int>();
         PrecomputedVisibilityCellBuckets = Ar.ReadArray(() => new FPrecomputedVisibilityBucket(Ar));
-        if (Ar.Game is EGame.GAME_IntotheRadius2)
+        if (Ar.Game is GAME_IntotheRadius2)
         {
             _ = Ar.ReadArray(() => new FCompressedVisibilityChunk(Ar));
             Ar.Position += 57;
         }
-        else if (Ar.Game is EGame.GAME_TheDivisionResurgence)
+        else if (Ar.Game is GAME_TheDivisionResurgence)
         {
             Ar.SkipFixedArray(8);
             _ = Ar.ReadArray(() => new FPrecomputedVisibilityBucket(Ar));
@@ -236,7 +236,7 @@ public class ULevel : Assets.Exports.UObject
         WorldDataLayers = GetOrDefault(nameof(WorldDataLayers), new FPackageIndex());
         WorldPartitionRuntimeCell = GetOrDefault<FSoftObjectPath>(nameof(WorldPartitionRuntimeCell));
 
-        if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 16;
+        if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 16;
         if (Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject) || Ar.Position >= validPos) return;
         if (FReleaseObjectVersion.Get(Ar) < FReleaseObjectVersion.Type.LevelTransArrayConvertedToTArray) Ar.Position += 4;
         Actors = Ar.ReadArray(() => new FPackageIndex(Ar));
@@ -249,7 +249,7 @@ public class ULevel : Assets.Exports.UObject
             Ar.ReadArray(() => new FPackageIndex(Ar)); // GameSequences
         }
 
-        if (Ar.Game >= EGame.GAME_UE4_0)
+        if (Ar.Game >= GAME_UE4_0)
         {
             LevelScriptActor = new FPackageIndex(Ar);
         }
@@ -273,14 +273,14 @@ public class ULevel : Assets.Exports.UObject
                 }
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICTEXTUREINSTANCES && Ar.Game is not EGame.GAME_Dishonored)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DYNAMICTEXTUREINSTANCES && Ar.Game is not GAME_Dishonored)
             {
                 Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadArray(() => new FDynamicTextureInstance(Ar))); // DynamicTextureInstances
             }
 
             var bIsCooked = Ar.Ver >= EUnrealEngineObjectUE4Version.REBUILD_TEXTURE_STREAMING_DATA_ON_LOAD && Ar.ReadBoolean();
 
-            if (Ar.Game >= EGame.GAME_UE4_0 && Ar.Ver < EUnrealEngineObjectUE4Version.REBUILD_TEXTURE_STREAMING_DATA_ON_LOAD)
+            if (Ar.Game >= GAME_UE4_0 && Ar.Ver < EUnrealEngineObjectUE4Version.REBUILD_TEXTURE_STREAMING_DATA_ON_LOAD)
             {
                 Ar.ReadBoolean();
             }
@@ -290,24 +290,24 @@ public class ULevel : Assets.Exports.UObject
                 Ar.ReadArray<byte>();
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOOK_PHYS_BSP_TERRAIN && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOOK_PHYS_BSP_TERRAIN && Ar.Game < GAME_UE4_0)
             {
                 Ar.ReadBulkArray<byte>(); // CachedPhysBSPData
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOOK_PHYS_STATICMESH_CACHE && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOOK_PHYS_STATICMESH_CACHE && Ar.Game < GAME_UE4_0)
             {
                 Ar.ReadMap(() => new FPackageIndex(Ar), () => new FCachedPhysSMData(Ar)); // CachedPhysSMDataMap
                 Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>())); // CachedPhysSMDataStore
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOOK_PERTRI_PHYS_STATICMESH && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOOK_PERTRI_PHYS_STATICMESH && Ar.Game < GAME_UE4_0)
             {
                 Ar.ReadMap(() => new FPackageIndex(Ar), () => new FCachedPhysSMData(Ar)); // CachedPhysSMDataMap
                 Ar.ReadArray(() => Ar.ReadBulkArray<byte>()); // CachedPhysPerTriSMDataStore
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.SAVE_PRECOOK_PHYS_VERSION && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.SAVE_PRECOOK_PHYS_VERSION && Ar.Game < GAME_UE4_0)
             {
                 Ar.Read<int>(); // CachedPhysBSPDataVersion
                 Ar.Read<int>(); // CachedPhysSMDataVersion
@@ -318,7 +318,7 @@ public class ULevel : Assets.Exports.UObject
                 Ar.ReadMap(() => new FPackageIndex(Ar), () => Ar.ReadBoolean()); // ForceStreamTextures
             }
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.CONVEX_BSP && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.CONVEX_BSP && Ar.Game < GAME_UE4_0)
             {
                 Ar.ReadArray(() => Ar.ReadArray(() => Ar.ReadBulkArray<byte>())); // CachedPhysConvexBSPData
                 Ar.Read<int>(); // CachedPhysConvexBSPVersion
@@ -339,7 +339,7 @@ public class ULevel : Assets.Exports.UObject
                 new FPackageIndex(Ar); // LegacyPylonListEnd
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.COVERGUIDREFS_IN_ULEVEL && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.COVERGUIDREFS_IN_ULEVEL && Ar.Game < GAME_UE4_0)
             {
                 Ar.ReadMap(Ar.Read<FGuid>, Ar.Read<int>); // CrossLevelCoverGuidRefs
                 Ar.ReadArray(() => new FPackageIndex(Ar)); // CoverLinkRefs
@@ -349,13 +349,13 @@ public class ULevel : Assets.Exports.UObject
             Ar.ReadArray(() => new FPackageIndex(Ar)); // CrossLevelActors
         }
 
-        if (Ar.Game == EGame.GAME_MetroAwakening && GetOrDefault<bool>("bIsLightingScenario")) return;
+        if (Ar.Game == GAME_MetroAwakening && GetOrDefault<bool>("bIsLightingScenario")) return;
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.GI_CHARACTER_LIGHTING && FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.MapBuildDataSeparatePackage)
         {
             _ = new FPrecomputedLightVolumeData(Ar, false);
         }
 
-        if (Ar.Game == EGame.GAME_OutlastTrials)
+        if (Ar.Game == GAME_OutlastTrials)
         {
             PrecomputedVolumeDistanceField = new FPrecomputedVolumeDistanceField(Ar);
             return;
@@ -365,14 +365,14 @@ public class ULevel : Assets.Exports.UObject
         {
             PrecomputedVisibilityHandler = new FPrecomputedVisibilityHandler(Ar);
         }
-        else if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOMPUTED_VISIBILITY && Ar.Game < EGame.GAME_UE4_0)
+        else if (Ar.Ver >= EUnrealEngineObjectUE3Version.PRECOMPUTED_VISIBILITY && Ar.Game < GAME_UE4_0)
         {
             new FBox(Ar); // LegacyPrecomputedVisibilityVolume
             Ar.Read<float>(); // LegacyPrecomputedVisibilityCellSize
             Ar.ReadArray(() => Ar.ReadArray<byte>()); // LegacyPrecomputedVisibilityData
         }
 
-        if (Ar.Game is EGame.GAME_Dishonored) return;
+        if (Ar.Game is GAME_Dishonored) return;
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.IMAGE_REFLECTION_SHADOWING)
         {
             PrecomputedVolumeDistanceField = new FPrecomputedVolumeDistanceField(Ar);

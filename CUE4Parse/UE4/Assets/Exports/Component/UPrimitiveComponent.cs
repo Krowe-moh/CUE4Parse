@@ -9,7 +9,7 @@ public class UPrimitiveComponent : USceneComponent
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 16;
+        if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 16;
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedComponentGuid && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_COMPONENT_GUID)
         {
             Ar.Position += 16; // Guid

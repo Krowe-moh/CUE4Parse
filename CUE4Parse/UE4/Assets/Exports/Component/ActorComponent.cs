@@ -28,8 +28,8 @@ public class UActorComponent : UComponent
         if (Ar.Position == validPos) // I think after validpos all read default to dummy data 000000s
             return;
 
-        if (Ar.Game is EGame.GAME_SuicideSquad) Ar.Position += 4;
-        if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 16;
+        if (Ar.Game is GAME_SuicideSquad) Ar.Position += 4;
+        if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 16;
 
         if (FFortniteReleaseBranchCustomObjectVersion.Get(Ar) >= FFortniteReleaseBranchCustomObjectVersion.Type.ActorComponentUCSModifiedPropertiesSparseStorage)
         {
@@ -156,7 +156,7 @@ public class UBrushComponent : UPrimitiveComponent
         Brush = GetOrDefault(nameof(Brush), new FPackageIndex());
         BrushBodySetup = GetOrDefault(nameof(BrushBodySetup), new FPackageIndex());
 
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < GAME_UE4_0)
         {
             Ar.ReadArray(() => Ar.ReadBulkArray<byte>()); // CachedPhysBrushData
         }
@@ -343,7 +343,7 @@ public class UTerrainComponent : UPrimitiveComponent
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < GAME_UE4_0)
         {
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.TERRAIN_COLLISION)
             {
@@ -404,7 +404,7 @@ public class UParticleSystemComponent : UFXSystemComponent
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 16;
+        if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 16;
         base.Deserialize(Ar, validPos);
     }
 }
@@ -413,7 +413,7 @@ public class UParticleSystem : UObject
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if(Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 8;
+        if(Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 8;
         base.Deserialize(Ar, validPos);
     }
 }
@@ -474,7 +474,7 @@ public class USpeedTreeComponent : UPrimitiveComponent
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SPEEDTREE_STATICLIGHTING && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SPEEDTREE_STATICLIGHTING && Ar.Game < GAME_UE4_0)
         {
             FLightMap? BranchAndFrondLightMap = Ar.Read<ELightMapType>() switch
             {
@@ -546,7 +546,7 @@ public class UFracturedSkinnedMeshComponent : UStaticMeshComponent
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < GAME_UE4_0)
         {
             new UStaticMeshComponent().Deserialize(Ar, validPos);
         }

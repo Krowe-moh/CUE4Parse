@@ -44,7 +44,7 @@ namespace CUE4Parse.UE4.Readers
 
         public bool SupportPartialReads => Game switch
         {
-            EGame.GAME_GameForPeace or EGame.GAME_Rennsport or EGame.GAME_DragonQuestXI => false,
+            GAME_GameForPeace or GAME_Rennsport or GAME_DragonQuestXI => false,
             _ => true,
         };
 
@@ -107,7 +107,7 @@ namespace CUE4Parse.UE4.Readers
             var size = Unsafe.SizeOf<T>();
             var readLength = size * length;
             CheckReadSize(readLength);
-            
+
             var buffer = ReadBytes(readLength);
             var result = new T[length];
             if (length > 0) Unsafe.CopyBlockUnaligned(ref Unsafe.As<T, byte>(ref result[0]), ref buffer[0], (uint)(readLength));
@@ -129,7 +129,7 @@ namespace CUE4Parse.UE4.Readers
         {
             Versions = versions ?? new VersionContainer();
         }
-        
+
         public override void Flush() { }
         public override bool CanRead { get; } = true;
         public override bool CanWrite { get; } = false;
@@ -196,14 +196,14 @@ namespace CUE4Parse.UE4.Readers
         {
             var pos = Position;
             T[] array = ReadArray(elementCount, getter);
-            if (Game != EGame.GAME_HogwartsLegacy && Position != pos + array.Length * elementSize)
+            if (Game != GAME_HogwartsLegacy && Position != pos + array.Length * elementSize)
                 throw new ParserException($"RawArray item size mismatch: expected {elementSize}, serialized {(Position - pos) / array.Length}");
             return array;
         }
 
         public T[] ReadBulkArray<T>() where T : struct
         {
-            if (Game == EGame.GAME_AvaGlobal && Ver >= EUnrealEngineObjectUE3Version.SHARED_SHADER_PARAMS) goto elementsize;
+            if (Game == GAME_AvaGlobal && Ver >= EUnrealEngineObjectUE3Version.SHARED_SHADER_PARAMS) goto elementsize;
             if (Ver < EUnrealEngineObjectUE3Version.ADDED_BULKSERIALIZE_SANITY_CHECKING)
             {
                 return ReadArray<T>();
@@ -804,8 +804,8 @@ namespace CUE4Parse.UE4.Readers
 
             public FCompressedChunkInfo(FArchive Ar)
             {
-                CompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : Ar.Read<long>();
-                UncompressedSize = Ar.Game < EGame.GAME_UE4_0 ? Ar.Read<uint>() : Ar.Read<long>();
+                CompressedSize = Ar.Game < GAME_UE4_0 ? Ar.Read<uint>() : Ar.Read<long>();
+                UncompressedSize = Ar.Game < GAME_UE4_0 ? Ar.Read<uint>() : Ar.Read<long>();
             }
         }
     }

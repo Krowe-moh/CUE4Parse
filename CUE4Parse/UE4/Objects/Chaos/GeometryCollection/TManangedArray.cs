@@ -61,7 +61,7 @@ public class TManangedArray : FManagedArrayBase
                     SerializeAsBulk<bool>(Ar);
                 break;
             case EManagedArrayType.FBoxType:
-                if (Ar.Game == EGame.GAME_MarvelRivals)
+                if (Ar.Game == GAME_MarvelRivals)
                     Serialize<FBox>(Ar);
                 else
                     Serialize(Ar, () => new FBox(Ar));

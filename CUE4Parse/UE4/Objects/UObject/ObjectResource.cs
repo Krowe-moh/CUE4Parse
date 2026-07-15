@@ -248,7 +248,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         public FObjectExport(FAssetArchive Ar)
         {
             var AA3Obfuscator = 0;
-            if (Ar.Game == EGame.GAME_AmericanArmy3)
+            if (Ar.Game == GAME_AmericanArmy3)
             {
                 AA3Obfuscator = Ar.Read<int>();
                 ClassIndex = new FPackageIndex(Ar.Owner, Ar.Read<int>() ^ AA3Obfuscator);
@@ -268,7 +268,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 new FPackageIndex(Ar); // Archetype
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag && Ar.Game < GAME_UE4_0)
             {
                 ObjectFlagsLegacy = Ar.Read<ulong>();
             }
@@ -281,7 +281,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 SerialSize = Ar.CheckAndReadCompactIndex();
 
-                if (Ar.Game == EGame.GAME_RocketLeague && (int)Ar.LicenseeVer > 22)
+                if (Ar.Game == GAME_RocketLeague && (int)Ar.LicenseeVer > 22)
                 {
                     SerialOffset = Ar.Read<long>();
                 }
@@ -296,13 +296,13 @@ namespace CUE4Parse.UE4.Objects.UObject
                 SerialOffset = Ar.Read<long>();
             }
 
-            if (Ar.Game == EGame.GAME_AmericanArmy3)
+            if (Ar.Game == GAME_AmericanArmy3)
             {
                 SerialSize   ^= AA3Obfuscator;
                 SerialOffset ^= AA3Obfuscator;
             }
 
-            if (Ar.Game >= EGame.GAME_UE4_0)
+            if (Ar.Game >= GAME_UE4_0)
             {
                 ForcedExport = Ar.ReadBoolean();
                 NotForClient = Ar.ReadBoolean();
@@ -314,7 +314,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 var LegacyComponentMap = Ar.ReadMap(() => Ar.ReadFName(), () => new FPackageIndex(Ar));
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.FOBJECTEXPORT_EXPORTFLAGS && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.FOBJECTEXPORT_EXPORTFLAGS && Ar.Game < GAME_UE4_0)
             {
                 Ar.Read<int>(); // ExportFlags
             }
@@ -438,7 +438,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 PackageName = Ar.ReadFName();
             }
 
-            if (Ar.Game == EGame.GAME_RacingMaster) Ar.Position += 1;
+            if (Ar.Game == GAME_RacingMaster) Ar.Position += 1;
 
             ImportOptional = Ar.Ver >= EUnrealEngineObjectUE5Version.OPTIONAL_RESOURCES && Ar.ReadBoolean();
         }

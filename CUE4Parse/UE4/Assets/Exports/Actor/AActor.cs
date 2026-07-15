@@ -20,7 +20,7 @@ public class AActor : UObject
         // not sure why, but very rarely it overreads for CDO, maybe related to SparseClassDataStructSerialization
         // doesn't matter so return early in this case
         if (Ar.Position >= validPos) return;
-        if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 24;
+        if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 24;
         if (FUE5SpecialProjectStreamObjectVersion.Get(Ar) >= FUE5SpecialProjectStreamObjectVersion.Type.SerializeActorLabelInCookedBuilds)
         {
             bIsCooked = Ar.ReadBoolean();
@@ -383,8 +383,9 @@ public class AStaticMeshCollectionActor : AStaticMeshActorBase
         StaticMeshComponents = GetOrDefault<FPackageIndex[]>(nameof(StaticMeshComponents), []);
 
         WorldMatrix = new FMatrix[StaticMeshComponents.Length];
+        // "LoadForClient | LoadForServer | LoadForEdit" == missing
         for (int i = 0; i < StaticMeshComponents.Length; i++)
-        {
+        { // !HasAnyFlags(RF_ClassDefaultObject) if remaining check flag
             WorldMatrix[i] = new FMatrix(Ar);
         }
     }
@@ -476,7 +477,7 @@ public class AWorldSettings : AInfo
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 20;
+        if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 20;
         base.Deserialize(Ar, validPos);
 
         WorldPartition = GetOrDefault(nameof(WorldPartition), new FPackageIndex());

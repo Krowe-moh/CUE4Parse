@@ -17,7 +17,7 @@ public struct FBonePose
 
     public FBonePose(FMutableArchive Ar)
     {
-        if (Ar.Game < EGame.GAME_UE5_5) Version = Ar.Read<int>();
+        if (Ar.Game < GAME_UE5_5) Version = Ar.Read<int>();
 
         if (Version <= 1)
         {
@@ -52,5 +52,5 @@ public enum EBoneUsageFlags : uint
     PhysicsParent  = 1 << 5,
     Deform         = 1 << 6,
     DeformParent   = 1 << 7,
-    Reshaped       = 1 << 8	
+    Reshaped       = 1 << 8
 }

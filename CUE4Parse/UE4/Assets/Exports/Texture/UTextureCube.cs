@@ -32,7 +32,7 @@ public class UTextureCube : UTexture
             var numMips = Ar.Read<int>();
         }
 
-        if (Ar.Game < EGame.GAME_UE4_0) return; // Nothing left
+        if (Ar.Game < GAME_UE4_0) return; // Nothing left
         var stripFlags = new FStripDataFlags(Ar);
         var bCooked = Ar.ReadBoolean();
 

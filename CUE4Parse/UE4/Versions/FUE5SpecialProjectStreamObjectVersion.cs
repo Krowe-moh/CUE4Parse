@@ -53,8 +53,8 @@ public static class FUE5SpecialProjectStreamObjectVersion
 
         return Ar.Game switch
         {
-            < EGame.GAME_UE5_0 => Type.BeforeCustomVersionWasAdded,
-            < EGame.GAME_UE5_6 => Type.StripMorphTargetSourceDataForCookedBuilds,
+            < GAME_UE5_0 => Type.BeforeCustomVersionWasAdded,
+            < GAME_UE5_6 => Type.StripMorphTargetSourceDataForCookedBuilds,
             _ => Type.LatestVersion
         };
     }

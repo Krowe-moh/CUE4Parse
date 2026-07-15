@@ -40,7 +40,7 @@ public class USoundNodeWave : UObject
         }
         else
         {
-            if (Ar.Game == EGame.GAME_APBReloaded)
+            if (Ar.Game == GAME_APBReloaded)
             {
                 Ar.Position += 8; // Bulkdata header
             }
@@ -65,7 +65,7 @@ public class USoundNodeWave : UObject
                 PCSound = new FByteBulkData(Ar);
             }
 
-            if (Ar.Game == EGame.GAME_SuddenAttack2) return; // Only pc audio
+            if (Ar.Game == GAME_SuddenAttack2) return; // Only pc audio
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_CACHED_COOKED_XBOX360_DATA)
             {
@@ -93,7 +93,7 @@ public class USoundNodeWave : UObject
             }
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_SOUNDNODEWAVE_GUID && Ar.Game is not EGame.GAME_APBReloaded)
+        if (Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_SOUNDNODEWAVE_GUID && Ar.Game is not GAME_APBReloaded)
         {
             Ar.Read<FGuid>(); // CompressedDataGuid
         }

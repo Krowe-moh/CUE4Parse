@@ -124,7 +124,7 @@ namespace CUE4Parse.FileProvider
                     }
                 }
 
-                if (Versions.Game is EGame.GAME_Back4Blood)
+                if (Versions.Game is GAME_Back4Blood)
                     _gameDisplayName = "Back 4 Blood"; // They left is as LDTEXT("TEXT_UI_GameTitle")
 
                 return _gameDisplayName;
@@ -161,7 +161,7 @@ namespace CUE4Parse.FileProvider
                 !collection.TryGetValue(fixedPath.SubstringBeforeWithLast('.') + GameFile.UePackageExtensions[1], out file) && // umap
                 !collection.TryGetValue(path, out file)) // in case FixPath broke something
             {
-                if (Versions.Game >= EGame.GAME_UE4_0)
+                if (Versions.Game >= GAME_UE4_0)
                 {
                     file = null;
                 }
@@ -503,7 +503,7 @@ namespace CUE4Parse.FileProvider
             // This part is only for FSoftObjectPaths and not really needed anymore internally, but it's still in here for user input
             if (lastPart.Contains('.') && lastPart.SubstringBefore('.') == lastPart.SubstringAfter('.'))
                 path = string.Concat(path.SubstringBeforeWithLast('/'), lastPart.SubstringBefore('.'));
-            if (path[^1] != '/' && !lastPart.Contains('.') && Versions.Game >= EGame.GAME_UE4_0)
+            if (path[^1] != '/' && !lastPart.Contains('.') && Versions.Game >= GAME_UE4_0)
                 path += "." + GameFile.UePackageExtensions[0]; // uasset
 
             var ret = path;
@@ -688,7 +688,7 @@ namespace CUE4Parse.FileProvider
         public IReadOnlyDictionary<string, byte[]> SavePackage(string path) => SavePackage(this[path]);
         public IReadOnlyDictionary<string, byte[]> SavePackage(GameFile file)
         {
-            if (Versions.Game < EGame.GAME_UE4_0)
+            if (Versions.Game < GAME_UE4_0)
             {
                 if (file.IsUePackage)
                 {

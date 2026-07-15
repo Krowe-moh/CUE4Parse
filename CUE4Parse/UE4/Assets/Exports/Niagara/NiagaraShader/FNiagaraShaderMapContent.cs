@@ -14,7 +14,7 @@ public class FNiagaraShaderMapContent : FShaderMapContent
     {
         base.Deserialize(Ar);
 
-        if (Ar.Game < EGame.GAME_UE5_4)
+        if (Ar.Game < GAME_UE5_4)
         {
             FriendlyName = Ar.ReadFString();
             DebugDescription = Ar.ReadFString();

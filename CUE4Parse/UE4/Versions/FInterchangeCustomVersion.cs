@@ -12,12 +12,12 @@ public static class FInterchangeCustomVersion
         BeforeCustomVersionWasAdded = 0,
 
         SerializedInterchangeObjectStoring,
-        
+
         MultipleAllocationsPerAttributeInStorage,
-        
+
         // The change that implemented the previous version had to be backed out to fix a serialization issue
         MultipleAllocationsPerAttributeInStorageFixed,
-            
+
         // -----<new versions can be added above this line>-------------------------------------------------
         VersionPlusOne,
         LatestVersion = VersionPlusOne - 1
@@ -33,8 +33,8 @@ public static class FInterchangeCustomVersion
 
         return Ar.Game switch
         {
-            < EGame.GAME_UE5_2 => Type.BeforeCustomVersionWasAdded,
-            < EGame.GAME_UE5_7 => Type.SerializedInterchangeObjectStoring,
+            < GAME_UE5_2 => Type.BeforeCustomVersionWasAdded,
+            < GAME_UE5_7 => Type.SerializedInterchangeObjectStoring,
             _ => Type.LatestVersion
         };
     }

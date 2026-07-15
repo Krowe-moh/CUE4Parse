@@ -54,14 +54,14 @@ public class FSkeletalMeshVertexBuffer
             bExtraBoneInfluences = Ar.ReadBoolean();
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELETAL_MESH_SUPPORT_PACKED_POSITION && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELETAL_MESH_SUPPORT_PACKED_POSITION && Ar.Game < GAME_UE4_0)
         {
             bUsePackedPosition = Ar.ReadBoolean();
             MeshExtension = new FVector(Ar);
             MeshOrigin = new FVector(Ar);
         }
 
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < GAME_UE4_0)
         {
             bUsePackedPosition = false;
         }

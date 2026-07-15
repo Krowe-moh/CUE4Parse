@@ -20,7 +20,7 @@ public class UFunction : UStruct
             Ar.Read<short>(); // ParmsSize
         }
 
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < GAME_UE4_0)
         {
             Ar.Read<short>(); // iNative
 
@@ -38,7 +38,7 @@ public class UFunction : UStruct
         }
 
         FunctionFlags = Ar.Read<EFunctionFlags>();
-        if (Ar.Game is EGame.GAME_AshesOfCreation or EGame.GAME_RocketLeague) Ar.Position += 4;
+        if (Ar.Game is GAME_AshesOfCreation or GAME_RocketLeague) Ar.Position += 4;
 
         // Replication info
         if (FunctionFlags.HasFlag(EFunctionFlags.FUNC_Net))
@@ -47,7 +47,7 @@ public class UFunction : UStruct
             var RepOffset = Ar.Read<short>();
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction && Ar.Game < GAME_UE4_0)
         {
             Ar.ReadFName(); // FriendlyName
         }

@@ -19,7 +19,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             ArrayDim = Ar.Read<int>();
             PropertyFlags = Ar.Ver >= EUnrealEngineObjectUE3Version.PropertyFlagsSizeExpandedTo64Bits ? Ar.Read<EPropertyFlags>() : (EPropertyFlags) Ar.Read<uint>();
 
-            if ((validPos - Ar.Position) >= 12 || (Ar.Ver < EUnrealEngineObjectUE3Version.DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES && (validPos - Ar.Position) >= 8) || (Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform == ETexturePlatform.XboxAndPlaystation4 || Ar.Game >= EGame.GAME_UE4_0) && Ar.Ver < EUnrealEngineObjectUE4Version.CATEGORY_MOVED_TO_METADATA)
+            if ((validPos - Ar.Position) >= 12 || (Ar.Ver < EUnrealEngineObjectUE3Version.DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES && (validPos - Ar.Position) >= 8) || (Ar.Owner.Summary.PackageFlags.HasFlag(EPackageFlags.PKG_Cooked) && Ar.Platform == ETexturePlatform.XboxAndPlaystation4 || Ar.Game >= GAME_UE4_0) && Ar.Ver < EUnrealEngineObjectUE4Version.CATEGORY_MOVED_TO_METADATA)
             {
                 Ar.ReadFName(); // CategoryName
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_DISABLED_UNLIT_MATERIALS_SKELETAL_MESHES)
@@ -28,14 +28,14 @@ namespace CUE4Parse.UE4.Objects.UObject
                 }
             }
 
-            if (PropertyFlags.HasFlag(EPropertyFlags.Net) && Ar.Game < EGame.GAME_UE4_0)
+            if (PropertyFlags.HasFlag(EPropertyFlags.Net) && Ar.Game < GAME_UE4_0)
             {
                 Ar.Read<ushort>(); // RepOffset
             }
 
-            if (Ar.Game == EGame.GAME_RocketLeague && (int)Ar.LicenseeVer > 10) _ = Ar.ReadFString(); // ObjectName
+            if (Ar.Game == GAME_RocketLeague && (int)Ar.LicenseeVer > 10) _ = Ar.ReadFString(); // ObjectName
 
-            if (Ar.Game >= EGame.GAME_UE4_0)
+            if (Ar.Game >= GAME_UE4_0)
             {
                 RepNotifyFunc = Ar.ReadFName();
             }
@@ -164,7 +164,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
-            if (Ar.Game == EGame.GAME_RocketLeague)
+            if (Ar.Game == GAME_RocketLeague)
             {
                 Ar.ReadFName(); // unknown
             }
@@ -246,7 +246,7 @@ namespace CUE4Parse.UE4.Objects.UObject
         {
             base.Deserialize(Ar, validPos);
             InterfaceClass = new FPackageIndex(Ar);
-            if (Ar.Game == EGame.GAME_RocketLeague)
+            if (Ar.Game == GAME_RocketLeague)
             {
                 Ar.ReadFName(); // unknown
             }
@@ -356,7 +356,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             base.Deserialize(Ar, validPos);
             SignatureFunction = new FPackageIndex(Ar);
 
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedDelegateSourceToUDelegateProperty && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedDelegateSourceToUDelegateProperty && Ar.Game < GAME_UE4_0)
             {
                 if (Ar.Ver < EUnrealEngineObjectUE3Version.ADDED_UExPORTER_PREFFERED_FORMAT)
                 {

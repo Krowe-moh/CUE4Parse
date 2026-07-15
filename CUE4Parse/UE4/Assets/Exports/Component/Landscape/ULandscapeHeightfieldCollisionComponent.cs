@@ -8,7 +8,7 @@ public class ULandscapeHeightfieldCollisionComponent : USceneComponent
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < GAME_UE4_0)
         {
             new UPrimitiveComponent().Deserialize(Ar, validPos);
         }
@@ -16,9 +16,9 @@ public class ULandscapeHeightfieldCollisionComponent : USceneComponent
         {
             base.Deserialize(Ar, validPos);
         }
-        if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 16;
+        if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 16;
 
-        if (Ar.Ver < EUnrealEngineObjectUE4Version.LANDSCAPE_COLLISION_DATA_COOKING && (Ar.IsFilterEditorOnly || Ar.Game < EGame.GAME_UE4_0))
+        if (Ar.Ver < EUnrealEngineObjectUE4Version.LANDSCAPE_COLLISION_DATA_COOKING && (Ar.IsFilterEditorOnly || Ar.Game < GAME_UE4_0))
         {
             new FWordBulkData(Ar); // CollisionHeightData
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.LANDSCAPE_PHYS_MATERIALS)
@@ -31,8 +31,8 @@ public class ULandscapeHeightfieldCollisionComponent : USceneComponent
             var bCooked = Ar.ReadBoolean();
             if (bCooked)
             {
-                if (Ar.Game >= EGame.GAME_UE4_14)
-                    if (Ar.Game == EGame.GAME_PlayerUnknownsBattlegrounds)
+                if (Ar.Game >= GAME_UE4_14)
+                    if (Ar.Game == GAME_PlayerUnknownsBattlegrounds)
                         _ = new FByteBulkData(Ar);
                     else
                         Ar.SkipBulkArrayData(); // CookedCollisionData

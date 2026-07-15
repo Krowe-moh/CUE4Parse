@@ -150,7 +150,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Tag == PACKAGE_FILE_TAG_ONE) // SOD2, "one"
             {
-                Ar.Game = EGame.GAME_StateOfDecay2;
+                Ar.Game = GAME_StateOfDecay2;
                 Ar.Ver = Ar.Game.GetVersion();
                 legacyFileVersion = Ar.Read<int>(); // seems to be always int.MinValue
                 bUnversioned = true;
@@ -168,7 +168,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 throw new ParserException($"Invalid uasset magic: 0x{Tag:X8} != 0x{PACKAGE_FILE_TAG:X8}");
             }
 
-            if (Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Game < GAME_UE4_0)
             {
                 var possibleTag = Ar.Read<uint>();
                 Ar.Position -= 4;
@@ -185,12 +185,12 @@ namespace CUE4Parse.UE4.Objects.UObject
             Ar.Position = 4;
 
             legacyFileVersion = Ar.Read<int>();
-            if (Ar.Game == EGame.GAME_MortalRoyale)
+            if (Ar.Game == GAME_MortalRoyale)
             {
                 legacyFileVersion = (short)legacyFileVersion;
                 Ar.Position += 4;
             }
-            if (Ar.Game == EGame.GAME_DeltaForce) legacyFileVersion /= 659;
+            if (Ar.Game == GAME_DeltaForce) legacyFileVersion /= 659;
 
             if (legacyFileVersion < 0) // means we have modern version numbers
             {
@@ -200,7 +200,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 }
 
                 FileVersionUE.FileVersionUE4 = Ar.Read<int>();
-                if (Ar.Game == EGame.GAME_DaysGone) FileVersionUE.FileVersionUE4 = 498;
+                if (Ar.Game == GAME_DaysGone) FileVersionUE.FileVersionUE4 = 498;
 
                 if (legacyFileVersion <= -8)
                 {
@@ -257,7 +257,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 FileVersionLicenseeUE = (EUnrealEngineObjectLicenseeUEVersion)(legacyFileVersion >> 16);
                 legacyFileVersion &= 0xFFFF;
-                if (Ar.Game == EGame.GAME_DirtyBomb) legacyFileVersion = 840;
+                if (Ar.Game == GAME_DirtyBomb) legacyFileVersion = 840;
                 FileVersionUE.FileVersionUE3 = legacyFileVersion;
                 Ar.Ver = FileVersionUE;
                 Ar.LicenseeVer = FileVersionLicenseeUE;
@@ -307,7 +307,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             ExportCount = Ar.Read<int>();
             ExportOffset = Ar.Read<int>();
 
-            if (Ar.Game == EGame.GAME_APBReloaded)
+            if (Ar.Game == GAME_APBReloaded)
             {
                 if ((int)FileVersionLicenseeUE > 29) Ar.Read<int>();
                 if ((int) FileVersionLicenseeUE > 28)
@@ -354,7 +354,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 SearchableNamesOffset = Ar.Read<int>();
             }
 
-            if (FileVersionUE >= EUnrealEngineObjectUE3Version.ADDED_CROSSLEVEL_REFERENCES && Ar.Game < EGame.GAME_UE4_0)
+            if (FileVersionUE >= EUnrealEngineObjectUE3Version.ADDED_CROSSLEVEL_REFERENCES && Ar.Game < GAME_UE4_0)
             {
                 ImportExportGuidsOffset = Ar.Read<int>();
                 ImportGuidsCount = Ar.Read<int>();
@@ -366,7 +366,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 ThumbnailTableOffset = Ar.Read<int>();
             }
 
-            if (FileVersionUE >= EUnrealEngineObjectUE5Version.IMPORT_TYPE_HIERARCHIES || Ar.Game is EGame.GAME_DeltaForce)
+            if (FileVersionUE >= EUnrealEngineObjectUE5Version.IMPORT_TYPE_HIERARCHIES || Ar.Game is GAME_DeltaForce)
             {
                 ImportTypeHierarchiesCount = Ar.Read<int>();
                 ImportTypeHierarchiesOffset = Ar.Read<int>();
@@ -382,7 +382,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Guid = Ar.Read<FGuid>();
             }
 
-            if (Ar.Game is EGame.GAME_Valorant_PRE_11_2 or EGame.GAME_HYENAS) Ar.Position += 8;
+            if (Ar.Game is GAME_Valorant_PRE_11_2 or GAME_HYENAS) Ar.Position += 8;
 
             if (!PackageFlags.HasFlag(EPackageFlags.PKG_FilterEditorOnly))
             {
@@ -405,7 +405,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             var Count = Ar.Read<int>();
 
-            if (Ar.Game == EGame.GAME_APBReloaded && (int)FileVersionLicenseeUE > 32)
+            if (Ar.Game == GAME_APBReloaded && (int)FileVersionLicenseeUE > 32)
             {
                 Ar.Read<FGuid>();
             }
@@ -417,7 +417,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 SavedByEngineVersion = new FEngineVersion(Ar);
                 FixCorruptEngineVersion(FileVersionUE, SavedByEngineVersion);
             }
-            else if (Ar.Game >= EGame.GAME_UE4_0)
+            else if (Ar.Game >= GAME_UE4_0)
             {
                 var engineChangelist = Ar.Read<int>();
 
@@ -473,7 +473,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 PackageSource = Ar.Read<int>();
             }
 
-            if (Ar.Game == EGame.GAME_ArkSurvivalEvolved && (int)FileVersionLicenseeUE >= 10)
+            if (Ar.Game == GAME_ArkSurvivalEvolved && (int)FileVersionLicenseeUE >= 10)
             {
                 Ar.Position += 8;
             }
@@ -498,7 +498,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 AssetRegistryDataOffset = Ar.Read<int>();
             }
 
-            if (Ar.Game == EGame.GAME_TowerOfFantasy)
+            if (Ar.Game == GAME_TowerOfFantasy)
             {
                 TotalHeaderSize = (int)(TotalHeaderSize ^ 0xEEB2CEC7);
                 NameCount = (int)(NameCount ^ 0xEEB2CEC7);
@@ -512,7 +512,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 AssetRegistryDataOffset = (int)(AssetRegistryDataOffset ^ 0xEEB2CEC7);
             }
 
-            if (Ar.Game is EGame.GAME_SeaOfThieves or EGame.GAME_GearsOfWar4)
+            if (Ar.Game is GAME_SeaOfThieves or GAME_GearsOfWar4)
             {
                 Ar.Position += 6; // no idea what's going on here.
             }
@@ -554,14 +554,14 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             NamesReferencedFromExportDataCount = FileVersionUE >= EUnrealEngineObjectUE5Version.NAMES_REFERENCED_FROM_EXPORT_DATA ? Ar.Read<int>() : NameCount;
             PayloadTocOffset = FileVersionUE >= EUnrealEngineObjectUE5Version.PAYLOAD_TOC ? Ar.Read<long>() : -1;
-            DataResourceOffset = FileVersionUE >= EUnrealEngineObjectUE5Version.DATA_RESOURCES || Ar.Game == EGame.GAME_TheFirstDescendant ? Ar.Read<int>() : -1;
+            DataResourceOffset = FileVersionUE >= EUnrealEngineObjectUE5Version.DATA_RESOURCES || Ar.Game == GAME_TheFirstDescendant ? Ar.Read<int>() : -1;
 
             if (Tag == PACKAGE_FILE_TAG_ONE && Ar is FAssetArchive assetAr)
             {
                 assetAr.AbsoluteOffset = NameOffset - (int)Ar.Position;
             }
 
-            if (Ar.Game == EGame.GAME_SuddenAttack2)
+            if (Ar.Game == GAME_SuddenAttack2)
             {
                 Ar.Read<int>(); // count
                 Ar.Read<int>(); // offset

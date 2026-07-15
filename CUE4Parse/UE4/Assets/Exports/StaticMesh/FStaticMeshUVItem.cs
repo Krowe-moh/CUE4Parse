@@ -23,7 +23,7 @@ namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
                 Color = Ar.Read<FColor>();
             }
             Normal = SerializeTangents(Ar, useHighPrecisionTangents);
-            if (Ar.Game == EGame.GAME_APBReloaded)
+            if (Ar.Game == GAME_APBReloaded)
             {
                 goto SkipColor;
             }

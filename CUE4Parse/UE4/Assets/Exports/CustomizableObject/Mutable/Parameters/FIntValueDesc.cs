@@ -7,10 +7,10 @@ public class FIntValueDesc
 {
     public short Value;
     public string Name;
-    
+
     public FIntValueDesc(FMutableArchive Ar)
     {
         Value = Ar.Read<short>();
-        Name = Ar.Game >= EGame.GAME_UE5_4 ? Ar.ReadFString() : Ar.ReadString();
+        Name = Ar.Game >= GAME_UE5_4 ? Ar.ReadFString() : Ar.ReadString();
     }
 }

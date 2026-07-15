@@ -23,7 +23,7 @@ public class UTexture2D : UTexture
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 12;
+        if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 12;
         base.Deserialize(Ar, validPos);
         ImportedSize = GetOrDefault<FIntPoint>(nameof(ImportedSize));
         AddressX = GetOrDefault<TextureAddress>(nameof(AddressX));
@@ -47,7 +47,7 @@ public class UTexture2D : UTexture
         {
             var legacyMips = Array.Empty<FTexture2DMipMap>();
 
-            var bHasLegacyMips = Ar.Game >= EGame.GAME_UE4_0 ? GetOrDefault("bDisableDerivedDataCache_DEPRECATED", false) : true;
+            var bHasLegacyMips = Ar.Game >= GAME_UE4_0 ? GetOrDefault("bDisableDerivedDataCache_DEPRECATED", false) : true;
             if (bHasLegacyMips)
             {
                 legacyMips = Ar.ReadArray(() => TextureFileCacheName.IsNone ? new FTexture2DMipMap(Ar) : new FTexture2DMipMap(Ar, TextureFileCacheName.Text));
@@ -113,7 +113,7 @@ public class UTexture2D : UTexture
         if (bCooked)
         {
             var bSerializeMipData = true;
-            if (Ar.Game >= EGame.GAME_UE5_3 || Ar.Game == EGame.GAME_TheFirstDescendant)
+            if (Ar.Game >= GAME_UE5_3 || Ar.Game == GAME_TheFirstDescendant)
             {
                 // Controls whether FByteBulkData is serialized??
                 bSerializeMipData = Ar.ReadBoolean();

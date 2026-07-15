@@ -18,7 +18,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
         {
             base.Deserialize(Ar, validPos);
 
-            if (Ar.Game is EGame.GAME_Borderlands4)
+            if (Ar.Game is GAME_Borderlands4)
             {
                 FaceFXAnimDataList = GetOrDefault<GbxFaceFXAnimData[]>(nameof(FaceFXAnimDataList)) ?? [];
                 AnimBuffer = GetOrDefault<byte[]>(nameof(AnimBuffer));

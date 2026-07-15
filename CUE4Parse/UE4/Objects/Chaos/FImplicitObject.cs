@@ -236,7 +236,7 @@ public class FImplicitObjectUnion : FImplicitObject
 
 		MLocalBoundingBox = new FAABB3();
 
-		if (Ar.Game == EGame.GAME_MarvelRivals)
+		if (Ar.Game == GAME_MarvelRivals)
 		{
 			var aabb = TBox<float>.SerializeAsAABB(Ar, 3);
 			MLocalBoundingBox.Min = new TVector<double>(aabb.Min[0], aabb.Min[1], aabb.Min[2]);
@@ -304,7 +304,7 @@ public class TImplicitObjectTransformed<T>: FImplicitObject
 		MTransform = Ar.Read<TTransform<double>>(); // FReal
 
 
-		if (Ar.Game == EGame.GAME_MarvelRivals)
+		if (Ar.Game == GAME_MarvelRivals)
 		{
 			var aabb = TBox<float>.SerializeAsAABB(Ar, 3);
 			// MLocalBoundingBox = new FAABB3(aabb);

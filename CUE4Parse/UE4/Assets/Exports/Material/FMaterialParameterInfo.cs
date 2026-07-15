@@ -24,7 +24,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Material
         public FMaterialParameterInfo(FArchive Ar)
         {
             Name = Ar.ReadFName();
-            if (Ar.Game >= EGame.GAME_UE4_0)
+            if (Ar.Game >= GAME_UE4_0)
             {
                 Association = Ar.Read<EMaterialParameterAssociation>();
                 Index = Ar.Read<int>();

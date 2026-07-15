@@ -49,10 +49,10 @@ public static class FFortniteSeasonBranchObjectVersion
 
         // Chaos Visual Debugger : Adding serialization for properties that were being recorded, but not serialized
         CVDSerializationFixMissingSerializationProperties,
-        
+
         // Updated Enhanceed Input Mapping Contexts to support adding "Profile override" mappings.
         EnhancedInputMappingContextProfileMappingsUpdate,
-        
+
         // Introduce per entity support for external owned entities
         SceneGraphExternalOwnedEntities,
 
@@ -71,10 +71,10 @@ public static class FFortniteSeasonBranchObjectVersion
 
         return Ar.Game switch
         {
-            < EGame.GAME_UE5_1 => Type.BeforeCustomVersionWasAdded,
-            < EGame.GAME_UE5_4 => Type.ChaosGeometryCollectionSaveLevelsAttribute,
-            < EGame.GAME_UE5_5 => Type.ChaosImplicitObjectUnionLeafObjectsToInt32,
-            < EGame.GAME_UE5_7 => Type.CVDSerializationFixMissingSerializationProperties,
+            < GAME_UE5_1 => Type.BeforeCustomVersionWasAdded,
+            < GAME_UE5_4 => Type.ChaosGeometryCollectionSaveLevelsAttribute,
+            < GAME_UE5_5 => Type.ChaosImplicitObjectUnionLeafObjectsToInt32,
+            < GAME_UE5_7 => Type.CVDSerializationFixMissingSerializationProperties,
             _ => Type.LatestVersion
         };
     }

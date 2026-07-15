@@ -26,7 +26,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound;
             VolumeMultiplier = GetOrDefault(nameof(VolumeMultiplier), 0.75f);
             PitchMultiplier = GetOrDefault(nameof(PitchMultiplier), 1f);
 
-            if (Ar.Game == EGame.GAME_ScourgeOutbreak) return; // Editor Data Removed
+            if (Ar.Game == GAME_ScourgeOutbreak) return; // Editor Data Removed
 
             // Todo: Find actual starting ver
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128 && Ar.Ver < EUnrealEngineObjectUE4Version.SOUND_NODE_INHERIT_FROM_ED_GRAPH_NODE)

@@ -45,3 +45,22 @@ public enum EPropertyType : byte
     CustomProperty_FE = 0xFE,
     Unknown = 0xFF
 }
+
+public enum EPropertyType2 : byte
+{
+    ByteProperty = 1,
+    IntProperty,
+    BoolProperty,
+    FloatProperty,
+    ObjectProperty,
+    NameProperty,
+    StringProperty,
+    ClassProperty,
+    ArrayProperty,
+    StructProperty,
+    VectorProperty,
+    RotatorProperty,
+    StrProperty,
+    MapProperty,
+    FixedArrayProperty,
+}

@@ -22,7 +22,7 @@ public class FSearchIndexBase
         PoseMetadata = Ar.ReadArray(() => new FPoseMetadata(Ar));
         bAnyBlockTransition = Ar.ReadBoolean();
         Assets = Ar.ReadArray(() => new FSearchIndexAsset(Ar));
-        if (Ar.Game >= EGame.GAME_UE5_6)
+        if (Ar.Game >= GAME_UE5_6)
         {
             EventData = new FEventData(Ar);
         }

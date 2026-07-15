@@ -10,10 +10,10 @@ public class FSphylBody : FBodyShape
     public FQuat Orientation;
     public float Radius;
     public float Length;
-    
+
     public FSphylBody(FMutableArchive Ar) : base(Ar)
     {
-        if (Ar.Game < EGame.GAME_UE5_6) Ar.Position += 4;
+        if (Ar.Game < GAME_UE5_6) Ar.Position += 4;
         Position = Ar.Read<FVector>();
         Orientation = Ar.Read<FQuat>();
         Radius = Ar.Read<float>();

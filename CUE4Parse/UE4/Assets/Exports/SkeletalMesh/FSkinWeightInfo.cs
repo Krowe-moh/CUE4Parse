@@ -26,7 +26,7 @@ public class FSkinWeightInfo
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH)
             NUM_INFLUENCES_UE3 = 4;
 
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < GAME_UE4_0)
         {
             BoneIndex = new ushort[NUM_INFLUENCES_UE3];
             BoneWeight = new ushort[NUM_INFLUENCES_UE3];

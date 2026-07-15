@@ -622,7 +622,7 @@ public static class MeshConverter
                 {
                     skeletalMeshLod.VertexColors[vert] = srcLod.ColorVertexBuffer.Data[vert];
                 }
-                
+
                 var scale = v.Infs.bUse16BitBoneWeight ? Constants.UShort_Bone_Scale : Constants.Byte_Bone_Scale;
                 foreach (var (weight, boneIndex) in v.Infs.BoneWeight.Zip(v.Infs.BoneIndex))
                 {

@@ -185,11 +185,11 @@ public class UDecalComponent : USceneComponent
         DecalMaterial = GetOrDefault(nameof(DecalMaterial), new FPackageIndex());
         DecalSize = GetOrDefault<FVector>(nameof(DecalSize));
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_STATIC_DECALS_SERIALIZED && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_STATIC_DECALS_SERIALIZED && Ar.Game < GAME_UE4_0)
         {
             Ar.ReadArray(() => new FStaticReceiverData(Ar));
         }
-        else if (Ar.Game < EGame.GAME_UE4_0)
+        else if (Ar.Game < GAME_UE4_0)
         {
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_REFACTOR)
             {

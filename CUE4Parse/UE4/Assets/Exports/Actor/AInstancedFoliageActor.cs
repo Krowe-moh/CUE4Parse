@@ -16,7 +16,7 @@ public class AInstancedFoliageActor : AISMPartitionActor
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 12;
+        if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 12;
         if (FFoliageCustomVersion.Get(Ar) < FFoliageCustomVersion.Type.CrossLevelBase)
         {
             FoliageMeshes_Deprecated = Ar.ReadMap(() => new FPackageIndex(Ar), () => new FFoliageMeshInfo_Deprecated(Ar));
@@ -27,7 +27,7 @@ public class AInstancedFoliageActor : AISMPartitionActor
         }
         else
         {
-            if (Ar.Game == EGame.GAME_MafiaTheOldCountry) Ar.Position += 4;
+            if (Ar.Game == GAME_MafiaTheOldCountry) Ar.Position += 4;
             FoliageInfos = Ar.ReadMap(() => new FPackageIndex(Ar), () => new FFoliageInfo(Ar));
         }
     }
@@ -67,7 +67,7 @@ public struct FFoliageMeshInfo_Deprecated
         }
         else
         {
-            if (Ar.Game >= EGame.GAME_UE4_0)
+            if (Ar.Game >= GAME_UE4_0)
             {
                 OldInstanceClusters = Ar.ReadArray(() => new FFoliageInstanceCluster_Deprecated(Ar));
             }

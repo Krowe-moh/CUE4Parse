@@ -14,7 +14,7 @@ public class UNiagaraScript : UNiagaraScriptBase
         if (Ar.Position == validPos)
             return;
 
-        if (Ar is { Game: >= EGame.GAME_UE4_25, Owner.Provider.ReadShaderMaps: true })
+        if (Ar is { Game: >= GAME_UE4_25, Owner.Provider.ReadShaderMaps: true })
         {
             try
             {

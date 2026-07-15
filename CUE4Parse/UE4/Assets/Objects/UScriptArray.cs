@@ -89,7 +89,7 @@ public class UScriptArray
                 $"ArrayProperty element count {elementCount} is larger than the remaining archive size {Ar.Length - Ar.Position}");
         }
 
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < GAME_UE4_0)
         {
             var count = elementCount > 0 ? elementCount : 1;
             var elemsize = (size - sizeof(int)) / count;
@@ -142,7 +142,7 @@ public class UScriptArray
         }
         else
         {
-            if (Ar.Game == EGame.GAME_DaysGone && InnerType == "StructProperty")
+            if (Ar.Game == GAME_DaysGone && InnerType == "StructProperty")
             {
                 var count = elementCount > 0 ? elementCount : 1;
                 var elemsize = (size - sizeof(int)) / count;

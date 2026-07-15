@@ -28,7 +28,7 @@ public static class FNiagaraObjectVersion
 
         return Ar.Game switch
         {
-            < EGame.GAME_UE4_21 => Type.BeforeCustomVersionWasAdded,
+            < GAME_UE4_21 => Type.BeforeCustomVersionWasAdded,
             _ => Type.LatestVersion
         };
     }

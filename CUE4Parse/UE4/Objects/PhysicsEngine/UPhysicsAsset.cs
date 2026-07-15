@@ -51,7 +51,7 @@ public class UPhysicsAsset : Assets.Exports.UObject
         SkeletalBodySetups = GetOrDefault(nameof(SkeletalBodySetups), Array.Empty<FPackageIndex>());
         ConstraintSetup = GetOrDefault(nameof(ConstraintSetup), Array.Empty<FPackageIndex>());
 
-        if (Ar.Game >= EGame.GAME_UE4_0)
+        if (Ar.Game >= GAME_UE4_0)
         {
             CollisionDisableTable = Ar.ReadMap(() => new FRigidBodyIndexPair(Ar), Ar.ReadBoolean);
         }

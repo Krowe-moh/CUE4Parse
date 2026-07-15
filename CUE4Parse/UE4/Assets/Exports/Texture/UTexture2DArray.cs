@@ -17,7 +17,7 @@ public class UTexture2DArray : UTexture
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-        if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 24;
+        if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 24;
         AddressX = GetOrDefault<TextureAddress>(nameof(AddressX));
         AddressY = GetOrDefault<TextureAddress>(nameof(AddressY));
         AddressZ = GetOrDefault<TextureAddress>(nameof(AddressZ));

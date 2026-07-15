@@ -20,19 +20,19 @@ namespace CUE4Parse.UE4.Objects.UObject
 #endif
         public FNameEntrySerialized(FArchive Ar)
         {
-            var bHasNameHashes = Ar.Ver >= EUnrealEngineObjectUE4Version.NAME_HASHES_SERIALIZED || Ar.Game is EGame.GAME_GearsOfWar4 or EGame.GAME_DaysGone;
+            var bHasNameHashes = Ar.Ver >= EUnrealEngineObjectUE4Version.NAME_HASHES_SERIALIZED || Ar.Game is GAME_GearsOfWar4 or GAME_DaysGone;
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.Release64)
             {
                 Name = Ar.ReadFString().Trim();
-                if (Ar.Game == EGame.GAME_AvaGlobal) Ar.Position += (Name.Length ^ 7) & 0xF;
+                if (Ar.Game == GAME_AvaGlobal) Ar.Position += (Name.Length ^ 7) & 0xF;
             }
             else
             {
                 Name = Ar.ReadFAnsiString();
             }
 
-            if (Ar.Game == EGame.GAME_PlayerUnknownsBattlegrounds)
+            if (Ar.Game == GAME_PlayerUnknownsBattlegrounds)
             {
                 if (_pubgNameMap == null)
                 {
@@ -45,7 +45,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 if (Name != null && _pubgNameMap.TryGetValue(Name, out var name)) Name = name;
             }
 
-            if (Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Game < GAME_UE4_0)
             {
                 _ = (Ar.Ver >= EUnrealEngineObjectUE3Version.Use64BitFlag)
                     ? (EObjectFlags)Ar.Read<long>()

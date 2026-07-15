@@ -21,13 +21,13 @@ public class FSearchIndex : FSearchIndexBase
         PCAValuesVectorToPoseIndexes = new FSparsePoseMultiMap<int>(Ar);
         PCAProjectionMatrix = Ar.ReadArray<float>();
         Mean = Ar.ReadArray<float>();
-        if (Ar.Game < EGame.GAME_UE5_6)
+        if (Ar.Game < GAME_UE5_6)
         {
             PCAExplainedVariance = Ar.Read<float>();
         }
         VPTree = new FVPTree(Ar);
         KDTree = new FKDTree(Ar);
-        if (Ar.Game >= EGame.GAME_UE5_6)
+        if (Ar.Game >= GAME_UE5_6)
         {
             PCAExplainedVariance = Ar.Read<float>();
         }

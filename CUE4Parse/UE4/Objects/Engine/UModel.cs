@@ -262,7 +262,7 @@ namespace CUE4Parse.UE4.Objects.Engine
             {
                 LightMapScale = Ar.Read<float>();
             }
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.BSP_LIGHTING_CHANNEL_SUPPORT && Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.BSP_LIGHTING_CHANNEL_SUPPORT && Ar.Game < GAME_UE4_0)
             {
                 Ar.Read<int>(); // LightingChannels
             }
@@ -364,10 +364,21 @@ namespace CUE4Parse.UE4.Objects.Engine
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
-            if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 24;
+            if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 24;
             if (Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject) || Ar.Position >= validPos) return;
             const int StripVertexBufferFlag = 1;
             var stripData = new FStripDataFlags(Ar);
+
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.Release61)
+            {
+                new FPackageIndex(Ar); // Vectors
+                new FPackageIndex(Ar); // Points
+                new FPackageIndex(Ar); // Nodes
+                new FPackageIndex(Ar); // Surfs
+                new FPackageIndex(Ar); // Verts
+                new FPackageIndex(Ar); // Polys
+                return;
+            }
 
             Bounds = new FBoxSphereBounds(Ar);
 
@@ -378,7 +389,7 @@ namespace CUE4Parse.UE4.Objects.Engine
 
             Vectors = Ar.ReadBulkArray<FVector>();
             Points = Ar.ReadBulkArray<FVector>();
-            if (Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Game < GAME_UE4_0)
             {
                 // made legacy because it just doesn't work on latest, I think it's some memory layout issue. no clue how to resolve
                 Ar.ReadBulkArray(() => new FBspNodeLegacy(Ar));

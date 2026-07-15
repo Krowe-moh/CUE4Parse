@@ -103,7 +103,7 @@ public class UMaterial : UMaterialInterface
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if (Ar.Game == EGame.GAME_WorldofJadeDynasty) Ar.Position += 16;
+        if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 16;
         base.Deserialize(Ar, validPos);
         TwoSided = GetOrDefault<bool>(nameof(TwoSided));
         bDisableDepthTest = GetOrDefault<bool>(nameof(bDisableDepthTest));
@@ -121,7 +121,7 @@ public class UMaterial : UMaterialInterface
         OpacityMaskClipValue = GetOrDefault(nameof(OpacityMaskClipValue), OpacityMaskClipValue);
 
         // 4.25+
-        if (Ar.Game >= EGame.GAME_UE4_25 || Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game >= GAME_UE4_25 || Ar.Game < GAME_UE4_0)
         {
             CachedExpressionData ??= GetOrDefault<FStructFallback>(nameof(CachedExpressionData));
             if (CachedExpressionData != null && CachedExpressionData.TryGetValue(out UTexture[] referencedTextures, "ReferencedTextures"))
@@ -132,12 +132,12 @@ public class UMaterial : UMaterialInterface
         }
 
         // scan package's imports for UTexture objects
-        if (Ar is { Game: >= EGame.GAME_UE5_0, Owner.Provider.SkipReferencedTextures: false })
+        if (Ar is { Game: >= GAME_UE5_0, Owner.Provider.SkipReferencedTextures: false })
             ScanForTextures(Ar);
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.PURGED_FMATERIAL_COMPILE_OUTPUTS)
         {
-            if (Ar is { Game: >= EGame.GAME_UE4_25, Owner.Provider.ReadShaderMaps: true })
+            if (Ar is { Game: >= GAME_UE4_25, Owner.Provider.ReadShaderMaps: true })
             {
                 var saved = Ar.Position;
                 try
@@ -185,10 +185,10 @@ public class UMaterial : UMaterialInterface
                 QualityMask = Ar.Read<int>();
             }
 
-            if (Ar.Game == EGame.GAME_APBReloaded) return;
+            if (Ar.Game == GAME_APBReloaded) return;
 
-            for (int QualityIndex = 0; QualityIndex < (Ar.Ver > EUnrealEngineObjectUE3Version.FLASH_MERGE_TO_MAIN && Ar.Game < EGame.GAME_UE4_0 ? 2 : 1); QualityIndex++)
-            //for (int QualityIndex = 0; QualityIndex < (Ar.Ver > EUnrealEngineObjectUE3Version.FLASH_MERGE_TO_MAIN && Ar.Ver <= EUnrealEngineObjectUE3Version.IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX ? 2 : Ar.Game == EGame.GAME_RocketLeague ? 2 : 1); QualityIndex++)
+            for (int QualityIndex = 0; QualityIndex < (Ar.Ver > EUnrealEngineObjectUE3Version.FLASH_MERGE_TO_MAIN && Ar.Game < GAME_UE4_0 ? 2 : 1); QualityIndex++)
+            //for (int QualityIndex = 0; QualityIndex < (Ar.Ver > EUnrealEngineObjectUE3Version.FLASH_MERGE_TO_MAIN && Ar.Ver <= EUnrealEngineObjectUE3Version.IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX ? 2 : Ar.Game == GAME_RocketLeague ? 2 : 1); QualityIndex++)
             {
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MATERIAL_QUALITY_LEVEL && (QualityMask & (1 << QualityIndex)) == 0)
                 {

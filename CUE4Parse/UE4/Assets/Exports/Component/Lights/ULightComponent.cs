@@ -110,7 +110,7 @@ public class ULightComponent : ULightComponentBase
             Ar.ReadArray(() => new FConvexVolume(Ar)); // ExclusionConvexVolumes
         }
 
-        if (Ar.Game == EGame.GAME_Valorant) Ar.Position += 24; // Zero FVector, 1.0f, -1 int, 1.0f
+        if (Ar.Game == GAME_Valorant) Ar.Position += 24; // Zero FVector, 1.0f, -1 int, 1.0f
     }
 
     public virtual ELightUnits GetLightUnits() => ELightUnits.Unitless;
@@ -186,7 +186,7 @@ public class UDominantSpotLightComponent : UPointLightComponent
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         // Before super
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SPOTLIGHT_DOMINANTSHADOW_TRANSITION && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SPOTLIGHT_DOMINANTSHADOW_TRANSITION && Ar.Game < GAME_UE4_0)
         {
             DominantLightShadowMap = Ar.ReadArray(() => Ar.Read<short>());
         }
@@ -202,7 +202,7 @@ public class UDominantDirectionalLightComponent : UPointLightComponent
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         // Before super
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DOMINANTLIGHT_NORMALSHADOWS && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DOMINANTLIGHT_NORMALSHADOWS && Ar.Game < GAME_UE4_0)
         {
             DominantLightShadowMap = Ar.ReadArray(() => Ar.Read<short>());
         }
@@ -216,7 +216,7 @@ public class UParticleLightEnvironmentComponent : UPointLightComponent
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < GAME_UE4_0)
         {
             new UDynamicLightEnvironmentComponent().Deserialize(Ar, validPos);
             //Ar.Read<FGuid>();
@@ -347,8 +347,9 @@ public class USkyLightComponent : ULightComponentBase
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < GAME_UE4_0)
         {
+            // if TONEMAPPER2ADJUST no need
             //new ULightComponent().Deserialize(Ar, validPos);
         }
         else

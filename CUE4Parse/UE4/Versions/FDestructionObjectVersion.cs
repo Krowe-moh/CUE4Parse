@@ -57,9 +57,9 @@ public static class FDestructionObjectVersion
 
         return Ar.Game switch
         {
-            < EGame.GAME_UE4_22 => Type.BeforeCustomVersionWasAdded,
-            < EGame.GAME_UE4_23 => Type.AddedCacheDataReduction,
-            < EGame.GAME_UE4_25 => Type.GroupAndAttributeNameRemapping,
+            < GAME_UE4_22 => Type.BeforeCustomVersionWasAdded,
+            < GAME_UE4_23 => Type.AddedCacheDataReduction,
+            < GAME_UE4_25 => Type.GroupAndAttributeNameRemapping,
             _ => Type.LatestVersion
         };
     }

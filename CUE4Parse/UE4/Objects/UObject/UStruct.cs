@@ -68,7 +68,7 @@ public class UStruct : UField
             serializedScriptSize = bytecodeBufferSize;
         }
 
-        if (Ar.Owner!.Provider?.ReadScriptData == true && Ar.Game >= EGame.GAME_UE4_0 && serializedScriptSize > 0)
+        if (Ar.Owner!.Provider?.ReadScriptData == true && Ar.Game >= GAME_UE4_0 && serializedScriptSize > 0)
         {
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE)
             {
@@ -100,7 +100,7 @@ public class UStruct : UField
             Ar.Position += serializedScriptSize;
         }
 
-        if (Ar.Game >= EGame.GAME_UE3_0 && Ar.Game < EGame.GAME_UE4_0 && GetType() is UStruct)
+        if (Ar.Game >= GAME_UE3_0 && Ar.Game < GAME_UE4_0 && GetType() is UStruct)
         {
             DeserializePropertiesTagged(Properties, Ar, false);
         }

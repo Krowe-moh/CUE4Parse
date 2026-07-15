@@ -26,7 +26,7 @@ public class FDNAAssetCustomVersion
 
         return Ar.Game switch
         {
-            < EGame.GAME_UE4_26 => (Type) (-1),
+            < GAME_UE4_26 => (Type) (-1),
             _ => Type.LatestVersion
         };
     }
