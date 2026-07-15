@@ -11,7 +11,7 @@ public class FTaperedCapsuleBody : FBodyShape
     public float Radius0;
     public float Radius1;
     public float Length;
-
+    
     public FTaperedCapsuleBody(FMutableArchive Ar) : base(Ar)
     {
         if (Ar.Game < GAME_UE5_6) Ar.Position += 4;

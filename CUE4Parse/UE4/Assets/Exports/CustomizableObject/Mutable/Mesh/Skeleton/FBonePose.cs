@@ -52,5 +52,5 @@ public enum EBoneUsageFlags : uint
     PhysicsParent  = 1 << 5,
     Deform         = 1 << 6,
     DeformParent   = 1 << 7,
-    Reshaped       = 1 << 8
+    Reshaped       = 1 << 8	
 }

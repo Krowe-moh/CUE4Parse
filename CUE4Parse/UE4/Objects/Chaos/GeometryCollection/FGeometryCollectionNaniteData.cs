@@ -11,12 +11,12 @@ namespace CUE4Parse.UE4.Assets.Exports.GeometryCollection
     {
         public int NumVertices;
         public ushort[] BoneMap;
-
+        
         public FBoneMapVertexBuffer(FAssetArchive Ar)
         {
             NumVertices = Ar.Read<int>();
             BoneMap = Ar.ReadBulkArray<ushort>();
-        }
+        } 
     }
 
     public class FGeometryCollectionMeshResources
@@ -47,7 +47,7 @@ namespace CUE4Parse.UE4.Assets.Exports.GeometryCollection
         public uint VertexStart;
         public uint VertexEnd;
     };
-
+    
     public class FGeometryCollectionMeshDescription
     {
         public uint NumVertices;
@@ -67,8 +67,8 @@ namespace CUE4Parse.UE4.Assets.Exports.GeometryCollection
             SubSections = Ar.ReadArray<FGeometryCollectionMeshElement>();
         }
     }
-
-
+    
+    
     public class FGeometryCollectionNaniteData
     {
         public FNaniteResources NaniteResources { get; private set; }
@@ -85,7 +85,7 @@ namespace CUE4Parse.UE4.Assets.Exports.GeometryCollection
                 (bHasMeshData, bHasNaniteData) = (bHasNaniteData, bHasMeshData); // maybe?
                 var something = Ar.Read<int>(); // ?
             }
-
+            
             if (bHasMeshData)
             {
                 MeshResources = new FGeometryCollectionMeshResources(Ar);

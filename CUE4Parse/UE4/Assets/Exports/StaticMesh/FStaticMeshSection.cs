@@ -101,6 +101,7 @@ public class FStaticMeshSection
         if (Ar.Game == GAME_PlayerUnknownsBattlegrounds) Ar.Position += 5; // byte + int
         if (Ar.Game == GAME_NeedForSpeedMobile) CustomData = Ar.Read<int>();
         if (Ar.Game is GAME_AssaultFireFuture) return;
+        if (Ar.Game is GAME_ArenaBreakoutMobile) Ar.Position += 4;
         bForceOpaque = FRenderingObjectVersion.Get(Ar) >= FRenderingObjectVersion.Type.StaticMeshSectionForceOpaqueField && Ar.ReadBoolean();
         if (Ar.Game is GAME_MortalKombat1 or GAME_TheFinals or GAME_ArcRaiders) Ar.Position += 8;
         if (Ar.Game == GAME_BlueProtocol) CustomData = Ar.Read<short>(); // Must be read before bVisibleInRayTracing

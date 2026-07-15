@@ -10,11 +10,11 @@ public class ARecastNavMesh : ANavigationData
 {
     public float AgentHeight;
     public float AgentRadius;
-    public FNavMeshResolutionParam[] NavMeshResolutionParams;
-
+    public FNavMeshResolutionParam[] NavMeshResolutionParams; 
+    
     public ENavMeshVersion NavMeshVersion;
     public FPImplRecastNavMesh? RecastNavMeshImpl;
-
+    
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
@@ -26,7 +26,7 @@ public class ARecastNavMesh : ANavigationData
 
         if (!TryGetAllValues(out NavMeshResolutionParams, nameof(NavMeshResolutionParams)))
             NavMeshResolutionParams = new FNavMeshResolutionParam[3];
-
+        
         NavMeshVersion = Ar.Read<ENavMeshVersion>();
 
         var recastNavMeshSizePos = Ar.Position;
@@ -47,18 +47,18 @@ public class ARecastNavMesh : ANavigationData
             RecastNavMeshImpl = new FPImplRecastNavMesh(Ar, this);
         }
     }
-
+    
     protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
     {
         base.WriteJson(writer, serializer);
-
+        
         writer.WritePropertyName(nameof(NavMeshVersion));
         serializer.Serialize(writer, NavMeshVersion);
-
+        
         writer.WritePropertyName(nameof(RecastNavMeshImpl));
         serializer.Serialize(writer, RecastNavMeshImpl);
     }
-
+    
     public float GetCellSize(ENavigationDataResolution resolution) => NavMeshResolutionParams[(byte)resolution].CellSize;
     public float GetAgentMaxStepHeight(ENavigationDataResolution resolution) => NavMeshResolutionParams[(byte)resolution].AgentMaxStepHeight;
 }
@@ -90,7 +90,7 @@ public enum ENavMeshVersion
     NAVMESHVER_1_VOXEL_AGENT_STEEP_SLOPE_FILTER_FIX  = 25, // Fix, remove steep slope filtering during heightfield ledge filtering when the agent radius is included into a single voxel
     NAVMESHVER_TILE_RESOLUTIONS_AGENTMAXSTEPHEIGHT   = 26, // UE5.3 Addition of AgentMaxStepHeight in the resolution params, deprecating the original AgentMaxStepHeight.
     NAVMESHVER_NAVLINK_JUMP_CONFIGS                  = 27, // UE5.7 Addition of NavLinkJumpConfigs, deprecating the original NavLinkJumpDownConfig
-
+    
     LatestPlusOne,
     Latest = LatestPlusOne - 1
 }
@@ -100,7 +100,7 @@ public enum ENavigationDataResolution : byte
     Low = 0,
     Default = 1,
     High = 2,
-
+    
     [Description("None")]
     Invalid = 3,
     MAX = 3,
