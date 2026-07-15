@@ -49,10 +49,10 @@ public static class FFortniteSeasonBranchObjectVersion
 
         // Chaos Visual Debugger : Adding serialization for properties that were being recorded, but not serialized
         CVDSerializationFixMissingSerializationProperties,
-
+        
         // Updated Enhanceed Input Mapping Contexts to support adding "Profile override" mappings.
         EnhancedInputMappingContextProfileMappingsUpdate,
-
+        
         // Introduce per entity support for external owned entities
         SceneGraphExternalOwnedEntities,
 

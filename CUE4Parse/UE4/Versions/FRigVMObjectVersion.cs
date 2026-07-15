@@ -68,7 +68,7 @@ public static class FRigVMObjectVersion
 
         // The VM stores a local snapshot registry to use in cooked environments instead of the shared global registry
         LocalizedRegistry,
-
+        
         // The VM stores a relative seek offset to be able to skip the registry during load
         LocalizedRegistryWithRelativeSeekOffset,
 

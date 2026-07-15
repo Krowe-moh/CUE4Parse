@@ -212,7 +212,7 @@ public static class FNiagaraCustomVersion
         SerializeUsageBitMaskToGPUFunctionInfo, // Make sure that we serialize the UsageBitMask with the GPUFunctionInfo
 
         AddedNewInterpolatedSpawnMode, // Changed the interpolated spawn property into an enum
-
+        
         UserAssetTagStorageInMetaData, // Adding user asset tag storage in UMetaData for all UPackages
 
         // DO NOT ADD A NEW VERSION UNLESS YOU HAVE TALKED TO THE NIAGARA LEAD. Mismanagement of these versions can lead to data loss if it is adjusted in multiple streams simultaneously.

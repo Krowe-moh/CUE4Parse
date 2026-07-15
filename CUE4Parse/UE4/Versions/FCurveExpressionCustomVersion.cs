@@ -15,7 +15,7 @@ public static class FCurveExpressionCustomVersion
         // Serialized expressions
         SerializedExpressions,
         ExpressionDataInSharedObject,
-
+		
         VersionPlusOne,
         LatestVersion = VersionPlusOne - 1,
     }
