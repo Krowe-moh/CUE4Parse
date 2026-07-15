@@ -473,7 +473,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 PackageSource = Ar.Read<int>();
             }
 
-            if (Ar.Game == GAME_ArkSurvivalEvolved && (int)FileVersionLicenseeUE >= 10)
+            if (Ar.Game == GAME_ArkSurvivalEvolved && (int) FileVersionLicenseeUE >= 10)
             {
                 Ar.Position += 8;
             }

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using CUE4Parse.UE4.Assets.Exports.Chaos;
 using CUE4Parse.UE4.Assets.Exports.Chaos.GeometryCollection;
 using CUE4Parse.UE4.Objects.Chaos.GeometryCollection;

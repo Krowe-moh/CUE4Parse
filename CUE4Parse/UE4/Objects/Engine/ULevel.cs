@@ -104,6 +104,7 @@ public readonly struct FPrecomputedVolumeDistanceField : IUStruct
         VolumeSizeX = Ar.Read<int>();
         VolumeSizeY = Ar.Read<int>();
         VolumeSizeZ = Ar.Read<int>();
+        if (Ar.Game is GAME_LordOfMysteries) return;
         Data = Ar.ReadArray<FColor>();
     }
 }

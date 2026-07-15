@@ -91,7 +91,7 @@ public sealed class FByteBulkData : TBulkData<byte>
     {
         try
         {
-            var data = ReadDataOnce(useCachedData) ?? throw new ParserException();
+            var data = ReadDataOnce(useCachedData) ?? [];
             reader = new FByteArchive(name, data, _savedAr?.Versions);
         }
         catch (Exception e)
@@ -99,7 +99,7 @@ public sealed class FByteBulkData : TBulkData<byte>
             Log.Error(e, "Could not create {0} reader for FByteBulkData", name);
             reader = null!;
         }
-        return reader != null;
+        return reader != null && reader.Length > 0;
     }
 
     protected override bool ReadBulkDataInto(out byte[] data)

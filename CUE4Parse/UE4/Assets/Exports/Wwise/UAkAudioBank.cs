@@ -17,7 +17,7 @@ public class UAkAudioBank : UAkAudioType
         if (Ar.Position >= validPos - 4) return;
         switch (Ar.Game)
         {
-            case GAME_HogwartsLegacy or GAME_Farlight84 or GAME_ArenaBreakoutInfinite or GAME_LittleNightmares3:
+            case GAME_HogwartsLegacy or GAME_Farlight84 or GAME_ArenaBreakoutInfinite or GAME_ArenaBreakoutMobile or GAME_LittleNightmares3:
                 return;
             case GAME_FateTrigger:
             {

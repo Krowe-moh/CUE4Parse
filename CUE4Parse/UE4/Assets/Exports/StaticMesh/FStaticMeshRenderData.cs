@@ -128,7 +128,7 @@ public class FStaticMeshRenderData
             }
         }
 
-        if (Ar.Game == GAME_ArenaBreakoutInfinite)
+        if (Ar.Game is GAME_ArenaBreakoutInfinite)
         {
             var flags = new FStripDataFlags(Ar);
             if (Ar.ReadBoolean())
@@ -207,7 +207,7 @@ public class FStaticMeshRenderData
             }
 
             if (Ar.Game == GAME_HogwartsLegacy) Ar.Position += 8;
-            if (Ar.Game == GAME_VisionsofMana) Ar.Position += 4;
+            if (Ar.Game is GAME_VisionsofMana or GAME_ValorantSource) Ar.Position += 4;
         }
 
         if (Ar.Game == GAME_Borderlands3)

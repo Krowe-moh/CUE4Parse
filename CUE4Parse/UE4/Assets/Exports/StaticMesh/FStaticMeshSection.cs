@@ -106,6 +106,7 @@ public class FStaticMeshSection
         if (Ar.Game == GAME_BlueProtocol) CustomData = Ar.Read<short>(); // Must be read before bVisibleInRayTracing
         bVisibleInRayTracing = !Ar.Versions["StaticMesh.HasVisibleInRayTracing"] || Ar.ReadBoolean();
         if (Ar.Game is GAME_Grounded or GAME_Dauntless) Ar.Position += 8;
+        if (Ar.Game is GAME_ValorantSource) Ar.Position += 12;
         bAffectDistanceFieldLighting = Ar.Game >= GAME_UE5_1 && Ar.ReadBoolean();
         if (Ar.Game is GAME_RogueCompany or GAME_Grounded or GAME_Grounded2 or GAME_RacingMaster or GAME_WutheringWaves
             or GAME_MetroAwakening or GAME_Avowed or GAME_OutlastTrials or GAME_OuterWorlds2 or GAME_LiesofP) Ar.Position += 4;

@@ -39,7 +39,7 @@ public class FFastGeoInstancedStaticMeshComponent : FFastGeoStaticMeshComponentB
         {
             PerInstanceSMData = Ar.ReadBulkArray(() => new FInstancedStaticMeshInstanceData(Ar.Read<FTransform>()));
         }
-
+        
         LastInstanceBodyIndex = Ar.Game >= GAME_UE5_8 ? Ar.Read<int>() : 0;
         InstancingRandomSeed = Ar.Read<int>();
         PerInstanceSMCustomData = Ar.ReadBulkArray(Ar.Read<float>);

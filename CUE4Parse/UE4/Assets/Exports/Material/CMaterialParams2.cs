@@ -109,7 +109,8 @@ public class CMaterialParams2
             "Primary ARME", "CombineTex(HRA)", "ORN", "TPA_SpecColorTex", "Tex_RME", "CompVT", "MetalRoughOcc_Tex",
             "Layer00_MetalRoughOccDp_Tex", "Tex_SkinBase_ORM", "Tex_Core_Layer_AO", "RGB[AO/R/Metallic]_Texture",
             "Simple_OcclRoughMet_Texture", "P (NoneVT)", "Pack Tex1", "CASR", "Roughness_VT", "OcclusionRoughnessMetallicTexture",
-            "Clothing ORM", "ORC [Standard]", "ORME_Tex", "Roughness VT", "RMAO VT", "Mix(AO,Rough,Mask,Metal)", "Texture_S"
+            "Clothing ORM", "ORC [Standard]", "ORME_Tex", "Roughness VT", "RMAO VT", "Mix(AO,Rough,Mask,Metal)", "Texture_S",
+            "MetallicRoughnessOcclusionSpecularTexture"
         ],
         ["SpecularMasks_2", "MRA B", "LP_2", "M2_T_PAK"],
         ["SpecularMasks_3", "MRA C", "LP_3", "M3_T_PAK"],

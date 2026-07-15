@@ -117,6 +117,20 @@ public class UInstancedStaticMeshComponent : UStaticMeshComponent
             MotoGP24Data = data.ToArray();
         }
         if (Ar.Game == GAME_SuicideSquad) Ar.SkipBulkArrayData();
+        if (Ar.Game is GAME_LordOfMysteries)
+        {
+            Ar.SkipBulkArrayData();
+            Ar.Position += Ar.Read<long>() + 4;
+
+            if (Ar.ReadBoolean())
+            {
+                Ar.SkipBulkArrayData();
+                Ar.Position += 4;
+                Ar.Position += Ar.Read<int>() * 4;
+                Ar.Position += 4;
+            }    
+            return;
+        }
 
         if (bCooked && (FFortniteMainBranchObjectVersion.Get(Ar) >= FFortniteMainBranchObjectVersion.Type.SerializeInstancedStaticMeshRenderData ||
                         FEditorObjectVersion.Get(Ar) >= FEditorObjectVersion.Type.SerializeInstancedStaticMeshRenderData))

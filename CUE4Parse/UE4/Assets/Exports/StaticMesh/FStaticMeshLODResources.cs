@@ -86,6 +86,8 @@ public class FStaticMeshLODResources
             return;
         }
 
+        if (Ar.Game is GAME_ArenaBreakoutMobile) Ar.SkipFixedArray(28);
+
         var bIsLODCookedOut = false;
         if (Ar.Game != GAME_Splitgate)
             bIsLODCookedOut = Ar.ReadBoolean();
@@ -158,6 +160,7 @@ public class FStaticMeshLODResources
                 Ar.Position += Ar.Game switch
                 {
                     >= GAME_UE5_6 => 6 * 4, // RawDataHeader = 6x uint32
+                    GAME_ArenaBreakoutMobile => 44,
                     GAME_NeedForSpeedMobile => 32,
                     GAME_SuicideSquad => 29,
                     GAME_ArenaBreakoutInfinite => 16,
@@ -253,7 +256,7 @@ public class FStaticMeshLODResources
             return;
         }
 
-        if (Ar.Game != GAME_PlayerUnknownsBattlegrounds || !stripDataFlags.IsClassDataStripped((byte)EClassDataStripFlag.CDSF_StripIndexBuffers))
+        if (Ar.Game != GAME_PlayerUnknownsBattlegrounds || !stripDataFlags.IsClassDataStripped((byte) EClassDataStripFlag.CDSF_StripIndexBuffers))
         {
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.SOUND_CONCURRENCY_PACKAGE && !stripDataFlags.IsClassDataStripped((byte)EClassDataStripFlag.CDSF_ReversedIndexBuffer))
             {
@@ -323,7 +326,6 @@ public class FStaticMeshLODResources
         {
             _ = new FColorVertexBuffer(Ar);
         }
-
         if (Ar.Game == GAME_ThePathless) Ar.Position += 20;
 
         IndexBuffer = new FRawStaticIndexBuffer(Ar);
@@ -352,10 +354,14 @@ public class FStaticMeshLODResources
 
         if (Ar.Game == GAME_OutlastTrials) Ar.Position += 4;
 
-        if (Ar.Game == GAME_ArenaBreakoutInfinite)
+        if (Ar.Game is GAME_ArenaBreakoutInfinite)
         {
             _ = new FRawStaticIndexBuffer(Ar);
             _ = new FRawStaticIndexBuffer(Ar);
+        }
+        if (Ar.Game is GAME_ArenaBreakoutMobile)
+        {
+            Ar.SkipMultipleBulkArrayData(4);
         }
         if (Ar.Game is GAME_TheFinals or GAME_ArcRaiders)
         {

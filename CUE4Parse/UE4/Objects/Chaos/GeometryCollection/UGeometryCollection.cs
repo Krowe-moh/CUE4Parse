@@ -1,4 +1,4 @@
-﻿using CUE4Parse.UE4.Assets.Exports.Chaos;
+using CUE4Parse.UE4.Assets.Exports.Chaos;
 using CUE4Parse.UE4.Assets.Exports.Nanite;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;

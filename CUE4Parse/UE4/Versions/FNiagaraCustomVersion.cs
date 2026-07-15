@@ -245,7 +245,7 @@ public static class FNiagaraCustomVersion
             < GAME_UE5_4 => Type.RibbonRendererLinkOrderDefaultIsUniqueID,
             < GAME_UE5_5 => Type.NDCSpawnGroupOverrideDisabledByDefault,
             < GAME_UE5_6 => Type.EmitterStateAddLoopDelayEnabled,
-            < GAME_UE5_7 => Type.AddedNewInterpolatedSpawnMode,
+            < GAME_UE5_7 => Type.AddedNewInterpolatedSpawnMode, 
             _ => Type.LatestVersion
         };
     }

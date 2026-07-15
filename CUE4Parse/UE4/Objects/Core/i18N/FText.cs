@@ -403,7 +403,7 @@ public abstract class FTextHistory : IUStruct
                 SourceString = t;
                 LocalizedString = Ar.Owner.Provider.Internationalization.SafeGet(table.StringTable.TableNamespace, Key, t);
             }
-
+            
             if (Ar.Game is GAME_DeltaForce) Ar.Position += 4;
         }
     }

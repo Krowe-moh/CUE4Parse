@@ -49,7 +49,7 @@ public class UClass : UStruct
     {
         base.Deserialize(Ar, validPos);
 
-        if (Ar.Game == EGame.GAME_AWayOut) Ar.Position += 4;
+        if (Ar.Game == GAME_AWayOut) Ar.Position += 4;
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.Release62)
         {
@@ -155,7 +155,7 @@ public class UClass : UStruct
         FuncMap = Ar.ReadMap(Ar.ReadFName, () => new FPackageIndex(Ar));
         ClassFlags = Ar.Read<EClassFlags>();
 
-        if (Ar.Game is EGame.GAME_StarWarsJediFallenOrder or EGame.GAME_StarWarsJediSurvivor or EGame.GAME_AshesOfCreation) Ar.Position += 4;
+        if (Ar.Game is GAME_StarWarsJediFallenOrder or GAME_StarWarsJediSurvivor or GAME_AshesOfCreation) Ar.Position += 4;
 
         ClassWithin = new FPackageIndex(Ar);
         ClassConfigName = Ar.ReadFName();

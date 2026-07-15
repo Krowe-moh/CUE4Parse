@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.FileProvider.Objects;
-using CUE4Parse.GameTypes.ABI.Encryption.Aes;
+using CUE4Parse.GameTypes.ABI.Encryption.SM4;
 using CUE4Parse.GameTypes.ApexMobile.Encryption.Aes;
 using CUE4Parse.GameTypes.ArcRaiders.Encryption.Aes;
 using CUE4Parse.GameTypes.BB3.Encryption.Aes;
@@ -25,8 +25,10 @@ using CUE4Parse.GameTypes.ProSpi.Encryption.Aes;
 using CUE4Parse.GameTypes.Rennsport.Encryption.Aes;
 using CUE4Parse.GameTypes.RocoKingdomWorld.Encryption.Aes;
 using CUE4Parse.GameTypes.SD.Encryption.Aes;
+using CUE4Parse.GameTypes.SilverPalace.Encryption;
 using CUE4Parse.GameTypes.Snowbreak.Encryption.Aes;
 using CUE4Parse.GameTypes.Splitgate2.Encryption.Aes;
+using CUE4Parse.GameTypes.Tencent.ValorantSource.Encryption.Aes;
 using CUE4Parse.GameTypes.THPS.Encryption.Aes;
 using CUE4Parse.GameTypes.UDWN.Encryption.Aes;
 using CUE4Parse.GameTypes.UWO.Encryption.Aes;
@@ -93,13 +95,15 @@ namespace CUE4Parse.FileProvider.Vfs
                 GAME_NeedForSpeedMobile => NFSMobileAes.NFSMobileDecrypt,
                 GAME_OnePieceAmbition => OnePieceAmbitionEncryption.OnePieceAmbitionDecrypt,
                 GAME_UnchartedWatersOrigin => UnchartedWatersOriginAes.UnchartedWatersOriginDecrypt,
-                GAME_ArenaBreakoutInfinite => ABIDecryption.ABIDecrypt,
+                GAME_ArenaBreakoutInfinite or GAME_ArenaBreakoutMobile => ABIDecryption.ABIDecrypt,
                 GAME_BloodBowl3 => BloodBowl3Aes.BloodBowl3Decrypt,
                 GAME_AssaultFireFuture => AssaultFireFutureAes.AssaultFireFutureDecrypt,
                 GAME_ArcRaiders => ArcRaidersAes.ArcRaidersDecrypt,
                 GAME_RocoKingdomWorld => RocoKingdomWorldAes.RocoKingdomWorldDecrypt,
                 GAME_DragonSwordAwakening => DragonSwordAes.DragonSwordDecrypt,
                 GAME_eBaseballProSpirit => ProSpiEncryption.ProSpiDecrypt,
+                GAME_SilverPalace => SilverPalaceAes.SilverPalaceDecrypt,
+                GAME_ValorantSource => ValorantSourceAes.ValorantSourceDecrypt,
                 _ => null
             };
         }

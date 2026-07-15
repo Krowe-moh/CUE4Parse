@@ -1,8 +1,11 @@
+using System.Buffers.Binary;
 using CUE4Parse.Compression;
+using CUE4Parse.GameTypes.ABI.Encryption.SM4;
+using CUE4Parse.GameTypes.Tencent.ValorantSource.Encryption;
+using CUE4Parse.GameTypes.Tencent.ValorantSource.Encryption.Aes;
 using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Readers;
-using CUE4Parse.UE4.Versions;
 using Serilog;
 
 namespace CUE4Parse.UE4.Pak.Objects;
@@ -44,8 +47,11 @@ public partial class FPakInfo
     public const uint PAK_FILE_MAGIC_CrystalOfAtlan = 0x22ce976a;
     public const uint PAK_FILE_MAGIC_PromiseMascotAgency = 0x11adde11;
     public const uint PAK_FILE_MAGIC_ArenaBreakoutInfinite = 0x53647586;
+    public const uint PAK_FILE_MAGIC_ArenaBreakoutMobile = 0x57647587;
     public const uint PAK_FILE_MAGIC_AssaultFireFuture = 0x4F6FAE86;
     public const uint PAK_FILE_MAGIC_Back4Blood = 0x18772;
+    public const uint PAK_FILE_MAGIC_SilverPalace = 0x12E15A6F;
+    public const uint PAK_FILE_MAGIC_ValorantSource = 0x167C2AB4;
 
     public const int COMPRESSION_METHOD_NAME_LEN = 32;
 
@@ -62,7 +68,7 @@ public partial class FPakInfo
     public readonly FGuid EncryptionKeyGuid;
     public readonly List<CompressionMethod> CompressionMethods;
     public readonly int PakchunkIndex = -1; // INDEX_NONE
-    public readonly byte[] CustomEncryptionData;
+    public byte[] CustomEncryptionData { get; private set; }
 
     private FPakInfo(FArchive Ar, OffsetsToTry offsetToTry)
     {
@@ -102,6 +108,39 @@ public partial class FPakInfo
                 CompressionMethod.LZ4, CompressionMethod.Zstd
             ];
             return;
+        }
+
+        if (Ar.Game is GAME_ArenaBreakoutMobile)
+        {
+            Magic = Ar.Read<uint>();
+            // Global or maybe older versions
+            if (Magic == PAK_FILE_MAGIC_ArenaBreakoutInfinite)
+            {
+                EncryptionKeyGuid = default;
+                EncryptedIndex = Ar.Read<byte>() != 0;
+                IndexSize = Ar.Read<long>();
+                IndexOffset = Ar.Read<long>();
+                IndexHash = new FSHAHash(Ar);
+                Version = Ar.Read<EPakFileVersion>();
+                goto beforeCompression;
+            }
+
+            // Chinese mobile version
+            if (Magic == PAK_FILE_MAGIC_ArenaBreakoutMobile)
+            {
+                EncryptionKeyGuid = default;
+                EncryptedIndex = Ar.Read<byte>() != 0;
+                var encryptedIndexInfo = Ar.ReadBytes(16);
+                var indexInfo = new byte[16];
+                Buffer.BlockCopy(encryptedIndexInfo, 8, indexInfo, 0, 8);
+                Buffer.BlockCopy(encryptedIndexInfo, 0, indexInfo, 8, 8);
+                ABIDecryption.DecryptAbiMobilePakInfo(indexInfo);
+                IndexOffset = BinaryPrimitives.ReadInt64LittleEndian(indexInfo);
+                IndexSize = BinaryPrimitives.ReadInt64LittleEndian(indexInfo.AsSpan(8));
+                IndexHash = new FSHAHash(Ar);
+                Version = Ar.Read<EPakFileVersion>();
+                goto beforeCompression;
+            }
         }
 
         if (Ar.Game == GAME_ArenaBreakoutInfinite)
@@ -225,6 +264,41 @@ public partial class FPakInfo
             goto beforeCompression;
         }
 
+        if (Ar.Game is GAME_ValorantSource)
+        {
+            Magic = Ar.Read<uint>();
+            if (Magic is not PAK_FILE_MAGIC_ValorantSource) return;
+            Version = Ar.Read<EPakFileVersion>();
+            EncryptionKeyGuid = Ar.Read<FGuid>();
+            Ar.Read<byte>(); // Tencent uses this byte as the cipher selector
+            EncryptedIndex = Ar.Read<byte>() != 0;
+
+            var valorantRsaKeyOffset = Ar.Read<long>();
+            Ar.Position += EncryptionKeyGuid.A % 5 + 1;
+            Ar.Read<long>();
+            var maskedIndexOffset = Ar.Read<ulong>();
+            Ar.Position += EncryptionKeyGuid.B % 5 + 1;
+            var valorantRsaKeySize = checked((int) Ar.Read<long>());
+            Ar.Read<long>();
+            Ar.Position += EncryptionKeyGuid.C % 5 + 1;
+            Ar.Read<long>();
+            var maskedIndexSize = Ar.Read<ulong>();
+
+            CustomEncryptionData = new byte[sizeof(long) + sizeof(int)];
+            BinaryPrimitives.WriteInt64LittleEndian(CustomEncryptionData.AsSpan(0, sizeof(long)), valorantRsaKeyOffset);
+            BinaryPrimitives.WriteInt32LittleEndian(CustomEncryptionData.AsSpan(sizeof(long), sizeof(int)), valorantRsaKeySize);
+
+            const ulong offsetMask = ValorantSourceAes.LOW_NIBBLES_MASK;
+            const ulong sizeMask = ValorantSourceAes.HIGH_NIBBLES_MASK;
+            IndexOffset = (long) ((maskedIndexSize & offsetMask) | (maskedIndexOffset & ~offsetMask));
+            IndexSize = (long) ((maskedIndexSize & sizeMask) | (maskedIndexOffset & ~sizeMask));
+            IndexHash = new FSHAHash(Ar);
+
+            // I'm not reading footer exactly rigth so hardcoded offset for compression names
+            Ar.Position = 126;
+            goto beforeCompression;
+        }
+
         // New FPakInfo fields.
         EncryptionKeyGuid = Ar.Read<FGuid>();          // PakFile_Version_EncryptionKeyGuid
         EncryptedIndex = Ar.Read<byte>() != 0;         // Do not replace by ReadFlag
@@ -240,7 +314,8 @@ public partial class FPakInfo
                 Ar.Game == GAME_FridayThe13th && Magic == PAK_FILE_MAGIC_FridayThe13th ||
                 Ar.Game == GAME_DreamStar && Magic == PAK_FILE_MAGIC_DreamStar ||
                 Ar.Game == GAME_AssaultFireFuture && Magic == PAK_FILE_MAGIC_AssaultFireFuture ||
-                Ar.Game == GAME_KartRiderDrift && Magic == PAK_FILE_MAGIC_KartRiderDrift)
+                Ar.Game == GAME_KartRiderDrift && Magic == PAK_FILE_MAGIC_KartRiderDrift ||
+                Ar.Game == GAME_SilverPalace && Magic == PAK_FILE_MAGIC_SilverPalace)
                 goto afterMagic;
             // Stop immediately when magic is wrong
             return;
@@ -256,7 +331,7 @@ public partial class FPakInfo
             IndexSize = Ar.Read<long>() >> 1;
             goto beforeCompression;
         }
-
+        
         if (Ar.Game == GAME_StateOfDecay2)
         {
             // ReSharper disable once BitwiseOperatorOnEnumWithoutFlags
@@ -311,6 +386,12 @@ public partial class FPakInfo
             IndexSize = (long) ((ulong) IndexSize ^ 0x6DB425B4BC084B4B) - 0xA8;
         }
 
+        if (Ar.Game is GAME_SilverPalace)
+        {
+            IndexOffset = (long) ((ulong) IndexOffset ^ 0x8b3c9f2a5e1d7046);
+            IndexSize = (long) ((ulong) IndexSize ^ 0x8b3c9f2a5e1d7046);
+        }
+
         if (Ar.Game is GAME_DeadByDaylight or GAME_DeadByDaylight_Old)
         {
             CustomEncryptionData = Ar.ReadBytes(28);
@@ -351,6 +432,8 @@ public partial class FPakInfo
                 OffsetsToTry.SizeDbD => 5,
                 OffsetsToTry.SizeRennsport => 5,
                 OffsetsToTry.SizeBack4Blood => 5,
+                OffsetsToTry.SizeArenaBreakoutMobile => 5,
+                OffsetsToTry.SizeValorantSource => 5,
                 OffsetsToTry.Size8 => 4,
                 OffsetsToTry.Size8_1 => 1,
                 OffsetsToTry.Size8_2 => 2,
@@ -389,7 +472,7 @@ public partial class FPakInfo
 
         // Written at the tail so the trailer for older versions remains byte-compatible. Paks authored before
         // this version leave PakchunkIndex at INDEX_NONE, and the reader falls back to deriving it from the filename.
-        if (Version >= EPakFileVersion.PakFile_Version_PakchunkIndex)
+        if (Version >= EPakFileVersion.PakFile_Version_PakchunkIndex && Ar.Game >= GAME_UE5_9)
         {
             PakchunkIndex = Ar.Read<int>();
         }
@@ -434,7 +517,9 @@ public partial class FPakInfo
         SizeLast,
         SizeMax = SizeLast - 1,
         SizeBack4Blood = 222,
+        SizeArenaBreakoutMobile = 205,
         SizeDuneAwakening = 261,
+        SizeValorantSource = 286, // For older versions it was 282
         SizeKartRiderDrift = 397, // don't let this be SizeMax, it's way above average and cause issues
     }
 
@@ -461,6 +546,8 @@ public partial class FPakInfo
                 GAME_Back4Blood => (long) OffsetsToTry.SizeBack4Blood,
                 GAME_DuneAwakening => (long) OffsetsToTry.SizeDuneAwakening,
                 GAME_KartRiderDrift => (long) OffsetsToTry.SizeKartRiderDrift,
+                GAME_ArenaBreakoutMobile => (long) OffsetsToTry.SizeArenaBreakoutMobile,
+                GAME_ValorantSource => (long) OffsetsToTry.SizeValorantSource,
                 _ => Math.Min(length, (long) OffsetsToTry.SizeMax),
             };
 
@@ -468,9 +555,14 @@ public partial class FPakInfo
             var buffer = stackalloc byte[(int) maxOffset];
             Ar.Serialize(buffer, (int) maxOffset);
 
-            if (Ar.Game == GAME_InZOI)
+            switch (Ar.Game)
             {
-                DecryptInZOIFPakInfo(Ar, maxOffset, buffer);
+                case GAME_InZOI:
+                    DecryptInZOIFPakInfo(Ar, maxOffset, buffer);
+                    break;
+                case GAME_ValorantSource:
+                    DecryptValorantSourcePakInfo(Ar, maxOffset, buffer);
+                    break;
             }
 
             using var reader = new FPointerArchive(Ar.Name, buffer, maxOffset, Ar.Versions);
@@ -490,6 +582,8 @@ public partial class FPakInfo
                 GAME_KartRiderDrift => [.._offsetsToTry, OffsetsToTry.SizeKartRiderDrift],
                 GAME_DuneAwakening => [OffsetsToTry.SizeDuneAwakening],
                 GAME_Back4Blood => [OffsetsToTry.SizeBack4Blood],
+                GAME_ArenaBreakoutMobile => [OffsetsToTry.SizeArenaBreakoutMobile, OffsetsToTry.Size8a],
+                GAME_ValorantSource => [OffsetsToTry.SizeValorantSource],
                 _ => _offsetsToTry
             };
 
@@ -525,11 +619,22 @@ public partial class FPakInfo
                     GAME_PromiseMascotAgency when info.Magic == PAK_FILE_MAGIC_PromiseMascotAgency => true,
                     GAME_WildAssault when info.Magic == PAK_FILE_MAGIC_WildAssault => true,
                     GAME_ArenaBreakoutInfinite when info.Magic == PAK_FILE_MAGIC_ArenaBreakoutInfinite => true,
+                    GAME_ArenaBreakoutMobile when info.Magic is PAK_FILE_MAGIC_ArenaBreakoutInfinite or PAK_FILE_MAGIC_ArenaBreakoutMobile => true,
                     GAME_AssaultFireFuture when info.Magic == PAK_FILE_MAGIC_AssaultFireFuture => true,
                     GAME_Back4Blood when info.Magic == PAK_FILE_MAGIC_Back4Blood => true,
+                    GAME_SilverPalace when info.Magic == PAK_FILE_MAGIC_SilverPalace => true,
+                    GAME_ValorantSource when info.Magic == PAK_FILE_MAGIC_ValorantSource => true,
                     _ => info.Magic == PAK_FILE_MAGIC
                 };
-                if (found) return info;
+                if (found)
+                {
+                    if (Ar.Game is GAME_ValorantSource)
+                    {
+                        info.CustomEncryptionData = ValorantSourceRSA.DerivePakKey(Ar, info.CustomEncryptionData);
+                    }
+
+                    return info;
+                }
             }
         }
         throw new ParserException($"File {Ar.Name} has an unknown format");

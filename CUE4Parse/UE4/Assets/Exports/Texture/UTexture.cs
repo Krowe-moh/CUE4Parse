@@ -66,7 +66,7 @@ public class UTexture : UUnrealMaterial, IAssetUserData
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if (Ar.Game is EGame.GAME_WorldofJadeDynasty or EGame.GAME_RocoKingdomWorld) Ar.Position += 16;
+        if (Ar.Game is GAME_WorldofJadeDynasty or GAME_RocoKingdomWorld) Ar.Position += 16;
         base.Deserialize(Ar, validPos);
         LightingGuid = GetOrDefault(nameof(LightingGuid), new FGuid((uint)GetFullName().GetHashCode()));
         CompressionSettings = GetOrDefault(nameof(CompressionSettings), TextureCompressionSettings.TC_Default);
@@ -76,30 +76,7 @@ public class UTexture : UUnrealMaterial, IAssetUserData
         AssetUserData = GetOrDefault<FPackageIndex[]>(nameof(AssetUserData), []);
         CookPlatformTilingSettings = GetOrDefault<ETextureCookPlatformTilingSettings>(nameof(CookPlatformTilingSettings));
 
-        if (Ar.Game == EGame.GAME_APBReloaded)
-        {
-            Ar.Position += 8 * 2; // Bulkdata headers
-            return;
-        }
-
-        if (Ar.Game < EGame.GAME_UE3_0)
-        {
-            Ar.ReadArray(() => new FLegacyMipMap(Ar));
-        }
-        if (Ar.Ver < EUnrealEngineObjectUE3Version.CompMipsDeprecated)
-        {
-            var bHasComp = GetOrDefault("bHasComp", false);
-            if (bHasComp)
-            {
-                Ar.ReadArray(() => new FLegacyMipMap(Ar));
-            }
-
-            return;
-        }
-
-        if (Ar.Game < EGame.GAME_UE3_0) return;
-
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < GAME_UE4_0)
         {
             SourceArt = new FByteBulkData(Ar);
             return;
@@ -134,12 +111,13 @@ public class UTexture : UUnrealMaterial, IAssetUserData
         if (pixelFormatName.Text == "PF_BC6H_Signed") pixelFormatName = "PF_BC6H";
         while (!pixelFormatName.IsNone)
         {
-            Enum.TryParse(pixelFormatName.Text, out EPixelFormat pixelFormat);
+            if (!Enum.TryParse(pixelFormatName.Text, ignoreCase: true, out EPixelFormat pixelFormat))
+                Log.Warning("Failed to parse pixel format: {PixelFormat}", pixelFormatName.Text);
 
             var skipOffset = Ar.Game switch
             {
-                >= EGame.GAME_UE5_0 => Ar.AbsolutePosition + Ar.Read<long>(),
-                >= EGame.GAME_UE4_20 => Ar.Read<long>(),
+                >= GAME_UE5_0 => Ar.AbsolutePosition + Ar.Read<long>(),
+                >= GAME_UE4_20 => Ar.Read<long>(),
                 _ => Ar.Read<int>()
             };
 
@@ -151,7 +129,7 @@ public class UTexture : UUnrealMaterial, IAssetUserData
 #endif
                 PlatformData = new FTexturePlatformData(Ar, this, bSerializeMipData);
 
-                if (Ar.Game is EGame.GAME_SeaOfThieves or EGame.GAME_DeltaForce) Ar.Position += 4;
+                if (Ar.Game is GAME_SeaOfThieves or GAME_DeltaForce) Ar.Position += 4;
 
                 if (Ar.AbsolutePosition != skipOffset)
                 {

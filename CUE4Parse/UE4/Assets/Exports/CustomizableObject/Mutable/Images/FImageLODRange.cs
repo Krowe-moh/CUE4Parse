@@ -24,7 +24,7 @@ public struct FImageLODRange
         }
         ImageSizeX = Ar.Read<ushort>();
         ImageSizeY = Ar.Read<ushort>();
-
+        
         if (Ar.Game >= GAME_UE5_7)
         {
             LODCount = Ar.Read<byte>();

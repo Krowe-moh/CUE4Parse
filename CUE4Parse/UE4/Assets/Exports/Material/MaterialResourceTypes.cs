@@ -872,7 +872,7 @@ public class FUniformExpressionSet
             Ar.ReadArray(UniformTextureParameters, () => Ar.ReadArray(() => new FMaterialTextureParameterInfo(Ar)));
             UniformExternalTextureParameters = Ar.ReadArray(() => new FMaterialExternalTextureParameterInfo(Ar));
             if (Ar.Game >= GAME_UE5_5 && Ar.Game is not GAME_FateTrigger) UniformTextureCollectionParameters = Ar.ReadArray(() => new FMaterialTextureCollectionParameterInfo(Ar));
-
+            if (Ar.Game is GAME_LordOfMysteries) Ar.Position += 120;
             UniformPreshaderBufferSize = Ar.Read<uint>();
             Ar.Position = Ar.Position.Align(8);
             UniformPreshaderData = new FMaterialPreshaderData(Ar);
@@ -903,6 +903,7 @@ public class FUniformExpressionSet
             UniformPreshaderData = new FMaterialPreshaderData(Ar);
         }
 
+        if (Ar.Game is GAME_LordOfMysteries) Ar.Position += 16;
         VTStacks = Ar.ReadArray(() => new FMaterialVirtualTextureStack(Ar));
         if (Ar.Game >= GAME_UE5_7 || Ar.Game is GAME_FateTrigger) MaterialCacheTagStacks = Ar.ReadArray<FMaterialCacheTagStack>();
         ParameterCollections = Ar.ReadArray<FGuid>();
@@ -1676,7 +1677,7 @@ public class FMaterialShaderMapId
         {
             QualityLevel = Ar.Game >= GAME_UE5_2 ? (EMaterialQualityLevel) Ar.Read<byte>() : (EMaterialQualityLevel) Ar.Read<int>();//changed to byte in FN 23.20
             FeatureLevel = (ERHIFeatureLevel) Ar.Read<int>();
-            if (Ar.Game is GAME_ArenaBreakoutInfinite) Ar.Position += 4;
+            if (Ar.Game is GAME_ArenaBreakoutInfinite or GAME_ArenaBreakoutMobile) Ar.Position += 4;
             if (Ar.Game is GAME_RocoKingdomWorld)
             {
                 (QualityLevel, FeatureLevel) = ((EMaterialQualityLevel) FeatureLevel, (ERHIFeatureLevel) QualityLevel);
