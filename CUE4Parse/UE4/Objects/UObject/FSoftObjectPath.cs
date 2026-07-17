@@ -200,7 +200,7 @@ public readonly struct FSoftObjectPath : IUStruct
         var asset = await provider.LoadPackageObjectAsync(AssetPathName.Text);
         return TryResolveSubObject(asset, out var export) ? export : null;
     }
-
+    
     private bool TryResolveSubObject(UExport asset, [MaybeNullWhen(false)] out UExport export)
     {
         if (string.IsNullOrEmpty(SubPathString))
@@ -208,9 +208,9 @@ public readonly struct FSoftObjectPath : IUStruct
             export = asset;
             return true;
         }
-
+        
         var current = asset;
-
+        
         var parts = SubPathString.Split('.');
         foreach (var part in parts)
         {
@@ -219,7 +219,7 @@ public readonly struct FSoftObjectPath : IUStruct
                 export = null;
                 return false;
             }
-
+            
             var foundExport = current.Owner.GetExportOrNull(part);
             if (foundExport == null)
             {
@@ -227,10 +227,10 @@ public readonly struct FSoftObjectPath : IUStruct
                 export = null;
                 return false;
             }
-
+            
             current = foundExport;
         }
-
+        
         export = current;
         return true;
     }
