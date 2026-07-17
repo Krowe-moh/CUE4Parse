@@ -29,6 +29,7 @@ public class ULandscapeComponent : UPrimitiveComponent
     public FLandscapeComponentGrassData GrassData;
     public bool bCooked;
     public FLandscapeComponentDerivedData? PlatformData;
+    public Dictionary<FName, FPackageIndex> NamedGrassTypes;
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
@@ -46,6 +47,7 @@ public class ULandscapeComponent : UPrimitiveComponent
         CachedLocalBox = GetOrDefault<FBox>(nameof(CachedLocalBox));
         MapBuildDataId = GetOrDefault<FGuid>(nameof(MapBuildDataId));
         WeightmapTextures = new Lazy<UTexture2D[]>(() => GetOrDefault<UTexture2D[]>("WeightmapTextures", []));
+        NamedGrassTypes = GetOrDefault<Dictionary<FName, FPackageIndex>>(nameof(NamedGrassTypes), []);
 
         if (FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.MapBuildDataSeparatePackage)
         {
@@ -71,7 +73,7 @@ public class ULandscapeComponent : UPrimitiveComponent
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SERIALIZE_LANDSCAPE_GRASS_DATA)
         {
-            GrassData = new FLandscapeComponentGrassData(Ar);
+            GrassData = new FLandscapeComponentGrassData(Ar, NamedGrassTypes);
         }
 
         if (!Ar.IsFilterEditorOnly && Ar.Game >= GAME_UE4_0)

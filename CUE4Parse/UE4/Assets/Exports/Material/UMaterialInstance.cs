@@ -10,7 +10,6 @@ using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
-using Serilog;
 
 namespace CUE4Parse.UE4.Assets.Exports.Material;
 
@@ -19,6 +18,7 @@ public class UMaterialInstanceDynamic: UMaterialInstance;
 
 public class UMaterialInstance : UMaterialInterface
 {
+    
     private ResolvedObject? _parent;
     private bool bHasNonUPropertyStaticParameters = false;
     public UUnrealMaterial? Parent => _parent?.Load<UUnrealMaterial>();

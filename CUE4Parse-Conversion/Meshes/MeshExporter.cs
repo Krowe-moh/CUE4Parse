@@ -11,12 +11,12 @@ using CUE4Parse.UE4.Assets.Exports.StaticMesh;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Writers;
 using CUE4Parse.Utils;
-using Serilog;
 
 namespace CUE4Parse_Conversion.Meshes
 {
     public class MeshExporter : ExporterBase
     {
+
         public readonly List<Mesh> MeshLods;
         public readonly List<DNAExporter> DNAAssets = [];
 
@@ -26,7 +26,7 @@ namespace CUE4Parse_Conversion.Meshes
 
             if (!originalSkeleton.TryConvert(out var bones, out _) || bones.Count == 0)
             {
-                Log.Warning($"Skeleton '{ExportName}' has no bone");
+                Log.Warning("Skeleton '{ExportName}' has no bone", ExportName);
                 return;
             }
 
@@ -60,7 +60,7 @@ namespace CUE4Parse_Conversion.Meshes
 
             if (!originalMesh.TryConvert(splineMeshComponent, out var convertedMesh, options.NaniteMeshFormat, options.LodFormat) || convertedMesh.LODs.Count == 0)
             {
-                Log.Logger.Warning($"Mesh '{ExportName}' has no LODs");
+                Log.Warning("Mesh '{ExportName}' has no LODs", ExportName);
                 return;
             }
 
@@ -119,7 +119,7 @@ namespace CUE4Parse_Conversion.Meshes
 
             if (!originalMesh.TryConvert(out var convertedMesh) || convertedMesh.LODs.Count == 0)
             {
-                Log.Warning($"Mesh '{ExportName}' has no LODs");
+                Log.Warning("Mesh '{ExportName}' has no LODs", ExportName);
                 return;
             }
 

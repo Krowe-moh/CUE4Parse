@@ -5,13 +5,13 @@ using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
-using Serilog;
 
 namespace CUE4Parse.UE4.Assets.Objects;
 
 [JsonConverter(typeof(UScriptArrayConverter))]
 public class UScriptArray
 {
+    
     public readonly string InnerType;
     public readonly FPropertyTagData? InnerTagData;
     public readonly List<FPropertyTagType> Properties;
@@ -167,7 +167,7 @@ public class UScriptArray
                 if (property != null)
                     Properties.Add(property);
                 else
-                    Log.Debug($"Failed to read array property of type {InnerType} at {Ar.Position}, index {i}");
+                    Log.Debug("Failed to read array property of type {InnerType} at {Position}, index {Index}", InnerType, Ar.Position, i);
             }
             return;
         }
@@ -178,7 +178,7 @@ public class UScriptArray
             if (property != null)
                 Properties.Add(property);
             else
-                Log.Debug($"Failed to read array property of type {InnerType} at {Ar.Position}, index {i}");
+                Log.Debug("Failed to read array property of type {InnerType} at {Position}, index {Index}", InnerType, Ar.Position, i);
         }
     }
 

@@ -7,7 +7,6 @@ using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
-using Serilog;
 using static CUE4Parse.UE4.Assets.Objects.EBulkDataFlags;
 
 namespace CUE4Parse.UE4.Assets.Objects;
@@ -28,6 +27,7 @@ public sealed class FByteArrayData : TBulkData<byte>
 [JsonConverter(typeof(FByteBulkDataConverter))]
 public sealed class FByteBulkData : TBulkData<byte>
 {
+    
     public FByteBulkData(FAssetArchive Ar) : base(Ar) { }
 
     public FByteBulkData(byte[] data)
@@ -69,23 +69,6 @@ public sealed class FByteBulkData : TBulkData<byte>
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetDataSize() => Header.ElementCount;
-
-    /// <summary>
-    /// Reads bulk data once without storing it in this instance.
-    /// If data is already cached, optionally returns a copy of a cached data.
-    /// </summary>
-    public byte[]? ReadDataOnce(bool returnCachedData = true)
-    {
-        if (_data is { IsValueCreated: true })
-        {
-            var cached = _data.Value;
-            if (cached is null) return null;
-
-            return returnCachedData ? cached : (byte[]) cached.Clone();
-        }
-
-        return ReadBulkDataInto(out var data) ? data : null;
-    }
 
     public bool TryCreateReader(string name, [NotNullWhen(true)] out FArchive reader, bool useCachedData = true)
     {
