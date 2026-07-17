@@ -254,7 +254,7 @@ namespace CUE4Parse.UE4.Assets
 
         private static void DecryptAndDecompress(FAssetArchive uassetAr, FPackageFileSummary Summary)
         {
-            if (uassetAr.Game == EGame.GAME_RocketLeague)
+            if (uassetAr.Game == GAME_RocketLeague)
             {
                 var checkSumDataSize = uassetAr.Read<int>();
                 var compressedChunkInfoOffset = uassetAr.Read<int>();
@@ -314,7 +314,7 @@ namespace CUE4Parse.UE4.Assets
                 uassetAr.SetBaseArchive(new FByteArchive("Decompressed Package", buffer, uassetAr.Versions));
             }
 
-            if (uassetAr.Game < EGame.GAME_UE4_0 && Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_Custom)) throw new NotSupportedException("Custom Decompression not supported");
+            if (uassetAr.Game < GAME_UE4_0 && Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_Custom)) throw new NotSupportedException("Custom Decompression not supported");
         }
 
         public static byte[] GetDecryptedData(FArchive uasset)

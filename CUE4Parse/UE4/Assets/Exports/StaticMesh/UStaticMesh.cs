@@ -92,9 +92,9 @@ public class UStaticMesh : UObject
         if (Ar.Versions["StaticMesh.HasNavCollision"])
             NavCollision = new FPackageIndex(Ar);
 
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < GAME_UE4_0)
         {
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.COMPACTKDOPSTATICMESH || Ar.Game == EGame.GAME_Dishonored)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.COMPACTKDOPSTATICMESH || Ar.Game == GAME_Dishonored)
             {
                 Ar.ReadBulkArray(() => new FkDOPNode3(Ar));
             }
@@ -176,7 +176,7 @@ public class UStaticMesh : UObject
                  }
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERSION_18 && FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.DeprecatedHighResSourceMesh && Ar.Game is not EGame.GAME_APBReloaded)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERSION_18 && FRenderingObjectVersion.Get(Ar) < FRenderingObjectVersion.Type.DeprecatedHighResSourceMesh && Ar.Game is not GAME_APBReloaded)
             {
                 var Deprecated_HighResSourceMeshName = Ar.ReadFString();
                 var Deprecated_HighResSourceMeshCRC = Ar.Read<uint>();
@@ -192,7 +192,7 @@ public class UStaticMesh : UObject
             LightingGuid = FGuid.Random();
         }
 
-        if (Ar.Game == EGame.GAME_Dishonored)
+        if (Ar.Game == GAME_Dishonored)
         {
             Ar.Position = validPos;
             return; // so it doesn't throw
@@ -213,7 +213,7 @@ public class UStaticMesh : UObject
             Ar.ReadBoolean(); // bRemoveDegenerates
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.INSTANCED_STATIC_MESH_PER_LOD_STATIC_LIGHTING && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.INSTANCED_STATIC_MESH_PER_LOD_STATIC_LIGHTING && Ar.Game < GAME_UE4_0)
         {
             Ar.ReadBoolean(); // bPerLODStaticLightingForInstancing
             Ar.Read<int>(); // ConsolePreallocateInstanceCount

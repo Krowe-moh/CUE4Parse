@@ -139,7 +139,7 @@ public class UObject : AbstractPropertyHolder
         }
         else
         {
-            if (Ar.Game < EGame.GAME_UE4_0)
+            if (Ar.Game < GAME_UE4_0)
             {
                 if (Ar.Ver < EUnrealEngineObjectUE3Version.Release40)
                 {

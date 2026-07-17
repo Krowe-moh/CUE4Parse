@@ -58,7 +58,7 @@ public abstract class TBulkData<T> where T: struct
         _dataPosition = Ar.Position;
         _savedAr = Ar;
 
-        if (((BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || BulkDataFlags is BULKDATA_LazyLoadable or BULKDATA_None) && Ar.Game >= EGame.GAME_UE4_0) || (!(BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile)) && Ar.Game < EGame.GAME_UE4_0))
+        if (((BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload) || BulkDataFlags is BULKDATA_LazyLoadable or BULKDATA_None) && Ar.Game >= GAME_UE4_0) || (!(BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile)) && Ar.Game < GAME_UE4_0))
         {
             Ar.Position += Header.SizeOnDisk;
         }
@@ -141,7 +141,7 @@ public abstract class TBulkData<T> where T: struct
 
         if (BulkDataFlags.HasFlag(BULKDATA_ForceInlinePayload))
         {
-            if (_savedAr.Game < EGame.GAME_UE4_0) position = Header.OffsetInFile;
+            if (_savedAr.Game < GAME_UE4_0) position = Header.OffsetInFile;
         }
         else if (BulkDataFlags.HasFlag(BULKDATA_OptionalPayload))
         {
@@ -183,7 +183,7 @@ public abstract class TBulkData<T> where T: struct
             archive = ubulkAr;
             position = ubulkAr.Length == Header.SizeOnDisk ? 0 : Header.OffsetInFile;
         }
-        else if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile) && archive.Game < EGame.GAME_UE4_0)
+        else if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile) && archive.Game < GAME_UE4_0)
         {
             if (_savedTfc is null)
                 throw new ParserException(archive, "TFC: something wrong");
