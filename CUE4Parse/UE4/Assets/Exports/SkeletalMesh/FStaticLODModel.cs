@@ -299,6 +299,11 @@ public class FStaticLODModel
         if (!stripDataFlags.IsEditorDataStripped() && Ar.Ver >= EUnrealEngineObjectUE3Version.AddedBulkLod)
             RawPointIndices = new FIntBulkData(Ar);
 
+        if (Ar.Game == GAME_LifeIsStrange && (int)Ar.LicenseeVer >= 19)
+        {
+            Ar.Read<int>();
+        }
+
         SkipBulkdata:
         if (Ar.Game != GAME_StateOfDecay2 && Ar.Ver >= EUnrealEngineObjectUE4Version.ADD_SKELMESH_MESHTOIMPORTVERTEXMAP)
         {
