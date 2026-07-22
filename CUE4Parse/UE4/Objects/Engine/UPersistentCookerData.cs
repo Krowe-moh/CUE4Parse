@@ -227,7 +227,7 @@ namespace CUE4Parse.UE4.Objects.Engine
                 ExternGCompressorDstBytes = Ar.Read<ulong>();
                 ExternGArchiveSerializedCompressedSavingTime = Ar.Read<double>();
             }
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.TAG_MESH_PROXIES) Ar.Position += 32; // unknown
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.IPHONE_COMPRESSED_SOUNDS_MS_ADPCM) Ar.Position += 32; // unknown
         }
     }
 
@@ -237,6 +237,8 @@ namespace CUE4Parse.UE4.Objects.Engine
     {
         public Dictionary<string, FPackageTreeEntry[]> ClassMap;
         public Dictionary<string, Dictionary<string, FPackageTreeEntry[]>> LocalizationMap;
+        public string[] AlreadyHandledStartupMaterials;
+        public string[] AlreadyHandledStartupMaterialInstances;
         public Dictionary<string, FCookedBulkDataInfo> CookedBulkDataInfoMap;
         public Dictionary<string, FCookedTextureFileCacheInfo> CookedTextureFileCacheInfoMap;
         public Dictionary<string, FCookedTextureUsageInfo> TextureUsageInfos;
@@ -263,13 +265,13 @@ namespace CUE4Parse.UE4.Objects.Engine
                     () => Ar.ReadMap(() => Ar.ReadFString(), () => Ar.ReadArray(() => new FPackageTreeEntry(Ar)))
                 );
 
-                Ar.Read<int>(); // unknown
-                Ar.Read<int>(); // unknown
+                AlreadyHandledStartupMaterials = Ar.ReadArray(() => Ar.ReadFString());
+                AlreadyHandledStartupMaterialInstances = Ar.ReadArray(() => Ar.ReadFString());
             }
             CookedBulkDataInfoMap = Ar.ReadMap(() => Ar.ReadFString(), () => new FCookedBulkDataInfo(Ar));
             FilenameToTimeMap = Ar.ReadMap(() => Ar.ReadFString(), () => Ar.Read<double>());
             TextureFileCacheWaste = Ar.Read<long>();
-            if (Ar.Ver <= EUnrealEngineObjectUE3Version.CONVERT_KISMET_OBJECTS) Ar.Read<long>();
+            if (Ar.Ver <= EUnrealEngineObjectUE3Version.ADDDED_EXPLICIT_EMISSIVE_LIGHT_RADIUS) Ar.Read<long>(); // was CONVERT_KISMET_OBJECTS
             FilenameToCookedVersion = Ar.ReadMap(() => Ar.ReadFString(), () => Ar.Read<int>());
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_TEXTURE_FILECACHE_GUIDS)
             {
@@ -284,6 +286,7 @@ namespace CUE4Parse.UE4.Objects.Engine
                     CookedPrefixCommonInfoMap = Ar.ReadMap(() => Ar.ReadFString(), () => new FForceCookedInfo(Ar));
                     PMapForcedObjectsMap = Ar.ReadMap(() => Ar.ReadFString(), () => new FForceCookedInfo(Ar));
                     FilenameToScriptSHA = Ar.ReadMap(() => Ar.ReadFString(), () => new FSHAHash(Ar));
+
                     if (Ar.Ver >= EUnrealEngineObjectUE3Version.RADIALBLUR_FIX)
                     {
                         ChildCookWarnings = Ar.ReadArray(() => Ar.ReadFString());
@@ -308,6 +311,18 @@ namespace CUE4Parse.UE4.Objects.Engine
             {
                 writer.WritePropertyName("LocalizationMap");
                 serializer.Serialize(writer, LocalizationMap);
+            }
+
+            if (AlreadyHandledStartupMaterials != null)
+            {
+                writer.WritePropertyName("AlreadyHandledStartupMaterials");
+                serializer.Serialize(writer, AlreadyHandledStartupMaterials);
+            }
+
+            if (AlreadyHandledStartupMaterialInstances != null)
+            {
+                writer.WritePropertyName("AlreadyHandledStartupMaterialInstances");
+                serializer.Serialize(writer, AlreadyHandledStartupMaterialInstances);
             }
 
             writer.WritePropertyName("CookedBulkDataInfoMap");

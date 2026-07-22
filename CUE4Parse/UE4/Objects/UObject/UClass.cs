@@ -199,12 +199,11 @@ public class UClass : UStruct
 
         ClassDefaultObject = new FPackageIndex(Ar);
 
-        if (Ar.Game == EGame.GAME_RocketLeague)
+        if (Ar.Game == GAME_RocketLeague)
         {
             Ar.ReadMap(Ar.ReadFName, () => new FPackageIndex(Ar));
         }
-
-        if (Ar.Game == EGame.GAME_Borderlands4) _ = Ar.ReadMap(Ar.Read<ulong>, Ar.Read<int>);
+        if (Ar.Game == GAME_Borderlands4) _ = Ar.ReadMap(Ar.Read<ulong>, Ar.Read<int>);
     }
 
     public Assets.Exports.UObject? ConstructObject(EObjectFlags flags)
