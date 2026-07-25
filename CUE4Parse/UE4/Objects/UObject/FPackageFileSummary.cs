@@ -321,6 +321,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 HeritageOffset = Ar.Read<int>();
                 HeritageCount = Ar.Read<int>();
+                return;
             }
 
             if (FileVersionUE >= EUnrealEngineObjectUE5Version.VERSE_CELLS)

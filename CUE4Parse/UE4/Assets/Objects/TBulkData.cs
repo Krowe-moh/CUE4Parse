@@ -186,7 +186,7 @@ public abstract class TBulkData<T> where T: struct
         else if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile) && archive.Game < GAME_UE4_0)
         {
             if (_savedTfc is null)
-                throw new ParserException(archive, "TFC: something wrong");
+                throw new ParserException(archive, "TFC: something wrong"); // what does this mean and how is ths possible?
 
             if (!_savedAr.Owner.Provider.TextureCachePaths.TryGetValue(_savedTfc, out var tfcPath))
             {

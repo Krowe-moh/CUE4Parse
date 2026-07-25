@@ -48,7 +48,8 @@ public enum EPropertyType : byte
 
 public enum EPropertyType2 : byte
 {
-    ByteProperty = 1,
+    None = 0,
+    ByteProperty,
     IntProperty,
     BoolProperty,
     FloatProperty,
