@@ -69,6 +69,8 @@ namespace CUE4Parse.UE4.Objects.Engine
         {
             base.Deserialize(Ar, validPos);
 
+            if (Ar.Game < GAME_UE3_0) return;
+
             if (Ar.Ver < EUnrealEngineObjectUE4Version.BSP_UNDO_FIX)
             {
                 Num = Ar.Read<int>();

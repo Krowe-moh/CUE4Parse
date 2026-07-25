@@ -380,14 +380,17 @@ public class AStaticMeshCollectionActor : AStaticMeshActorBase
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
+
+        // This is correct, but some Games don't have it
+        /*
         StaticMeshComponents = GetOrDefault<FPackageIndex[]>(nameof(StaticMeshComponents), []);
 
         WorldMatrix = new FMatrix[StaticMeshComponents.Length];
-        // "LoadForClient | LoadForServer | LoadForEdit" == missing
+
         for (int i = 0; i < StaticMeshComponents.Length; i++)
-        { // !HasAnyFlags(RF_ClassDefaultObject) if remaining check flag
+        {
             WorldMatrix[i] = new FMatrix(Ar);
-        }
+        }*/
     }
 }
 
@@ -399,13 +402,16 @@ public class AStaticLightCollectionActor : ALight
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
+
+        // This is correct, but some Games don't have it
+        /*
         LightComponents = GetOrDefault<FPackageIndex[]>(nameof(LightComponents), []);
 
         LightToWorldMatrix = new FMatrix[LightComponents.Length];
         for (int i = 0; i < LightComponents.Length; i++)
         {
             LightToWorldMatrix[i] = new FMatrix(Ar);
-        }
+        }*/
     }
 }
 

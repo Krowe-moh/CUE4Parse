@@ -109,11 +109,14 @@ public class ULandscapeComponent : UPrimitiveComponent
             {
                 PlatformData = new FLandscapeComponentDerivedData(Ar);
 
+                /*
+                // untested
                 if (Ar.Ver >= EUnrealEngineObjectUE4Version.SERIALIZE_LANDSCAPE_ES2_TEXTURES)
                 {
                     new FPackageIndex(Ar); // MobileMaterialInterface
                     new FPackageIndex(Ar); // MobileWeightNormalmapTexture
                 }
+                */
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.LANDSCAPE_GRASS_COOKING && Ar.Ver < EUnrealEngineObjectUE4Version.SERIALIZE_LANDSCAPE_GRASS_DATA)

@@ -19,7 +19,7 @@ public enum ESkinVertexColorChannel : byte
 [JsonConverter(typeof(FSkelMeshSectionConverter))]
 public class FSkelMeshSection
 {
-    
+
     public short MaterialIndex;
     public int BaseIndex;
     public int NumTriangles;

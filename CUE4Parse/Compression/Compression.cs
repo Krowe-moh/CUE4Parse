@@ -49,14 +49,6 @@ public static class Compression
                 => zlib.Uncompress(destination, source, out written) == ZlibngCompressionResult.Ok, replace: true)
             .Build();
     }
-    
-    public static void UseLZO(DecompressDelegate decompressor)
-    {
-        _decompressor = new DecompressorBuilder()
-            .AddRange(_decompressor, true)
-            .Add(CompressionAlgorithm.LZO, decompressor, replace: true)
-            .Build();
-    }
 
     public static void UseLZO(DecompressDelegate decompressor)
     {

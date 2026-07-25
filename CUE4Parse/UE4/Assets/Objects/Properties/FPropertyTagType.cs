@@ -158,7 +158,7 @@ public abstract class FPropertyTagType
             "FieldPathProperty" => new FieldPathProperty(Ar, type),
             "FloatProperty" => new FloatProperty(Ar, type),
             "Int16Property" => new Int16Property(Ar, type),
-            "Int64Property" => new Int64Property(Ar, type),
+            "Int64Property" or "QWordProperty" => new Int64Property(Ar, type),
             "Int8Property" => new Int8Property(Ar, type),
             "IntProperty" => new IntProperty(Ar, type),
             "InterfaceProperty" => new InterfaceProperty(Ar, type),
