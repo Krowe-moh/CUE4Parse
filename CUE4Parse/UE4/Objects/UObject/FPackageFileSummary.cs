@@ -75,8 +75,8 @@ namespace CUE4Parse.UE4.Objects.UObject
         public int ExportOffset;
         public int ImportCount;
         public int ImportOffset;
-        public int HeritageCount;
         public int HeritageOffset;
+        public int HeritageCount;
         public int CellExportCount;
         public int CellExportOffset;
         public int CellImportCount;
@@ -315,7 +315,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             ImportCount = Ar.Read<int>();
             ImportOffset = Ar.Read<int>();
-            
+
             if (FileVersionUE < EUnrealEngineObjectUE3Version.DeprecatedHeritageTable)
             {
                 HeritageOffset = Ar.Read<int>();
