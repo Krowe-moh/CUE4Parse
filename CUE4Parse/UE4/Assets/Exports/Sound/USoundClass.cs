@@ -5,12 +5,6 @@ using Newtonsoft.Json;
 
 namespace CUE4Parse.UE4.Assets.Exports.Sound;
 
-public struct FSoundClassEditorData
-{
-    public int X;
-    public int Y;
-}
-
 public class USoundClass : UObject
 {
     public Dictionary<FPackageIndex, FSoundCueEditorData>? EditorData;

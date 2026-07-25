@@ -18,7 +18,7 @@ namespace CUE4Parse.UE4.Readers
 {
     public abstract class FArchive : RandomAccessStream, ICloneable
     {
-        
+
         public VersionContainer Versions;
         public EGame Game
         {
@@ -35,7 +35,6 @@ namespace CUE4Parse.UE4.Readers
             get => Versions.LicenseeVer;
             set => Versions.LicenseeVer = value;
         }
-
         public ETexturePlatform Platform
         {
             get => Versions.Platform;
@@ -103,7 +102,7 @@ namespace CUE4Parse.UE4.Readers
             var buffer = ArrayPool<byte>.Shared.Rent(size);
             Read(buffer, 0,  size);
             Position = saved;
-            var result = Unsafe.ReadUnaligned<T>(ref buffer[0]);    
+            var result = Unsafe.ReadUnaligned<T>(ref buffer[0]);
             ArrayPool<byte>.Shared.Return(buffer);
             return result;
         }
@@ -272,6 +271,21 @@ namespace CUE4Parse.UE4.Readers
         {
             var num = Read<int>();
             Position += num * size;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SkipArray<T>()
+        {
+            var length = Read<int>();
+            var size = Unsafe.SizeOf<T>();
+            Position += length * size;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SkipArray<T>(int length)
+        {
+            var size = Unsafe.SizeOf<T>();
+            Position += length * size;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -451,6 +465,26 @@ namespace CUE4Parse.UE4.Readers
             {
                 ((byte*)v)[lengthBits / 8] &= (byte) ((1 << (int)(lengthBits & 7)) - 1);
             }
+        }
+
+        public int ReadCompactIndex()
+        {
+            byte b = Read<byte>();
+            int sign = b & 0x80;
+            int shift = 6;
+            int r = b & 0x3F;
+
+            if ((b & 0x40) != 0)
+            {
+                do
+                {
+                    b = Read<byte>();
+                    r |= (b & 0x7F) << shift;
+                    shift += 7;
+                } while ((b & 0x80) != 0);
+            }
+
+            return sign != 0 ? -r : r;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

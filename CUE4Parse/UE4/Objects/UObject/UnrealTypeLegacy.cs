@@ -375,7 +375,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             writer.WritePropertyName("SignatureFunction");
             serializer.Serialize(writer, SignatureFunction);
-
+            
             if (SourceDelegate is { IsNull: false })
             {
                 writer.WritePropertyName("SourceDelegate");

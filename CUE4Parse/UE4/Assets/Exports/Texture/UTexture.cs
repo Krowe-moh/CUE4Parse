@@ -92,7 +92,7 @@ public class UTexture : UUnrealMaterial, IAssetUserData
             {
                 if (FUE5MainStreamObjectVersion.Get(Ar) < FUE5MainStreamObjectVersion.Type.TextureSourceVirtualization)
                 {
-                    new FByteBulkData(Ar);
+                    SourceArt = new FByteBulkData(Ar);
                 }
                 else
                 {
@@ -136,7 +136,7 @@ public class UTexture : UUnrealMaterial, IAssetUserData
 #endif
                 PlatformData = new FTexturePlatformData(Ar, this, bSerializeMipData);
 
-                if (Ar.Game is GAME_SeaOfThieves or GAME_DeltaForce) Ar.Position += 4;
+                if (Ar.Game is GAME_SeaOfThieves or GAME_DeltaForce or GAME_PUBGLite) Ar.Position += 4;
 
                 if (Ar.AbsolutePosition != skipOffset)
                 {

@@ -270,7 +270,6 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 PackageName = Ar.ReadFString();
             }
-
             PackageFlags = Ar.Read<EPackageFlags>();
 
             /*if (PackageFlags.HasFlag(EPackageFlags.PKG_FilterEditorOnly))
@@ -316,6 +315,12 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             ImportCount = Ar.Read<int>();
             ImportOffset = Ar.Read<int>();
+            
+            if (FileVersionUE < EUnrealEngineObjectUE3Version.DeprecatedHeritageTable)
+            {
+                HeritageOffset = Ar.Read<int>();
+                HeritageCount = Ar.Read<int>();
+            }
 
             if (FileVersionUE < EUnrealEngineObjectUE3Version.DeprecatedHeritageTable)
             {

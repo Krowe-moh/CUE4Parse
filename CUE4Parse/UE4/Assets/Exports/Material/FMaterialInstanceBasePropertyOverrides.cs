@@ -13,6 +13,8 @@ namespace CUE4Parse.UE4.Assets.Exports.Material
         public readonly float OpacityMaskClipValue;
         public readonly bool DitheredLODTransition;
 
+        /*
+        // untested
         public FMaterialInstanceBasePropertyOverrides(FAssetArchive Ar)
         {
             Ar.ReadBoolean(); // bOverrideBaseProperties_DEPRECATED
@@ -39,6 +41,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Material
                 }
             }
         }
+         */
 
         public FMaterialInstanceBasePropertyOverrides(FStructFallback fallback)
         {
