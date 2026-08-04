@@ -379,8 +379,7 @@ public class UMaterial : UMaterialInterface
             parameters.Diffuse = null;
         }
     }
-
-    public override void GetParams(CMaterialParams2 parameters, EMaterialFormat format)
+    public override void GetParams(CMaterialParams2 parameters, EMaterialDepth depth)
     {
         parameters.BlendMode = BlendMode;
         parameters.ShadingModel = ShadingModel;
@@ -439,7 +438,7 @@ public class UMaterial : UMaterialInterface
                 parameters.SpecularTex = textureParameter.Texture;
         }
 
-        if (format != EMaterialFormat.AllLayersNoRef)
+        if (depth != EMaterialDepth.AllLayersNoRef)
         {
             for (int i = 0; i < ReferencedTextures.Count; i++)
             {
@@ -448,8 +447,8 @@ public class UMaterial : UMaterialInterface
             }
         }
 
-        base.GetParams(parameters, format);
-        if (format == EMaterialFormat.AllLayersNoRef) return;
+        base.GetParams(parameters, depth);
+        if (depth == EMaterialDepth.AllLayersNoRef) return;
 
         if (ReferencedTextures.Count == 1 && ReferencedTextures[0] is { } fallback)
         {

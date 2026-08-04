@@ -9,7 +9,7 @@ public class FSoftVertex : FSkelMeshVertexBase
 {
     private int MAX_SKELETAL_UV_SETS = 1;
 
-    public FMeshUVFloat[] UV;
+    public sealed override FMeshUVFloat[] UVs { get; }
     public FColor Color;
 
     public FSoftVertex(FArchive Ar, bool isRigid = false)
