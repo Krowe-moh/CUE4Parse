@@ -105,7 +105,7 @@ public class UMaterialInstance : UMaterialInterface
                 }
                 if (Ar.Ver >= EUnrealEngineObjectUE4Version.MATERIAL_INSTANCE_BASE_PROPERTY_OVERRIDES)
                 {
-                    new FMaterialInstanceBasePropertyOverrides(Ar);
+                    //new FMaterialInstanceBasePropertyOverrides(Ar);
                 }
             }
         }

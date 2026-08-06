@@ -17,7 +17,7 @@ namespace CUE4Parse.UE4.Objects.UObject;
 [SkipObjectRegistration]
 public class UClass : UStruct
 {
-    
+
     /** Used to check if the class was cooked or not */
     public bool bCooked;
 
@@ -48,7 +48,14 @@ public class UClass : UStruct
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
-
+/*	if( Ar.Ver()<=63 )
+		Ar << ParmsSize;//oldver
+	Ar << iNative;
+	if( Ar.Ver()<=63 )
+		Ar << NumParms;//oldver
+	Ar << OperPrecedence;
+	if( Ar.Ver()<=63 )
+		Ar << ReturnValueOffset;//oldver*/
         if (Ar.Game == GAME_AWayOut) Ar.Position += 4;
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.Release62)
@@ -59,21 +66,15 @@ public class UClass : UStruct
         FuncMap = Ar.ReadMap(Ar.ReadFName, () => new FPackageIndex(Ar));
         ClassFlags = Ar.Read<EClassFlags>();
 
-        if (Ar.Game is EGame.GAME_StarWarsJediFallenOrder or EGame.GAME_StarWarsJediSurvivor or EGame.GAME_AshesOfCreation or EGame.GAME_RocketLeague) Ar.Position += 4;
-
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game < GAME_UE4_0)
         {
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_PLATFORM_FLAGS)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.ADDED_PLATFORM_FLAGS)
             {
-                if (Ar.Ver < EUnrealEngineObjectUE3Version.EMITTER_LODVALIDITY_FIX2)
-                {
-                    // temp
-                    Ar.Read<byte>(); // classPlatformFlags
-                }
+                Ar.Read<FGuid>(); // ClassGuid
             }
             else
             {
-                Ar.Read<FGuid>();
+                Ar.Read<byte>(); // ClassPlatformFlags
             }
         }
 
@@ -87,66 +88,78 @@ public class UClass : UStruct
             Ar.ReadArray(() => Ar.ReadFName());
         }
 
-        // Variables.
-    //    ClassWithin = new FPackageIndex(Ar);
-      //  ClassConfigName = Ar.ReadFName();
+        if (Ar.Game is GAME_StarWarsJediFallenOrder or GAME_StarWarsJediSurvivor or GAME_AshesOfCreation) Ar.Position += 4;
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedHideCategoriesToUClass && Ar.Game < EGame.GAME_UE4_0)
+        ClassWithin = new FPackageIndex(Ar);
+        ClassConfigName = Ar.ReadFName();
+        if (Ar.Game < GAME_UE4_0)
         {
+            ClassGeneratedBy = new FPackageIndex(Ar);
+        }
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedHideCategoriesToUClass && Ar.Game < GAME_UE4_0)
+        { // DONTSORTCATEGORIES_ADDED
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.DisplacedHideCategories && Ar.Ver < EUnrealEngineObjectUE3Version.MP3ENC_TO_MSENC) // && Ar.UE4Version < 117
             {
-                Ar.ReadArray(() => Ar.ReadFName());
+                Ar.ReadArray(() => Ar.ReadFName()); // HideCategories
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_COMPONENT_CLASS_BRIDGE)
             {
-                var ComponentClassBridgeMap = Ar.ReadMap(
-                    () => new FPackageIndex(Ar),
-                    () => Ar.ReadFName()
-                );
+               Ar.ReadMap(() => new FPackageIndex(Ar),() => Ar.ReadFName()); // TempMap
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedComponentTemplatesToUClass && Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_COMPONENT_TEMPLATES)
             {
-                Ar.ReadArray(() => new FPackageIndex(Ar));
+                Ar.ReadArray(() => new FPackageIndex(Ar)); // TempArray
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex) //&& Ar.UE4Version < 118
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex && Ar.Ver < EUnrealEngineObjectUE4Version.STOPPED_SERIALIZING_COMPONENTNAMETODEFAULTOBJECTMAP)
             {
-                Ar.ReadMap(
-                    () => new FPackageIndex(Ar),
-                    () => Ar.ReadFName()
-                );
+                Ar.ReadMap(() => new FPackageIndex(Ar),() => Ar.ReadFName()); // ComponentNameToDefaultObjectMap
             }
 
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedInterfacesFeature && Ar.Ver < EUnrealEngineObjectUE3Version.CHANGED_INTERFACES_TO_MAP)
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedInterfacesFeature)
             {
-                Ar.ReadArray(() => new FPackageIndex(Ar));
-            }
-
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.CHANGED_INTERFACES_TO_MAP)
-            {
-                var interfacesCount = Ar.Read<int>();
-
-                if (interfacesCount > 0)
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.CHANGED_INTERFACES_TO_MAP)
                 {
-                    var ImplementedInterfaces = new List<int>(interfacesCount);
-                    for (int i = 0; i < interfacesCount; i++)
-                    {
-                        var interfaceIndex = Ar.Read<int>();
-                        var typeIndex = Ar.Read<int>();
-                        ImplementedInterfaces.Add(interfaceIndex);
-
-                        if (Ar.Game >= EGame.GAME_UE4_0)
-                        {
-                            var isImplementedByK2 = Ar.Read<int>() > 0;
-                        }
-                    }
+                    Ar.ReadArray(() => new FPackageIndex(Ar)); // InterfaceClassArray
                 }
+                else
+                {
+                    Interfaces = Ar.ReadArray(() => new FImplementedInterface(Ar));
+                }
+            }
+
+            if (Ar.Game < GAME_UE4_0)
+            {
+                return;
+                var bDeprecatedForceScriptOrder = Ar.ReadBoolean();
+            }
+
+            if (Ar.Game == GAME_RocketLeague)
+            {
+                Ar.ReadFString();
+                Ar.Read<int>();
+                Ar.ReadArray(() => Ar.ReadFName());
+            }
+
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.SCRIPT_BIND_DLL_FUNCTIONS && Ar.Game < GAME_UE4_0)
+            {
+                Ar.ReadFName(); // DLLBindName
+            }
+
+            if (Ar.Game == GAME_SuddenAttack2)
+            {
+                Ar.Read<int>();
+            }
+
+            if (Ar.Game < GAME_UE4_0)
+            {
+                _ = Ar.ReadFName();
             }
         }
 
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game <GAME_UE4_0)
         {
             ClassGeneratedBy = new FPackageIndex(Ar);
         }
@@ -162,34 +175,34 @@ public class UClass : UStruct
         ClassGeneratedBy = new FPackageIndex(Ar);
         Interfaces = Ar.ReadArray(() => new FImplementedInterface(Ar));
 
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game <GAME_UE4_0)
         {
             var bDeprecatedForceScriptOrder = Ar.ReadBoolean();
         }
 
-        if (Ar.Game == EGame.GAME_RocketLeague)
+        if (Ar.Game ==GAME_RocketLeague)
         {
             Ar.ReadFString();
             Ar.Read<int>();
             Ar.ReadArray(() => Ar.ReadFName());
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SCRIPT_BIND_DLL_FUNCTIONS && Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SCRIPT_BIND_DLL_FUNCTIONS && Ar.Game <GAME_UE4_0)
         {
             Ar.ReadFName(); // DLLBindName
         }
 
-        if (Ar.Game == EGame.GAME_SuddenAttack2)
+        if (Ar.Game ==GAME_SuddenAttack2)
         {
             Ar.Read<int>();
         }
 
-        if (Ar.Game < EGame.GAME_UE4_0)
+        if (Ar.Game <GAME_UE4_0)
         {
             _ = Ar.ReadFName();
         }
 
-        if (Ar.Game >= EGame.GAME_UE4_0)
+        if (Ar.Game >=GAME_UE4_0)
         {
             _ = Ar.ReadBoolean();
             _ = Ar.ReadFName();

@@ -9,7 +9,7 @@ namespace CUE4Parse.UE4.Assets.Exports.StaticMesh;
 [JsonConverter(typeof(FStaticMeshSectionConverter))]
 public class FStaticMeshSection
 {
-    public ResolvedObject? Material;
+    public FPackageIndex? Material;
     public int MaterialIndex;
     public int FirstIndex;
     public int NumTriangles;
@@ -42,7 +42,7 @@ public class FStaticMeshSection
                 return;
             }
 
-            Material = new FPackageIndex((FAssetArchive)Ar).ResolvedObject;
+            Material = new FPackageIndex((FAssetArchive)Ar);
             bEnableCollision = Ar.ReadBoolean();
             Ar.ReadBoolean(); // OldEnableCollision
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedCastShadow) bCastShadow = Ar.ReadBoolean();

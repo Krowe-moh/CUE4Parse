@@ -190,7 +190,7 @@ public class UMaterial : UMaterialInterface
             for (int QualityIndex = 0; QualityIndex < (Ar.Ver > EUnrealEngineObjectUE3Version.FLASH_MERGE_TO_MAIN && Ar.Game < GAME_UE4_0 ? 2 : 1); QualityIndex++)
             //for (int QualityIndex = 0; QualityIndex < (Ar.Ver > EUnrealEngineObjectUE3Version.FLASH_MERGE_TO_MAIN && Ar.Ver <= EUnrealEngineObjectUE3Version.IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX ? 2 : Ar.Game == GAME_RocketLeague ? 2 : 1); QualityIndex++)
             {
-                if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MATERIAL_QUALITY_LEVEL && (QualityMask & (1 << QualityIndex)) == 0)
+                if ((QualityMask & (1 << QualityIndex)) == 0)
                 {
                     continue;
                 }
@@ -202,8 +202,8 @@ public class UMaterial : UMaterialInterface
                     ReferencedTextures.AddRange(loadedResource.ReferencedTextures);
             }
 
-            //new FMaterialShaderMapId(Ar); // if PKG_ContainsInlinedShaders and ue3
-            if (Ar.Ver > EUnrealEngineObjectUE3Version.CHANGED_COMPRESSION_CHUNK_SIZE_TO_128 && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADER_MODEL_2)
+            // Todo: UE3 - if PKG_ContainsInlinedShaders new FMaterialShaderMapId(Ar);
+            if (Ar.Ver > EUnrealEngineObjectUE3Version.ANIMNODESYNCH_RATESCALE && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADER_MODEL_2)
             {
                 var loadedResource = new FMaterialResource();
                 loadedResource.Deserialize(Ar);

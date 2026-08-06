@@ -277,6 +277,9 @@ namespace CUE4Parse.UE4.Objects.Engine
             {
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX) Ar.Read<int>(); // unknown
                 CookedTextureFileCacheInfoMap = Ar.ReadMap(() => Ar.ReadFString(), () => new FCookedTextureFileCacheInfo(Ar));
+
+                // Perfect: REALD_DBAVARS_TO_SHADER_REGISTERS, FLASH_MERGE_TO_MAIN, CONVERT_KISMET_OBJECTS, IPHONE_AUDIO_VARIABLE_BLOCK_SIZE_COMPRESSION, IPHONE_COMPRESSED_SOUNDS_MS_ADPCM
+                // 12 extra: ADDDED_EXPLICIT_EMISSIVE_LIGHT_RADIUS
                 if (Ar.Ver > EUnrealEngineObjectUE3Version.CONVERT_KISMET_OBJECTS)
                 {
                     if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_TEXTURE_USAGE_INFO)

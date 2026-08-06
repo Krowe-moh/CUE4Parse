@@ -24,6 +24,8 @@ public class FActorReference : IUStruct
         }
         else
         {
+            Ar.Position += 36;
+            return;
             new FPackageIndex(Ar); // Actor
             Ar.Read<FGuid>(); // Guid
         }

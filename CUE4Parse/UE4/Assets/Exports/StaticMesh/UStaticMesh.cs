@@ -154,11 +154,12 @@ public class UStaticMesh : UObject
 
             RenderData = new FStaticMeshRenderData(Ar);
 
-            Materials = new ResolvedObject[RenderData.LODs[0].Sections.Length];
+            Materials = new FPackageIndex?[RenderData.LODs[0].Sections.Length];
             for (var i = 0; i < RenderData.LODs[0].Sections.Length; i++)
             {
                 Materials[i] = RenderData.LODs[0].Sections[i].Material!;
             }
+
             RenderData.Bounds = Bounds;
 
             Ar.Read<int>(); // LODInfo
@@ -223,7 +224,7 @@ public class UStaticMesh : UObject
             Sockets = Ar.ReadArray(() => new FPackageIndex(Ar));
         }
 
-        if (!Ar.IsFilterEditorOnly)
+        if (!Ar.IsFilterEditorOnly  || Ar.Game < GAME_UE4_0)
         {
             Ar.Position = validPos;
             return; // so it doesn't throw

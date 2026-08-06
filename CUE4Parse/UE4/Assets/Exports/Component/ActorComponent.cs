@@ -8,6 +8,7 @@ using CUE4Parse.UE4.Assets.Exports.StaticMesh;
 using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Assets.Readers;
+using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
@@ -391,7 +392,6 @@ public class UShapeComponent : UPrimitiveComponent;
 public class USingleAnimSkeletalComponent : USkeletalMeshComponent;
 public class USkeletalMeshReplicatedComponent : USkeletalMeshComponent;
 public class UFPSSkeletalMeshComponent : USkeletalMeshComponent;
-public class USkinnedMeshComponent : UMeshComponent;
 public class USpeedTreeComponent : UPrimitiveComponent
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)

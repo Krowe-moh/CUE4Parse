@@ -419,56 +419,6 @@ namespace CUE4Parse.UE4.Readers
 
         public int ReadCompactIndex()
         {
-            int index = 0;
-
-            byte b0 = Read<byte>();
-
-            if ((b0 & 0x40) != 0)
-            {
-                byte b1 = Read<byte>();
-                if ((b1 & 0x80) != 0)
-                {
-                    byte b2 = Read<byte>();
-                    if ((b2 & 0x80) != 0)
-                    {
-                        byte b3 = Read<byte>();
-                        if ((b3 & 0x80) != 0)
-                        {
-                            byte b4 = Read<byte>();
-                            index = b4;
-                        }
-
-                        index = (index << 7) | (b3 & 0x7F);
-                    }
-
-                    index = (index << 7) | (b2 & 0x7F);
-                }
-
-                index = (index << 7) | (b1 & 0x7F);
-            }
-
-            index = (index << 6) | (b0 & 0x3F);
-
-            if ((b0 & 0x80) != 0)
-            {
-                index *= -1;
-            }
-
-            return index;
-        }
-
-        public virtual unsafe void SerializeBits(void* v, long lengthBits)
-        {
-            Serialize((byte*) v, (int) ((lengthBits + 7) / 8));
-
-            if (/*IsLoading &&*/ (lengthBits % 8) != 0)
-            {
-                ((byte*)v)[lengthBits / 8] &= (byte) ((1 << (int)(lengthBits & 7)) - 1);
-            }
-        }
-
-        public int ReadCompactIndex()
-        {
             byte b = Read<byte>();
             int sign = b & 0x80;
             int shift = 6;

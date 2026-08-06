@@ -63,11 +63,12 @@ public partial class USkeletalMesh : UObject
 
         if (Ar.Game < GAME_UE4_0)
         {
-            var SkeletalMaterials = Ar.ReadArray(() => new FPackageIndex(Ar));
-            Materials = new ResolvedObject?[SkeletalMaterials.Length];
+            Materials = Ar.ReadArray(() => new FPackageIndex(Ar));
+
+            SkeletalMaterials = new FSkeletalMaterial[Materials.Length];
             for (var i = 0; i < Materials.Length; i++)
             {
-                Materials[i] = SkeletalMaterials[i].ResolvedObject;
+                SkeletalMaterials[i] = new FSkeletalMaterial(Materials[i]);
             }
 
             Ar.Read<FVector>(); // MeshOrigin
@@ -80,7 +81,7 @@ public partial class USkeletalMesh : UObject
         else
         {
             SkeletalMaterials = Ar.ReadArray(() => new FSkeletalMaterial(Ar));
-            Materials = new ResolvedObject?[SkeletalMaterials.Length];
+            Materials = new FPackageIndex?[SkeletalMaterials.Length];
             for (var i = 0; i < Materials.Length; i++)
             {
                 Materials[i] = SkeletalMaterials[i].Material;
@@ -358,9 +359,6 @@ public partial class USkeletalMesh : UObject
 
         writer.WritePropertyName(nameof(SkeletalMaterials));
         serializer.Serialize(writer, SkeletalMaterials);
-
-        writer.WritePropertyName(nameof(Materials));
-        serializer.Serialize(writer, Materials);
 
         writer.WritePropertyName(nameof(LODModels));
         serializer.Serialize(writer, LODModels);
