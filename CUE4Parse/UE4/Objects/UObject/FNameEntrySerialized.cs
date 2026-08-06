@@ -9,60 +9,6 @@ using Newtonsoft.Json;
 
 namespace CUE4Parse.UE4.Objects.UObject
 {
-    public static class DefaultClassNameMap
-    {
-        // lowercase -> proper UE engine casing, default/core types only
-        private static readonly Dictionary<string, string> _map = new(StringComparer.OrdinalIgnoreCase)
-        {
-            ["class"] = "Class",
-            ["package"] = "Package",
-            ["core"] = "Core",
-            ["object"] = "Object",
-            ["level"] = "Level",
-            ["world"] = "World",
-            ["worldinfo"] = "WorldInfo",
-            ["model"] = "Model",
-            ["polys"] = "Polys",
-            ["brush"] = "Brush",
-            ["brushcomponent"] = "BrushComponent",
-            ["vector"] = "Vector",
-            ["rotator"] = "Rotator",
-            ["color"] = "Color",
-            ["box"] = "Box",
-            ["sequence"] = "Sequence",
-            ["sequenceevent"] = "SequenceEvent",
-            ["seqact_delay"] = "SeqAct_Delay",
-            ["seqact_toggle"] = "SeqAct_Toggle",
-            ["seqvar_bool"] = "SeqVar_Bool",
-            ["seqvar_float"] = "SeqVar_Float",
-            ["seqvar_object"] = "SeqVar_Object",
-            ["objectreferencer"] = "ObjectReferencer",
-            ["shadercache"] = "ShaderCache",
-            ["seekfreeshadercache"] = "SeekFreeShaderCache",
-            ["boolproperty"] = "BoolProperty",
-            ["byteproperty"] = "ByteProperty",
-            ["intproperty"] = "IntProperty",
-            ["floatproperty"] = "FloatProperty",
-            ["strproperty"] = "StrProperty",
-            ["nameproperty"] = "NameProperty",
-            ["objectproperty"] = "ObjectProperty",
-            ["arrayproperty"] = "ArrayProperty",
-            ["structproperty"] = "StructProperty",
-            ["none"] = "None",
-            ["pf_dxt1"] = "PF_DXT1",
-            ["pf_dxt5"] = "PF_DXT5",
-            ["format"] = "Format",
-            ["sizey"] = "SizeY",
-            ["sizex"] = "SizeX",
-        };
-
-        public static string Normalize(string name)
-        {
-            return _map.TryGetValue(name, out var proper) ? proper : name;
-        }
-    }
-
-
     public readonly struct FNameEntrySerialized
     {
         public readonly string? Name;
@@ -79,8 +25,6 @@ namespace CUE4Parse.UE4.Objects.UObject
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.Release64)
             {
                 Name = Ar.ReadFString().Trim();
-
-                //Name = DefaultClassNameMap.Normalize(Name);
                 if (Ar.Game == GAME_AvaGlobal) Ar.Position += (Name.Length ^ 7) & 0xF;
             }
             else

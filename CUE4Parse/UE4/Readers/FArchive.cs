@@ -437,6 +437,16 @@ namespace CUE4Parse.UE4.Readers
             return sign != 0 ? -r : r;
         }
 
+        public virtual unsafe void SerializeBits(void* v, long lengthBits)
+        {
+            Serialize((byte*) v, (int) ((lengthBits + 7) / 8));
+
+            if (/*IsLoading &&*/ (lengthBits % 8) != 0)
+            {
+                ((byte*)v)[lengthBits / 8] &= (byte) ((1 << (int)(lengthBits & 7)) - 1);
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Read7BitEncodedInt()
         {

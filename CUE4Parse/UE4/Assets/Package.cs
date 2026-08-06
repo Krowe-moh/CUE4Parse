@@ -261,11 +261,7 @@ namespace CUE4Parse.UE4.Assets
             {
                 var checkSumDataSize = uassetAr.Read<int>();
                 var compressedChunkInfoOffset = uassetAr.Read<int>();
-                var lastBlockSize = 0;
-
-                Console.WriteLine($"checkSumDataSize={checkSumDataSize} compressedChunkInfoOffset={compressedChunkInfoOffset} " +
-                                  $"lastBlockSize={lastBlockSize} TotalHeaderSize={Summary.TotalHeaderSize} " +
-                                  $"headerEnd={uassetAr.Position} NameOffset={Summary.NameOffset}");
+                var lastBlockSize = uassetAr.Read<int>();
 
                 if (Summary.CompressionFlags != ECompressionFlags.COMPRESS_None)
                 {
@@ -276,14 +272,7 @@ namespace CUE4Parse.UE4.Assets
                     var before = uassetAr.ReadBytes(Summary.NameOffset);
 
                     var encryptedSize = (int) (Summary.TotalHeaderSize - lastBlockSize - headerEnd);
-
-                    if (encryptedSize % 16 != 0)
-                    {
-                        throw new ParserException(uassetAr,
-                            $"Rocket League header layout changed: encryptedSize={encryptedSize} " +
-                            $"(TotalHeaderSize={Summary.TotalHeaderSize}, lastBlockSize={lastBlockSize}, headerEnd={headerEnd}) " +
-                            "is not a multiple of 16 - offsets need to be re-derived for this build.");
-                    }
+                    if (uassetAr.Game == GAME_RocketLeague && (int)uassetAr.LicenseeVer >= 33) encryptedSize -= encryptedSize % 16;
 
                     var encryptedData = uassetAr.ReadBytes(encryptedSize);
 
@@ -296,12 +285,10 @@ namespace CUE4Parse.UE4.Assets
                     Buffer.BlockCopy(decryptedData, 0, fullBuffer, before.Length, decryptedData.Length);
                     Buffer.BlockCopy(after, 0, fullBuffer, before.Length + decryptedData.Length, after.Length);
 
-                    File.WriteAllBytes(uassetAr.Name, fullBuffer);
                     uassetAr.SetBaseArchive(new FByteArchive("Rocket League - Decrypted Package", fullBuffer, uassetAr.Versions));
                     uassetAr.SeekAbsolute(Summary.NameOffset + compressedChunkInfoOffset, SeekOrigin.Begin);
 
                     Summary.CompressedChunks = uassetAr.ReadArray(() => new FCompressedChunk(uassetAr));
-                    Summary.CompressedChunks = Summary.CompressedChunks.Skip(1).ToArray();
                 }
             }
 
@@ -319,32 +306,12 @@ namespace CUE4Parse.UE4.Assets
                 {
                     var decompressedData = new byte[chunk.UncompressedSize];
 
-                    if (false && uassetAr.Game == GAME_RocketLeague)
-                    {
-                        // RL update dropped the PACKAGE_FILE_TAG chunk header - chunks are now raw zlib streams
-                        uassetAr.Position = chunk.CompressedOffset;
-                        var compressedData = new byte[chunk.CompressedSize];
-                        uassetAr.Read(compressedData, 0, (int) chunk.CompressedSize);
-/*
-                        using var ms = new MemoryStream(compressedData);
-                        using var zlib = new System.IO.Compression.ZLibStream(ms, System.IO.Compression.CompressionMode.Decompress);
-                        zlib.ReadExactly(decompressedData, 0, decompressedData.Length);*/
-
-                        uassetAr.SerializeCompressedNew(decompressedData, chunk.UncompressedSize,
-                            Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB)
-                                ? CompressionMethod.Zlib.ToString()
-                                : CompressionMethod.LZO.ToString(),
-                            ECompressionFlags.COMPRESS_None, false, out _);
-                    }
-                    else
-                    {
-                        uassetAr.Position = chunk.CompressedOffset;
-                        uassetAr.SerializeCompressedNew(decompressedData, chunk.UncompressedSize,
-                            Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB)
-                                ? CompressionMethod.Zlib.ToString()
-                                : CompressionMethod.LZO.ToString(),
-                            ECompressionFlags.COMPRESS_None, false, out _);
-                    }
+                    uassetAr.Position = chunk.CompressedOffset;
+                    uassetAr.SerializeCompressedNew(decompressedData, chunk.UncompressedSize,
+                        Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB)
+                            ? CompressionMethod.Zlib.ToString()
+                            : CompressionMethod.LZO.ToString(),
+                        ECompressionFlags.COMPRESS_None, false, out _);
 
                     Array.Copy(decompressedData, 0, buffer, chunk.UncompressedOffset, decompressedData.Length);
                 }
