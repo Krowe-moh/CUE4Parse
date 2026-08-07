@@ -97,16 +97,19 @@ public class UTexture2D : UTexture
                     {
                         Format = EPixelFormat.PF_PVRTC4;
                     }
-                } else if (false) // if game is android
+                }
+                else if (false) // if game is android
                 {
                     if (Format == EPixelFormat.PF_DXT1)
                     {
                         Format = EPixelFormat.PF_ETC1;
-                    } else if (Format == EPixelFormat.PF_DXT5)
+                    }
+                    else if (Format == EPixelFormat.PF_DXT5)
                     {
                         // unsupported RGBA4
                     }
                 }
+
                 PlatformData.Mips = legacyMips;
             }
         }

@@ -582,6 +582,18 @@ namespace CUE4Parse.UE4.Readers
             if (length > Length - Position) throw new ParserException($"Invalid AnsiString length '{length}'");
 
             return Encoding.Latin1.GetString(ReadSpan(length));
+
+        public string ReadFAnsiString2()
+        {
+            var strBytes = new List<byte>();
+            nextChar:
+            byte c = Read<byte>();
+            if (c != 0)
+            {
+                strBytes.Add(c);
+                goto nextChar;
+            }
+            return Encoding.Latin1.GetString(strBytes.ToArray());
         }
 
         public float ReadFReal() => Ver >= EUnrealEngineObjectUE5Version.LARGE_WORLD_COORDINATES ? (float)Read<double>() : Read<float>();

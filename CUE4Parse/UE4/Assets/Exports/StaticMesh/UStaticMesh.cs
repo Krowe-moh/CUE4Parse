@@ -154,10 +154,16 @@ public class UStaticMesh : UObject
 
             RenderData = new FStaticMeshRenderData(Ar);
 
-            Materials = new FPackageIndex?[RenderData.LODs[0].Sections.Length];
+            StaticMaterials = new FStaticMaterial[RenderData.LODs[0].Sections.Length];
             for (var i = 0; i < RenderData.LODs[0].Sections.Length; i++)
             {
-                Materials[i] = RenderData.LODs[0].Sections[i].Material!;
+                StaticMaterials[i] = new FStaticMaterial(RenderData.LODs[0].Sections[i].Material!);
+            }
+
+            Materials = new FPackageIndex?[StaticMaterials.Length];
+            for (var i = 0; i < Materials.Length; i++)
+            {
+                Materials[i] = StaticMaterials[i].MaterialInterface;
             }
 
             RenderData.Bounds = Bounds;
