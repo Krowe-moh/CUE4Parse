@@ -25,10 +25,7 @@ namespace CUE4Parse.UE4.Objects.Engine
 
             if (Ar.Ver < EUnrealEngineObjectUE4Version.ADD_EDITOR_VIEWS)
             {
-                for (int i = 0; i < 4; i++)
-                {
-                    new FLevelViewportInfo(Ar); // EditorViews
-                }
+                Ar.ReadArray(4, () => new FLevelViewportInfo(Ar));
             }
 
             if (Ar.Ver < EUnrealEngineObjectUE4Version.REMOVE_SAVEGAMESUMMARY)

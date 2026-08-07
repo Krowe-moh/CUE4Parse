@@ -21,7 +21,7 @@ public class FRawStaticIndexBuffer() : FRawIndexBuffer
             {
                 var bShouldExpandTo32Bit = Ar.ReadBoolean();
             }
-
+            
             if (tempAr.Length == 0)
             {
                 tempAr.Dispose();

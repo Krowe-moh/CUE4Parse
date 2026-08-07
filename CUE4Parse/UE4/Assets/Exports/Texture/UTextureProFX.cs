@@ -24,6 +24,7 @@ public class UTextureProFXChild : UTexture
 {
     public int SizeX;
     public int SizeY;
+
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);

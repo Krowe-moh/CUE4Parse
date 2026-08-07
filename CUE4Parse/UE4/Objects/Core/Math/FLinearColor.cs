@@ -17,7 +17,6 @@ namespace CUE4Parse.UE4.Objects.Core.Math
         public float A;
 
         public static readonly FLinearColor Gray = new(0.6f, 0.6f, 0.6f, 1f);
-        public static readonly FLinearColor Black = new(0f, 0f, 0f, 1f);
 
         public string Hex => ToFColor(true).Hex;
 

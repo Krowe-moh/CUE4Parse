@@ -32,7 +32,7 @@ public struct DetourTileCacheLayerHeader
             _ => size + (6 * sizeof(float)) - 2
         };
     }
-
+    
     public DetourTileCacheLayerHeader(FArchive Ar)
     {
         if (Ar.Game < GAME_UE5_0)
@@ -44,7 +44,7 @@ public struct DetourTileCacheLayerHeader
         {
             Version = Ar.Read<short>();
         }
-
+        
         Tx = Ar.Read<int>();
         Ty = Ar.Read<int>();
         TLayer = Ar.Read<int>();
@@ -63,10 +63,10 @@ public struct DetourTileCacheLayerHeader
 
         Width = Ar.Read<ushort>();
         Height = Ar.Read<ushort>();
-
+        
         MinX = Ar.Read<ushort>();
         MaxX = Ar.Read<ushort>();
-
+        
         MinY = Ar.Read<ushort>();
         MaxY = Ar.Read<ushort>();
     }
