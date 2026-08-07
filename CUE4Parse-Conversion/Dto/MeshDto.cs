@@ -324,7 +324,7 @@ public sealed class SkeletalMeshDto : SkeletonDto
 
     private void ParseMeshRenderData(USkeletalMesh mesh, EMeshQuality quality)
     {
-        foreach (var sourceLodIndex in quality.GetRange(mesh.LODModels!.Length, i => false))
+        foreach (var sourceLodIndex in quality.GetRange(mesh.LODModels!.Length, i => mesh.LODModels[i].SkipLod))
         {
             LODs.Add(MeshLodDto<SkinnedMeshVertex>.FromSkeletalMesh(this, sourceLodIndex, mesh.LODModels[sourceLodIndex], mesh.LODInfo[sourceLodIndex].ScreenSize.Value));
         }

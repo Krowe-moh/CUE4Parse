@@ -119,6 +119,7 @@ public class FStaticLODModel
     public FMultisizeIndexContainer AdjacencyIndexBuffer;
     public FSkeletalMeshVertexClothBuffer ClothVertexBuffer;
     public FSkeletalMeshHalfEdgeBuffer HalfEdgeBuffer;
+    public bool SkipLod => Indices?.Buffer == null || Indices.Buffer.Length < 1;
     // Game specific data
     public object? AdditionalBuffer;
 
@@ -286,7 +287,8 @@ public class FStaticLODModel
             RequiredBones = new short[byteBones.Length];
             for (int i = 0; i < byteBones.Length; i++)
                 RequiredBones[i] = byteBones[i];
-        } else
+        }
+        else
         {
             RequiredBones = Ar.ReadArray<short>();
         }
