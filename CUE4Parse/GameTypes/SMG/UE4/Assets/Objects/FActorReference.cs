@@ -24,10 +24,13 @@ public class FActorReference : IUStruct
         }
         else
         {
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.VERSION_NUMBER_FIX_FOR_FLASH_TEXTURES)
+            {
+                new FPackageIndex(Ar); // Actor
+                Ar.Read<FGuid>(); // Guid
+                return;
+            }
             Ar.Position += 36;
-            return;
-            new FPackageIndex(Ar); // Actor
-            Ar.Read<FGuid>(); // Guid
         }
     }
 }

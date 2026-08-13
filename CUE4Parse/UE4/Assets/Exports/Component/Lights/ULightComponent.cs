@@ -352,6 +352,7 @@ public class USkyLightComponent : ULightComponentBase
         if (Ar.Game < GAME_UE4_0)
         {
             // if TONEMAPPER2ADJUST no need
+            // if IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX need
             //new ULightComponent().Deserialize(Ar, validPos);
         }
         else

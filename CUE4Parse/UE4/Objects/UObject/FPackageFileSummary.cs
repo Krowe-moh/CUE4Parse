@@ -167,22 +167,6 @@ namespace CUE4Parse.UE4.Objects.UObject
                 throw new ParserException($"Invalid uasset magic: 0x{Tag:X8} != 0x{PACKAGE_FILE_TAG:X8}");
             }
 
-            if (Ar.Game < GAME_UE4_0)
-            {
-                var possibleTag = Ar.Read<uint>();
-                Ar.Position -= 4;
-                if (possibleTag == PACKAGE_FILE_TAG || possibleTag == 0x20000 || possibleTag == 0x10000)
-                {
-                    Ar.Position = 0;
-                    var decompressedData = new byte[Ar.Length*10];
-
-                    Ar.SerializeCompressedNew(decompressedData, (int)Ar.Length*20, CompressionMethod.Zlib.ToString(), COMPRESS_None, false, out _);
-                    Ar = new FByteArchive("Decompressed Package", decompressedData, Ar.Versions);
-                }
-            }
-
-            Ar.Position = 4;
-
             legacyFileVersion = Ar.Read<int>();
             if (Ar.Game == GAME_MortalRoyale)
             {

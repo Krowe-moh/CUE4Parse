@@ -132,4 +132,13 @@ public class FLegacyMipMap
         UBits = Ar.Read<byte>();
         VBits = Ar.Read<byte>();
     }
+
+    public bool EnsureValidBulkData()
+    {
+        var bulkData = BulkData?.Data;
+        if (bulkData != null && bulkData.Length > 0)
+            return true;
+
+        return false;
+    }
 }
