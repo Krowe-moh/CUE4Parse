@@ -1,10 +1,12 @@
 using System.Buffers;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using CUE4Parse.Compression;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Exports.Texture;
+using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.UObject;
@@ -564,6 +566,61 @@ namespace CUE4Parse.UE4.Readers
             }
         }
 
+        public struct FLazyArray<TElement> where TElement : unmanaged
+        {
+            public int ElementCount;
+            public long StorageSize;
+            public long StorageOffset;
+            public EBulkDataFlags Flags;
+            public FName StoragePackageName;
+
+            private FArchive? _ar;
+            internal FArchive? Archive { set => _ar = value; }
+
+            public byte[] GetData() => _ar != null ? _ar.ReadBytesAt(StorageOffset, (int)StorageSize) : [];
+        }
+
+        public FLazyArray<TElement> LazyArray<TElement>() where TElement : unmanaged
+        {
+            var result = new FLazyArray<TElement> { Archive = this };
+            var elementSize = Unsafe.SizeOf<TElement>();
+
+            if (Ver < EUnrealEngineObjectUE3Version.LazyArraySkipCountChangedToSkipOffset)
+            {
+                result.ElementCount = CheckAndReadCompactIndex();
+                result.StorageSize = result.ElementCount * elementSize;
+                result.StorageOffset = Position;
+                Position += result.StorageSize;
+                return result;
+            }
+
+            var skipOffset = Read<int>();
+
+            if (Ver >= EUnrealEngineObjectUE3Version.LAZYARRAY_COMPRESSION)
+                result.StorageSize = Read<int>();
+
+            if (Ver >= EUnrealEngineObjectUE3Version.LAZYARRAY_SERIALIZATION_CHANGE)
+                result.Flags = Read<EBulkDataFlags>();
+
+            if (Ver >= EUnrealEngineObjectUE3Version.LAZYLOADER_PAYLOADFILENAME)
+                result.StoragePackageName = ReadFName();
+
+            result.ElementCount = CheckAndReadCompactIndex();
+
+            if (skipOffset == 0)
+            {
+                result.StorageSize = result.ElementCount * elementSize;
+                result.StorageOffset = Position;
+                Position += result.StorageSize;
+                return result;
+            }
+
+            result.StorageSize = skipOffset - Position;
+            result.StorageOffset = Position;
+            Position = skipOffset;
+            return result;
+        }
+
         public string ReadFUtf8String() => ReadFUtf8String(Read<int>());
         public string ReadFUtf8String(int length)
         {
@@ -581,7 +638,10 @@ namespace CUE4Parse.UE4.Readers
             if (length < 0) throw new ParserException($"Negative AnsiString length '{length}'");
             if (length > Length - Position) throw new ParserException($"Invalid AnsiString length '{length}'");
 
-            return Encoding.Latin1.GetString(ReadSpan(length));
+            Span<byte> buf = length <= 512 ? stackalloc byte[length] : new byte[length];
+            Read(buf);
+            return Encoding.Latin1.GetString(buf);
+        }
 
         public string ReadFAnsiString2()
         {
@@ -760,7 +820,7 @@ namespace CUE4Parse.UE4.Readers
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ulong BYTESWAP_ORDER64(ulong value)
+        public static ulong BYTESWAP_ORDER64(ulong value)
         {
             value = ((value << 8) & 0xFF00FF00FF00FF00UL) | ((value >> 8) & 0x00FF00FF00FF00FFUL);
             value = ((value << 16) & 0xFFFF0000FFFF0000UL) | ((value >> 16) & 0x0000FFFF0000FFFFUL);
