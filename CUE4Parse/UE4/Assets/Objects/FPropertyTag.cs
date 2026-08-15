@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CUE4Parse.MappingsProvider;
 using CUE4Parse.MappingsProvider.Usmap;
@@ -78,7 +79,7 @@ public static class FPropertyTypeNameUtils
 
 public class FPropertyTag
 {
-    
+
     public FName Name;
     public FName PropertyType;
     public int Size;
@@ -174,8 +175,70 @@ public class FPropertyTag
         }
         else
         {
-            PropertyType = Ar.ReadFName();
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.RefactoredPropertyTags)
+            {
+                var info = Ar.Read<byte>();
+                var type = (EPropertyType2) ((info & 0x0F));
+                PropertyType = type.ToString();
+                ArrayIndex = info & 0x80;
 
+                TagData = new FPropertyTagData();
+
+                switch (type)
+                {
+                    case EPropertyType2.StructProperty:
+                        TagData.StructType = Ar.ReadFName().Text; // ItemName
+                        break;
+                }
+
+                Size = DeserializePackedSize(Ar, (byte) (info & 0x70));
+
+                switch (type)
+                {
+                    case EPropertyType2.BoolProperty:
+                        TagData.Bool = ArrayIndex != 0;
+                        Tag = FPropertyTagType.ReadPropertyTagType(Ar, PropertyType.Text, TagData, ReadType.ZERO, Size);
+                        return;
+
+                    default:
+                    {
+                        if (ArrayIndex != 0)
+                        {
+                            byte b = Ar.Read<byte>();
+
+                            if ((b & 0x80) == 0)
+                            {
+                                ArrayIndex = b;
+                            }
+                            else if ((b & 0xC0) == 0x80)
+                            {
+                                byte c = Ar.Read<byte>();
+                                ArrayIndex = ((b & 0x7F) << 8) + c;
+                            }
+                            else
+                            {
+                                byte c = Ar.Read<byte>();
+                                byte d = Ar.Read<byte>();
+                                byte e = Ar.Read<byte>();
+                                ArrayIndex = ((b & 0x3F) << 24) + (c << 16) + (d << 8) + e;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+
+                switch (type)
+                {
+                    case EPropertyType2.StructProperty:
+                        Ar.Position += Size;
+                        return;
+                }
+
+                goto gurt;
+            }
+
+            PropertyType = Ar.ReadFName();
             Size = Ar.Read<int>();
             ArrayIndex = Ar.Read<int>();
 
@@ -200,6 +263,7 @@ public class FPropertyTag
             }
         }
 
+        gurt:
         if (!readData) return;
 
         var pos = Ar.Position;
@@ -250,6 +314,40 @@ public class FPropertyTag
         PropertyType = propertyType;
         Tag = tag;
         TagData = tagData;
+    }
+
+
+    private static int DeserializePackedSize(FArchive Ar, byte sizePack)
+    {
+        switch (sizePack)
+        {
+            case 0x00:
+                return 1;
+
+            case 0x10:
+                return 2;
+
+            case 0x20:
+                return 4;
+
+            case 0x30:
+                return 12;
+
+            case 0x40:
+                return 16;
+
+            case 0x50:
+                return Ar.Read<byte>(); // SizeByte
+
+            case 0x60:
+                return Ar.Read<ushort>(); // SizeWord
+
+            case 0x70:
+                return Ar.Read<int>(); // SizeInt
+
+            default:
+                throw new NotImplementedException($"Unknown sizePack {sizePack}");
+        }
     }
 
     internal string GetCppVariable()

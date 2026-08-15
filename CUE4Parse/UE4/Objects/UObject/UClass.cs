@@ -85,7 +85,7 @@ public class UClass : UStruct
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.PackageImportsDeprecated)
         {
-            Ar.ReadArray(() => Ar.ReadFName());
+            Ar.ReadArray(Ar.ReadFName);
         }
 
         if (Ar.Game is GAME_StarWarsJediFallenOrder or GAME_StarWarsJediSurvivor or GAME_AshesOfCreation) Ar.Position += 4;
@@ -100,12 +100,12 @@ public class UClass : UStruct
         { // DONTSORTCATEGORIES_ADDED
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.DisplacedHideCategories && Ar.Ver < EUnrealEngineObjectUE3Version.MP3ENC_TO_MSENC) // && Ar.UE4Version < 117
             {
-                Ar.ReadArray(() => Ar.ReadFName()); // HideCategories
+                Ar.ReadArray(Ar.ReadFName); // HideCategories
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex && Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_COMPONENT_CLASS_BRIDGE)
             {
-               Ar.ReadMap(() => new FPackageIndex(Ar),() => Ar.ReadFName()); // TempMap
+               Ar.ReadMap(() => new FPackageIndex(Ar),Ar.ReadFName); // TempMap
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedComponentTemplatesToUClass && Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_COMPONENT_TEMPLATES)
@@ -115,7 +115,7 @@ public class UClass : UStruct
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.DeprecatedCompactIndex && Ar.Ver < EUnrealEngineObjectUE4Version.STOPPED_SERIALIZING_COMPONENTNAMETODEFAULTOBJECTMAP)
             {
-                Ar.ReadMap(() => new FPackageIndex(Ar),() => Ar.ReadFName()); // ComponentNameToDefaultObjectMap
+                Ar.ReadMap(() => new FPackageIndex(Ar), Ar.ReadFName); // ComponentNameToDefaultObjectMap
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedInterfacesFeature)

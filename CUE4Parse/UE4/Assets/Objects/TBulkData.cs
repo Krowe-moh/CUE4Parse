@@ -48,6 +48,13 @@ public abstract class TBulkData<T> where T: struct
 
     protected TBulkData(FAssetArchive Ar)
     {
+        if (Ar.Game < GAME_UE3_0)
+        {
+            var lazyArray = Ar.LazyArray<byte>();
+            _data = new Lazy<T[]?>(() => MemoryMarshal.Cast<byte, T>(lazyArray.GetData()).ToArray());
+            return;
+        }
+
         Header = new FByteBulkDataHeader(Ar);
         if (Header.SizeOnDisk == 0 || BulkDataFlags.HasFlag(BULKDATA_Unused) || Header.ElementCount <= 0)
         {

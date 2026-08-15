@@ -45,8 +45,8 @@ public class UUIDynamicFieldProvider : UObject
             Ar.ReadMap(
                 () => Ar.ReadFName(),
                 () => Ar.ReadMap(
-                    () => Ar.ReadFName(),
-                    () => Ar.ReadFString()
+                    Ar.ReadFName,
+                    Ar.ReadFString
                 )
             );
         }
@@ -353,6 +353,7 @@ public class USkyLightComponent : ULightComponentBase
         {
             // if TONEMAPPER2ADJUST no need
             // if IPHONE_STEREO_ADPCM_COMPRRESION_BUG_FIX need
+            // if AUTOMATIC_VERSION_PLUS_ONE need
             //new ULightComponent().Deserialize(Ar, validPos);
         }
         else

@@ -36,7 +36,7 @@ public abstract class FPropertyTagType<T> : FPropertyTagType
 [JsonConverter(typeof(FPropertyTagTypeConverter))]
 public abstract class FPropertyTagType
 {
-    
+
     public abstract object? GenericValue { get; }
     public object? GetValue(Type type)
     {
@@ -82,7 +82,8 @@ public abstract class FPropertyTagType
                 var values = type.GetEnumNames();
                 var idx = Array.FindIndex(values, it => it == search);
                 return idx == -1 ? null : type.GetEnumValues().GetValue(idx);
-            //TODO There are also Enums stored as ByteProperty but UModel uses them nowhere besides in UE2
+            case FPropertyTagType<byte> byteProp when type.IsEnum:
+                return Enum.ToObject(type, byteProp.Value);
             case FPropertyTagType<UScriptMap> mapProp when type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>):
                 return CreateDictionary(type, mapProp.Value!.Properties);
             case OptionalProperty optionalProperty:

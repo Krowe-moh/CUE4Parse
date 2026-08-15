@@ -8,11 +8,11 @@ public class ULandscapeHeightfieldCollisionComponent : USceneComponent
 {
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
-        if (Ar.Game < GAME_UE4_0)
+      //  if (Ar.Game < GAME_UE4_0)
         {
-            new UPrimitiveComponent().Deserialize(Ar, validPos);
+      //      new UPrimitiveComponent().Deserialize(Ar, validPos);
         }
-        else
+       // else
         {
             base.Deserialize(Ar, validPos);
         }

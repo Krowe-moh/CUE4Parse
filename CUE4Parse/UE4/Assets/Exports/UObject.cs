@@ -218,7 +218,7 @@ public class UObject : AbstractPropertyHolder
 
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.REMOVE_SIZE_VJOINTPOS)
                 {
-                    if (this is UComponent)
+                    if (this is UComponent || (validPos - Ar.Position >= 16 && Class.Name.Text.EndsWith("Component")) || sixnine(Class.Name.Text, Ar))
                     {
                         new FPackageIndex(Ar);
                         if (Ar.Ver < EUnrealEngineObjectUE3Version.FIXED_COMPONENT_TEMPLATES || gurtlegacy())
@@ -628,6 +628,25 @@ public class UObject : AbstractPropertyHolder
                 return true;
 
             current = outer.Outer;
+        }
+
+        return false;
+    }
+
+    public bool sixnine(string type, FAssetArchive Ar)
+    {
+        var currentType = type;
+
+        while (currentType != null)
+        {
+            if (currentType == "Component")
+                return true;
+
+            if (Ar.Owner?.Mappings?.Types == null ||
+                !Ar.Owner.Mappings.Types.TryGetValue(currentType, out var mappings))
+                break;
+
+            currentType = mappings.SuperType;
         }
 
         return false;
