@@ -113,7 +113,7 @@ public class CMaterialParams2
             "Layer00_MetalRoughOccDp_Tex", "Tex_SkinBase_ORM", "Tex_Core_Layer_AO", "RGB[AO/R/Metallic]_Texture",
             "Simple_OcclRoughMet_Texture", "P (NoneVT)", "Pack Tex1", "CASR", "Roughness_VT", "OcclusionRoughnessMetallicTexture",
             "Clothing ORM", "ORC [Standard]", "ORME_Tex", "Roughness VT", "RMAO VT", "Mix(AO,Rough,Mask,Metal)", "Texture_S",
-            "MetallicRoughnessOcclusionSpecularTexture", "Virtual Texture ORM"
+            "MetallicRoughnessOcclusionSpecularTexture", "Virtual Texture ORM", "Spec"
         ],
         ["SpecularMasks_2", "MRA B", "LP_2", "M2_T_PAK"],
         ["SpecularMasks_3", "MRA C", "LP_3", "M3_T_PAK"],
@@ -128,7 +128,7 @@ public class CMaterialParams2
     [
         [
             "Emissive", "EmissiveTexture", "EmissiveColorTexture", "EmissiveColor", "EmissiveMask",
-            "EmmisiveColor_A", "TextureEmissive", "TexEm", "Main_T_Emissive", "VT Emissive"
+            "EmmisiveColor_A", "TextureEmissive", "TexEm", "Main_T_Emissive", "VT Emissive", "MobileEmissiveTexture"
         ],
         ["L1_Emissive", "EmmisiveColor_B"],
         ["L2_Emissive", "EmmisiveColor_C"],

@@ -54,6 +54,18 @@ public class UsdWorldFormat : IWorldExportFormat
 
             actorPrim.Add(rootPrim);
         }
+        else if (actor.Location is { } loc)
+        {
+            var transformPrim = UsdPrim.Def("Xform", "Transform");
+            var transform = new FTransform
+            {
+                Translation = loc,
+                Rotation = actor.Rotation?.Quaternion() ?? FQuat.Identity,
+                Scale3D = actor.Scale ?? FVector.OneVector
+            };
+            transformPrim.Add(transform.ToTransformAttributes());
+            actorPrim.Add(transformPrim);
+        }
 
         return actorPrim;
     }

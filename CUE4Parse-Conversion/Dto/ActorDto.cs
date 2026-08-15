@@ -1,5 +1,6 @@
 ﻿using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Exports.Actor;
+using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Objects.UObject;
 
@@ -10,6 +11,9 @@ public class ActorDto : ObjectDto
     public SceneComponentDto? RootComponent { get; protected init; }
     public List<StreamingLevel>? StreamingLevels { get; protected init; }
     public bool IsVisible { get; } = true;
+    public FVector? Location { get; protected init; }
+    public FRotator? Rotation { get; protected init; }
+    public FVector? Scale { get; protected init; }
 
     protected ActorDto(UObject actor) : base(actor, actor is AActor a && !string.IsNullOrWhiteSpace(a.ActorLabel) ? a.ActorLabel : null)
     {
@@ -31,6 +35,25 @@ public class ActorDto : ObjectDto
         {
             IsVisible = !hidden;
         }
+
+        var drawScale = actor.GetOrDefault("DrawScale", 1.0f);
+        var prePivot = actor.GetOrDefault("PrePivot", FVector.ZeroVector);
+
+        if (actor.TryGetValue(out FVector location, "Location"))
+            Location = location - prePivot;
+
+        if (actor.TryGetValue(out FRotator rotation, "Rotation"))
+            Rotation = rotation;
+
+        Scale = actor.GetOrDefault("DrawScale3D", FVector.OneVector * drawScale);
+
+        if (RootComponent is { } roota && Location is { } loc)
+        {
+            roota.Transform.Translation = loc;
+            if (Rotation is { } rot) roota.Transform.Rotation = rot.Quaternion();
+            if (Scale is { } scale) roota.Transform.Scale3D = scale;
+        }
+
 
         // TODO: TextureData
 
@@ -61,6 +84,9 @@ public class ActorDto : ObjectDto
     {
         yield return actor.GetOrDefault<FPackageIndex?>("RootComponent");
         yield return actor.GetOrDefault<FPackageIndex?>("SplineComponent");
+
+        yield return actor.GetOrDefault<FPackageIndex?>("StaticMeshComponent");
+        yield return actor.GetOrDefault<FPackageIndex?>("CollisionComponent");
 
         foreach (var ptr in actor.GetOrDefault<FPackageIndex?[]>("InstanceComponents", []))
             yield return ptr;
