@@ -72,6 +72,15 @@ public class UStaticMesh : UObject
         var stripDataFlags = new FStripDataFlags(Ar);
         bCooked = Ar.Ver >= EUnrealEngineObjectUE4Version.STATIC_MESH_REFACTOR && Ar.ReadBoolean();
         HasTangents = Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERTEXBUFFER_MERGE;
+
+        if (Ar.Game < GAME_UE3_0)
+        {
+            new FBox(Ar);
+            new FSphere(Ar);
+            RenderData = new FStaticMeshRenderData { LODs = [new FStaticMeshLODResources(Ar)] };
+            return;
+        }
+
         var Bounds = new FBoxSphereBounds();
         if (!stripDataFlags.IsEditorDataStripped() && Ar.Ver < EUnrealEngineObjectUE4Version.STATIC_MESH_REFACTOR)
         {

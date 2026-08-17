@@ -388,7 +388,7 @@ namespace CUE4Parse.UE4.Assets
             var import = ImportMap[-importIndex.Index - 1];
             var className = import.ClassName.Text;
 
-            if (className.StartsWith("Class", StringComparison.Ordinal) || className.StartsWith("Package", StringComparison.Ordinal))
+            if (className is "Class" or "SharpClass" or "PythonClass" or "ASClass" or "ScriptStruct")
             {
                 return new ResolvedImportObject(import, this);
             }
@@ -408,7 +408,7 @@ namespace CUE4Parse.UE4.Assets
             }
 
             var outerMostObjectName = outerMostImport.ObjectName.Text;
-            if (outerMostObjectName.StartsWith("/Script/", StringComparison.Ordinal) || outerMostObjectName.StartsWith("Class", StringComparison.Ordinal) || outerMostObjectName.StartsWith("Package", StringComparison.Ordinal))
+            if (outerMostObjectName.StartsWith("/Script/", StringComparison.Ordinal))
             {
                 return new ResolvedImportObject(import, this);
             }

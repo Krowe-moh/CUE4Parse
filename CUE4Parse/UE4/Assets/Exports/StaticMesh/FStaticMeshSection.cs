@@ -28,7 +28,7 @@ public class FStaticMeshSection
     {
         if (Ar.Game < GAME_UE4_0)
         {
-            if (Ar.Game < GAME_UE3_0)
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.Release119)
             {
                 Ar.Read<int>(); // f4, usually 0
 

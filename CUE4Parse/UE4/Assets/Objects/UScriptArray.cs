@@ -34,7 +34,7 @@ public class UScriptArray
         IDictionary<string, MappingsProvider.Struct> mappingTypes,
         string structName,
         FName propertyName,
-        out string innerType,
+        out string? innerType,
         out FPropertyTagData? innerTagData)
     {
         innerType = null;
@@ -43,39 +43,37 @@ public class UScriptArray
         if (!mappingTypes.TryGetValue(structName, out var mappingStruct))
             return false;
 
-        while (mappingStruct != null)
+        while (true)
         {
             var property = mappingStruct.Properties.Values
                 .FirstOrDefault(p => p.Name == propertyName);
 
             if (property?.MappingType is { Type: "ArrayProperty" } mapType)
             {
-                if (mapType.InnerType.Type == "StructProperty")
+                var inner = mapType.InnerType;
+                if (inner?.Type == "StructProperty")
                 {
                     innerType = "StructProperty";
                     innerTagData = new FPropertyTagData
                     {
                         Type = "StructProperty",
-                        StructType = mapType.InnerType.StructType,
-                        Name = mapType.InnerType.StructType
+                        StructType = inner.StructType,
+                        Name = inner.StructType
                     };
                 }
                 else
                 {
-                    innerType = mapType.InnerType.Type;
+                    innerType = inner?.Type;
                 }
-
                 return true;
             }
 
-            if (mappingStruct.SuperType == null ||
+            if (mappingStruct.SuperType is null ||
                 !mappingTypes.TryGetValue(mappingStruct.SuperType, out mappingStruct))
             {
-                break;
+                return false;
             }
         }
-
-        return false;
     }
 
     public UScriptArray(FAssetArchive Ar, FPropertyTagData? tagData, ReadType type, int size)
@@ -91,25 +89,18 @@ public class UScriptArray
 
         if (Ar.Game < GAME_UE4_0)
         {
-            var count = elementCount > 0 ? elementCount : 1;
-            var elemsize = (size - sizeof(int)) / count;
-
             if (!Ar.HasUnversionedProperties &&
-                tagData.Name is not null &&
-                Ar.Owner?.Provider?.MappingsForGame?.Types is { } mappingTypes)
+                tagData?.Name is not null &&
+                Ar.Owner?.Provider?.MappingsForGame?.Types is { } mappingTypes &&
+                TryGetArrayInnerType(
+                    mappingTypes,
+                    Ar.StructTypeStack.Peek(),
+                    tagData.Name,
+                    out var innerType,
+                    out var innerTagData))
             {
-                var structName = Ar.StructTypeStack.Peek();
-
-                if (TryGetArrayInnerType(
-                        mappingTypes,
-                        structName,
-                        tagData.Name,
-                        out var innerType,
-                        out var innerTagData))
-                {
-                    InnerType = innerType;
-                    InnerTagData = innerTagData;
-                }
+                InnerType = innerType;
+                InnerTagData = innerTagData;
             }
 
             if (InnerType == null)

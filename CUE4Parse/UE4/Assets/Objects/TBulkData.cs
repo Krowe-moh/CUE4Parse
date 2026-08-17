@@ -191,12 +191,19 @@ public abstract class TBulkData<T> where T: struct
         else if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile) && archive.Game < GAME_UE4_0)
         {
             if (_savedTfc is null)
-                throw new ParserException(archive, "TFC: something wrong"); // what does this mean and how is ths possible?
+            {
+#if DEBUG
+                Log.Debug("Failed unsupported, Can't find payload (Payload In Separate File) (flags={BulkDataFlags}, pos={HeaderOffsetInFile}, size={HeaderSizeOnDisk}))", BulkDataFlags, Header.OffsetInFile, Header.SizeOnDisk);
+#endif
+                return false; // This is some very stupid stuff. You need to get the outermost export, get its ObjectName, and then load that .upk
+            }
 
             if (!_savedAr.Owner.Provider.TextureCachePaths.TryGetValue(_savedTfc, out var tfcPath))
             {
-                // there is a mip that's in the upk, could use it
-                throw new ParserException(archive, $"Missing TFC: {_savedTfc}");
+#if DEBUG
+                Log.Debug("Failed {TFC} is missing, Can't find payload (Payload In Separate File) (flags={BulkDataFlags}, pos={HeaderOffsetInFile}, size={HeaderSizeOnDisk}))", _savedTfc, BulkDataFlags, Header.OffsetInFile, Header.SizeOnDisk);
+#endif
+                return false;
             }
 
             //if (!File.Exists(tfcPath))
