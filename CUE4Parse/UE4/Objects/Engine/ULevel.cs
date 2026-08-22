@@ -207,6 +207,7 @@ public class ULevel : Assets.Exports.UObject
     public FPackageIndex WorldSettings;
     public FPackageIndex WorldDataLayers;
     public FSoftObjectPath WorldPartitionRuntimeCell;
+    public FPackageIndex[]? AssetUserData { get; private set; }
 
     public FPackageIndex?[] Actors;
     public FURL URL;
@@ -236,6 +237,7 @@ public class ULevel : Assets.Exports.UObject
         WorldSettings = GetOrDefault(nameof(WorldSettings), new FPackageIndex());
         WorldDataLayers = GetOrDefault(nameof(WorldDataLayers), new FPackageIndex());
         WorldPartitionRuntimeCell = GetOrDefault<FSoftObjectPath>(nameof(WorldPartitionRuntimeCell));
+        AssetUserData = GetOrDefault<FPackageIndex[]?>(nameof(AssetUserData));
 
         if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 16;
         if (Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject) || Ar.Position >= validPos) return;
