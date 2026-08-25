@@ -1,7 +1,5 @@
 ﻿using CUE4Parse.UE4.Assets.Objects;
-using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Assets.Utils;
-using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.UE4.Assets.Exports.Material
 {

@@ -18,6 +18,7 @@ public class FMultisizeIndexContainer() : FRawIndexBuffer
 
             dataSize = Ar.Read<byte>();
         }
+
         if (Ar.Game == GAME_OutlastTrials) Ar.Position += 4;
 
         if (dataSize == 0x02)

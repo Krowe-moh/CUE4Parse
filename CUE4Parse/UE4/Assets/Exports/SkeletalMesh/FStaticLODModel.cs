@@ -319,6 +319,7 @@ public class FStaticLODModel
             {
                 NumTexCoords = Ar.Read<int>();
             }
+
             if (skelMeshVer < FSkeletalMeshCustomVersion.Type.SplitModelAndRenderData)
             {
                 if (Ar.Ver >= EUnrealEngineObjectUE3Version.USE_UMA_RESOURCE_ARRAY_MESH_DATA)
