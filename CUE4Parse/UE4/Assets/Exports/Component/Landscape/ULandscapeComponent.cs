@@ -22,6 +22,7 @@ public class ULandscapeComponent : UPrimitiveComponent
     public float WeightmapSubsectionOffset;
     public FWeightmapLayerAllocationInfo[] WeightmapLayerAllocations;
     public FBox CachedLocalBox;
+    public FBoxSphereBounds CachedBoxSphereBounds;
     public FGuid MapBuildDataId;
 
     public FPackageIndex? OverrideMaterial;
@@ -49,6 +50,16 @@ public class ULandscapeComponent : UPrimitiveComponent
         WeightmapSubsectionOffset = GetOrDefault(nameof(WeightmapSubsectionOffset), 0f);
         WeightmapLayerAllocations = GetOrDefault(nameof(WeightmapLayerAllocations), Array.Empty<FWeightmapLayerAllocationInfo>());
         CachedLocalBox = GetOrDefault<FBox>(nameof(CachedLocalBox));
+        var fallback = GetOrDefault<FStructFallback>(nameof(CachedBoxSphereBounds));
+        if (fallback != null)
+        {
+            CachedBoxSphereBounds = new FBoxSphereBounds
+            {
+                Origin = fallback.GetOrDefault<FVector>("Origin"),
+                BoxExtent = fallback.GetOrDefault<FVector>("BoxExtent"),
+                SphereRadius = fallback.GetOrDefault<float>("SphereRadius")
+            };
+        }
         MapBuildDataId = GetOrDefault<FGuid>(nameof(MapBuildDataId));
         WeightmapTextures = new Lazy<UTexture2D[]>(() => GetOrDefault<UTexture2D[]>("WeightmapTextures", []));
         NamedGrassTypes = GetOrDefault<Dictionary<FName, FPackageIndex>>(nameof(NamedGrassTypes), []);

@@ -6,11 +6,13 @@ namespace CUE4Parse.UE4.Assets.Exports.Component;
 public class UMeshComponent : UPrimitiveComponent
 {
     public FPackageIndex?[] OverrideMaterials = [];
+    public FPackageIndex?[] Materials = [];
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
         base.Deserialize(Ar, validPos);
 
         OverrideMaterials = GetOrDefault(nameof(OverrideMaterials), OverrideMaterials);
+        Materials = GetOrDefault(nameof(Materials), Materials);
     }
 }

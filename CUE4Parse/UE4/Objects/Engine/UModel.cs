@@ -66,6 +66,7 @@ namespace CUE4Parse.UE4.Objects.Engine
      * is an index to a coplanar polygon in the Bsp.  All polygons that are iPlane
      * children can only have iPlane children themselves, not fronts or backs.
      */
+
     public readonly struct FBspNode : IUStruct
     {
         public const int MAX_NODE_VERTICES = 255;
@@ -111,55 +112,8 @@ namespace CUE4Parse.UE4.Objects.Engine
         /**4  Leaf in back and front, INDEX_NONE=not a leaf.*/
         public readonly int iLeaf0;
         public readonly int iLeaf1;
-    }
 
-    public readonly struct FBspNodeLegacy: IUStruct
-    {
-        public const int MAX_NODE_VERTICES = 255;
-        public const int MAX_ZONES = 64;
-
-        // Persistent information.
-        public readonly FPlane Plane;  // 16 Plane the node falls into (X, Y, Z, W).
-        public readonly int iVertPool; // 4  Index of first vertex in vertex pool, =iTerrain if NumVertices==0 and NF_TerrainFront.
-        public readonly int iSurf;     // 4  Index to surface information.
-
-        /** The index of the node's first vertex in the UModel's vertex buffer. */
-        public readonly int iVertexIndex;
-
-        /** The index in ULevel::ModelComponents of the UModelComponent containing this node. */
-        public readonly ushort ComponentIndex;
-
-        /** The index of the node in the UModelComponent's Nodes array. */
-        public readonly ushort ComponentNodeIndex;
-
-        /** The index of the element in the UModelComponent's Element array. */
-        public readonly int ComponentElementIndex;
-
-        // iBack:  4  Index to node in front (in direction of Normal).
-        // iFront: 4  Index to node in back  (opposite direction as Normal).
-        // iPlane: 4  Index to next coplanar poly in coplanar list.
-        public readonly int iBack;
-        public readonly int iFront;
-        public readonly int iPlane;
-
-        /** 4  Collision bound. */
-        public readonly int iCollisionBound;
-
-        /** 2 Visibility zone in 1=front, 0=back. */
-        public readonly byte iZone0;
-        public readonly byte iZone1;
-
-        /**1  Number of vertices in node.*/
-        public readonly byte NumVertices;
-
-        /** 1  Node flags. */
-        public readonly EBspNodeFlags NodeFlags;
-
-        /**4  Leaf in back and front, INDEX_NONE=not a leaf.*/
-        public readonly int iLeaf0;
-        public readonly int iLeaf1;
-
-        public FBspNodeLegacy(FAssetArchive Ar)
+        public FBspNode(FAssetArchive Ar)
         {
             Plane = new FPlane(Ar);
             if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_ZONEMASK)
@@ -384,15 +338,7 @@ namespace CUE4Parse.UE4.Objects.Engine
 
             Vectors = Ar.ReadBulkArray<FVector>();
             Points = Ar.ReadBulkArray<FVector>();
-            if (Ar.Game < GAME_UE4_0)
-            {
-                // made legacy because it just doesn't work on latest, I think it's some memory layout issue. no clue how to resolve
-                Ar.ReadBulkArray(() => new FBspNodeLegacy(Ar));
-            }
-            else
-            {
-                Nodes = Ar.ReadBulkArray<FBspNode>();
-            }
+            Nodes = Ar.ReadBulkArray(() => new FBspNode(Ar));
 
             if (Ar.Ver < EUnrealEngineObjectUE4Version.BSP_UNDO_FIX)
             {
