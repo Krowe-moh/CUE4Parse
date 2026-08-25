@@ -212,36 +212,6 @@ public partial class USkeletalMesh : UObject
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELMESH_BONE_KDOP && Ar.Game < GAME_UE4_0)
         {
             // this is not an array of ints, it's a complex FPerPolyBoneCollisionData struct
-            Ar.ReadArray<int>(); // PerPolyBoneKDOPs
-        }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_MAPPING && Ar.Game < GAME_UE4_0)
-        {
-            Ar.ReadArray(Ar.ReadFString); // BoneBreakNames
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_CUSTOM_MAPPING)
-            {
-                Ar.ReadArray(Ar.Read<int>); // BoneBreakOptions
-            }
-        }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.APEX_CLOTHING && Ar.Game < GAME_UE4_0)
-        {
-            var ApexClothingAssetcount = Ar.Read<int>();
-            for (var i = 0; i < ApexClothingAssetcount; i++)
-            {
-                var bAssetValid = Ar.ReadBoolean();
-
-                if (bAssetValid)
-                {
-                    Ar.ReadArray<byte>(); // NameBuffer
-                    Ar.ReadArray<byte>(); // Buffer
-                }
-            }
-        }
-
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELMESH_BONE_KDOP && Ar.Game < GAME_UE4_0)
-        {
-            // this is not an array of ints, it's a complex FPerPolyBoneCollisionData struct
             Ar.SkipArray<int>(); // PerPolyBoneKDOPs
         }
 
@@ -298,7 +268,6 @@ public partial class USkeletalMesh : UObject
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELETAL_MESH_SIMPLIFICATION && Ar.Game < GAME_UE4_0)
         {
-            return;
             var bHaveSourceData = Ar.ReadBoolean();
             if (bHaveSourceData)
             {
