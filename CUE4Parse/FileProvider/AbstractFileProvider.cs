@@ -187,18 +187,8 @@ namespace CUE4Parse.FileProvider
                 : throw new KeyNotFoundException($"There is no game file with the path \"{path}\"");
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryGetGameFile(string path, [MaybeNullWhen(false)] out GameFile file)
-        {
-            try
-            {
-                file = this[path];
-            }
-            catch
-            {
-                file = null;
-            }
-            return file != null;
-        }
+        public bool TryGetGameFile(string path, [MaybeNullWhen(false)] out GameFile file) => 
+            TryGetGameFile(path, Files, out file);
 
         public int LoadLocalization(ELanguage language = ELanguage.English, CancellationToken cancellationToken = default)
             => LoadLocalization(GetLanguageCode(language), cancellationToken);
@@ -694,6 +684,7 @@ namespace CUE4Parse.FileProvider
         public IReadOnlyDictionary<string, byte[]> SavePackage(string path) => SavePackage(this[path]);
         public IReadOnlyDictionary<string, byte[]> SavePackage(GameFile file)
         {
+            // decompress or decrypt the package before returning bytes
             if (Versions.Game < GAME_UE4_0)
             {
                 if (file.IsUePackage)

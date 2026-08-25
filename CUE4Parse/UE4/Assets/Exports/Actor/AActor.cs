@@ -479,9 +479,8 @@ public class AWorldPartitionReplay : AActor;
 public class AWorldPartitionVolume : AVolume;
 public class AWorldSettings : AInfo
 {
-    public FPackageIndex WorldPartition;
-    public FPackageIndex[] StreamingLevels { get; private set; }
-
+    public FPackageIndex? WorldPartition { get; private set; }
+    public FPackageIndex[]? StreamingLevels { get; private set; }
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
@@ -489,6 +488,7 @@ public class AWorldSettings : AInfo
         base.Deserialize(Ar, validPos);
         StreamingLevels = GetOrDefault<FPackageIndex[]>("StreamingLevels", []);
 
-        WorldPartition = GetOrDefault(nameof(WorldPartition), new FPackageIndex());
+        WorldPartition = GetOrDefault<FPackageIndex?>(nameof(WorldPartition));
+        StreamingLevels = GetOrDefault<FPackageIndex[]?>(nameof(StreamingLevels));
     }
 }

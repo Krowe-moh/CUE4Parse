@@ -190,7 +190,7 @@ public class UDominantSpotLightComponent : UPointLightComponent
         // Before super
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.SPOTLIGHT_DOMINANTSHADOW_TRANSITION && Ar.Game < GAME_UE4_0)
         {
-            DominantLightShadowMap = Ar.ReadArray(() => Ar.Read<short>());
+            DominantLightShadowMap = Ar.ReadArray<short>();
         }
 
         base.Deserialize(Ar, validPos);
@@ -206,7 +206,7 @@ public class UDominantDirectionalLightComponent : UPointLightComponent
         // Before super
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.DOMINANTLIGHT_NORMALSHADOWS && Ar.Game < GAME_UE4_0)
         {
-            DominantLightShadowMap = Ar.ReadArray(() => Ar.Read<short>());
+            DominantLightShadowMap = Ar.ReadArray<short>();
         }
 
         base.Deserialize(Ar, validPos);

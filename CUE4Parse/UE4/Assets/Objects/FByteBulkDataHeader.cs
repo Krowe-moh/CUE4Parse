@@ -95,8 +95,7 @@ public readonly struct FByteBulkDataHeader
         {
             OffsetInFile = Ar.Ver >= EUnrealEngineObjectUE4Version.BULKDATA_AT_LARGE_OFFSETS ? Ar.Read<long>() : Ar.Read<int>();
         }
-
-        if (!BulkDataFlags.HasFlag(BULKDATA_NoOffsetFixUp) && Ar.Game >= GAME_UE4_26)
+        if (!BulkDataFlags.HasFlag(BULKDATA_NoOffsetFixUp)) // UE4.26 flag
         {
             OffsetInFile += Ar.Owner.Summary.BulkDataStartOffset;
         }

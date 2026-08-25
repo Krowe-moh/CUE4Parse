@@ -34,19 +34,11 @@ public class FSkeletalMeshVertexBuffer
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.USE_FLOAT16_SKELETAL_MESH_UVS)
         {
-            Ar.ReadBulkArray(() => new FSoftVertex(Ar)); // LegacyVerts
+            Ar.ReadBulkArray(() => new FSoftVertex(Ar)); // LegacyVerts, TODO: skip
             return;
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH)
-        {
-            NumTexCoords = Ar.Read<int>();
-        }
-        else
-        {
-            NumTexCoords = 1;
-        }
-
+        NumTexCoords = Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_MULTIPLE_UVS_TO_SKELETAL_MESH ? Ar.Read<int>() : 1;
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.AddedFullPrecisionUV) bUseFullPrecisionUVs = Ar.ReadBoolean();
 
         if (Ar.Ver >= EUnrealEngineObjectUE4Version.SUPPORT_GPUSKINNING_8_BONE_INFLUENCES && FSkeletalMeshCustomVersion.Get(Ar) < FSkeletalMeshCustomVersion.Type.UseSeparateSkinWeightBuffer)
@@ -54,13 +46,17 @@ public class FSkeletalMeshVertexBuffer
             bExtraBoneInfluences = Ar.ReadBoolean();
         }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELETAL_MESH_SUPPORT_PACKED_POSITION && Ar.Game < GAME_UE4_0)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELETAL_MESH_SUPPORT_PACKED_POSITION)
         {
-            bUsePackedPosition = Ar.ReadBoolean();
+            if (Ar.Game < GAME_UE4_0)
+            {
+                bUsePackedPosition = Ar.ReadBoolean();
+            }
             MeshExtension = new FVector(Ar);
             MeshOrigin = new FVector(Ar);
         }
 
+        // bUsePackedPosition can't be trusted
         if (Ar.Game < GAME_UE4_0)
         {
             bUsePackedPosition = false;

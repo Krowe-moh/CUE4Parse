@@ -177,6 +177,11 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (legacyFileVersion < 0) // means we have modern version numbers
             {
+                if (legacyFileVersion < CurrentLegacyFileVersion)
+                {
+                    // what is this?
+                }
+
                 if (legacyFileVersion != -4)
                 {
                     FileVersionUE.FileVersionUE3 = Ar.Read<int>();
@@ -290,10 +295,10 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Game == GAME_APBReloaded)
             {
-                if ((int)FileVersionLicenseeUE > 29) Ar.Read<int>();
+                if ((int)FileVersionLicenseeUE > 29) Ar.Position += sizeof(int);
                 if ((int) FileVersionLicenseeUE > 28)
                 {
-                    Ar.ReadArray<int>(5);
+                    Ar.Position += sizeof(int) * 5;
                 }
             }
 
@@ -304,6 +309,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 HeritageOffset = Ar.Read<int>();
                 HeritageCount = Ar.Read<int>();
+                return;
             }
 
             if (FileVersionUE < EUnrealEngineObjectUE3Version.DeprecatedHeritageTable)
@@ -395,7 +401,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Game == GAME_APBReloaded && (int)FileVersionLicenseeUE > 32)
             {
-                Ar.Read<FGuid>();
+                Ar.Position += sizeof(uint) * 4; // FGuid
             }
 
             Generations = Ar.ReadArray(Count, () => new FGenerationInfo(Ar));
@@ -447,9 +453,9 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 CompressionFlags = Ar.Read<ECompressionFlags>();
 
-                if (!VerifyCompressionFlagsValid((int)CompressionFlags))
+                if (!VerifyCompressionFlagsValid((int) CompressionFlags))
                 {
-                    throw new ParserException($"Invalid compression flags ({(uint)CompressionFlags})");
+                    throw new ParserException($"Invalid compression flags ({(uint) CompressionFlags})");
                 }
 
                 CompressedChunks = Ar.ReadArray(() => new FCompressedChunk(Ar));
@@ -553,6 +559,11 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 Ar.Read<int>(); // count
                 Ar.Read<int>(); // offset
+            }
+            
+            if (Ar.Game == GAME_SuddenAttack2)
+            {
+                Ar.Position += sizeof(int) * 2; // int - count, offset
             }
         }
 

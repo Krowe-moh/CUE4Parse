@@ -258,12 +258,12 @@ public class UObject : AbstractPropertyHolder
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.Release57)
         {
-            Ar.ReadFName(); // TempState
+            Ar.SkipFName(); // TempState
         }
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.Release58)
         {
-            Ar.ReadFName(); // TempGroup
+            Ar.SkipFName(); // TempGroup
         }
 
         if (FUE5MainStreamObjectVersion.Get(Ar) < FUE5MainStreamObjectVersion.Type.SparseClassDataStructSerialization || !Flags.HasFlag(EObjectFlags.RF_ClassDefaultObject))

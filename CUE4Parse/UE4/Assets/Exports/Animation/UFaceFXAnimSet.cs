@@ -25,8 +25,16 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
                 return;
             }
 
-            Ar.ReadArray<byte>(); // RawFaceFXAnimSetBytes
-            Ar.ReadArray<byte>(); // RawFaceFXMiniSessionBytes
+            if (Ar.Game >= GAME_UE4_0)
+            {
+                Ar.SkipMultipleFixedArrays(Ar.Read<int>(), 1); // RawFaceFXAnimSetBytes
+                Ar.SkipMultipleFixedArrays(Ar.Read<int>(), 1); // RawFaceFXMiniSessionBytes
+            }
+            else
+            {
+                Ar.SkipArray<byte>(); // RawFaceFXAnimSetBytes
+                Ar.SkipArray<byte>(); // RawFaceFXMiniSessionBytes
+            }
         }
     }
 }

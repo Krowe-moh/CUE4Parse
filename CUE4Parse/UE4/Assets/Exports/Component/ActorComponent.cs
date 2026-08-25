@@ -51,7 +51,6 @@ public class UApplicationLifecycleComponent : UActorComponent;
 public class UApexComponentBase : UMeshComponent;
 public class UApexStaticComponent : UApexComponentBase;
 public class ApexStaticDestructibleComponent : UApexStaticComponent;
-
 public class UArchVisCharMovementComponent : UCharacterMovementComponent;
 public class UAsyncPhysicsInputComponent : UActorComponent;
 

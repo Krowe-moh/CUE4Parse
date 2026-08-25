@@ -45,7 +45,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 BlueprintReplicationCondition = (ELifetimeCondition) Ar.Read<byte>();
             }
 
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.temp10) Ar.Read<byte>();
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.temp10) Ar.Position += sizeof(byte); // what is this?
         }
 
         protected internal override void WriteJson(JsonWriter writer, JsonSerializer serializer)
@@ -166,7 +166,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             base.Deserialize(Ar, validPos);
             if (Ar.Game == GAME_RocketLeague)
             {
-                Ar.ReadFName(); // unknown
+                Ar.SkipFName(); // unknown
             }
         }
     }
@@ -248,7 +248,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             InterfaceClass = new FPackageIndex(Ar);
             if (Ar.Game == GAME_RocketLeague)
             {
-                Ar.ReadFName(); // unknown
+                Ar.SkipFName(); // unknown
             }
         }
 

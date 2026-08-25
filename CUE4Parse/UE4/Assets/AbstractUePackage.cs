@@ -105,9 +105,9 @@ public abstract class AbstractUePackage : UObject, IPackage
         {
             if (Globals.FatalObjectSerializationErrors)
             {
-                throw new ParserException($"Could not read {obj.ExportType} {obj.Name} correctly", e);
+                throw new ParserException($"Could not read {obj.ExportType} named {obj.Name} correctly", e);
             }
-            Log.Error(e, "Could not read {0} {1} correctly", obj.ExportType, obj.Name);
+            Log.Error(e, "Could not read {0} named {1} correctly", obj.ExportType, obj.Name);
         }
     }
 

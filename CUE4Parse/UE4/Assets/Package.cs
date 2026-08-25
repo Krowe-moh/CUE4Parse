@@ -10,7 +10,6 @@ using CUE4Parse.UE4.Assets.Utils;
 using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.IO.Objects;
 using CUE4Parse.UE4.Objects.Core.Misc;
-using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
@@ -128,6 +127,7 @@ namespace CUE4Parse.UE4.Assets
 
             Summary = new FPackageFileSummary(uassetAr);
 
+            // Decompresses CompressedChunks and Decrypts Rocket league encrypted files
             DecryptAndDecompress(uassetAr, Summary);
 
             uassetAr.SeekAbsolute(Summary.NameOffset, SeekOrigin.Begin);
@@ -330,9 +330,9 @@ namespace CUE4Parse.UE4.Assets
 
                 foreach (var chunk in Summary.CompressedChunks)
                 {
+                    uassetAr.Position = chunk.CompressedOffset;
                     var decompressedData = new byte[chunk.UncompressedSize];
 
-                    uassetAr.Position = chunk.CompressedOffset;
                     uassetAr.SerializeCompressedNew(decompressedData, chunk.UncompressedSize,
                         Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB)
                             ? CompressionMethod.Zlib.ToString()
@@ -407,6 +407,8 @@ namespace CUE4Parse.UE4.Assets
                 outerMostIndex = outerMostImport.OuterIndex;
             }
 
+            outerMostImport = ImportMap[-outerMostIndex.Index - 1];
+            // We don't support loading script packages, so just return a fallback
             var outerMostObjectName = outerMostImport.ObjectName.Text;
             if (outerMostObjectName.StartsWith("/Script/", StringComparison.Ordinal))
             {
@@ -415,9 +417,8 @@ namespace CUE4Parse.UE4.Assets
 
             if (Provider == null)
                 return null;
-
-            var importObjectName = import.ObjectName.Text;
-            if (Provider.TryLoadPackage(outerMostObjectName, out var package))
+            Package? importPackage = null;
+            if (Provider.TryLoadPackage(outerMostObjectName, out var package) || Provider.TryLoadPackage(outerMostImport.ClassPackage.Text, out package))
             {
                 if (package is IoPackage ioPackage)
                 {
@@ -434,6 +435,7 @@ namespace CUE4Parse.UE4.Assets
 #endif
                     return new ResolvedImportObject(import, this);
                 }
+                importPackage = package as Package;
             }
 
             Package? importPackage = package as Package;

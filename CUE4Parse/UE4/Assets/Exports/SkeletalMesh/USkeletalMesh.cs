@@ -34,7 +34,7 @@ public partial class USkeletalMesh : UObject
     {
         if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 8;
         base.Deserialize(Ar, validPos);
-        LODInfo = GetOrDefault<FSkeletalMeshLODGroupSettings[]?>(nameof(LODInfo)) ?? GetOrDefault<FSkeletalMeshLODGroupSettings[]>("SourceModels", []); ;
+        LODInfo = GetOrDefault<FSkeletalMeshLODGroupSettings[]?>(nameof(LODInfo)) ?? GetOrDefault<FSkeletalMeshLODGroupSettings[]>("SourceModels");
 
         bHasVertexColors = GetOrDefault<bool>(nameof(bHasVertexColors));
         NumVertexColorChannels = GetOrDefault<byte>(nameof(NumVertexColorChannels));
@@ -93,7 +93,7 @@ public partial class USkeletalMesh : UObject
         ReferenceSkeleton = new FReferenceSkeleton(Ar);
         if (Ar.Game < GAME_UE4_0)
         {
-            Ar.Read<int>(); // SkeletalDepth
+            Ar.Position += sizeof(int); // int - SkeletalDepth
         }
 
         if (FSkeletalMeshCustomVersion.Get(Ar) < FSkeletalMeshCustomVersion.Type.SplitModelAndRenderData)
@@ -234,6 +234,36 @@ public partial class USkeletalMesh : UObject
                 {
                     Ar.ReadArray<byte>(); // NameBuffer
                     Ar.ReadArray<byte>(); // Buffer
+                }
+            }
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELMESH_BONE_KDOP && Ar.Game < GAME_UE4_0)
+        {
+            // this is not an array of ints, it's a complex FPerPolyBoneCollisionData struct
+            Ar.SkipArray<int>(); // PerPolyBoneKDOPs
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_MAPPING && Ar.Game < GAME_UE4_0)
+        {
+            Ar.SkipArray(Ar.SkipFString); // BoneBreakNames
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_EXTRA_SKELMESH_VERTEX_INFLUENCE_CUSTOM_MAPPING)
+            {
+                Ar.SkipArray<int>(); // BoneBreakOptions
+            }
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.APEX_CLOTHING && Ar.Game < GAME_UE4_0)
+        {
+            var ApexClothingAssets = Ar.Read<int>();
+            for (var i = 0; i < ApexClothingAssets; i++)
+            {
+                var bAssetValid = Ar.ReadBoolean();
+
+                if (bAssetValid)
+                {
+                    Ar.SkipArray<byte>(); // NameBuffer
+                    Ar.SkipArray<byte>(); // Buffer
                 }
             }
         }

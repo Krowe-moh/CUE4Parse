@@ -17,7 +17,7 @@ namespace CUE4Parse.UE4.Assets.Objects;
 [JsonConverter(typeof(TBulkDataConverter))]
 public abstract class TBulkData<T> where T: struct
 {
-    
+
     public FByteBulkDataHeader Header { get; init; }
     public EBulkDataFlags BulkDataFlags => Header.BulkDataFlags;
 
@@ -40,6 +40,13 @@ public abstract class TBulkData<T> where T: struct
         _data = data;
     }
     protected TBulkData(FAssetArchive ar, string? tfc = null)
+        : this(ar)
+    {
+        _savedAr = ar;
+        _savedTfc = tfc;
+    }
+
+    protected TBulkData(FAssetArchive ar, string tfc)
         : this(ar)
     {
         _savedAr = ar;
@@ -188,7 +195,7 @@ public abstract class TBulkData<T> where T: struct
             archive = ubulkAr;
             position = ubulkAr.Length == Header.SizeOnDisk ? 0 : Header.OffsetInFile;
         }
-        else if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile) && archive.Game < GAME_UE4_0)
+        else if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile) && archive.Game < GAME_UE4_0) // basically a BULKDATA_PayloadInSeperateFile
         {
             if (_savedTfc is null)
             {
@@ -206,14 +213,12 @@ public abstract class TBulkData<T> where T: struct
                 return false;
             }
 
-            //if (!File.Exists(tfcPath))
-            //    return true;
-
+            // TFC files are huge so jump to the payload offset and create an archive of the payload.
             var bytes = new byte[Header.SizeOnDisk];
             using var fs = File.OpenRead(tfcPath);
             fs.Seek(Header.OffsetInFile, SeekOrigin.Begin);
             fs.ReadExactly(bytes);
-            archive = new FAssetArchive(new FByteArchive("tfc", bytes, _savedAr.Versions), _savedAr.Owner);
+            archive = new FAssetArchive(new FByteArchive("TFC Payload", bytes, _savedAr.Versions), _savedAr.Owner);
             position = 0;
         }
         else if (BulkDataFlags.HasFlag(BULKDATA_PayloadAtEndOfFile))

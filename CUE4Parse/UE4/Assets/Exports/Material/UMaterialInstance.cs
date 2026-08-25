@@ -174,7 +174,7 @@ public class FStaticParameterSet
         }
         StaticSwitchParameters = Ar.ReadArray(() => new FStaticSwitchParameter(Ar));
         StaticComponentMaskParameters = Ar.ReadArray(() => new FStaticComponentMaskParameter(Ar));
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADD_NORMAL_PARAMETERS)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADD_NORMAL_PARAMETERS && Ar.Game < GAME_UE4_0)
         {
             NormalParameters = Ar.ReadArray(() => new FNormalParameter(Ar));
         }

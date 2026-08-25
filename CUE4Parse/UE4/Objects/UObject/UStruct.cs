@@ -38,18 +38,17 @@ public class UStruct : UField
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.MovedFriendlyNameToUFunction)
         {
-            Ar.ReadFName();
+            Ar.SkipFName();
         }
 
         if (Ar.Ver < EUnrealEngineObjectUE4Version.CONSOLIDATE_HEADER_PARSER_ONLY_PROPERTIES)
         {
             if (Ar.Ver > EUnrealEngineObjectUE3Version.AddedCppTextToUStruct)
             {
-                new FPackageIndex(Ar); // CppText
+                Ar.Position += sizeof(int); // FPackageIndex - CppText
             }
 
-            Ar.Read<int>(); // Line
-            Ar.Read<int>(); // TextPos
+            Ar.Position += sizeof(int) * 2; // int - Line, TextPos
         }
 
         if (FCoreObjectVersion.Get(Ar) >= FCoreObjectVersion.Type.FProperties)
@@ -58,8 +57,9 @@ public class UStruct : UField
         }
 
         var bytecodeBufferSize = Ar.Read<int>();
-        var serializedScriptSize = 0;
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE)
+        var serializedScriptSize = Ar.Ver >= EUnrealEngineObjectUE3Version.USTRUCT_SERIALIZE_ONDISK_SCRIPTSIZE ? Ar.Read<int>() : bytecodeBufferSize;
+
+        if (Ar.Owner!.Provider?.ReadScriptData == true && Ar.Game >= GAME_UE4_0 && serializedScriptSize > 0)
         {
             serializedScriptSize = Ar.Read<int>();
         }

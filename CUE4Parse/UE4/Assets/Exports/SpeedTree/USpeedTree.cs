@@ -8,7 +8,7 @@ public class USpeedTree : UObject
     {
         base.Deserialize(Ar, validPos);
 
-        // Todo:
+        // This can be skipped for now as this is a pretty long function
         var NumBytes = Ar.Read<int>();
         Ar.Position += NumBytes;
     }

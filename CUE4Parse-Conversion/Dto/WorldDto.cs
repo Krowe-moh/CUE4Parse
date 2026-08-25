@@ -33,8 +33,7 @@ public class WorldDto : ObjectDto
             }
         }
 
-        return;
-        foreach (var ptr in world.StreamingLevels)
+        foreach (var ptr in world.StreamingLevels ?? [])
         {
             ct.ThrowIfCancellationRequested();
             switch (ptr.Load())

@@ -29,6 +29,7 @@ public static class RocketLeagueAes
     {
         try
         {
+            // at the moment it's using this repo that gets updated every update
             var content = HttpClient
                 .GetStringAsync("https://raw.githubusercontent.com/ShinyEmii/Toga-Files/refs/heads/master/aes.txt")
                 .GetAwaiter()

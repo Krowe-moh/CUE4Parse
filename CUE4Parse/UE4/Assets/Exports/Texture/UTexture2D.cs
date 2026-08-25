@@ -10,7 +10,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Texture;
 
 public class UTexture2D : UTexture
 {
-    
+
     public FIntPoint ImportedSize { get; private set; }
     public TextureAddress AddressX { get; private set; }
     public int SizeX { get; private set; }
@@ -97,8 +97,7 @@ public class UTexture2D : UTexture
                     {
                         Format = EPixelFormat.PF_PVRTC4;
                     }
-                }
-                else if (false) // if game is android
+                } else if (false) // if game is android
                 {
                     if (Format == EPixelFormat.PF_DXT1)
                     {

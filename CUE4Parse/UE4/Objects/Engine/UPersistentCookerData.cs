@@ -11,25 +11,26 @@ namespace CUE4Parse.UE4.Objects.Engine
 {
     public class FPackageTreeEntry(FAssetArchive Ar)
     {
-        public string FullObjectName = Ar.ReadFString();
-        public string ClassName = Ar.ReadFString();
+        public readonly string FullObjectName = Ar.ReadFString();
+        public readonly string ClassName = Ar.ReadFString();
     }
 
     public class FCookedBulkDataInfo(FAssetArchive Ar)
     {
         [JsonConverter(typeof(StringEnumConverter))]
-        public EBulkDataFlags SavedBulkDataFlags = Ar.Read<EBulkDataFlags>();
-        public int SavedElementCount = Ar.Read<int>();
-        public int SavedBulkDataOffsetInFile = Ar.Read<int>();
-        public int SavedBulkDataSizeOnDisk = Ar.Read<int>();
-        public FName TextureFileCacheName = Ar.ReadFName();
+        public readonly EBulkDataFlags SavedBulkDataFlags = Ar.Read<EBulkDataFlags>();
+
+        public readonly int SavedElementCount = Ar.Read<int>();
+        public readonly int SavedBulkDataOffsetInFile = Ar.Read<int>();
+        public readonly int SavedBulkDataSizeOnDisk = Ar.Read<int>();
+        public readonly FName TextureFileCacheName = Ar.ReadFName();
     }
 
     public class FCookedTextureFileCacheInfo(FAssetArchive Ar)
     {
-        public FGuid TextureFileCacheGuid = Ar.Read<FGuid>();
-        public FName TextureFileCacheName = Ar.ReadFName();
-        public double LastSaved = Ar.Read<double>();
+        public readonly FGuid TextureFileCacheGuid = Ar.Read<FGuid>();
+        public readonly FName TextureFileCacheName = Ar.ReadFName();
+        public readonly double LastSaved = Ar.Read<double>();
     }
 
     public class FCookedTextureUsageInfo(FAssetArchive Ar)
@@ -37,8 +38,10 @@ namespace CUE4Parse.UE4.Objects.Engine
         public string[] PackageNames = Ar.ReadArray(Ar.ReadFString);
         [JsonConverter(typeof(StringEnumConverter))]
         public EPixelFormat Format = Ar.Read<EPixelFormat>();
+
         [JsonConverter(typeof(StringEnumConverter))]
         public TextureGroup LODGroup = (TextureGroup)Ar.Read<byte>();
+
         public int SizeX = Ar.Read<int>();
         public int SizeY = Ar.Read<int>();
         public int StoredOnceMipSize = Ar.Read<int>();
@@ -192,7 +195,7 @@ namespace CUE4Parse.UE4.Objects.Engine
         }
     }
 
-    public class UGearsPersistentCookerData : UPersistentCookerData;
+    public class UGearsPersistentCookerData : UPersistentCookerData; // this shouldn't be here
 
     public class UPersistentCookerData : Assets.Exports.UObject
     {
