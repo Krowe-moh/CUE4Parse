@@ -134,17 +134,6 @@ public class ULandscapeComponent : UPrimitiveComponent
                     Ar.ReadArray(() => new FByteBulkData(Ar)); // OldData (cooked FGrassMap data)
                 }
             }
-
-            /*
-            // untested
-            if (Ar.Ver >= EUnrealEngineObjectUE4Version.LANDSCAPE_GRASS_COOKING && Ar.Ver < EUnrealEngineObjectUE4Version.SERIALIZE_LANDSCAPE_GRASS_DATA)
-            {
-                var NumChannels = Ar.Read<int>();
-                if (NumChannels > 0)
-                {
-                    Ar.ReadArray(() => new FByteBulkData(Ar)); // OldData (cooked FGrassMap data)
-                }
-            }*/
         }
     }
 

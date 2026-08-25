@@ -486,7 +486,6 @@ public class AWorldSettings : AInfo
     {
         if (Ar.Game == GAME_WorldofJadeDynasty) Ar.Position += 20;
         base.Deserialize(Ar, validPos);
-        StreamingLevels = GetOrDefault<FPackageIndex[]>("StreamingLevels", []);
 
         WorldPartition = GetOrDefault<FPackageIndex?>(nameof(WorldPartition));
         StreamingLevels = GetOrDefault<FPackageIndex[]?>(nameof(StreamingLevels));
