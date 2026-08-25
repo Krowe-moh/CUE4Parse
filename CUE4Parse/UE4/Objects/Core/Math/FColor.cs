@@ -20,6 +20,12 @@ namespace CUE4Parse.UE4.Objects.Core.Math
         public byte A;
 
         public static readonly FColor Gray = new(153);
+        public static readonly FColor White = new(byte.MaxValue);
+
+        public static bool operator ==(FColor a, FColor b) => a.R == b.R && a.G == b.G && a.B == b.B && a.A == b.A;
+        public static bool operator !=(FColor a, FColor b) => !(a == b);
+        public override bool Equals(object? obj) => obj is FColor color && this == color;
+        public override int GetHashCode() => HashCode.Combine(R, G, B, A);
 
         public string Hex => A is byte.MaxValue or byte.MinValue ? UnsafePrint.BytesToHex(R, G, B) : UnsafePrint.BytesToHex(A, R, G, B);
 

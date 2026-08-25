@@ -48,7 +48,7 @@ public class UTexture2D : UTexture
         {
             var legacyMips = Array.Empty<FTexture2DMipMap>();
 
-            var bHasLegacyMips = Ar.Game >= GAME_UE4_0 ? GetOrDefault("bDisableDerivedDataCache_DEPRECATED", false) : true;
+            var bHasLegacyMips =  Ar.Game < GAME_UE4_0 || GetOrDefault("bDisableDerivedDataCache_DEPRECATED", false);
             if (bHasLegacyMips)
             {
                 legacyMips = Ar.ReadArray(() => TextureFileCacheName.IsNone ? new FTexture2DMipMap(Ar) : new FTexture2DMipMap(Ar, TextureFileCacheName.Text));

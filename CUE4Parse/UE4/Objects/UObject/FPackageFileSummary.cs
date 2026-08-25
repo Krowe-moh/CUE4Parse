@@ -557,8 +557,7 @@ namespace CUE4Parse.UE4.Objects.UObject
 
             if (Ar.Game == GAME_SuddenAttack2)
             {
-                Ar.Read<int>(); // count
-                Ar.Read<int>(); // offset
+                Ar.Position += 8; // two ints count, offset
             }
             
             if (Ar.Game == GAME_SuddenAttack2)

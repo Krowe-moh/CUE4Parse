@@ -49,16 +49,16 @@ public partial class USkeletalMesh : UObject
 
         if (Ar.Game == GAME_Dishonored && Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_SCALES2)
         {
-            Ar.ReadFName(); // m_BoneName
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.OPTIMIZED_ANIMSEQ) Ar.Read<FVector>(); // m_Offset
-            Ar.Read<float>(); // m_fRadius
+            Ar.SkipFName(); // m_BoneName
+            if (Ar.Ver >= EUnrealEngineObjectUE3Version.OPTIMIZED_ANIMSEQ) Ar.Position += sizeof(float) * 3; // FVector - m_Offset
+            Ar.Position += sizeof(float); // float - m_fRadius
         }
 
         ImportedBounds = new FBoxSphereBounds(Ar);
 
         if (Ar.Ver < EUnrealEngineObjectUE3Version.DeprecatedPointer)
         {
-            new FPackageIndex(Ar);
+            Ar.Position += sizeof(int); // FPackageIndex
         }
 
         if (Ar.Game < GAME_UE4_0)
@@ -71,11 +71,11 @@ public partial class USkeletalMesh : UObject
                 SkeletalMaterials[i] = new FSkeletalMaterial(Materials[i]);
             }
 
-            Ar.Read<FVector>(); // MeshOrigin
-            Ar.Read<FRotator>(); // RotOrigin
+            Ar.Position += sizeof(float) * 3; // FVector - MeshOrigin
+            Ar.Position += sizeof(float) * 3; // FRotator - RotOrigin
             if (Ar.Game == GAME_Dishonored && Ar.Ver >= EUnrealEngineObjectUE3Version.FIXCLAMP_NON_TONEMAP)
             {
-                Ar.ReadArray<byte>();
+                Ar.SkipArray<byte>();
             }
         }
         else
@@ -88,7 +88,7 @@ public partial class USkeletalMesh : UObject
             }
         }
 
-        if (Ar.Game is GAME_LordOfMysteries) Ar.Position += 4;
+        if (Ar.Game is GAME_LordOfMysteries) CustomGameData = Ar.ReadArray(() => new FSkeletalMaterial(Ar));
 
         ReferenceSkeleton = new FReferenceSkeleton(Ar);
         if (Ar.Game < GAME_UE4_0)
@@ -205,7 +205,8 @@ public partial class USkeletalMesh : UObject
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADD_SKELMESH_NAMEINDEXMAP && Ar.Ver < EUnrealEngineObjectUE4Version.REFERENCE_SKELETON_REFACTOR)
         {
-            Ar.ReadMap(Ar.ReadFName, () => Ar.Read<int>()); // DummyNameIndexMap
+            var length = Ar.Read<int>();
+            Ar.Position += 12 * length; // TMap<FName, int32> DummyNameIndexMap
         }
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELMESH_BONE_KDOP && Ar.Game < GAME_UE4_0)
@@ -297,6 +298,7 @@ public partial class USkeletalMesh : UObject
 
         if (Ar.Ver >= EUnrealEngineObjectUE3Version.SKELETAL_MESH_SIMPLIFICATION && Ar.Game < GAME_UE4_0)
         {
+            return;
             var bHaveSourceData = Ar.ReadBoolean();
             if (bHaveSourceData)
             {

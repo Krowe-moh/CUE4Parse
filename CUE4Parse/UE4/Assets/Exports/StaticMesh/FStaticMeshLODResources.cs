@@ -219,9 +219,45 @@ public class FStaticMeshLODResources
                     ColorVertexBuffer = new FColorVertexBuffer();
                 }
             }
-            else if (Ar.Ver >= EUnrealEngineObjectUE3Version.MESH_PAINT_SYSTEM)
+
+            if (Ar.Ver < EUnrealEngineObjectUE3Version.MESH_PAINT_SYSTEM)
             {
-                ColorVertexBuffer = new FColorVertexBuffer(Ar);
+                var colors = new FColor[VertexBuffer.NumVertices];
+                for (int i = 0; i < colors.Length; i++)
+                    colors[i] = VertexBuffer.UV[i].Color;
+
+                ColorVertexBuffer = colors.Any(c => c != FColor.White)
+                    ? new FColorVertexBuffer(colors)
+                    : new FColorVertexBuffer();
+            }
+            else
+            {
+                if (Ar.Ver < EUnrealEngineObjectUE3Version.FIX_BROKEN_COLOR_VERTEX_BUFFERS)
+                {
+                    long arPos = Ar.Position;
+                    int expectedVertCount = VertexBuffer.NumVertices;
+                    int colorBufferVertCount = Ar.Read<int>();
+                    int colorBufferStride = Ar.Read<int>();
+
+                    int colorBulkDataStride = 0;
+                    if (Ar.Ver >= EUnrealEngineObjectUE3Version.REMOVED_SHADOW_VOLUMES)
+                    {
+                        long arPos2 = Ar.Position;
+                        colorBulkDataStride = Ar.Read<int>();
+                        Ar.Position = arPos2;
+                    }
+
+                    if (colorBufferVertCount == expectedVertCount ||
+                        (colorBufferVertCount > 0 && colorBulkDataStride == colorBufferStride))
+                    {
+                        Ar.Position = arPos;
+                        ColorVertexBuffer = new FColorVertexBuffer(Ar);
+                    }
+                }
+                else
+                {
+                    ColorVertexBuffer = new FColorVertexBuffer(Ar);
+                }
             }
 
             if (Ar.Ver < EUnrealEngineObjectUE3Version.REMOVED_SHADOW_VOLUMES)
