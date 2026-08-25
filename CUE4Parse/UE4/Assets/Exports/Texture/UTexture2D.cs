@@ -61,7 +61,7 @@ public class UTexture2D : UTexture
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.ADDED_CACHED_IPHONE_DATA)
             {
-                Ar.ReadArray(() => new FTexture2DMipMap(Ar));
+                Ar.ReadArray(() => new FTexture2DMipMap(Ar)); // CachedPVRTCMips
             }
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.VERSION_NUMBER_FIX_FOR_FLASH_TEXTURES)
@@ -73,7 +73,7 @@ public class UTexture2D : UTexture
 
             if (Ar.Ver >= EUnrealEngineObjectUE3Version.ANDROID_ETC_SEPARATED)
             {
-                Ar.ReadArray(() => new FTexture2DMipMap(Ar));
+                Ar.ReadArray(() => new FTexture2DMipMap(Ar)); // CachedETCMips
             }
 
             // Old versions use ByteProperty for enums
@@ -97,7 +97,8 @@ public class UTexture2D : UTexture
                     {
                         Format = EPixelFormat.PF_PVRTC4;
                     }
-                } else if (false) // if game is android
+                }
+                else if (false) // if game is android
                 {
                     if (Format == EPixelFormat.PF_DXT1)
                     {

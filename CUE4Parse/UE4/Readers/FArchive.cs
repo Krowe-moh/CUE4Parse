@@ -660,17 +660,15 @@ namespace CUE4Parse.UE4.Readers
             return Encoding.Latin1.GetString(buf);
         }
 
-        public string ReadFAnsiString2()
+        public string ReadNullTerminatedAnsiString()
         {
-            var strBytes = new List<byte>();
-            nextChar:
-            byte c = Read<byte>();
-            if (c != 0)
+            var bytes = new List<byte>();
+            byte b;
+            while ((b = Read<byte>()) != 0)
             {
-                strBytes.Add(c);
-                goto nextChar;
+                bytes.Add(b);
             }
-            return Encoding.Latin1.GetString(strBytes.ToArray());
+            return Encoding.Latin1.GetString(bytes.ToArray());
         }
 
         public float ReadFReal() => Ver >= EUnrealEngineObjectUE5Version.LARGE_WORLD_COORDINATES ? (float)Read<double>() : Read<float>();

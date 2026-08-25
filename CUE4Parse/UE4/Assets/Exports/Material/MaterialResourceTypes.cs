@@ -161,13 +161,15 @@ public class FMaterial
 public class FGlobalShaderCache
 {
     public FGlobalShaderMap[] LoadedShaderMaps;
+    public FShaderCache ShaderCache;
 
     public FGlobalShaderCache(FArchive Ar)
     {
         Ar.Read<int>();
         Ar.Read<int>();
         Ar.Read<int>();
-        new FShaderCache(Ar);
+        ShaderCache = new FShaderCache(Ar);
+        Console.WriteLine(Ar.Length - Ar.Position);
         return;
         var numLoadedResources = Ar.Read<int>();
         var resourceAr = new FMaterialResourceProxyReader(Ar, false);

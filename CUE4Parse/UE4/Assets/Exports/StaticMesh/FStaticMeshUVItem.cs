@@ -24,17 +24,12 @@ public partial class FStaticMeshUVItem
         }
 
         Normal = SerializeTangents(Ar, useHighPrecisionTangents);
-        if (Ar.Game == GAME_APBReloaded)
-        {
-            goto SkipColor;
-        }
 
-        if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERTEXCOLOR && Ar.Ver < EUnrealEngineObjectUE3Version.MESH_PAINT_SYSTEM)
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERTEXCOLOR && Ar.Ver < EUnrealEngineObjectUE3Version.MESH_PAINT_SYSTEM && Ar.Game is not GAME_APBReloaded)
         {
             Color = Ar.Read<FColor>();
         }
 
-        SkipColor:
         UV = SerializeTexcoords(Ar, numStaticUVSets, useStaticFloatUVs);
     }
 
