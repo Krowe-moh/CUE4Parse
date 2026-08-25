@@ -19,22 +19,44 @@ public partial class FStaticMeshUVItem
     {
         if (Ar.Ver < EUnrealEngineObjectUE3Version.MovedColorFromUVItem)
         {
-            if (Ar.Ver < EUnrealEngineObjectUE3Version.MovedColorFromUVItem)
-            {
-                Position = Ar.Read<FVector>();
-                Color = Ar.Read<FColor>();
-            }
-            Normal = SerializeTangents(Ar, useHighPrecisionTangents);
-            if (Ar.Game == GAME_APBReloaded)
-            {
-                goto SkipColor;
-            }
-            if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERTEXCOLOR && Ar.Ver < EUnrealEngineObjectUE3Version.MESH_PAINT_SYSTEM)
-            {
-                Color = Ar.Read<FColor>();
-            }
-            SkipColor:
-            UV = SerializeTexcoords(Ar, numStaticUVSets, useStaticFloatUVs);
+            Position = Ar.Read<FVector>();
+            Color = Ar.Read<FColor>();
+        }
+
+        Normal = SerializeTangents(Ar, useHighPrecisionTangents);
+        if (Ar.Game == GAME_APBReloaded)
+        {
+            goto SkipColor;
+        }
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.STATICMESH_VERTEXCOLOR && Ar.Ver < EUnrealEngineObjectUE3Version.MESH_PAINT_SYSTEM)
+        {
+            Color = Ar.Read<FColor>();
+        }
+
+        SkipColor:
+        UV = SerializeTexcoords(Ar, numStaticUVSets, useStaticFloatUVs);
+    }
+
+    public FStaticMeshUVItem(FPackedNormal[] normal, FMeshUVFloat[] uv)
+    {
+        Normal = normal;
+        UV = uv;
+    }
+
+    public static FPackedNormal[] SerializeTangents(FArchive Ar, bool useHighPrecisionTangents)
+    {
+        if (!useHighPrecisionTangents)
+            return [new FPackedNormal(Ar), Ar.Ver < EUnrealEngineObjectUE3Version.AddedRemovedNormal ? new FPackedNormal(Ar) : new FPackedNormal(0), new FPackedNormal(Ar)]; // # TangentX, TangentY and TangentZ
+
+        return [(FPackedNormal) new FPackedRGBA16N(Ar), Ar.Ver < EUnrealEngineObjectUE3Version.AddedRemovedNormal ? (FPackedNormal) new FPackedRGBA16N(Ar) : new FPackedNormal(0), (FPackedNormal) new FPackedRGBA16N(Ar)];
+    }
+
+    public static FMeshUVFloat[] SerializeTexcoords(FArchive Ar, int numStaticUVSets, bool useStaticFloatUVs)
+    {
+        if (useStaticFloatUVs)
+        {
+            return Ar.ReadArray<FMeshUVFloat>(numStaticUVSets);
         }
 
         var uvFloat = new FMeshUVFloat[numStaticUVSets];

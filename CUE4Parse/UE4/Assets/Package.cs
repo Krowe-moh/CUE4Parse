@@ -326,7 +326,7 @@ namespace CUE4Parse.UE4.Assets
 
                 var buffer = new byte[totalSize];
                 uassetAr.Position = 0;
-                uassetAr.Read(buffer, 0, (int) uassetAr.Length);
+                uassetAr.ReadExactly(buffer, 0, (int) uassetAr.Length);
 
                 foreach (var chunk in Summary.CompressedChunks)
                 {
@@ -417,7 +417,7 @@ namespace CUE4Parse.UE4.Assets
 
             if (Provider == null)
                 return null;
-            Package? importPackage = null;
+
             if (Provider.TryLoadPackage(outerMostObjectName, out var package) || Provider.TryLoadPackage(outerMostImport.ClassPackage.Text, out package))
             {
                 if (package is IoPackage ioPackage)
@@ -425,17 +425,16 @@ namespace CUE4Parse.UE4.Assets
                     var ioExportMap = ioPackage.ExportMap;
                     for (int i = 0; i < ioExportMap.Length; i++)
                     {
-                        if (ioPackage.CreateFNameFromMappedName(ioExportMap[i].ObjectName).Text == importObjectName)
+                        if (ioPackage.CreateFNameFromMappedName(ioExportMap[i].ObjectName).Text == import.ObjectName)
                         {
                             return ioPackage.ResolvePackageIndex(new FPackageIndex(ioPackage, i + 1));
                         }
                     }
 #if DEBUG
-                    //Log.Fatal("Missing import of ({0}): {1} in {2} was not found, but the package exists.", Name, importObjectName, ioPackage.GetFullName());
+                    Log.Fatal("Missing import of ({0}): {1} in {2} was not found, but the package exists.", Name, import.ObjectName, ioPackage.GetFullName());
 #endif
                     return new ResolvedImportObject(import, this);
                 }
-                importPackage = package as Package;
             }
 
             Package? importPackage = package as Package;
@@ -448,7 +447,7 @@ namespace CUE4Parse.UE4.Assets
             if (importPackage == null)
             {
 #if DEBUG
-                //Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, importObjectName, Name);
+                Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, import.ObjectName, Name);
 #endif
                 return new ResolvedImportObject(import, this);
             }
@@ -474,7 +473,7 @@ namespace CUE4Parse.UE4.Assets
             for (var i = 0; i < exportSpan.Length; i++)
             {
                 ref var export = ref exportSpan[i];
-                if (export.ObjectName.Text != importObjectName)
+                if (export.ObjectName.Text != import.ObjectName)
                     continue;
 
                 var thisOuter = importPackage.ResolvePackageIndex(export.OuterIndex);

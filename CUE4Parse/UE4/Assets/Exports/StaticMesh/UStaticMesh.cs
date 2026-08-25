@@ -48,8 +48,6 @@ public class FkDOPNode3
     }
 }
 
-public class UFracturedStaticMesh : UStaticMesh;
-
 public class UStaticMesh : UObject
 {
     public bool bCooked { get; private set; }

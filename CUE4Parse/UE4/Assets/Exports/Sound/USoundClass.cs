@@ -7,7 +7,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Sound;
 
 public class USoundClass : UObject
 {
-    public Dictionary<FPackageIndex, FSoundCueEditorData>? EditorData;
+    public Dictionary<FPackageIndex, FSoundEditorData>? EditorData;
 
     public override void Deserialize(FAssetArchive Ar, long validPos)
     {
