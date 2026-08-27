@@ -292,6 +292,12 @@ namespace CUE4Parse.UE4.Assets
 
                 if (Summary.CompressionFlags != ECompressionFlags.COMPRESS_None)
                 {
+                    byte[] nonce;
+                    if ((Summary.PackageFlags & EPackageFlags.PKG_NotExternallyReferenceable) != 0)
+                    {
+                        nonce = uassetAr.ReadBytes(12);
+                    }
+
                     var headerEnd = uassetAr.Position;
                     var checkSumDataOffset = (int) (Summary.TotalHeaderSize - headerEnd - checkSumDataSize);
 
@@ -303,7 +309,15 @@ namespace CUE4Parse.UE4.Assets
 
                     var encryptedData = uassetAr.ReadBytes(encryptedSize);
 
-                    RocketLeagueAes.Decrypt(encryptedData, checkSumDataOffset, checkSumDataSize, true, out var decryptedData);
+                    byte[] decryptedData;
+                    if ((Summary.PackageFlags & EPackageFlags.PKG_NotExternallyReferenceable) != 0)
+                    {
+                        RocketLeagueAes.Decryptv2(encryptedData, checkSumDataOffset, checkSumDataSize, nonce, out decryptedData);
+                    }
+                    else
+                    {
+                        RocketLeagueAes.Decrypt(encryptedData, checkSumDataOffset, checkSumDataSize, true, out decryptedData);
+                    }
 
                     var after = uassetAr.ReadBytes((int) (uassetAr.Length - uassetAr.Position));
 
@@ -332,13 +346,25 @@ namespace CUE4Parse.UE4.Assets
                 foreach (var chunk in Summary.CompressedChunks)
                 {
                     uassetAr.Position = chunk.CompressedOffset;
+                    var compressedData = uassetAr.ReadBytes(chunk.CompressedSize);
+
+                    if ((Summary.PackageFlags & EPackageFlags.PKG_NotExternallyReferenceable) != 0)
+                    {
+                        RocketLeagueAes.Decryptv2WithLastKey(compressedData, chunk.Nonce, out compressedData);
+                    }
+
                     var decompressedData = new byte[chunk.UncompressedSize];
 
-                    uassetAr.SerializeCompressedNew(decompressedData, chunk.UncompressedSize,
+                    using var tempAr = new FByteArchive($"CompressedChunk", compressedData, uassetAr.Versions);
+                    tempAr.SerializeCompressedNew(
+                        decompressedData,
+                        chunk.UncompressedSize,
                         Summary.CompressionFlags.HasFlag(ECompressionFlags.COMPRESS_ZLIB)
                             ? CompressionMethod.Zlib.ToString()
                             : CompressionMethod.LZO.ToString(),
-                        ECompressionFlags.COMPRESS_None, false, out _);
+                        ECompressionFlags.COMPRESS_None,
+                        false,
+                        out _);
 
                     Array.Copy(decompressedData, 0, buffer, chunk.UncompressedOffset, decompressedData.Length);
                 }
