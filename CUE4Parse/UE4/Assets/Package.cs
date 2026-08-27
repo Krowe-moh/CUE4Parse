@@ -292,7 +292,7 @@ namespace CUE4Parse.UE4.Assets
 
                 if (Summary.CompressionFlags != ECompressionFlags.COMPRESS_None)
                 {
-                    byte[] nonce;
+                    byte[] nonce = [];
                     if ((Summary.PackageFlags & EPackageFlags.PKG_NotExternallyReferenceable) != 0)
                     {
                         nonce = uassetAr.ReadBytes(12);
