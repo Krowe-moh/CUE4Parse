@@ -36,16 +36,22 @@ public class ActorDto : ObjectDto
             IsVisible = !hidden;
         }
 
-        var drawScale = actor.GetOrDefault("DrawScale", 1.0f);
+        var DrawScale = actor.GetOrDefault("DrawScale", 1.0f);
+
+        var location = actor.GetOrDefault(
+            "RelativeLocation",
+            actor.GetOrDefault(
+                "Translation",
+                actor.GetOrDefault("Location", FVector.ZeroVector)));
+
         var prePivot = actor.GetOrDefault("PrePivot", FVector.ZeroVector);
 
-        if (actor.TryGetValue(out FVector location, "Location"))
-            Location = location - prePivot;
+        Location = location - prePivot;
 
         if (actor.TryGetValue(out FRotator rotation, "Rotation"))
             Rotation = rotation;
 
-        Scale = actor.GetOrDefault("DrawScale3D", FVector.OneVector * drawScale);
+        Scale = actor.GetOrDefault("DrawScale3D", FVector.OneVector * DrawScale);
 
         if (RootComponent is { } roota && Location is { } loc)
         {

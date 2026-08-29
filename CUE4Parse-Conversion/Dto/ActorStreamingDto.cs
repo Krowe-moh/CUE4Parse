@@ -20,7 +20,7 @@ public class WorldSettingsDto : ActorDto
 
         StreamingLevels = [];
 
-        foreach (var ptr in worldSettings.StreamingLevels)
+        foreach (var ptr in worldSettings?.StreamingLevels ?? [])
         {
             if (ptr.Load() is not ULevelStreaming { WorldAsset: { } worldAsset } streaming || ptr.Load() is not ULevelStreaming gurt)
                 continue;
