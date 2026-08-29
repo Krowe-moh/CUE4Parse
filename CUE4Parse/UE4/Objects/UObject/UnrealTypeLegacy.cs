@@ -33,7 +33,7 @@ namespace CUE4Parse.UE4.Objects.UObject
                 Ar.Read<ushort>(); // RepOffset
             }
 
-            if (Ar.Game == GAME_RocketLeague && (int)Ar.LicenseeVer > 10) _ = Ar.ReadFString(); // ObjectName
+            if (Ar.Game == GAME_RocketLeague && (int)Ar.LicenseeVer > 10) Ar.SkipFString(); // ObjectName
 
             if (Ar.Game >= GAME_UE4_0)
             {

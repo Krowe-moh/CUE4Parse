@@ -287,6 +287,7 @@ public static class CubemapConverter
                     *(cubeDataPtr + pixelOffset + 1) / 255.0f // R
                 );
 
+            case EPixelFormat.PF_G8:
             case EPixelFormat.PF_R8:
                 float gray8 = *(ushort*) (cubeDataPtr + pixelOffset) / 255.0f;
                 return new FLinearColor(1.0f, gray8, gray8, gray8); // A, B, G, R
