@@ -62,6 +62,16 @@ public class FMaterialUniformExpressionClamp : IUStruct
     }
 }
 
+public class FMaterialUniformExpressionFrac : IUStruct
+{
+    public UniformExpression X { get; private set; }
+
+    public FMaterialUniformExpressionFrac(FAssetArchive Ar)
+    {
+        X = new UniformExpression(Ar);
+    }
+}
+
 public class FMaterialUniformExpressionFoldedMath : IUStruct
 {
     public UniformExpression A { get; private set; }

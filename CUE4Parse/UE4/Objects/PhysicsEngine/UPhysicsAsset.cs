@@ -27,7 +27,7 @@ public class UPhysicsAssetInstance : Assets.Exports.UObject
         writer.WritePropertyName("CollisionDisableTable");
         writer.WriteStartArray();
 
-        foreach (var Table in CollisionDisableTable)
+        foreach (var Table in CollisionDisableTable ?? [])
         {
             serializer.Serialize(writer, Table);
         }
