@@ -21,6 +21,7 @@ public enum EGame : uint
         GAME_AvaGlobal = GAME_UE3_0 + 10,
         GAME_LetItDie = GAME_UE3_0 + 11,
         GAME_Paladins = GAME_UE3_0 + 12,
+        GAME_Mars = GAME_UE3_0 + 13,
 
     GAME_UE4_0 = GameUtils.GameUe4Base + (0 << 16),
     GAME_UE4_1 = GameUtils.GameUe4Base + (1 << 16),
