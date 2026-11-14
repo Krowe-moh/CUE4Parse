@@ -1,4 +1,5 @@
-﻿using CUE4Parse.UE4.Assets.Exports.Material;
+﻿using CUE4Parse.UE4.Assets.Exports.Component.Decal;
+using CUE4Parse.UE4.Assets.Exports.Material;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.UObject;
@@ -22,6 +23,19 @@ public class UDecalComponent : USceneComponent
 
         DecalMaterial = GetOrDefault(nameof(DecalMaterial), new FPackageIndex());
         DecalSize = GetOrDefault<FVector>(nameof(DecalSize));
+
+        if (Ar.Game >= GAME_UE4_0) return;
+
+        if (Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_STATIC_DECALS_SERIALIZED)
+        {
+            Ar.ReadArray(() => new FStaticReceiverData(Ar));
+        }
+        else if (Ar.Ver < EUnrealEngineObjectUE3Version.DECAL_REFACTOR &&
+                 (Ar.Ver == EUnrealEngineObjectUE3Version.DECAL_RENDERDATA ||
+                  Ar.Ver >= EUnrealEngineObjectUE3Version.DECAL_RENDERDATA_POINTER))
+        {
+            Ar.ReadArray(() => new FDecalRenderData(Ar));
+        }
     }
 
     public UMaterialInterface? GetDecalMaterial()
